@@ -1,3 +1,5 @@
+// Use https://learn.microsoft.com/en-us/azure/azure-resource-manager/bicep/deploy-github-actions?tabs=userlevel%2CCLI to setup GitHub Actions for Bicep deployment
+
 @description('The unique name for the deployment.')
 param uniqueName string = uniqueString(resourceGroup().id)
 

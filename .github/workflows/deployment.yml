@@ -9,6 +9,12 @@ on:
         uniquelabel:
           type: string
           required: true
+        csprojpath:
+          type: string
+          required: true
+        dotnetoutputpath:
+          type: string
+          required: true
       secrets:
         azure-credentials:
           required: true
@@ -58,12 +64,12 @@ jobs:
 
     - name: dotnet-build-publish-webapp
       run: |
-        dotnet restore ./src/SportsTeam.csproj
-        dotnet build ./src/SportsTeam.csproj --configuration Release
-        dotnet publish ./src/SportsTeam.csproj -c Release -o './src/output' 
+        dotnet restore {{ csprojpath }}
+        dotnet build {{ csprojpath }} --configuration Release
+        dotnet publish {{ csprojpath }} -c Release -o {{ dotnetoutputpath }}
 
     - name: azure-deploy-webapp
       uses: azure/webapps-deploy@v2
       with: 
         app-name: ${{ env.WebAppName }}
-        package: './src/output'
+        package: {{ dotnetoutputpath }}

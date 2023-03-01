@@ -12,6 +12,8 @@ jobs:
     with:
       rg: 'SportsTeamOrganiser'
       uniquelabel: 'stoprod'
+      csprojpath: './src/STO.csproj'
+      dotnetoutputpath: './src/output'
     secrets:
       azure-credentials: ${{ secrets.AZURE_CREDENTIALS_MKNETPROD }}
       azure-subscription: ${{ secrets.AZURE_SUBSCRIPTION }}

@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using SportsTeam.Data;
+using STO.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 

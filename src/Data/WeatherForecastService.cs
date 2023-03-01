@@ -1,4 +1,4 @@
-namespace SportsTeam.Data;
+namespace STO.Data;
 
 public class WeatherForecastService
 {

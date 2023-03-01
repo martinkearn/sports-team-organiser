@@ -15,5 +15,5 @@ jobs:
       csprojpath: './src/STO.csproj'
       dotnetoutputpath: './src/output'
     secrets:
-      azure-credentials: ${{ secrets.AZURE_CREDENTIALS_MKNETPROD }}
+      azure-credentials: ${{ secrets.AZURE_CREDENTIALS }}
       azure-subscription: ${{ secrets.AZURE_SUBSCRIPTION }}

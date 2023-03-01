@@ -1,7 +1,19 @@
 ﻿@page "/"
+@inject IStorageService StorageService
 
 <PageTitle>Index</PageTitle>
 
 <h1>Hello, world!</h1>
 
 Welcome to your new app.
+
+<p>Players table: @test</p>
+
+@code {
+    private string test;
+
+    protected override void OnInitialized()
+    {
+        test = StorageService.GetConfiguration().PlayersTable;
+    }
+}

@@ -64,12 +64,12 @@ jobs:
 
     - name: dotnet-build-publish-webapp
       run: |
-        dotnet restore {{ csprojpath }}
-        dotnet build {{ csprojpath }} --configuration Release
-        dotnet publish {{ csprojpath }} -c Release -o {{ dotnetoutputpath }}
+        dotnet restore {{ inputs.csprojpath }}
+        dotnet build {{ inputs.csprojpath }} --configuration Release
+        dotnet publish {{ inputs.csprojpath }} -c Release -o {{ inputs.dotnetoutputpath }}
 
     - name: azure-deploy-webapp
       uses: azure/webapps-deploy@v2
       with: 
         app-name: ${{ env.WebAppName }}
-        package: {{ dotnetoutputpath }}
+        package: {{ inputs.dotnetoutputpath }}

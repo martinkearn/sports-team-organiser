@@ -1,0 +1,25 @@
+@page "/admin"
+@inject IStorageService StorageService
+
+<button @onclick="AddPlayer">Add Player</button>
+
+<p>@PlayerName</p>
+
+
+@code {
+    private string PlayerName = "";
+
+    protected override void OnInitialized()
+    {
+    }
+
+    async Task AddPlayer()
+    {
+        var player = new Player("Jack Grealish", "midfield,dribbling")
+        {   
+            DefaultRate = 4.00
+        };
+        var upsertedPlayer = await StorageService.UpsertPlayer(player);
+        PlayerName = upsertedPlayer.Name;
+    }
+}

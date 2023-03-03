@@ -21,7 +21,7 @@ namespace STO.Interfaces
         public Task DeleteEntity(string partitionKey, string rowKey);
 
         /// <summary>
-        /// Queries players usiong an Odata query syntax.
+        /// Queries players using an Odata query syntax.
         /// </summary>
         /// <param name="partitionKey">The PartitionKey to identify the entities to query on.</param>
         /// <param name="player">The OData filter string.</param>

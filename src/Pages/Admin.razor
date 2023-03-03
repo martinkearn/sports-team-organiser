@@ -17,12 +17,11 @@
         @foreach (var player in players)
         {
             <tr>
-                <th>@player.Name</th>
-                <td>@player.Tags</td>
-                <td>@player.DefaultRate</td>
+                <th><InputText class="form-control" @bind-Value="player.Name"></InputText></th>
+                <td><InputText class="form-control" @bind-Value="player.Tags"></InputText></td>
+                <td><div class="input-group"><span class="input-group-text">£</span><InputNumber min="0" class="form-control" @bind-Value="player.DefaultRate"></InputNumber></div></td>
                 <td>
-                    <button type="button" class="btn btn-outline-secondary" @onclick="@(e => DeletePlayer(player.RowKey))">Delete</button>
-                    <button type="button" class="btn btn-outline-secondary">Edit</button>
+                    <button type="button" class="btn btn-outline-secondary" @onclick="@(e => DeletePlayer(player.RowKey))"><i class="fa-solid fa-trash"></i> Delete</button>
                 </td>
             </tr>
         }
@@ -30,7 +29,8 @@
 </table>
 
 <div>
-    <button class="btn btn-primary me-3" data-bs-toggle="modal"  data-bs-target="#addPlayerModal">Add Player</button>
+    <button class="btn btn-primary me-3" @onclick="SaveEdits"><i class="fa-solid fa-floppy-disk"></i> Save Changes</button>
+    <button class="btn btn-primary me-3" data-bs-toggle="modal" data-bs-target="#addPlayerModal"><i class="fa-solid fa-plus"></i> Add Player</button>
 </div>
 
 <!-- Add Modal -->
@@ -64,7 +64,7 @@
             </div>
             
             <div class="modal-footer">
-                <button type="submoit" class="btn btn-primary">Add Player</button>
+                <button type="submit" class="btn btn-primary">Add Player</button>
             </div>
         </EditForm>
       </div>
@@ -85,6 +85,21 @@
     async Task AddPlayer()
     {
         await StorageService.UpsertPlayer(newPlayer);
+        RefreshData();
+    }
+
+    async Task UpdatePlayer(Player updatedPlayer)
+    {
+        await StorageService.UpsertPlayer(updatedPlayer);
+        RefreshData();
+    }
+
+    async Task SaveEdits()
+    {
+        foreach (var player in players)
+        {
+            await StorageService.UpsertPlayer(player);
+        }
         RefreshData();
     }
 

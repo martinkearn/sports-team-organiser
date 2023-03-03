@@ -1,5 +1,6 @@
 @page "/admin"
 @inject IStorageService StorageService
+@using Microsoft.AspNetCore.Components.Forms
 
 <PageTitle>TNF - Admin</PageTitle>
 
@@ -41,28 +42,31 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <form>
+        <EditForm Model="@newPlayer" OnSubmit="@AddPlayer">
             <div class="mb-3">
                 <label for="addName" class="form-label">Name</label>
-                <input type="text" class="form-control" id="addName" @bind-value=@newPlayerName >
+                <InputText class="form-control" id="addName" @bind-Value="newPlayer.Name" />
             </div>
+
             <div class="mb-3">
                 <label for="addTags" class="form-label">Tags</label>
-                <input type="text" class="form-control" id="addTags" @bind-value=@newPlayerTags >
-                <div id="emailHelp" class="form-text">For example "defender,dribbling,goalie".</div>
+                <InputText id="addTags" class="form-control" @bind-Value="newPlayer.Tags" />
+                <div id="addTagsHelp" class="form-text">For example "defender,dribbling,goalie".</div>
             </div>
+
             <div class="mb-3">
                 <label for="addDefaultRate" class="form-label">Default Rate</label>
                 <div class="input-group">
                     <span class="input-group-text">£</span>
-                    <input type="number" min="0" class="form-control" id="addDefaultRate" @bind-value=@newPlayerDefaultRate >
+                    <InputNumber type="number" min="0" class="form-control" id="addDefaultRate" @bind-Value="newPlayer.DefaultRate" />
                 </div>
                 <div id="emailHelp" class="form-text">Default rate per game. Usually £3 or £4.</div>
             </div>
-        </form>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-primary" @onclick="AddPlayer">Add Player</button>
+            
+            <div class="modal-footer">
+                <button type="submoit" class="btn btn-primary">Add Player</button>
+            </div>
+        </EditForm>
       </div>
     </div>
   </div>
@@ -71,11 +75,7 @@
 @code {
     private List<Player> players = new List<Player>();
 
-    private string? newPlayerName;
-
-    private string? newPlayerTags;
-
-    private double newPlayerDefaultRate = 4.00;
+    private Player newPlayer = new();
 
     protected override void OnInitialized()
     {
@@ -84,12 +84,6 @@
 
     async Task AddPlayer()
     {
-        var newPlayer = new Player()
-        {   
-            Name = newPlayerName,
-            Tags = newPlayerTags,
-            DefaultRate = newPlayerDefaultRate
-        };
         await StorageService.UpsertPlayer(newPlayer);
         RefreshData();
     }
@@ -102,6 +96,7 @@
 
     private void RefreshData()
     {
+        newPlayer = new Player();
         players = StorageService.QueryEntities(Constants.PlayerPartitionKey, default);
     }
 }

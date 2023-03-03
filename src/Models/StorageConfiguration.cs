@@ -11,14 +11,8 @@ namespace STO.Models
         public string? ConnectionString { get; set; }
 
         /// <summary>
-        /// The name of a table in Azure Storage where Player entities are stored.
+        /// The name of a table in Azure Storage where entities are stored.
         /// </summary>
-        public string? PlayersTable { get; set; }
-
-        /// <summary>
-        /// The name of a table in Azure Storage where Game entities are stored.
-        /// </summary>
-        public string? GamesTable { get; set; }   
-   
+        public string? DataTable { get; set; }
     }
 }

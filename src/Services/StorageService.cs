@@ -6,21 +6,19 @@ namespace STO.Services
     public class StorageService : IStorageService
     {
         private readonly StorageConfiguration _options;
-        private readonly TableClient _playersTableClient;
-
-        private string _playersPartitionKey = "player";
+        private readonly TableClient _tableClient;
 
         public StorageService(IOptions<StorageConfiguration> storageConfigurationOptions)
         { 
             _options = storageConfigurationOptions.Value;
 
-            _playersTableClient = new TableClient(_options.ConnectionString, _options.PlayersTable);
-            _playersTableClient.CreateIfNotExists();
+            _tableClient = new TableClient(_options.ConnectionString, _options.DataTable);
+            _tableClient.CreateIfNotExists();
         }
 
-        public void DeletePlayer(string rowKey)
+        public async Task DeleteEntity(string partitionKey, string rowKey)
         {
-            throw new NotImplementedException();
+            await _tableClient.DeleteEntityAsync(partitionKey, rowKey);
         }
 
         public StorageConfiguration GetConfiguration()
@@ -28,14 +26,14 @@ namespace STO.Services
             return _options;
         }
 
-        public List<Player> QueryPlayers(string filter)
+        public List<Player> QueryEntities(string partitionKey, string? filter)
         {
             if (string.IsNullOrEmpty(filter))
             {
-                filter = $"PartitionKey eq '{_playersPartitionKey}'";
+                filter = $"PartitionKey eq '{partitionKey}'";
             }
 
-            var players = _playersTableClient.Query<Player>(filter).ToList();
+            var players = _tableClient.Query<Player>(filter).ToList();
 
             return players;
         }
@@ -44,13 +42,13 @@ namespace STO.Services
         {
             // Complete required values
             if (player.RowKey == default) player.RowKey = Guid.NewGuid().ToString();
-            if (player.PartitionKey == default) player.PartitionKey = _playersPartitionKey;
+            if (player.PartitionKey == default) player.PartitionKey = Constants.PlayerPartitionKey;
 
             // Upsert player
-            await _playersTableClient.UpsertEntityAsync<Player>(player, TableUpdateMode.Replace);
+            await _tableClient.UpsertEntityAsync<Player>(player, TableUpdateMode.Replace);
 
             // Get player from storage
-            var upsertedPlayer = this.QueryPlayers($"RowKey eq '{player.RowKey}'").First();
+            var upsertedPlayer = this.QueryEntities(Constants.PlayerPartitionKey, $"RowKey eq '{player.RowKey}'").First();
 
             // Return
             return upsertedPlayer;

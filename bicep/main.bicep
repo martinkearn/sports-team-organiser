@@ -23,13 +23,8 @@ resource storageAccountTableService 'Microsoft.Storage/storageAccounts/tableServ
   parent: storageAccount
 }
 
-resource storageAccountTableServicePlayersTable 'Microsoft.Storage/storageAccounts/tableServices/tables@2022-05-01' = {
-  name: 'players'
-  parent: storageAccountTableService
-}
-
-resource storageAccountTableServiceGamesTable 'Microsoft.Storage/storageAccounts/tableServices/tables@2022-05-01' = {
-  name: 'games'
+resource storageAccountTableServiceDataTable 'Microsoft.Storage/storageAccounts/tableServices/tables@2022-05-01' = {
+  name: 'data'
   parent: storageAccountTableService
 }
 
@@ -71,13 +66,9 @@ resource webApp 'Microsoft.Web/sites@2022-03-01' = {
           value: reference(applicationInsights.id, '2020-02-02').InstrumentationKey
         }
         {
-          name: 'StorageConfiguration__PlayersTable'
-          value: storageAccountTableServicePlayersTable.name
+          name: 'StorageConfiguration__DataTable'
+          value: storageAccountTableServiceDataTable.name
         }
-        {
-          name: 'StorageConfiguration__GamesTable'
-          value: storageAccountTableServiceGamesTable.name
-        } 
         {
           name: 'StorageConfiguration__ConnectionString'
           value: 'DefaultEndpointsProtocol=https;AccountName=${storageAccountName};EndpointSuffix=${environment().suffixes.storage};AccountKey=${listKeys(storageAccount.id, '2019-06-01').keys[0].value}'

@@ -1,6 +1,7 @@
 global using STO.Services;
 global using STO.Interfaces;
 global using STO.Models;
+global using STO.Const;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 

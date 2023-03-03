@@ -3,23 +3,39 @@
 
 <button @onclick="AddPlayer">Add Player</button>
 
-<p>@PlayerName</p>
-
+@foreach (var player in players)
+{
+    <p>@player.Name <button type="button" class="btn btn-primary" @onclick="@(e => DeletePlayer(player.RowKey))">Delete</button></p>
+}
 
 @code {
-    private string PlayerName = "";
+    private List<Player> players = new List<Player>();
 
     protected override void OnInitialized()
     {
+        RefreshData();
     }
 
     async Task AddPlayer()
     {
-        var player = new Player("Jack Grealish", "midfield,dribbling")
+        var player = new Player()
         {   
+            Name = "Jack Grealish",
+            Tags = "midfield,dribbling",
             DefaultRate = 4.00
         };
         var upsertedPlayer = await StorageService.UpsertPlayer(player);
-        PlayerName = upsertedPlayer.Name;
+        RefreshData();
+    }
+
+    async Task DeletePlayer(string rowKey)
+    {
+        await StorageService.DeleteEntity(Constants.PlayerPartitionKey, rowKey);
+        RefreshData();
+    }
+
+    private void RefreshData()
+    {
+        players = StorageService.QueryEntities(Constants.PlayerPartitionKey, default);
     }
 }

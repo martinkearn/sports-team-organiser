@@ -1,5 +1,3 @@
-using STO.Models;
-
 namespace STO.Interfaces
 {
     /// <summary>
@@ -17,16 +15,18 @@ namespace STO.Interfaces
         /// <summary>
         /// Deletes a player.
         /// </summary>
+        /// <param name="partitionKey">The PartitionKey to identify the entity with.</param>
         /// <param name="rowKey">The rowKey value for the player to delete.</param>
         /// <returns>Nothing.</returns>
-        public void DeletePlayer(string rowKey);
+        public Task DeleteEntity(string partitionKey, string rowKey);
 
         /// <summary>
         /// Queries players usiong an Odata query syntax.
         /// </summary>
-        /// <param name="player">The Odata filter string.</param>
+        /// <param name="partitionKey">The PartitionKey to identify the entities to query on.</param>
+        /// <param name="player">The OData filter string.</param>
         /// <returns>A list of players which match the query.</returns>
-        public List<Player> QueryPlayers(string filter);
+        public List<Player> QueryEntities(string partitionKey, string? filter);
 
         /// <summary>
         /// Returns configuration data.

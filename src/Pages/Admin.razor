@@ -1,15 +1,81 @@
 @page "/admin"
 @inject IStorageService StorageService
 
-<button @onclick="AddPlayer">Add Player</button>
+<PageTitle>TNF - Admin</PageTitle>
 
-@foreach (var player in players)
-{
-    <p>@player.Name <button type="button" class="btn btn-primary" @onclick="@(e => DeletePlayer(player.RowKey))">Delete</button></p>
-}
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th scope="col">Name</th>
+            <th scope="col">Tags</th>
+            <th scope="col">Rate</th>
+            <th scope="col">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var player in players)
+        {
+            <tr>
+                <th>@player.Name</th>
+                <td>@player.Tags</td>
+                <td>@player.DefaultRate</td>
+                <td>
+                    <button type="button" class="btn btn-outline-secondary" @onclick="@(e => DeletePlayer(player.RowKey))">Delete</button>
+                    <button type="button" class="btn btn-outline-secondary">Edit</button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div>
+    <button class="btn btn-primary me-3" data-bs-toggle="modal"  data-bs-target="#addPlayerModal">Add Player</button>
+</div>
+
+<!-- Add Modal -->
+<div class="modal fade" id="addPlayerModal" tabindex="-1" aria-labelledby="addPlayerModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="addPlayerModalLabel">Add Shortcut</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form>
+            <div class="mb-3">
+                <label for="addName" class="form-label">Name</label>
+                <input type="text" class="form-control" id="addName" @bind-value=@newPlayerName >
+            </div>
+            <div class="mb-3">
+                <label for="addTags" class="form-label">Tags</label>
+                <input type="text" class="form-control" id="addTags" @bind-value=@newPlayerTags >
+                <div id="emailHelp" class="form-text">For example "defender,dribbling,goalie".</div>
+            </div>
+            <div class="mb-3">
+                <label for="addDefaultRate" class="form-label">Default Rate</label>
+                <div class="input-group">
+                    <span class="input-group-text">£</span>
+                    <input type="number" min="0" class="form-control" id="addDefaultRate" @bind-value=@newPlayerDefaultRate >
+                </div>
+                <div id="emailHelp" class="form-text">Default rate per game. Usually £3 or £4.</div>
+            </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" @onclick="AddPlayer">Add Player</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 @code {
     private List<Player> players = new List<Player>();
+
+    private string? newPlayerName;
+
+    private string? newPlayerTags;
+
+    private double newPlayerDefaultRate = 4.00;
 
     protected override void OnInitialized()
     {
@@ -18,13 +84,13 @@
 
     async Task AddPlayer()
     {
-        var player = new Player()
+        var newPlayer = new Player()
         {   
-            Name = "Jack Grealish",
-            Tags = "midfield,dribbling",
-            DefaultRate = 4.00
+            Name = newPlayerName,
+            Tags = newPlayerTags,
+            DefaultRate = newPlayerDefaultRate
         };
-        var upsertedPlayer = await StorageService.UpsertPlayer(player);
+        await StorageService.UpsertPlayer(newPlayer);
         RefreshData();
     }
 

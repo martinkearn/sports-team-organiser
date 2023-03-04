@@ -1,3 +1,5 @@
+using Azure.Data.Tables;
+
 namespace STO.Interfaces
 {
     /// <summary>
@@ -6,14 +8,15 @@ namespace STO.Interfaces
     public interface IStorageService
     {
         /// <summary>
-        /// Adds or Updates a player. Updates if rowkey is present, adds if not.
+        /// Adds or Updates an entity. Updates if rowkey is present, adds if not.
         /// </summary>
-        /// <param name="player">The player to upsert.</param>
-        /// <returns>Stored representation of the player.</returns>
-        public Task<Player> UpsertPlayer(Player player);
+        /// <param name="partitionKey">The PartitionKey to identify the entity with.</param>
+        /// <param name="entity">The entity of tyep T to upsert.</param>
+        /// <returns>Stored representation of the entity of type T.</returns>
+        public Task<T> UpsertEntity<T>(string partitionKey, T entity) where T : class, ITableEntity;
 
         /// <summary>
-        /// Deletes a player.
+        /// Deletes an entity.
         /// </summary>
         /// <param name="partitionKey">The PartitionKey to identify the entity with.</param>
         /// <param name="rowKey">The rowKey value for the player to delete.</param>
@@ -21,12 +24,12 @@ namespace STO.Interfaces
         public Task DeleteEntity(string partitionKey, string rowKey);
 
         /// <summary>
-        /// Queries players using an Odata query syntax.
+        /// Queries entities of type T using an Odata query syntax.
         /// </summary>
         /// <param name="partitionKey">The PartitionKey to identify the entities to query on.</param>
         /// <param name="player">The OData filter string.</param>
-        /// <returns>A list of players which match the query.</returns>
-        public List<Player> QueryEntities(string partitionKey, string? filter);
+        /// <returns>A list of entities of type T which match the query.</returns>
+        public List<T> QueryEntities<T>(string partitionKey, string? filter) where T : class, ITableEntity;
 
         /// <summary>
         /// Returns configuration data.

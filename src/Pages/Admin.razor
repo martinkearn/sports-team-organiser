@@ -98,13 +98,13 @@
 
     async Task AddPlayer()
     {
-        await StorageService.UpsertPlayer(newPlayer);
+        await StorageService.UpsertEntity<Player>(Constants.PlayerPartitionKey, newPlayer);
         RefreshData();
     }
 
     async Task UpdatePlayer(Player updatedPlayer)
     {
-        await StorageService.UpsertPlayer(updatedPlayer);
+        await StorageService.UpsertEntity<Player>(Constants.PlayerPartitionKey, updatedPlayer);
         RefreshData();
     }
 
@@ -112,7 +112,7 @@
     {
         foreach (var player in players)
         {
-            await StorageService.UpsertPlayer(player);
+            await StorageService.UpsertEntity<Player>(Constants.PlayerPartitionKey, player);
         }
         RefreshData();
     }
@@ -123,7 +123,7 @@
         {
             player.NextGameForecast = NextGameForecast.Unstated;
             player.Played = false;
-            await StorageService.UpsertPlayer(player);
+            await StorageService.UpsertEntity<Player>(Constants.PlayerPartitionKey, player);
         }
         RefreshData();
     }
@@ -137,6 +137,6 @@
     private void RefreshData()
     {
         newPlayer = new Player();
-        players = StorageService.QueryEntities(Constants.PlayerPartitionKey, default);
+        players = StorageService.QueryEntities<Player>(Constants.PlayerPartitionKey, default);
     }
 }

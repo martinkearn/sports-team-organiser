@@ -3,6 +3,7 @@ using Microsoft.Extensions.Options;
 
 namespace STO.Services
 {
+    /// <inheritdoc/>
     public class StorageService : IStorageService
     {
         private readonly StorageConfiguration _options;
@@ -26,32 +27,32 @@ namespace STO.Services
             return _options;
         }
 
-        public List<Player> QueryEntities(string partitionKey, string? filter)
+        public List<T> QueryEntities<T>(string partitionKey, string? filter) where T : class, ITableEntity
         {
             if (string.IsNullOrEmpty(filter))
             {
                 filter = $"PartitionKey eq '{partitionKey}'";
             }
 
-            var players = _tableClient.Query<Player>(filter).ToList();
+            var entities = _tableClient.Query<T>(filter).ToList();
 
-            return players;
-        }
+            return entities;
+        }  
 
-        public async Task<Player> UpsertPlayer(Player player)
+        public async Task<T> UpsertEntity<T>(string partitionKey, T entity) where T : class, ITableEntity
         {
             // Complete required values
-            if (player.RowKey == default) player.RowKey = Guid.NewGuid().ToString();
-            if (player.PartitionKey == default) player.PartitionKey = Constants.PlayerPartitionKey;
+            if (entity.RowKey == default) entity.RowKey = Guid.NewGuid().ToString();
+            if (entity.PartitionKey == default) entity.PartitionKey = partitionKey;
 
-            // Upsert player
-            await _tableClient.UpsertEntityAsync<Player>(player, TableUpdateMode.Replace);
+            // Upsert entity
+            await _tableClient.UpsertEntityAsync<T>(entity, TableUpdateMode.Replace);
 
             // Get player from storage
-            var upsertedPlayer = this.QueryEntities(Constants.PlayerPartitionKey, $"RowKey eq '{player.RowKey}'").First();
+            var upsertedEntity = this.QueryEntities<T>(partitionKey, $"RowKey eq '{entity.RowKey}'").First();
 
             // Return
-            return upsertedPlayer;
-        }
+            return upsertedEntity;
+        }        
     }
 }

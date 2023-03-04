@@ -1,0 +1,60 @@
+@page "/games"
+@inject IStorageService StorageService
+@using Microsoft.AspNetCore.Components.Forms
+
+@foreach (var game in games)
+{
+<p>@game.Date - @game.RowKey</p>   
+}
+
+<div>
+    <button class="btn btn-secondary me-3 mb-3" data-bs-toggle="modal" data-bs-target="#addGameModal"><i class="fa-solid fa-plus"></i> Add Game</button>
+</div>
+
+<!-- Add Modal -->
+<div class="modal fade" id="addGameModal" tabindex="-1" aria-labelledby="addGameModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="addGameModalLabel">Add Game</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <EditForm EditContext="@editContext" OnSubmit="@AddGame">
+            <div class="mb-3">
+                <label for="addDate" class="form-label">Date</label>
+                <InputDate class="form-control" id="addDate" @bind-Value="newGame.Date" />
+            </div>
+            
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-primary">Add Game</button>
+            </div>
+        </EditForm>
+      </div>
+    </div>
+  </div>
+</div>
+
+@code {
+    private List<Game> games = new List<Game>();
+    private Game newGame = new();
+    private EditContext? editContext;
+
+    protected override void OnInitialized()
+    {
+        RefreshData();
+        editContext = new(newGame);
+    }
+
+    protected async Task AddGame()
+    {
+        await StorageService.UpsertEntity<Game>(Constants.GamePartitionKey, newGame);
+        RefreshData();
+    }
+
+    private void RefreshData()
+    {
+        newGame = new Game();
+        games = StorageService.QueryEntities<Game>(Constants.GamePartitionKey, default);
+    }
+}

@@ -15,7 +15,7 @@
     <thead>
         <tr>
             <th scope="col">Name</th>
-            <th scope="col">Tags</th>
+            <th scope="col" class="d-none d-lg-table-cell">Tags</th>
             <th scope="col">Playing</th>
             <th scope="col">Played</th>
         </tr>
@@ -26,14 +26,15 @@
             var thisPag = playersAtGame.Single(p => p.PlayerRowKey == player.RowKey);
             <tr>
                 <td>@player.Name</td>
-                <td>@player.Tags</td>
+                <td class="d-none d-lg-table-cell">@player.Tags</td>
                 <td>
-                    <InputSelect class="form-select" @bind-Value=thisPag.Forecast @bind-Value:after="(e => EditPlayerAtGame(thisPag))">
+                    <InputSelect class="form-select d-none d-lg-table-cell" @bind-Value=thisPag.Forecast @bind-Value:after="(e => EditPlayerAtGame(thisPag))">
                         @foreach (var option in PlayingOptions)
                         {
                             <option value="@option">@textInfo.ToTitleCase(option)</option>
                         }
                     </InputSelect>
+                    <span class="d-lg-none">@thisPag.Forecast</span>
                 </td>
                 <td>
                     <div class="form-check form-switch">

@@ -29,6 +29,8 @@ namespace STO.Services
 
         public List<T> QueryEntities<T>(string partitionKey, string? filter) where T : class, ITableEntity
         {
+            // Switch on T to get partition key rather than passing it in? Or even use T to define partition key on creation?
+
             if (string.IsNullOrEmpty(filter))
             {
                 filter = $"PartitionKey eq '{partitionKey}'";

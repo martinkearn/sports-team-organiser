@@ -27,15 +27,28 @@
                 <td>@player.Name</td>
                 <td>@player.Tags</td>
                 <td>
-                    <InputRadioGroup @bind-Value=thisPag.Forecast @bind-Value:after="(e => EditPlayerAtGame(thisPag))">
+                    @* <InputRadioGroup @bind-Value=thisPag.Forecast @bind-Value:after="(e => EditPlayerAtGame(thisPag))">
                         @foreach (var option in PlayingOptions)
                         {
                             <div class="form-check form-check-inline">
                                 <InputRadio class="form-check-input" Value="option"></InputRadio>
-                                <label class="form-check-label" >@option</label>
+                                <label class="form-check-label">@option</label>
                             </div>
                         }
                     </InputRadioGroup>
+                    <InputRadioGroup @bind-Value=thisPag.Forecast @bind-Value:after="(e => EditPlayerAtGame(thisPag))">
+                        @foreach (var option in PlayingOptions)
+                        {
+                            <InputRadio class="btn-check" Value="option"></InputRadio>
+                            <label class="btn btn-outline-primary" >@option</label>
+                        }
+                    </InputRadioGroup> *@
+                    <InputSelect class="form-select"  @bind-Value=thisPag.Forecast @bind-Value:after="(e => EditPlayerAtGame(thisPag))">
+                        @foreach (var option in PlayingOptions)
+                        {
+                            <option value="@option">@option</option>
+                        }
+                    </InputSelect>
                 </td>
                 <td>
                     <div class="form-check form-switch">

@@ -1,13 +1,11 @@
-@page "/admin"
+@page "/players"
 @inject IStorageService StorageService
 @using Microsoft.AspNetCore.Components.Forms
 
 <PageTitle>TNF - Admin</PageTitle>
 
 <div>
-    <button class="btn btn-primary me-3 mb-3" @onclick="SaveEdits"><i class="fa-solid fa-floppy-disk"></i> Save Changes</button>
     <button class="btn btn-secondary me-3 mb-3" data-bs-toggle="modal" data-bs-target="#addPlayerModal"><i class="fa-solid fa-plus"></i> Add Player</button>
-    <button class="btn btn-secondary me-3 mb-3" @onclick="ResetNextGame" ><i class="fa-solid fa-rotate-left"></i> Reset Next Game</button>
 </div>
 
 <table class="table table-striped">
@@ -16,8 +14,6 @@
             <th scope="col">Name</th>
             <th scope="col">Tags</th>
             <th scope="col">Rate</th>
-            <th scope="col">Game Forecast</th>
-            <th scope="col">Played</th>
             <th scope="col">Actions</th>
         </tr>
     </thead>
@@ -25,22 +21,9 @@
         @foreach (var player in players)
         {
             <tr>
-                <td><InputText class="form-control" @bind-Value="player.Name"></InputText></td>
-                <td><InputText class="form-control" @bind-Value="player.Tags"></InputText></td>
-                <td><div class="input-group"><span class="input-group-text">£</span><InputNumber min="0" class="form-control" @bind-Value="player.DefaultRate"></InputNumber></div></td>
-                <td>
-                    <InputSelect class="form-control" @bind-Value="player.NextGameForecast">
-                        <option value="Unstated">@NextGameForecast.Unstated.ToString()</option>
-                        <option value="Yes">@NextGameForecast.Yes.ToString()</option>
-                        <option value="No">@NextGameForecast.No.ToString()</option>
-                        <option value="Unsure">@NextGameForecast.Unsure.ToString()</option>
-                    </InputSelect>
-                </td>
-                <td>
-                    <div class="form-check form-switch">
-                        <InputCheckbox class="form-check-input" role="switch" @bind-Value="player.Played" />
-                    </div>
-                </td>
+                <td><InputText class="form-control" @bind-Value=player.Name @bind-Value:after="(e => EditPlayer(player))"></InputText></td>
+                <td><InputText class="form-control" @bind-Value=player.Tags @bind-Value:after="(e => EditPlayer(player))"></InputText></td>
+                <td><div class="input-group"><span class="input-group-text">£</span><InputNumber min="0" class="form-control" @bind-Value=player.DefaultRate @bind-Value:after="(e => EditPlayer(player))"></InputNumber></div></td>
                 <td><button type="button" class="btn btn-outline-secondary" @onclick="@(e => DeletePlayer(player.RowKey))"><i class="fa-solid fa-trash"></i> Delete</button></td>
             </tr>
         }
@@ -102,29 +85,9 @@
         RefreshData();
     }
 
-    async Task UpdatePlayer(Player updatedPlayer)
+    async Task EditPlayer(Player editedPlayer)
     {
-        await StorageService.UpsertEntity<Player>(Constants.PlayerPartitionKey, updatedPlayer);
-        RefreshData();
-    }
-
-    async Task SaveEdits()
-    {
-        foreach (var player in players)
-        {
-            await StorageService.UpsertEntity<Player>(Constants.PlayerPartitionKey, player);
-        }
-        RefreshData();
-    }
-
-    async Task ResetNextGame()
-    {
-        foreach (var player in players)
-        {
-            player.NextGameForecast = NextGameForecast.Unstated;
-            player.Played = false;
-            await StorageService.UpsertEntity<Player>(Constants.PlayerPartitionKey, player);
-        }
+        await StorageService.UpsertEntity<Player>(Constants.PlayerPartitionKey, editedPlayer);
         RefreshData();
     }
 
@@ -136,7 +99,9 @@
 
     private void RefreshData()
     {
-        newPlayer = new Player();
-        players = StorageService.QueryEntities<Player>(Constants.PlayerPartitionKey, default);
+        newPlayer = new();
+        players = StorageService.QueryEntities<Player>(Constants.PlayerPartitionKey, default)
+            .OrderBy(p => p.Name)
+            .ToList();
     }
 }

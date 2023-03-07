@@ -5,7 +5,7 @@
 <PageTitle>TNF - Game @game?.Date</PageTitle>
 
 <h2>@game?.Date.Date.ToLongDateString()</h2>
-<p class="invisible">Weather forecast here?</p>
+<p>@playersAtGame.Where(p => p.Forecast == "yes").Count() yes, @playersAtGame.Where(p => p.Forecast == "maybe").Count() maybe </p>
 
 <div>
     <a class="btn btn-secondary me-3 mb-3" href="/games/"><i class="fa-solid fa-arrow-left"></i> All Games</a>
@@ -28,13 +28,13 @@
                 <td>@player.Name</td>
                 <td class="d-none d-lg-table-cell">@player.Tags</td>
                 <td>
-                    <InputSelect class="form-select d-none d-lg-table-cell" @bind-Value=thisPag.Forecast @bind-Value:after="(e => EditPlayerAtGame(thisPag))">
+                    <InputSelect class="form-select" @bind-Value=thisPag.Forecast @bind-Value:after="(e => EditPlayerAtGame(thisPag))">
                         @foreach (var option in PlayingOptions)
                         {
                             <option value="@option">@textInfo.ToTitleCase(option)</option>
                         }
                     </InputSelect>
-                    <span class="d-lg-none">@thisPag.Forecast</span>
+                    @* <span class="d-lg-none">@thisPag.Forecast</span>d-none d-lg-table-cell *@
                 </td>
                 <td>
                     <div class="form-check form-switch">

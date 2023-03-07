@@ -4,6 +4,12 @@
 
 <PageTitle>TNF - Admin</PageTitle>
 
+<div>
+    <button class="btn btn-primary me-3 mb-3" @onclick="SaveEdits"><i class="fa-solid fa-floppy-disk"></i> Save Changes</button>
+    <button class="btn btn-secondary me-3 mb-3" data-bs-toggle="modal" data-bs-target="#addPlayerModal"><i class="fa-solid fa-plus"></i> Add Player</button>
+    <button class="btn btn-secondary me-3 mb-3" @onclick="ResetNextGame" ><i class="fa-solid fa-rotate-left"></i> Reset Next Game</button>
+</div>
+
 <table class="table table-striped">
     <thead>
         <tr>
@@ -19,7 +25,7 @@
         @foreach (var player in players)
         {
             <tr>
-                <th><InputText class="form-control" @bind-Value="player.Name"></InputText></th>
+                <td><InputText class="form-control" @bind-Value="player.Name"></InputText></td>
                 <td><InputText class="form-control" @bind-Value="player.Tags"></InputText></td>
                 <td><div class="input-group"><span class="input-group-text">£</span><InputNumber min="0" class="form-control" @bind-Value="player.DefaultRate"></InputNumber></div></td>
                 <td>
@@ -40,12 +46,6 @@
         }
     </tbody>
 </table>
-
-<div>
-    <button class="btn btn-primary me-3 mb-3" @onclick="SaveEdits"><i class="fa-solid fa-floppy-disk"></i> Save Changes</button>
-    <button class="btn btn-secondary me-3 mb-3" data-bs-toggle="modal" data-bs-target="#addPlayerModal"><i class="fa-solid fa-plus"></i> Add Player</button>
-    <button class="btn btn-secondary me-3 mb-3" @onclick="ResetNextGame" ><i class="fa-solid fa-rotate-left"></i> Reset Next Game</button>
-</div>
 
 <!-- Add Modal -->
 <div class="modal fade" id="addPlayerModal" tabindex="-1" aria-labelledby="addPlayerModalLabel" aria-hidden="true">

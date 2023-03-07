@@ -5,11 +5,7 @@
 <PageTitle>TNF - Game @game?.Date</PageTitle>
 
 <h2>@game?.Date.Date.ToLongDateString()</h2>
-<p>@playersAtGame.Where(p => p.Forecast == "yes").Count() yes, @playersAtGame.Where(p => p.Forecast == "maybe").Count() maybe </p>
-
-<div>
-    <a class="btn btn-secondary me-3 mb-3" href="/games/"><i class="fa-solid fa-arrow-left"></i> All Games</a>
-</div>
+<p>Forecast: @playersAtGame.Where(p => p.Forecast == "yes").Count() yes / @playersAtGame.Where(p => p.Forecast == "maybe").Count() maybe <br> Actual: @playersAtGame.Where(p => p.Played == true).Count()</p>
 
 <table class="table table-striped">
     <thead>
@@ -45,6 +41,10 @@
         }
     </tbody>
 </table>
+
+<div>
+    <a class="btn btn-secondary me-3 mb-3" href="/games/"><i class="fa-solid fa-arrow-left"></i> All Games</a>
+</div>
 
 @code {
     [Parameter]

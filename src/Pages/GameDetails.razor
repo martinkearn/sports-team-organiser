@@ -23,11 +23,12 @@
     <tbody>
         @foreach (var player in players)
         {
+            var thisPag = playersAtGame.Single(p => p.PlayerRowKey == player.RowKey);
             <tr>
                 <td>@player.Name</td>
                 <td>@player.Tags</td>
                 <td>
-                    <InputRadioGroup @bind-Value=radioselection>
+                    <InputRadioGroup @bind-Value=thisPag.Forecast>
                         @foreach (var option in PlayingOptions)
                         {
                             <div class="form-check form-check-inline">
@@ -36,6 +37,7 @@
                             </div>
                         }
                     </InputRadioGroup>
+                    @thisPag.Forecast
                 </td>
                 <td>
                     <div class="form-check form-switch">
@@ -56,6 +58,8 @@
 
     private List<Player> players = new();
 
+    private List<PlayerAtGame> playersAtGame = new();
+
     private string? radioselection;
 
     List<String> PlayingOptions = new List<string> { "unstated", "maybe", "yes", "no" };
@@ -63,6 +67,25 @@
 
     protected override void OnInitialized()
     {
+        RefreshData();
+
+        // Create PlayerAtGame entities for each player listed
+        foreach (var player in players)
+        {
+            var pag = new PlayerAtGame()
+            {
+                GameRowKey = game.RowKey,
+                PlayerRowKey = player.RowKey,
+                Forecast = "unstated",
+                Played = false
+            };
+            playersAtGame.Add(pag);
+        }
+    }
+
+    async Task EditPlayerAtGame(Player editedPlayer)
+    {
+        await StorageService.UpsertEntity<Player>(Constants.PlayerPartitionKey, editedPlayer);
         RefreshData();
     }
 

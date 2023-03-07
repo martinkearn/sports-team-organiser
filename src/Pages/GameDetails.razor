@@ -28,7 +28,7 @@
                 <td>@player.Name</td>
                 <td>@player.Tags</td>
                 <td>
-                    <InputSelect class="form-select"  @bind-Value=thisPag.Forecast @bind-Value:after="(e => EditPlayerAtGame(thisPag))">
+                    <InputSelect class="form-select" @bind-Value=thisPag.Forecast @bind-Value:after="(e => EditPlayerAtGame(thisPag))">
                         @foreach (var option in PlayingOptions)
                         {
                             <option value="@option">@textInfo.ToTitleCase(option)</option>
@@ -37,8 +37,7 @@
                 </td>
                 <td>
                     <div class="form-check form-switch">
-                        <input class="form-check-input" type="checkbox" role="switch" id="@player.RowKey-played">
-                        <label class="form-check-label" for="@player.RowKey-played">Default switch checkbox input</label>
+                        <InputCheckbox class="form-check-input" type="checkbox" role="switch" @bind-Value=thisPag.Played @bind-Value:after="(e => EditPlayerAtGame(thisPag))"></InputCheckbox>
                     </div>
                 </td>
             </tr>
@@ -73,7 +72,9 @@
 
     private void RefreshData()
     {
-        players = StorageService.QueryEntities<Player>(Constants.PlayerPartitionKey, default);
+        players = StorageService.QueryEntities<Player>(Constants.PlayerPartitionKey, default)            
+            .OrderBy(p => p.Name)
+            .ToList();
         game = StorageService.QueryEntities<Game>(Constants.GamePartitionKey, $"RowKey eq '{GameRowKey}'").First();
         playersAtGame = StorageService.QueryEntities<PlayerAtGame>(Constants.PlayerAtGamePartitionKey, $"GameRowKey eq '{GameRowKey}'");
         

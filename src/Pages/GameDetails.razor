@@ -3,17 +3,63 @@
 
 <PageTitle>TNF - Game @game?.Date</PageTitle>
 
-<h2>@game?.Date</h2>
+<h2>@game?.Date.Date.ToLongDateString()</h2>
+<p>Weather forecast here?</p>
+<p>@radioselection</p>
 
 <div>
     <a class="btn btn-secondary me-3 mb-3" href="/games/"><i class="fa-solid fa-arrow-left"></i> All Games</a>
 </div>
 
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th scope="col">Name</th>
+            <th scope="col">Tags</th>
+            <th scope="col">Playing</th>
+            <th scope="col">Played</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var player in players)
+        {
+            <tr>
+                <td>@player.Name</td>
+                <td>@player.Tags</td>
+                <td>
+                    <InputRadioGroup @bind-Value=radioselection>
+                        @foreach (var option in PlayingOptions)
+                        {
+                            <div class="form-check form-check-inline">
+                                <InputRadio class="form-check-input" Value="option"></InputRadio>
+                                <label class="form-check-label" >@option</label>
+                            </div>
+                        }
+                    </InputRadioGroup>
+                </td>
+                <td>
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" role="switch" id="@player.RowKey-played">
+                        <label class="form-check-label" for="@player.RowKey-played">Default switch checkbox input</label>
+                    </div>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
 @code {
     [Parameter]
     public string? GameRowKey { get; set; }
 
-    private Game? game;
+    private Game game = new();
+
+    private List<Player> players = new();
+
+    private string? radioselection;
+
+    List<String> PlayingOptions = new List<string> { "unstated", "maybe", "yes", "no" };
+
 
     protected override void OnInitialized()
     {
@@ -22,6 +68,7 @@
 
     private void RefreshData()
     {
+        players = StorageService.QueryEntities<Player>(Constants.PlayerPartitionKey, default);
         game = StorageService.QueryEntities<Game>(Constants.GamePartitionKey, $"RowKey eq '{GameRowKey}'").First();
     }
 }

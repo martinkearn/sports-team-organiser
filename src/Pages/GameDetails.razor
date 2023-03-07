@@ -1,0 +1,27 @@
+@page "/games/{GameRowKey}"
+@inject IStorageService StorageService
+
+<PageTitle>TNF - Game @game?.Date</PageTitle>
+
+<h2>@game?.Date</h2>
+
+<div>
+    <a class="btn btn-secondary me-3 mb-3" href="/games/"><i class="fa-solid fa-arrow-left"></i> All Games</a>
+</div>
+
+@code {
+    [Parameter]
+    public string? GameRowKey { get; set; }
+
+    private Game? game;
+
+    protected override void OnInitialized()
+    {
+        RefreshData();
+    }
+
+    private void RefreshData()
+    {
+        game = StorageService.QueryEntities<Game>(Constants.GamePartitionKey, $"RowKey eq '{GameRowKey}'").First();
+    }
+}

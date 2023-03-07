@@ -1,5 +1,6 @@
 @page "/games"
 @inject IStorageService StorageService
+@inject NavigationManager Navigation
 @using Microsoft.AspNetCore.Components.Forms
 
 <PageTitle>TNF - Games</PageTitle>
@@ -12,6 +13,7 @@
     <thead>
         <tr>
             <th scope="col">Date</th>
+            <th scope="col">Actions</th>
         </tr>
     </thead>
     <tbody>
@@ -20,6 +22,10 @@
             <tr>
                 <td>
                     <InputDate class="form-control" @bind-Value=game.Date @bind-Value:after="(e => EditGame(game))"  ></InputDate>
+                </td>
+                <td>
+                    <button type="button" class="btn btn-outline-secondary" @onclick="@(e => DeleteGame(game.RowKey))"><i class="fa-solid fa-trash"></i> Delete</button>
+                    <button type="button" class="btn btn-outline-secondary" @onclick="@(e => NavigateGame(game.RowKey))"><i class="fa-solid fa-pen-to-square"></i> Details</button>
                 </td>
             </tr>
         }
@@ -57,16 +63,27 @@
         RefreshData();
     }
 
+    protected async Task AddGame()
+    {
+        await StorageService.UpsertEntity<Game>(Constants.GamePartitionKey, newGame);
+        RefreshData();
+    }
+
     protected async Task EditGame(Game editedGame)
     {
         await StorageService.UpsertEntity<Game>(Constants.GamePartitionKey, editedGame);
         RefreshData();
     }
 
-    protected async Task AddGame()
+    async Task DeleteGame(string rowKey)
     {
-        await StorageService.UpsertEntity<Game>(Constants.GamePartitionKey, newGame);
+        await StorageService.DeleteEntity(Constants.GamePartitionKey, rowKey);
         RefreshData();
+    }
+
+    private void NavigateGame(string rowKey)
+    {
+        Navigation.NavigateTo("/games/" + rowKey);
     }
 
     private void RefreshData()

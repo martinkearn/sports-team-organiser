@@ -4,8 +4,7 @@
 <PageTitle>TNF - Game @game?.Date</PageTitle>
 
 <h2>@game?.Date.Date.ToLongDateString()</h2>
-<p>Weather forecast here?</p>
-<p>@radioselection</p>
+<p class="invisible">Weather forecast here?</p>
 
 <div>
     <a class="btn btn-secondary me-3 mb-3" href="/games/"><i class="fa-solid fa-arrow-left"></i> All Games</a>
@@ -28,7 +27,7 @@
                 <td>@player.Name</td>
                 <td>@player.Tags</td>
                 <td>
-                    <InputRadioGroup @bind-Value=thisPag.Forecast>
+                    <InputRadioGroup @bind-Value=thisPag.Forecast @bind-Value:after="(e => EditPlayerAtGame(thisPag))">
                         @foreach (var option in PlayingOptions)
                         {
                             <div class="form-check form-check-inline">
@@ -37,7 +36,6 @@
                             </div>
                         }
                     </InputRadioGroup>
-                    @thisPag.Forecast
                 </td>
                 <td>
                     <div class="form-check form-switch">
@@ -60,32 +58,16 @@
 
     private List<PlayerAtGame> playersAtGame = new();
 
-    private string? radioselection;
-
     List<String> PlayingOptions = new List<string> { "unstated", "maybe", "yes", "no" };
-
 
     protected override void OnInitialized()
     {
         RefreshData();
-
-        // Create PlayerAtGame entities for each player listed
-        foreach (var player in players)
-        {
-            var pag = new PlayerAtGame()
-            {
-                GameRowKey = game.RowKey,
-                PlayerRowKey = player.RowKey,
-                Forecast = "unstated",
-                Played = false
-            };
-            playersAtGame.Add(pag);
-        }
     }
 
-    async Task EditPlayerAtGame(Player editedPlayer)
+    async Task EditPlayerAtGame(PlayerAtGame editedPlayerAtGame)
     {
-        await StorageService.UpsertEntity<Player>(Constants.PlayerPartitionKey, editedPlayer);
+        await StorageService.UpsertEntity<PlayerAtGame>(Constants.PlayerAtGamePartitionKey, editedPlayerAtGame);
         RefreshData();
     }
 
@@ -93,5 +75,23 @@
     {
         players = StorageService.QueryEntities<Player>(Constants.PlayerPartitionKey, default);
         game = StorageService.QueryEntities<Game>(Constants.GamePartitionKey, $"RowKey eq '{GameRowKey}'").First();
+        playersAtGame = StorageService.QueryEntities<PlayerAtGame>(Constants.PlayerAtGamePartitionKey, $"GameRowKey eq '{GameRowKey}'");
+        
+        // Create PAG entity locally for any player who does not already exist as a PAG
+        foreach (var player in players)
+        {
+            var existingPag = playersAtGame.SingleOrDefault(p => p.PlayerRowKey == player.RowKey && p.GameRowKey == GameRowKey);
+            if (existingPag == default)
+            {
+                var pag = new PlayerAtGame()
+                {
+                    GameRowKey = game.RowKey,
+                    PlayerRowKey = player.RowKey,
+                    Forecast = "unstated",
+                    Played = false
+                };
+                playersAtGame.Add(pag);
+            }
+        }
     }
 }

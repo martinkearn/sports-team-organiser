@@ -1,5 +1,6 @@
 @page "/games/{GameRowKey}"
 @inject IStorageService StorageService
+@using System.Globalization
 
 <PageTitle>TNF - Game @game?.Date</PageTitle>
 
@@ -27,26 +28,10 @@
                 <td>@player.Name</td>
                 <td>@player.Tags</td>
                 <td>
-                    @* <InputRadioGroup @bind-Value=thisPag.Forecast @bind-Value:after="(e => EditPlayerAtGame(thisPag))">
-                        @foreach (var option in PlayingOptions)
-                        {
-                            <div class="form-check form-check-inline">
-                                <InputRadio class="form-check-input" Value="option"></InputRadio>
-                                <label class="form-check-label">@option</label>
-                            </div>
-                        }
-                    </InputRadioGroup>
-                    <InputRadioGroup @bind-Value=thisPag.Forecast @bind-Value:after="(e => EditPlayerAtGame(thisPag))">
-                        @foreach (var option in PlayingOptions)
-                        {
-                            <InputRadio class="btn-check" Value="option"></InputRadio>
-                            <label class="btn btn-outline-primary" >@option</label>
-                        }
-                    </InputRadioGroup> *@
                     <InputSelect class="form-select"  @bind-Value=thisPag.Forecast @bind-Value:after="(e => EditPlayerAtGame(thisPag))">
                         @foreach (var option in PlayingOptions)
                         {
-                            <option value="@option">@option</option>
+                            <option value="@option">@textInfo.ToTitleCase(option)</option>
                         }
                     </InputSelect>
                 </td>
@@ -72,6 +57,8 @@
     private List<PlayerAtGame> playersAtGame = new();
 
     List<String> PlayingOptions = new List<string> { "unstated", "maybe", "yes", "no" };
+
+    TextInfo textInfo = new CultureInfo("en-GB", false).TextInfo;
 
     protected override void OnInitialized()
     {

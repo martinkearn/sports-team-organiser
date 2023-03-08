@@ -69,7 +69,30 @@
         </li>
     </ul>
 
-    <p>Show list of transactions related to this game here with player and amount</p>
+    <p>Transactions assoicated with this game.</p>
+
+    <table class="table table-striped">
+    <thead>
+        <tr>
+            <th scope="col">Date</th>
+            <th scope="col">Amount</th>
+            <th scope="col">Player</th>
+            <th scope="col" class="d-none d-lg-table-cell">Notes</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var transactionForGame in transactionsForGame)
+        {
+            var amountStyle = (transactionForGame.Amount < 0) ? "red-text" : string.Empty;
+            <tr>
+                <td>@transactionForGame.Date.Date.ToShortDateString()</td>
+                <td><span class="@amountStyle">@transactionForGame.Amount.ToString("C", CultureInfo.CurrentCulture)</span></td>
+                <td>@players.Single(p => p.RowKey == transactionForGame.PlayerRowKey).Name</td>
+                <td class="d-none d-lg-table-cell">@transactionForGame.Notes</td>
+            </tr>
+        }
+    </tbody>
+</table>
 }
 
 @if (currentTab == "teams")
@@ -121,6 +144,9 @@
 
     private List<PlayerAtGame> playersAtGame = new();
 
+
+    private List<Transaction> transactionsForGame = new();
+
     List<String> PlayingOptions = new List<string> { "unstated", "maybe", "yes", "no" };
 
     TextInfo textInfo = new CultureInfo("en-GB", false).TextInfo;
@@ -169,6 +195,7 @@
             .ToList();
         game = StorageService.QueryEntities<Game>($"RowKey eq '{GameRowKey}'").First();
         playersAtGame = StorageService.QueryEntities<PlayerAtGame>($"GameRowKey eq '{GameRowKey}'");
+        transactionsForGame = StorageService.QueryEntities<Transaction>($"GameRowKey eq '{GameRowKey}'");
         
         // Create PAG entity locally for any player who does not already exist as a PAG
         foreach (var player in players)

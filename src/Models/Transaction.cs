@@ -12,6 +12,7 @@ namespace STO.Models
         public double Amount { get; set; }
         [Required]
         public DateTimeOffset Date { get; set; } = DateTimeOffset.UtcNow!;
+        public string Notes { get; set; } = default!;
         public string GameRowKey { get; set; } = default!;
         public string PartitionKey { get; set; } = default!;
         public string RowKey { get; set; } = default!;

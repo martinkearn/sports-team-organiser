@@ -16,6 +16,7 @@
             <th scope="col">Amount</th>
             <th scope="col">Player</th>
             <th scope="col">Game</th>
+            <th scope="col">Notes</th>
             <th scope="col">Actions</th>
         </tr>
     </thead>
@@ -28,6 +29,7 @@
                 <td><span class="@amountStyle">@transaction.Amount.ToString("C", CultureInfo.CurrentCulture)</span></td>
                 <td>@players.Single(p => p.RowKey == transaction.PlayerRowKey).Name</td>
                 <td>@games.SingleOrDefault(g => g.RowKey == transaction.GameRowKey)?.Date.Date.ToShortDateString()</td>
+                <td>@transaction.Notes</td>
                 <td>
                     <button type="button" class="btn btn-outline-secondary" @onclick="@(e => DeleteTransaction(transaction.RowKey))"><i class="fa-solid fa-trash"></i> Delete</button>
                 </td>
@@ -74,6 +76,11 @@
             <div class="mb-3">
                 <label for="addDate" class="form-label">Date</label>
                 <InputDate class="form-control" id="addDate" @bind-Value="newTransaction.Date" />
+            </div>
+
+            <div class="mb-3">
+                <label for="addNotes" class="form-label">Notes</label>
+                <InputText class="form-control" id="addNotes" @bind-Value="newTransaction.Notes" />
             </div>
 
             <div class="mb-3">

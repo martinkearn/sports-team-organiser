@@ -6,39 +6,88 @@
 <h1>@game?.Date.Date.ToLongDateString()</h1>
 <p>Forecast: @playersAtGame.Where(p => p.Forecast == "yes").Count() yes / @playersAtGame.Where(p => p.Forecast == "maybe").Count() maybe <br> Actual: @playersAtGame.Where(p => p.Played == true).Count()</p>
 
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <th scope="col">Name</th>
-            <th scope="col" class="d-none d-lg-table-cell">Tags</th>
-            <th scope="col">Playing</th>
-            <th scope="col">Played</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var player in players)
-        {
-            var thisPag = playersAtGame.Single(p => p.PlayerRowKey == player.RowKey);
+@if (currentTab == "players")
+{
+    <ul class="nav nav-tabs">
+        <li class="nav-item">
+            <a class="nav-link active" @onclick="SwitchTabPlayers">Players</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" @onclick="SwitchTabTransactions">Transactions</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" @onclick="SwitchTabTeams">Teams</a>
+        </li>
+    </ul>
+
+    <table class="table table-striped">
+        <thead>
             <tr>
-                <td>@player.Name</td>
-                <td class="d-none d-lg-table-cell">@player.Tags</td>
-                <td>
-                    <InputSelect class="form-select" @bind-Value=thisPag.Forecast @bind-Value:after="(e => EditPlayerAtGame(thisPag))">
-                        @foreach (var option in PlayingOptions)
-                        {
-                            <option value="@option">@textInfo.ToTitleCase(option)</option>
-                        }
-                    </InputSelect>
-                </td>
-                <td>
-                    <div class="form-check form-switch">
-                        <InputCheckbox class="form-check-input" type="checkbox" role="switch" @bind-Value=thisPag.Played @bind-Value:after="(e => EditPlayerAtGame(thisPag))"></InputCheckbox>
-                    </div>
-                </td>
+                <th scope="col">Name</th>
+                <th scope="col" class="d-none d-lg-table-cell">Tags</th>
+                <th scope="col">Playing</th>
+                <th scope="col">Played</th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @foreach (var player in players)
+            {
+                var thisPag = playersAtGame.Single(p => p.PlayerRowKey == player.RowKey);
+                <tr>
+                    <td>@player.Name</td>
+                    <td class="d-none d-lg-table-cell">@player.Tags</td>
+                    <td>
+                        <InputSelect class="form-select" @bind-Value=thisPag.Forecast @bind-Value:after="(e => EditPlayerAtGame(thisPag))">
+                            @foreach (var option in PlayingOptions)
+                            {
+                                <option value="@option">@textInfo.ToTitleCase(option)</option>
+                            }
+                        </InputSelect>
+                    </td>
+                    <td>
+                        <div class="form-check form-switch">
+                            <InputCheckbox class="form-check-input" type="checkbox" role="switch" @bind-Value=thisPag.Played @bind-Value:after="(e => EditPlayerAtGame(thisPag))"></InputCheckbox>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@if (currentTab == "transactions")
+{
+    <ul class="nav nav-tabs">
+        <li class="nav-item">
+            <a class="nav-link" @onclick="SwitchTabPlayers">Players</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link active" @onclick="SwitchTabTransactions">Transactions</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" @onclick="SwitchTabTeams">Teams</a>
+        </li>
+    </ul>
+
+    <h3>Transactions</h3>
+}
+
+@if (currentTab == "teams")
+{
+    <ul class="nav nav-tabs">
+        <li class="nav-item">
+            <a class="nav-link" @onclick="SwitchTabPlayers">Players</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" @onclick="SwitchTabTransactions">Transactions</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link active" @onclick="SwitchTabTeams">Teams</a>
+        </li>
+    </ul>
+
+    <h3>Teams</h3>
+}
 
 <div>
     <a class="btn btn-secondary me-3 mb-3" href="/games/"><i class="fa-solid fa-arrow-left"></i> All Games</a>
@@ -57,6 +106,8 @@
     List<String> PlayingOptions = new List<string> { "unstated", "maybe", "yes", "no" };
 
     TextInfo textInfo = new CultureInfo("en-GB", false).TextInfo;
+
+    private string? currentTab = "players";
 
     protected override void OnInitialized()
     {
@@ -118,4 +169,8 @@
             }
         }
     }
+
+    private void SwitchTabPlayers() => currentTab = "players";
+    private void SwitchTabTransactions() => currentTab = "transactions";
+    private void SwitchTabTeams() => currentTab = "teams";
 }

@@ -41,13 +41,17 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
+        <EditForm Model="@newGame" OnValidSubmit="AddGame">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
             <div class="mb-3">
                 <label for="addDate" class="form-label">Date</label>
                 <InputDate class="form-control" id="addDate" @bind-Value="newGame.Date" />
             </div>
             <div class="modal-footer">
-                <button type="submit" class="btn btn-primary" @onclick="@AddGame">Add Game</button>
+                <button type="submit" class="btn btn-primary" >Add Game</button>
             </div>
+        </EditForm>
       </div>
     </div>
   </div>

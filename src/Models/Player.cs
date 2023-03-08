@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using Azure;
 using Azure.Data.Tables;
 
@@ -5,10 +6,10 @@ namespace STO.Models
 {
     public class Player : ITableEntity
     {
+        [Required]
         public string? Name { get; set; }
         public string? Tags { get; set; }
-        public NextGameForecast NextGameForecast { get; set; }
-        public bool Played { get; set; }
+        [Required]
         public double DefaultRate { get; set; } = default!;
         public string PartitionKey { get; set; } = default!;
         public string RowKey { get; set; } = default!;

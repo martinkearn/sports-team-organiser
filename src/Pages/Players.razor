@@ -40,6 +40,8 @@
       </div>
       <div class="modal-body">
         <EditForm Model="@newPlayer" OnSubmit="@AddPlayer">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
             <div class="mb-3">
                 <label for="addName" class="form-label">Name</label>
                 <InputText class="form-control" id="addName" @bind-Value="newPlayer.Name" />

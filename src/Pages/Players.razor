@@ -81,27 +81,27 @@
 
     async Task AddPlayer()
     {
-        await StorageService.UpsertEntity<Player>(Constants.PlayerPartitionKey, newPlayer);
+        await StorageService.UpsertEntity<Player>(newPlayer);
         RefreshData();
     }
 
     async Task EditPlayer(Player editedPlayer)
     {
-        await StorageService.UpsertEntity<Player>(Constants.PlayerPartitionKey, editedPlayer);
+        await StorageService.UpsertEntity<Player>(editedPlayer);
         RefreshData();
     }
 
     async Task DeletePlayer(string rowKey)
     {
         // Get and delete PAGs
-        var pags = StorageService.QueryEntities<PlayerAtGame>(Constants.PlayerAtGamePartitionKey, $"PlayerRowKey eq '{rowKey}'");
+        var pags = StorageService.QueryEntities<PlayerAtGame>($"PlayerRowKey eq '{rowKey}'");
         foreach (var pag in pags)
         {
-            await StorageService.DeleteEntity(Constants.PlayerAtGamePartitionKey, pag.RowKey);
+            await StorageService.DeleteEntity<PlayerAtGame>(pag.RowKey);
         }
 
         // Delete Player
-        await StorageService.DeleteEntity(Constants.PlayerPartitionKey, rowKey);
+        await StorageService.DeleteEntity<Player>(rowKey);
 
         RefreshData();
     }
@@ -109,7 +109,7 @@
     private void RefreshData()
     {
         newPlayer = new();
-        players = StorageService.QueryEntities<Player>(Constants.PlayerPartitionKey, default)
+        players = StorageService.QueryEntities<Player>(default)
             .OrderBy(p => p.Name)
             .ToList();
     }

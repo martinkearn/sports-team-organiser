@@ -65,19 +65,19 @@
 
     protected async Task AddGame()
     {
-        await StorageService.UpsertEntity<Game>(Constants.GamePartitionKey, newGame);
+        await StorageService.UpsertEntity<Game>(newGame);
         RefreshData();
     }
 
     protected async Task EditGame(Game editedGame)
     {
-        await StorageService.UpsertEntity<Game>(Constants.GamePartitionKey, editedGame);
+        await StorageService.UpsertEntity<Game>(editedGame);
         RefreshData();
     }
 
     async Task DeleteGame(string rowKey)
     {
-        await StorageService.DeleteEntity(Constants.GamePartitionKey, rowKey);
+        await StorageService.DeleteEntity<Game>(rowKey);
         RefreshData();
     }
 
@@ -89,7 +89,7 @@
     private void RefreshData()
     {
         newGame = new();
-        games = StorageService.QueryEntities<Game>(Constants.GamePartitionKey, default)
+        games = StorageService.QueryEntities<Game>(default)
             .OrderByDescending(g => g.Date)
             .ToList();
     }

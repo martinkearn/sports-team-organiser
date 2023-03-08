@@ -17,23 +17,18 @@ namespace STO.Services
             _tableClient.CreateIfNotExists();
         }
 
-        public async Task DeleteEntity(string partitionKey, string rowKey)
+        public async Task DeleteEntity<T>(string rowKey) where T : class, ITableEntity
         {
-            await _tableClient.DeleteEntityAsync(partitionKey, rowKey);
+            await _tableClient.DeleteEntityAsync(typeof(T).ToString(), rowKey);
         }
 
-        public StorageConfiguration GetConfiguration()
-        {
-            return _options;
-        }
-
-        public List<T> QueryEntities<T>(string partitionKey, string? filter) where T : class, ITableEntity
+        public List<T> QueryEntities<T>(string? filter) where T : class, ITableEntity
         {
             // Switch on T to get partition key rather than passing it in? Or even use T to define partition key on creation?
 
             if (string.IsNullOrEmpty(filter))
             {
-                filter = $"PartitionKey eq '{partitionKey}'";
+                filter = $"PartitionKey eq '{typeof(T).ToString()}'";
             }
 
             var entities = _tableClient.Query<T>(filter).ToList();
@@ -41,17 +36,17 @@ namespace STO.Services
             return entities;
         }  
 
-        public async Task<T> UpsertEntity<T>(string partitionKey, T entity) where T : class, ITableEntity
+        public async Task<T> UpsertEntity<T>(T entity) where T : class, ITableEntity
         {
             // Complete required values
             if (entity.RowKey == default) entity.RowKey = Guid.NewGuid().ToString();
-            if (entity.PartitionKey == default) entity.PartitionKey = partitionKey;
+            if (entity.PartitionKey == default) entity.PartitionKey = typeof(T).ToString();
 
             // Upsert entity
             await _tableClient.UpsertEntityAsync<T>(entity, TableUpdateMode.Replace);
 
             // Get player from storage
-            var upsertedEntity = this.QueryEntities<T>(partitionKey, $"RowKey eq '{entity.RowKey}'").First();
+            var upsertedEntity = this.QueryEntities<T>($"RowKey eq '{entity.RowKey}'").First();
 
             // Return
             return upsertedEntity;

@@ -67,17 +67,17 @@
 
     async Task EditPlayerAtGame(PlayerAtGame editedPlayerAtGame)
     {
-        await StorageService.UpsertEntity<PlayerAtGame>(Constants.PlayerAtGamePartitionKey, editedPlayerAtGame);
+        await StorageService.UpsertEntity<PlayerAtGame>(editedPlayerAtGame);
         RefreshData();
     }
 
     private void RefreshData()
     {
-        players = StorageService.QueryEntities<Player>(Constants.PlayerPartitionKey, default)            
+        players = StorageService.QueryEntities<Player>(default)            
             .OrderBy(p => p.Name)
             .ToList();
-        game = StorageService.QueryEntities<Game>(Constants.GamePartitionKey, $"RowKey eq '{GameRowKey}'").First();
-        playersAtGame = StorageService.QueryEntities<PlayerAtGame>(Constants.PlayerAtGamePartitionKey, $"GameRowKey eq '{GameRowKey}'");
+        game = StorageService.QueryEntities<Game>($"RowKey eq '{GameRowKey}'").First();
+        playersAtGame = StorageService.QueryEntities<PlayerAtGame>($"GameRowKey eq '{GameRowKey}'");
         
         // Create PAG entity locally for any player who does not already exist as a PAG
         foreach (var player in players)

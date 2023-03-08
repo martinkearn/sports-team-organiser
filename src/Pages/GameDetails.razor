@@ -66,6 +66,30 @@
     async Task EditPlayerAtGame(PlayerAtGame editedPlayerAtGame)
     {
         await StorageService.UpsertEntity<PlayerAtGame>(editedPlayerAtGame);
+        
+        // Add / remove transactions
+        var player = players.Single(p => p.RowKey == editedPlayerAtGame.PlayerRowKey);
+        if (editedPlayerAtGame.Played)
+        {
+            var transaction = new Transaction()
+            {
+                PlayerRowKey = editedPlayerAtGame.PlayerRowKey,
+                Amount = player.DefaultRate,
+                Date = DateTimeOffset.UtcNow,
+                GameRowKey = editedPlayerAtGame.GameRowKey,
+                Notes = "Auto added"
+            };
+            await StorageService.UpsertEntity<Transaction>(transaction);
+        }
+        else
+        {
+            var existingTransactions = StorageService.QueryEntities<Transaction>($"PlayerRowKey eq '{editedPlayerAtGame.PlayerRowKey}' and GameRowKey eq '{editedPlayerAtGame.GameRowKey}'");
+            foreach (var existingTransaction in existingTransactions)
+            {
+                await StorageService.DeleteEntity<Transaction>(existingTransaction.RowKey);
+            }
+        }
+
         RefreshData();
     }
 

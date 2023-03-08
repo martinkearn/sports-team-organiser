@@ -3,7 +3,7 @@
 
 <PageTitle>TNF - Game @game?.Date</PageTitle>
 
-<h2>@game?.Date.Date.ToLongDateString()</h2>
+<h1>@game?.Date.Date.ToLongDateString()</h1>
 <p>Forecast: @playersAtGame.Where(p => p.Forecast == "yes").Count() yes / @playersAtGame.Where(p => p.Forecast == "maybe").Count() maybe <br> Actual: @playersAtGame.Where(p => p.Played == true).Count()</p>
 
 <table class="table table-striped">

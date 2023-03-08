@@ -2,7 +2,11 @@
 @inject IStorageService StorageService
 @using Microsoft.AspNetCore.Components.Forms
 
-<PageTitle>TNF - Admin</PageTitle>
+<PageTitle>TNF - Players</PageTitle>
+
+<div>
+    <button class="btn btn-secondary me-3 mb-3" data-bs-toggle="modal" data-bs-target="#addPlayerModal"><i class="fa-solid fa-plus"></i> Add Player</button>
+</div>
 
 <table class="table table-striped">
     <thead>
@@ -25,10 +29,6 @@
         }
     </tbody>
 </table>
-
-<div>
-    <button class="btn btn-secondary me-3 mb-3" data-bs-toggle="modal" data-bs-target="#addPlayerModal"><i class="fa-solid fa-plus"></i> Add Player</button>
-</div>
 
 <!-- Add Modal -->
 <div class="modal fade" id="addPlayerModal" tabindex="-1" aria-labelledby="addPlayerModalLabel" aria-hidden="true">
@@ -57,7 +57,7 @@
                     <span class="input-group-text">£</span>
                     <InputNumber type="number" min="0" class="form-control" id="addDefaultRate" @bind-Value="newPlayer.DefaultRate" />
                 </div>
-                <div id="emailHelp" class="form-text">Default rate per game. Usually £3 or £4.</div>
+                <div class="form-text">Default rate per game. Usually £3 or £4.</div>
             </div>
             
             <div class="modal-footer">

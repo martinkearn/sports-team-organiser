@@ -1,6 +1,5 @@
 @page "/games/{GameRowKey}"
 @inject IStorageService StorageService
-@using System.Globalization
 
 <PageTitle>TNF - Game @game?.Date</PageTitle>
 
@@ -30,7 +29,6 @@
                             <option value="@option">@textInfo.ToTitleCase(option)</option>
                         }
                     </InputSelect>
-                    @* <span class="d-lg-none">@thisPag.Forecast</span>d-none d-lg-table-cell *@
                 </td>
                 <td>
                     <div class="form-check form-switch">

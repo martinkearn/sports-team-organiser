@@ -15,16 +15,19 @@
             <th scope="col">Date</th>
             <th scope="col">Amount</th>
             <th scope="col">Player</th>
+            <th scope="col">Game</th>
             <th scope="col">Actions</th>
         </tr>
     </thead>
     <tbody>
         @foreach (var transaction in transactions)
         {
+            var amountStyle = (transaction.Amount < 0) ? "red-text" : string.Empty;
             <tr>
                 <td>@transaction.Date.Date.ToShortDateString()</td>
-                <td>@transaction.Amount.ToString("C", CultureInfo.CurrentCulture)</td>
+                <td><span class="@amountStyle">@transaction.Amount.ToString("C", CultureInfo.CurrentCulture)</span></td>
                 <td>@players.Single(p => p.RowKey == transaction.PlayerRowKey).Name</td>
+                <td>@games.SingleOrDefault(g => g.RowKey == transaction.GameRowKey)?.Date.Date.ToShortDateString()</td>
                 <td>
                     <button type="button" class="btn btn-outline-secondary" @onclick="@(e => DeleteTransaction(transaction.RowKey))"><i class="fa-solid fa-trash"></i> Delete</button>
                 </td>
@@ -57,6 +60,18 @@
             </div>
 
             <div class="mb-3">
+                <label for="addPlayerRowKey" class="form-label">Associated Game</label>
+                <InputSelect class="form-select" @bind-Value="newTransaction.GameRowKey">
+                    <option value="">Select game ...</option>
+                    @foreach (var game in games)
+                    {
+                        <option value="@game.RowKey">@game.Date.Date.ToShortDateString()</option>
+                    }
+                </InputSelect>
+                <div class="form-text">Optionally associate the transaction with a game.</div>
+            </div>
+
+            <div class="mb-3">
                 <label for="addDate" class="form-label">Date</label>
                 <InputDate class="form-control" id="addDate" @bind-Value="newTransaction.Date" />
             </div>
@@ -82,6 +97,8 @@
 @code {
     private List<Transaction> transactions = new();
     private List<Player> players = new();
+
+    private List<Game> games = new();
 
     private Transaction newTransaction = new();
 
@@ -112,10 +129,13 @@
     {
         newTransaction = new();
         transactions = StorageService.QueryEntities<Transaction>(default)
-            .OrderByDescending(g => g.Date)
+            .OrderByDescending(t => t.Date)
             .ToList();
         players = StorageService.QueryEntities<Player>(default)            
-            .OrderBy(g => g.Name)
-            .ToList();;
+            .OrderBy(p => p.Name)
+            .ToList();
+        games = StorageService.QueryEntities<Game>(default)
+            .OrderByDescending(g => g.Date)
+            .ToList();
     }
 }

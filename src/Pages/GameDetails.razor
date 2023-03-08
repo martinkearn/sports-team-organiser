@@ -169,10 +169,10 @@
             var transaction = new Transaction()
             {
                 PlayerRowKey = editedPlayerAtGame.PlayerRowKey,
-                Amount = player.DefaultRate,
+                Amount = -player.DefaultRate,
                 Date = DateTimeOffset.UtcNow,
                 GameRowKey = editedPlayerAtGame.GameRowKey,
-                Notes = "Auto added"
+                Notes = "Auto debited"
             };
             await StorageService.UpsertEntity<Transaction>(transaction);
         }

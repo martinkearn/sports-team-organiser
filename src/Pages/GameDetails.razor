@@ -109,25 +109,21 @@
         </li>
     </ul>
 
-    <p>Players that are marked as "Played" for this game.</p>
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th scope="col">Name</th>
-                <th scope="col" >Tags</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var pag in playersAtGame.Where(pag => pag.Played == true))
-            {
-                var thisPlayer = players.Single(p => p.RowKey == pag.PlayerRowKey);
-                <tr>
-                    <td>@thisPlayer.Name</td>
-                    <td>@thisPlayer.Tags</td>
-                </tr>
-            }
-        </tbody>
-    </table>
+    <p>Inlcudes only players marked as "Played" for this game.</p>
+    
+    <h4>Team A - @teamA.Count()</h4>
+    @foreach (var pag in teamA)
+    {
+        var thisPlayer = players.Single(p => p.RowKey == pag.PlayerRowKey);
+        <p>@thisPlayer.Name, @thisPlayer.Tags</p>
+    }
+
+    <h4>Team B - @teamB.Count()</h4>
+    @foreach (var pag in teamB)
+    {
+        var thisPlayer = players.Single(p => p.RowKey == pag.PlayerRowKey);
+        <p>@thisPlayer.Name, @thisPlayer.Tags</p>
+    }
 }
 
 <div>
@@ -144,6 +140,9 @@
 
     private List<PlayerAtGame> playersAtGame = new();
 
+    private List<PlayerAtGame> teamA = new();
+
+    private List<PlayerAtGame> teamB = new();
 
     private List<Transaction> transactionsForGame = new();
 
@@ -208,9 +207,69 @@
                     GameRowKey = game.RowKey,
                     PlayerRowKey = player.RowKey,
                     Forecast = "unstated",
-                    Played = false
+                    Played = false,
+                    Team = string.Empty
                 };
                 playersAtGame.Add(pag);
+            }
+        }
+
+        GenerateTeams();
+    }
+
+    private void GenerateTeams()
+    {
+        // Get unique list of tags
+        var tags = new List<string>();
+        foreach (var player in players)
+        {
+            var playerTags = player.Tags?.Split(',');
+            if (playerTags != null)
+            {
+                foreach(var tag in playerTags)
+                {
+                    if (!tags.Contains(tag))
+                    {
+                        tags.Add(tag);
+                    }
+                }
+            }
+        }
+
+        // Clear teams
+        teamA.Clear();
+        teamB.Clear();
+
+        // Calculate new teams
+        var teams = new List<Team>();
+        teams.Add(new Team() { Name = "A", Count = 0});
+        teams.Add(new Team() { Name = "B", Count = 0});
+
+        foreach (var tag in tags)
+        {
+            var playersWithTag = players.Where(p => (bool)p.Tags?.Contains(tag)!);
+
+            foreach (var playerWithTag in playersWithTag)
+            {
+                var pag = playersAtGame.Single(p => p.PlayerRowKey == playerWithTag.RowKey);
+
+                if (pag.Played)
+                {
+                    var lowestTeam = teams.MinBy(t => t.Count);
+                    if (lowestTeam != null)
+                    {
+                        pag.Team = lowestTeam.Name;
+                        if (lowestTeam.Name == "A")
+                        {
+                            teamA.Add(pag);
+                        }
+                        else if (lowestTeam.Name == "B")
+                        {
+                            teamB.Add(pag);
+                        }
+                        lowestTeam.Count += 1;
+                    }
+                }
             }
         }
     }

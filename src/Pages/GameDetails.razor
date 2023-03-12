@@ -109,20 +109,20 @@
         </li>
     </ul>
 
-    <p>Inlcudes only players marked as "Played" for this game.</p>
+    <p>Inlcudes only players forecasting "Yes" and "Maybe" for this game.</p>
     
     <h4>Team A - @teamA.Count()</h4>
     @foreach (var pag in teamA)
     {
         var thisPlayer = players.Single(p => p.RowKey == pag.PlayerRowKey);
-        <p>@thisPlayer.Name, @thisPlayer.Tags</p>
+        <p><b>@thisPlayer.Name</b>, @thisPlayer.Tags, @pag.Forecast</p>
     }
 
     <h4>Team B - @teamB.Count()</h4>
     @foreach (var pag in teamB)
     {
         var thisPlayer = players.Single(p => p.RowKey == pag.PlayerRowKey);
-        <p>@thisPlayer.Name, @thisPlayer.Tags</p>
+        <p><b>@thisPlayer.Name</b>, @thisPlayer.Tags, @pag.Forecast</p>
     }
 }
 
@@ -254,7 +254,7 @@
             {
                 var pag = playersAtGame.Single(p => p.PlayerRowKey == playerWithTag.RowKey);
 
-                if (pag.Played)
+                if (pag.Forecast == "yes" || pag.Forecast == "maybe") 
                 {
                     var lowestTeam = teams.MinBy(t => t.Count);
                     if (lowestTeam != null)

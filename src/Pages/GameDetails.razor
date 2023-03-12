@@ -177,7 +177,8 @@
         }
         else
         {
-            var existingTransactions = StorageService.QueryEntities<Transaction>($"PlayerRowKey eq '{editedPlayerAtGame.PlayerRowKey}' and GameRowKey eq '{editedPlayerAtGame.GameRowKey}'");
+            // Get debit transactions (less than £0) for player and game
+            var existingTransactions = StorageService.QueryEntities<Transaction>($"PlayerRowKey eq '{editedPlayerAtGame.PlayerRowKey}' and GameRowKey eq '{editedPlayerAtGame.GameRowKey}' and Amount lt 0");
             foreach (var existingTransaction in existingTransactions)
             {
                 await StorageService.DeleteEntity<Transaction>(existingTransaction.RowKey);

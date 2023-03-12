@@ -4,7 +4,7 @@
 <PageTitle>TNF - Game @game?.Date</PageTitle>
 
 <h1>@game?.Date.Date.ToLongDateString()</h1>
-<p>Forecast: @playersAtGame.Where(p => p.Forecast == "yes").Count() yes / @playersAtGame.Where(p => p.Forecast == "maybe").Count() maybe <br> Actual: @playersAtGame.Where(p => p.Played == true).Count()</p>
+<p>Forecast: @playersAtGame.Where(p => p.Forecast == PlayingOptions.Yes.ToString()).Count() yes / @playersAtGame.Where(p => p.Forecast == PlayingOptions.Maybe.ToString()).Count() maybe <br> Actual: @playersAtGame.Where(p => p.Played == true).Count()</p>
 
 @if (currentTab == "players")
 {
@@ -38,9 +38,9 @@
                     <td class="d-none d-lg-table-cell">@player.Tags</td>
                     <td>
                         <InputSelect class="form-select" @bind-Value=thisPag.Forecast @bind-Value:after="(e => EditPlayerAtGame(thisPag))">
-                            @foreach (var option in PlayingOptions)
+                            @foreach (string option in playingOptions)
                             {
-                                <option value="@option">@textInfo.ToTitleCase(option)</option>
+                                <option value="@option">@option</option>
                             }
                         </InputSelect>
                     </td>
@@ -146,14 +146,16 @@
 
     private List<Transaction> transactionsForGame = new();
 
-    List<String> PlayingOptions = new List<string> { "unstated", "maybe", "yes", "no" };
-
-    TextInfo textInfo = new CultureInfo("en-GB", false).TextInfo;
+    private List<string> playingOptions = new();
 
     private string? currentTab = "players";
 
     protected override void OnInitialized()
     {
+        foreach (var playingOption in Enum.GetNames(typeof(PlayingOptions)))
+        {
+            playingOptions.Add(playingOption.ToString()!);
+        }
         RefreshData();
     }
 
@@ -207,7 +209,7 @@
                 {
                     GameRowKey = game.RowKey,
                     PlayerRowKey = player.RowKey,
-                    Forecast = "unstated",
+                    Forecast = PlayingOptions.Unstated.ToString(),
                     Played = false,
                     Team = string.Empty
                 };
@@ -254,7 +256,7 @@
             {
                 var pag = playersAtGame.Single(p => p.PlayerRowKey == playerWithTag.RowKey);
 
-                if (pag.Forecast == "yes" || pag.Forecast == "maybe") 
+                if (pag.Forecast == PlayingOptions.Yes.ToString() || pag.Forecast == PlayingOptions.Maybe.ToString()) 
                 {
                     var lowestTeam = teams.MinBy(t => t.Count);
                     if (lowestTeam != null)

@@ -24,7 +24,7 @@
         <thead>
             <tr>
                 <th scope="col">Name</th>
-                <th scope="col" class="d-none d-lg-table-cell">Tags</th>
+                <th scope="col" class="d-none d-lg-table-cell">Position</th>
                 <th scope="col">Playing</th>
                 <th scope="col">Played</th>
             </tr>
@@ -35,10 +35,10 @@
                 var thisPag = playersAtGame.Single(p => p.PlayerRowKey == player.RowKey);
                 <tr>
                     <td>@player.Name</td>
-                    <td class="d-none d-lg-table-cell">@player.Tags</td>
+                    <td class="d-none d-lg-table-cell">@player.Position</td>
                     <td>
                         <InputSelect class="form-select" @bind-Value=thisPag.Forecast @bind-Value:after="(e => EditPlayerAtGame(thisPag))">
-                            @foreach (string option in playingOptions)
+                            @foreach (string option in Enum.GetNames(typeof(PlayingOptions)))
                             {
                                 <option value="@option">@option</option>
                             }
@@ -115,14 +115,14 @@
     @foreach (var pag in teamA)
     {
         var thisPlayer = players.Single(p => p.RowKey == pag.PlayerRowKey);
-        <p><b>@thisPlayer.Name</b>, @thisPlayer.Tags, @pag.Forecast</p>
+        <p><b>@thisPlayer.Name</b>, @thisPlayer.Position, @pag.Forecast</p>
     }
 
     <h4>Team B - @teamB.Count()</h4>
     @foreach (var pag in teamB)
     {
         var thisPlayer = players.Single(p => p.RowKey == pag.PlayerRowKey);
-        <p><b>@thisPlayer.Name</b>, @thisPlayer.Tags, @pag.Forecast</p>
+        <p><b>@thisPlayer.Name</b>, @thisPlayer.Position, @pag.Forecast</p>
     }
 }
 
@@ -146,16 +146,10 @@
 
     private List<Transaction> transactionsForGame = new();
 
-    private List<string> playingOptions = new();
-
     private string? currentTab = "players";
 
     protected override void OnInitialized()
     {
-        foreach (var playingOption in Enum.GetNames(typeof(PlayingOptions)))
-        {
-            playingOptions.Add(playingOption.ToString()!);
-        }
         RefreshData();
     }
 
@@ -222,23 +216,6 @@
 
     private void GenerateTeams()
     {
-        // Get unique list of tags
-        var tags = new List<string>();
-        foreach (var player in players)
-        {
-            var playerTags = player.Tags?.Split(',');
-            if (playerTags != null)
-            {
-                foreach(var tag in playerTags)
-                {
-                    if (!tags.Contains(tag))
-                    {
-                        tags.Add(tag);
-                    }
-                }
-            }
-        }
-
         // Clear teams
         teamA.Clear();
         teamB.Clear();
@@ -248,13 +225,13 @@
         teams.Add(new Team() { Name = "A", Count = 0});
         teams.Add(new Team() { Name = "B", Count = 0});
 
-        foreach (var tag in tags)
+        foreach (var position in Enum.GetNames(typeof(PlayerPosition)))
         {
-            var playersWithTag = players.Where(p => (bool)p.Tags?.Contains(tag)!);
+            var playersInPosition = players.Where(p => p.Position.ToString() == position);
 
-            foreach (var playerWithTag in playersWithTag)
+            foreach (var playerInPosition in playersInPosition)
             {
-                var pag = playersAtGame.Single(p => p.PlayerRowKey == playerWithTag.RowKey);
+                var pag = playersAtGame.Single(p => p.PlayerRowKey == playerInPosition.RowKey);
 
                 if (pag.Forecast == PlayingOptions.Yes.ToString() || pag.Forecast == PlayingOptions.Maybe.ToString()) 
                 {

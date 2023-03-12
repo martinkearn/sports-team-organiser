@@ -9,6 +9,7 @@ namespace STO.Models
         [Required]
         public string? Name { get; set; }
         public string? Tags { get; set; }
+        public PlayerPosition Position { get; set; }
         [Required]
         public double DefaultRate { get; set; } = default!;
         public string PartitionKey { get; set; } = default!;

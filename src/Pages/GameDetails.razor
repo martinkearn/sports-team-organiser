@@ -108,6 +108,8 @@
             <a class="nav-link active" @onclick="SwitchTabTeams">Teams</a>
         </li>
     </ul>
+
+    <p>Team status as at @DateTime.UtcNow</p>
     
     <h4>Team A - @teamA.Count()</h4>
     @foreach (var pag in teamA)

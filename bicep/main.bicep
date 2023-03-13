@@ -60,6 +60,7 @@ resource webApp 'Microsoft.Web/sites@2022-03-01' = {
     serverFarmId: webAppServicePlan.id
     siteConfig: {
       linuxFxVersion: 'DOTNETCORE|7.0'
+      alwaysOn: true
       appSettings: [
         {
           name: 'APPINSIGHTS_INSTRUMENTATIONKEY'

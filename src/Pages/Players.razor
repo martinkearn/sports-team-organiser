@@ -6,6 +6,8 @@
 
 <h1>Players</h1>
 
+<p>@playersWithbalance.Count players registered.</p>
+
 <div>
     <button class="btn btn-secondary me-3 mb-3" data-bs-toggle="modal" data-bs-target="#addPlayerModal"><i class="fa-solid fa-plus"></i> Add Player</button>
 </div>
@@ -131,6 +133,7 @@
             .OrderBy(p => p.Name)
             .ToList();
 
+        playersWithbalance.Clear();
         foreach (var player in players)
         {
             var playersTransactions = StorageService.QueryEntities<Transaction>($"PlayerRowKey eq '{player.RowKey}'");

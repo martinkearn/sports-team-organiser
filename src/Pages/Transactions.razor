@@ -1,14 +1,13 @@
 @page "/transactions"
 @inject IStorageService StorageService
 @inject NavigationManager Navigation
-@using Microsoft.AspNetCore.Components.Forms
 
 <PageTitle>TNF - Transactions</PageTitle>
 
 <h1>Transactions</h1>
 
 <div>
-    <button class="btn btn-secondary me-3 mb-3" data-bs-toggle="modal" data-bs-target="#addTransactionModal"><i class="fa-solid fa-plus"></i> Add Transaction</button>
+    <a class="btn btn-secondary me-3 mb-3" href="/transactions/add"><i class="fa-solid fa-plus"></i> Add Transaction</a>
 </div>
 
 <table class="table table-striped">
@@ -40,85 +39,14 @@
     </tbody>
 </table>
 
-<!-- Add Modal -->
-<div class="modal fade" id="addTransactionModal" tabindex="-1" aria-labelledby="addTransactionModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h1 class="modal-title fs-5" id="addTransactionModalLabel">Add Game</h1>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <EditForm Model="@newTransaction" OnValidSubmit="AddTransaction">
-            <DataAnnotationsValidator />
-            <ValidationSummary />
-            <div class="mb-3">
-                <label for="addPlayerRowKey" class="form-label">Player</label>
-                <InputSelect class="form-select" @bind-Value="newTransaction.PlayerRowKey">
-                    <option value="">Select player ...</option>
-                    @foreach (var player in players)
-                    {
-                        <option value="@player.RowKey">@player.Name</option>
-                    }
-                </InputSelect>
-            </div>
-
-            <div class="mb-3">
-                <label for="addPlayerRowKey" class="form-label">Associated Game</label>
-                <InputSelect class="form-select" @bind-Value="newTransaction.GameRowKey">
-                    <option value="">Select game ...</option>
-                    @foreach (var game in games)
-                    {
-                        <option value="@game.RowKey">@game.Date.Date.ToShortDateString()</option>
-                    }
-                </InputSelect>
-                <div class="form-text">Optionally associate the transaction with a game.</div>
-            </div>
-
-            <div class="mb-3">
-                <label for="addDate" class="form-label">Date</label>
-                <InputDate class="form-control" id="addDate" @bind-Value="newTransaction.Date" />
-            </div>
-
-            <div class="mb-3">
-                <label for="addNotes" class="form-label">Notes</label>
-                <InputText class="form-control" id="addNotes" @bind-Value="newTransaction.Notes" />
-            </div>
-
-            <div class="mb-3">
-                <label for="addAmount" class="form-label">Amount</label>
-                <div class="input-group">
-                    <span class="input-group-text">£</span>
-                    <InputNumber type="number" class="form-control" id="addAmount" @bind-Value="newTransaction.Amount" />
-                </div>
-                <div class="form-text">Positive for payments, negative to pay for a played game.</div>
-            </div>
-
-            <div class="modal-footer">
-                <button type="submit" class="btn btn-primary">Add Transaction</button>
-            </div>
-        </EditForm>
-      </div>
-    </div>
-  </div>
-</div>
-
 @code {
     private List<Transaction> transactions = new();
     private List<Player> players = new();
 
     private List<Game> games = new();
 
-    private Transaction newTransaction = new();
-
     protected override void OnInitialized()
     {
-        RefreshData();
-    }
-
-    protected async Task AddTransaction()
-    {
-        await StorageService.UpsertEntity<Transaction>(newTransaction);
         RefreshData();
     }
 
@@ -136,7 +64,6 @@
 
     private void RefreshData()
     {
-        newTransaction = new();
         transactions = StorageService.QueryEntities<Transaction>(default)
             .OrderByDescending(t => t.Date)
             .ToList();

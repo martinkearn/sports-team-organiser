@@ -72,6 +72,10 @@
         </li>
     </ul>
 
+    <div>
+        <a class="btn btn-secondary me-3 mb-3" href="/transactions/add/@game.RowKey"><i class="fa-solid fa-plus"></i> Add Transaction for Game</a>
+    </div>
+
     <p>Transactions assoicated with this game.</p>
 
     <table class="table table-striped">
@@ -89,7 +93,7 @@
             var amountStyle = (transactionForGame.Amount < 0) ? "red-text" : string.Empty;
             <tr>
                 <td>@transactionForGame.Date.Date.ToShortDateString()</td>
-                <td><span class="@amountStyle">@transactionForGame.Amount.ToString("C", CultureInfo.CurrentCulture)</span></td>
+                <td><span class="@amountStyle">£@String.Format("{0:0.00}", transactionForGame.Amount)</span></td>
                 <td>@players.Single(p => p.RowKey == transactionForGame.PlayerRowKey).Name</td>
                 <td class="d-none d-lg-table-cell">@transactionForGame.Notes</td>
             </tr>

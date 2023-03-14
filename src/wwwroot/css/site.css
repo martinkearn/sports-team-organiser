@@ -68,3 +68,7 @@ a, .btn-link {
 .red-text{
     color: red; 
 }
+
+.nav-tabs{
+    margin-bottom: 1rem;
+}

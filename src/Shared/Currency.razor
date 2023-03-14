@@ -1,0 +1,23 @@
+<span class="@css">£@String.Format("{0:0.00}", Amount)</span>
+
+@code {
+    [Parameter]
+    public double Amount { get; set; }
+
+    private string? css;
+
+    protected override void OnInitialized()
+    {
+        switch (Amount)
+        {
+            case (<0):
+                css = "red-text";
+                break;
+            case (>0):
+                css = "green-text";
+                break;
+            default:
+                break;
+        }
+    }
+}

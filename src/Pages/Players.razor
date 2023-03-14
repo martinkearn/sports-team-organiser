@@ -25,7 +25,6 @@
     <tbody>
         @foreach (var playerWithBalance in playersWithbalance)
         {
-            var amountStyle = (playerWithBalance.Balance < 0) ? "red-text" : string.Empty;
             <tr>
                 <td><InputText class="form-control" @bind-Value=playerWithBalance.Player.Name @bind-Value:after="(e => EditPlayer(playerWithBalance.Player))"></InputText></td>
                 <td class="d-none d-lg-table-cell">
@@ -37,7 +36,7 @@
                     </InputSelect>
                 </td>
                 <td class="d-none d-lg-table-cell"><div class="input-group"><span class="input-group-text">£</span><InputNumber min="0" class="form-control" @bind-Value=playerWithBalance.Player.DefaultRate @bind-Value:after="(e => EditPlayer(playerWithBalance.Player))"></InputNumber></div></td>
-                <td><span class="@amountStyle">£@String.Format("{0:0.00}", playerWithBalance.Balance)</span></td>
+                <td><Currency Amount=@playerWithBalance.Balance /></td>
                 <td><button type="button" class="btn btn-outline-secondary" @onclick="@(e => DeletePlayer(playerWithBalance.Player.RowKey))"><i class="fa-solid fa-trash"></i> Delete</button></td>
             </tr>
         }

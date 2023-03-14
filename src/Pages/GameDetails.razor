@@ -38,7 +38,7 @@
                 <tr>
                     <td>@player.Name</td>
                     <td class="d-none d-lg-table-cell">@player.Position</td>
-                    <td class="d-none d-lg-table-cell">£@String.Format("{0:0.00}", transactionsForPlayerSum)</td>
+                    <td class="d-none d-lg-table-cell"><Currency Amount=@transactionsForPlayerSum /></td>
                     <td>
                         <InputSelect class="form-select" @bind-Value=thisPag.Forecast @bind-Value:after="(e => EditPlayerAtGame(thisPag))">
                             @foreach (string option in Enum.GetNames(typeof(PlayingOptions)))
@@ -76,8 +76,18 @@
         <a class="btn btn-secondary me-3 mb-3" href="/transactions/add/@game.RowKey"><i class="fa-solid fa-plus"></i> Add Transaction for Game</a>
     </div>
 
-    <p>Transactions assoicated with this game.</p>
+    <h4>Still to pay</h4>
+    @foreach (var player in players)
+    {
+        var thisPag = playersAtGame.Single(p => p.PlayerRowKey == player.RowKey);
+        var transactionsForPlayerSum = transactionsForGame.Where(t => t.PlayerRowKey == player.RowKey).Sum(t => t.Amount);
+        if ((transactionsForPlayerSum <= 0) && (thisPag.Forecast == PlayingOptions.Yes.ToString()))
+        {
+            <p>@player.Name - does not take into account funds on account not associated with game</p>
+        }
+    }
 
+    <h4>Transactions assoicated with this game.</h4>
     <table class="table table-striped">
     <thead>
         <tr>
@@ -90,16 +100,19 @@
     <tbody>
         @foreach (var transactionForGame in transactionsForGame)
         {
-            var amountStyle = (transactionForGame.Amount < 0) ? "red-text" : string.Empty;
             <tr>
                 <td>@transactionForGame.Date.Date.ToShortDateString()</td>
-                <td><span class="@amountStyle">£@String.Format("{0:0.00}", transactionForGame.Amount)</span></td>
+                <td><Currency Amount=@transactionForGame.Amount /></td>
                 <td>@players.Single(p => p.RowKey == transactionForGame.PlayerRowKey).Name</td>
                 <td class="d-none d-lg-table-cell">@transactionForGame.Notes</td>
             </tr>
         }
     </tbody>
 </table>
+
+<div>
+    <a class="btn btn-secondary me-3 mb-3" href="/transactions/"><i class="fa-solid fa-arrow-left"></i> All Transactions</a>
+</div>
 }
 
 @if (currentTab == "teams")
@@ -198,7 +211,9 @@
             .ToList();
         game = StorageService.QueryEntities<Game>($"RowKey eq '{GameRowKey}'").First();
         playersAtGame = StorageService.QueryEntities<PlayerAtGame>($"GameRowKey eq '{GameRowKey}'");
-        transactionsForGame = StorageService.QueryEntities<Transaction>($"GameRowKey eq '{GameRowKey}'");
+        transactionsForGame = StorageService.QueryEntities<Transaction>($"GameRowKey eq '{GameRowKey}'")
+            .OrderByDescending(t => t.Date)
+            .ToList();
         
         // Create PAG entity locally for any player who does not already exist as a PAG
         foreach (var player in players)

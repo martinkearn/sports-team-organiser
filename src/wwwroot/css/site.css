@@ -69,6 +69,11 @@ a, .btn-link {
     color: red; 
 }
 
+.green-text{
+    color: green; 
+}
+
+
 .nav-tabs{
     margin-bottom: 1rem;
 }

@@ -71,21 +71,6 @@
             <a class="nav-link" @onclick="SwitchTabTeams">Teams</a>
         </li>
     </ul>
-@* 
-    <div>
-        <a class="btn btn-secondary me-3 mb-3" href="/transactions/add/@game.RowKey"><i class="fa-solid fa-plus"></i> Add Transaction for Game</a>
-    </div> *@
-
-    <h4>Still to pay</h4>
-    @foreach (var player in players)
-    {
-        var thisPag = playersAtGame.Single(p => p.PlayerRowKey == player.RowKey);
-        var transactionsForPlayerSum = transactionsForGame.Where(t => t.PlayerRowKey == player.RowKey).Sum(t => t.Amount);
-        if ((transactionsForPlayerSum <= 0) && (thisPag.Forecast == PlayingOptions.Yes.ToString()))
-        {
-            <p>@player.Name - does not take into account funds on account not associated with game</p>
-        }
-    }
 
     <h4>Transactions assoicated with this game.</h4>
     <table class="table table-striped">

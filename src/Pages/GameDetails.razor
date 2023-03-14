@@ -25,6 +25,7 @@
             <tr>
                 <th scope="col">Name</th>
                 <th scope="col" class="d-none d-lg-table-cell">Position</th>
+                <th scope="col" class="d-none d-lg-table-cell">Balance for game</th>
                 <th scope="col">Playing</th>
                 <th scope="col">Played</th>
             </tr>
@@ -33,9 +34,11 @@
             @foreach (var player in players)
             {
                 var thisPag = playersAtGame.Single(p => p.PlayerRowKey == player.RowKey);
+                var transactionsForPlayerSum = transactionsForGame.Where(t => t.PlayerRowKey == player.RowKey).Sum(t => t.Amount);
                 <tr>
                     <td>@player.Name</td>
                     <td class="d-none d-lg-table-cell">@player.Position</td>
+                    <td class="d-none d-lg-table-cell">£@String.Format("{0:0.00}", transactionsForPlayerSum)</td>
                     <td>
                         <InputSelect class="form-select" @bind-Value=thisPag.Forecast @bind-Value:after="(e => EditPlayerAtGame(thisPag))">
                             @foreach (string option in Enum.GetNames(typeof(PlayingOptions)))

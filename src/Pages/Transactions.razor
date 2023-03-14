@@ -28,7 +28,7 @@
             var amountStyle = (transaction.Amount < 0) ? "red-text" : string.Empty;
             <tr>
                 <td>@transaction.Date.Date.ToShortDateString()</td>
-                <td><span class="@amountStyle">@transaction.Amount.ToString("C", CultureInfo.CurrentCulture)</span></td>
+                <td><span class="@amountStyle">£@String.Format("{0:0.00}", transaction.Amount)</span></td>
                 <td>@players.Single(p => p.RowKey == transaction.PlayerRowKey).Name</td>
                 <td class="d-none d-lg-table-cell">@games.SingleOrDefault(g => g.RowKey == transaction.GameRowKey)?.Date.Date.ToShortDateString()</td>
                 <td class="d-none d-lg-table-cell">@transaction.Notes</td>

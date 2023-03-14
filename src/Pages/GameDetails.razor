@@ -38,7 +38,7 @@
                 <tr>
                     <td>@player.Name</td>
                     <td class="d-none d-lg-table-cell">@player.Position</td>
-                    <td class="d-none d-lg-table-cell"><Currency Amount=@transactionsForPlayerSum /></td>
+                    <td class="d-none d-lg-table-cell"><CurrencyDisplay Amount="@transactionsForPlayerSum" /></td>
                     <td>
                         <InputSelect class="form-select" @bind-Value=thisPag.Forecast @bind-Value:after="(e => EditPlayerAtGame(thisPag))">
                             @foreach (string option in Enum.GetNames(typeof(PlayingOptions)))
@@ -87,7 +87,7 @@
         {
             <tr>
                 <td>@transactionForGame.Date.Date.ToShortDateString()</td>
-                <td><Currency Amount=@transactionForGame.Amount /></td>
+                <td><CurrencyDisplay Amount="@transactionForGame.Amount" /></td>
                 <td>@players.Single(p => p.RowKey == transactionForGame.PlayerRowKey).Name</td>
                 <td class="d-none d-lg-table-cell">@transactionForGame.Notes</td>
             </tr>

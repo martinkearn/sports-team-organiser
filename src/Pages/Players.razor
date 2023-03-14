@@ -36,7 +36,7 @@
                     </InputSelect>
                 </td>
                 <td class="d-none d-lg-table-cell"><div class="input-group"><span class="input-group-text">£</span><InputNumber min="0" class="form-control" @bind-Value=playerWithBalance.Player.DefaultRate @bind-Value:after="(e => EditPlayer(playerWithBalance.Player))"></InputNumber></div></td>
-                <td><Currency Amount=@playerWithBalance.Balance /></td>
+                <td><CurrencyDisplay Amount="@playerWithBalance.Balance" /></td>
                 <td><button type="button" class="btn btn-outline-secondary" @onclick="@(e => DeletePlayer(playerWithBalance.Player.RowKey))"><i class="fa-solid fa-trash"></i> Delete</button></td>
             </tr>
         }

@@ -26,7 +26,8 @@
         {
             <tr>
                 <td>@transaction.Date.Date.ToShortDateString()</td>
-                <td><CurrencyDisplay Amount="@transaction.Amount" /></td>
+                <td>Currency here</td>
+                @* <CurrencyDisplay Amount="@transaction.Amount" /> *@
                 <td>@players.Single(p => p.RowKey == transaction.PlayerRowKey).Name</td>
                 <td class="d-none d-lg-table-cell">@games.SingleOrDefault(g => g.RowKey == transaction.GameRowKey)?.Date.Date.ToShortDateString()</td>
                 <td class="d-none d-lg-table-cell">@transaction.Notes</td>

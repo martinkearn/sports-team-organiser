@@ -23,11 +23,11 @@
         {
             <tr>
                 <td>
-                    <InputDate class="form-control" @bind-Value=game.Date @bind-Value:after="(e => EditGame(game))"  ></InputDate>
+                    <InputDate class="form-control" @bind-Value=game.Date @bind-Value:after="@(e => EditGame(game))"  ></InputDate>
                 </td>
                 <td>
-                    <button type="button" class="btn btn-outline-secondary" @onclick="(e => DeleteGame(game.RowKey))"><i class="fa-solid fa-trash"></i> Delete</button>
-                    <button type="button" class="btn btn-outline-secondary" @onclick="(e => NavigateGame(game.RowKey))"><i class="fa-solid fa-pen-to-square"></i> Details</button>
+                    <button type="button" class="btn btn-outline-secondary" @onclick="@(e => DeleteGame(game.RowKey))"><i class="fa-solid fa-trash"></i> Delete</button>
+                    <button type="button" class="btn btn-outline-secondary" @onclick="@(e => NavigateGame(game.RowKey))"><i class="fa-solid fa-pen-to-square"></i> Details</button>
                 </td>
             </tr>
         }

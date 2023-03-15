@@ -22,7 +22,7 @@ namespace STO.Services
             await _tableClient.DeleteEntityAsync(typeof(T).ToString(), rowKey);
         }
 
-        public List<T> QueryEntities<T>(string? filter) where T : class, ITableEntity
+        public List<T> QueryEntities<T>(string filter) where T : class, ITableEntity
         {
             if (string.IsNullOrEmpty(filter))
             {

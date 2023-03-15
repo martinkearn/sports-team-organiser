@@ -137,7 +137,7 @@
 
 @code {
     [Parameter]
-    public string? GameRowKey { get; set; }
+    public string GameRowKey { get; set; }
 
     private Game game = new();
 
@@ -151,7 +151,7 @@
 
     private List<Transaction> transactionsForGame = new();
 
-    private string? currentTab = "players";
+    private string currentTab = "players";
 
     protected override void OnInitialized()
     {

@@ -8,11 +8,11 @@ namespace STO.Models
         /// <summary>
         /// The connection string for Azure Storage.
         /// </summary>
-        public string? ConnectionString { get; set; }
+        public string ConnectionString { get; set; }
 
         /// <summary>
         /// The name of a table in Azure Storage where entities are stored.
         /// </summary>
-        public string? DataTable { get; set; }
+        public string DataTable { get; set; }
     }
 }

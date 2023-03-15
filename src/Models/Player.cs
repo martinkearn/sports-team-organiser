@@ -7,8 +7,8 @@ namespace STO.Models
     public class Player : ITableEntity
     {
         [Required]
-        public string? Name { get; set; }
-        public string? Tags { get; set; }
+        public string Name { get; set; }
+        public string Tags { get; set; }
         public PlayerPosition Position { get; set; }
         [Required]
         public double DefaultRate { get; set; } = default!;

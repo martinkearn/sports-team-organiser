@@ -4,7 +4,7 @@ name: CD Dev
 
 on:
   workflow_dispatch:
-  push:
+  pull_request:
     branches:
     - main
 

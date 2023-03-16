@@ -23,11 +23,11 @@
         {
             <tr>
                 <td>
-                    <InputDate class="form-control" @bind-Value=game.Date @bind-Value:after="@(e => EditGame(game))"  ></InputDate>
+                    <InputDate class="form-control" @bind-Value=game.Date @bind-Value:after="() => EditGame(game)"></InputDate>
                 </td>
                 <td>
-                    <button type="button" class="btn btn-outline-secondary" @onclick="@(e => DeleteGame(game.RowKey))"><i class="fa-solid fa-trash"></i> Delete</button>
-                    <button type="button" class="btn btn-outline-secondary" @onclick="@(e => NavigateGame(game.RowKey))"><i class="fa-solid fa-pen-to-square"></i> Details</button>
+                    <button type="button" class="btn btn-outline-secondary" @onclick="() => DeleteGame(game.RowKey)"><i class="fa-solid fa-trash"></i> Delete</button>
+                    <button type="button" class="btn btn-outline-secondary" @onclick="() => NavigateGame(game.RowKey)"><i class="fa-solid fa-pen-to-square"></i> Details</button>
                 </td>
             </tr>
         }
@@ -36,27 +36,27 @@
 
 <!-- Add Modal -->
 <div class="modal fade" id="addGameModal" tabindex="-1" aria-labelledby="addGameModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h1 class="modal-title fs-5" id="addGameModalLabel">Add Game</h1>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <EditForm Model="@newGame" OnValidSubmit="AddGame">
-            <DataAnnotationsValidator />
-            <ValidationSummary />
-            <div class="mb-3">
-                <label for="addDate" class="form-label">Date</label>
-                <InputDate class="form-control" id="addDate" @bind-Value="newGame.Date" />
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="addGameModalLabel">Add Game</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-footer">
-                <button type="submit" class="btn btn-primary" >Add Game</button>
+            <div class="modal-body">
+                <EditForm Model="@newGame" OnValidSubmit="AddGame">
+                    <DataAnnotationsValidator />
+                    <ValidationSummary />
+                    <div class="mb-3">
+                        <label for="addDate" class="form-label">Date</label>
+                        <InputDate class="form-control" id="addDate" @bind-Value="newGame.Date" />
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Add Game</button>
+                    </div>
+                </EditForm>
             </div>
-        </EditForm>
-      </div>
+        </div>
     </div>
-  </div>
 </div>
 
 @code {
@@ -92,7 +92,7 @@
 
         // Delete game
         await StorageService.DeleteEntity<Game>(rowKey);
-            
+
         RefreshData();
     }
 

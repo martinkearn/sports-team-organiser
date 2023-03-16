@@ -26,13 +26,12 @@
         {
             <tr>
                 <td>@transaction.Date.Date.ToShortDateString()</td>
-                <td>Currency here</td>
-                @* <CurrencyDisplay Amount="@transaction.Amount" /> *@
+                <td><CurrencyDisplay Amount="@transaction.Amount" /></td>
                 <td>@players.Single(p => p.RowKey == transaction.PlayerRowKey).Name</td>
                 <td class="d-none d-lg-table-cell">@games.SingleOrDefault(g => g.RowKey == transaction.GameRowKey)?.Date.Date.ToShortDateString()</td>
                 <td class="d-none d-lg-table-cell">@transaction.Notes</td>
                 <td>
-                    <button type="button" class="btn btn-outline-secondary" @onclick="@(e => DeleteTransaction(transaction.RowKey))"><i class="fa-solid fa-trash"></i> Delete</button>
+                    <button type="button" class="btn btn-outline-secondary" @onclick="() => DeleteTransaction(transaction.RowKey)"><i class="fa-solid fa-trash"></i> Delete</button>
                 </td>
             </tr>
         }

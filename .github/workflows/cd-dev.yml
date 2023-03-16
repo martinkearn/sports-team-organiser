@@ -1,6 +1,6 @@
 # Based on steps outlined at https://learn.microsoft.com/en-us/azure/azure-resource-manager/bicep/deploy-github-actions?tabs=userlevel%2CCLI
 
-name: CD Prod
+name: CD Dev
 
 on:
   workflow_dispatch:
@@ -12,10 +12,10 @@ jobs:
   CD-Prod:
     uses: ./.github/workflows/deployment.yml
     with:
-      rg: 'SportsTeamOrganiser'
-      uniquelabel: 'stoprod'
+      rg: 'SportsTeamOrganiserDev'
+      uniquelabel: 'stodev'
       csprojpath: './src/STO.csproj'
       dotnetoutputpath: './src/output'
     secrets:
-      azure-credentials: ${{ secrets.AZURE_CREDENTIALS }}
+      azure-credentials: ${{ secrets.AZURE_CREDENTIALS_DEV }}
       azure-subscription: ${{ secrets.AZURE_SUBSCRIPTION }}

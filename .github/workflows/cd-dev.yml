@@ -9,7 +9,7 @@ on:
     - main
 
 jobs:
-  CD-Prod:
+  CD-Dev:
     uses: ./.github/workflows/deployment.yml
     with:
       rg: 'SportsTeamOrganiserDev'

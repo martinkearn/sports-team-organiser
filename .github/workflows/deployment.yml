@@ -44,7 +44,7 @@ jobs:
 
 # Bicep
     - name: bicep-install
-      run: az bicep upgrade
+      run: az bicep install
 
     - name: bicep-deploy
       uses: azure/arm-deploy@v1

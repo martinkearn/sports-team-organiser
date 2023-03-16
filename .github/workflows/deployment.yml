@@ -44,7 +44,9 @@ jobs:
 
 # Bicep
     - name: bicep-install
-      run: az bicep install
+      run: |
+        az config set bicep.use_binary_from_path=False
+        az bicep install
 
     - name: bicep-deploy
       uses: azure/arm-deploy@v1

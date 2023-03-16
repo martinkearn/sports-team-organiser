@@ -60,11 +60,11 @@
 @code {
     private string gameRowKey = string.Empty;
 
-    private List<Player> players = new();
+    private List<PlayerEntity> players = new();
 
-    private List<Game> games = new();
+    private List<GameEntity> games = new();
 
-    private Transaction newTransaction = new();
+    private TransactionEntity newTransaction = new();
 
     protected override void OnInitialized()
     {
@@ -80,7 +80,7 @@
 
     protected async Task AddTransaction()
     {
-        await StorageService.UpsertEntity<Transaction>(newTransaction);
+        await StorageService.UpsertEntity<TransactionEntity>(newTransaction);
         Navigation.NavigateTo("/transactions");
     }
 
@@ -92,11 +92,11 @@
             newTransaction.GameRowKey = gameRowKey;
         }
 
-        players = StorageService.QueryEntities<Player>(default)            
+        players = StorageService.QueryEntities<PlayerEntity>(default)            
             .OrderBy(p => p.Name)
             .ToList();
 
-        games = StorageService.QueryEntities<Game>(default)
+        games = StorageService.QueryEntities<GameEntity>(default)
             .OrderByDescending(g => g.Date)
             .ToList();
     }

@@ -4,16 +4,14 @@ using Azure.Data.Tables;
 
 namespace STO.Models
 {
-    public class Transaction : ITableEntity
+    public class PlayerEntity : ITableEntity
     {
         [Required]
-        public string PlayerRowKey { get; set; } = default!;
+        public string Name { get; set; }
+        public string Tags { get; set; }
+        public PlayerPosition Position { get; set; }
         [Required]
-        public double Amount { get; set; }
-        [Required]
-        public DateTimeOffset Date { get; set; } = DateTimeOffset.UtcNow!;
-        public string Notes { get; set; } = default!;
-        public string GameRowKey { get; set; } = default!;
+        public double DefaultRate { get; set; } = default!;
         public string PartitionKey { get; set; } = default!;
         public string RowKey { get; set; } = default!;
         public DateTimeOffset? Timestamp { get; set; } = DateTimeOffset.UtcNow!;

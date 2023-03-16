@@ -91,7 +91,7 @@
 @code {
     private List<PlayerWithBalance> playersWithbalance = new();
 
-    private Player newPlayer = new();
+    private PlayerEntity newPlayer = new();
 
     protected override void OnInitialized()
     {
@@ -100,27 +100,27 @@
 
     async Task AddPlayer()
     {
-        await StorageService.UpsertEntity<Player>(newPlayer);
+        await StorageService.UpsertEntity<PlayerEntity>(newPlayer);
         RefreshData();
     }
 
-    async Task EditPlayer(Player editedPlayer)
+    async Task EditPlayer(PlayerEntity editedPlayer)
     {
-        await StorageService.UpsertEntity<Player>(editedPlayer);
+        await StorageService.UpsertEntity<PlayerEntity>(editedPlayer);
         RefreshData();
     }
 
     async Task DeletePlayer(string rowKey)
     {
         // Get and delete PAGs
-        var pags = StorageService.QueryEntities<PlayerAtGame>($"PlayerRowKey eq '{rowKey}'");
+        var pags = StorageService.QueryEntities<PlayerAtGameEntity>($"PlayerRowKey eq '{rowKey}'");
         foreach (var pag in pags)
         {
-            await StorageService.DeleteEntity<PlayerAtGame>(pag.RowKey);
+            await StorageService.DeleteEntity<PlayerAtGameEntity>(pag.RowKey);
         }
 
         // Delete Player
-        await StorageService.DeleteEntity<Player>(rowKey);
+        await StorageService.DeleteEntity<PlayerEntity>(rowKey);
 
         RefreshData();
     }
@@ -128,14 +128,14 @@
     private void RefreshData()
     {
         newPlayer = new();
-        var players = StorageService.QueryEntities<Player>(default)
+        var players = StorageService.QueryEntities<PlayerEntity>(default)
             .OrderBy(p => p.Name)
             .ToList();
 
         playersWithbalance.Clear();
         foreach (var player in players)
         {
-            var playersTransactions = StorageService.QueryEntities<Transaction>($"PlayerRowKey eq '{player.RowKey}'");
+            var playersTransactions = StorageService.QueryEntities<TransactionEntity>($"PlayerRowKey eq '{player.RowKey}'");
             var playerBalance = playersTransactions.Sum(t => t.Amount);
             var playerWithBalance = new PlayerWithBalance(player)
             {

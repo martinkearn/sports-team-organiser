@@ -1,13 +1,13 @@
 namespace STO.Models
 {
-    public class PlayerWithBalance : Player
+    public class PlayerWithBalance : PlayerEntity
     {
-        public PlayerWithBalance(Player player)
+        public PlayerWithBalance(PlayerEntity player)
         {
             this.Player = player;
         }
 
-        public Player Player { get; set; }
+        public PlayerEntity Player { get; set; }
         public double Balance { get; set; }
     }
 }

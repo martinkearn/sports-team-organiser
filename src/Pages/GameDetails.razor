@@ -139,17 +139,17 @@
     [Parameter]
     public string GameRowKey { get; set; }
 
-    private Game game = new();
+    private GameEntity game = new();
 
-    private List<Player> players = new();
+    private List<PlayerEntity> players = new();
 
-    private List<PlayerAtGame> playersAtGame = new();
+    private List<PlayerAtGameEntity> playersAtGame = new();
 
-    private List<PlayerAtGame> teamA = new();
+    private List<PlayerAtGameEntity> teamA = new();
 
-    private List<PlayerAtGame> teamB = new();
+    private List<PlayerAtGameEntity> teamB = new();
 
-    private List<Transaction> transactionsForGame = new();
+    private List<TransactionEntity> transactionsForGame = new();
 
     private string currentTab = "players";
 
@@ -158,15 +158,15 @@
         RefreshData();
     }
 
-    async Task EditPlayerAtGame(PlayerAtGame editedPlayerAtGame)
+    async Task EditPlayerAtGame(PlayerAtGameEntity editedPlayerAtGame)
     {
-        await StorageService.UpsertEntity<PlayerAtGame>(editedPlayerAtGame);
+        await StorageService.UpsertEntity<PlayerAtGameEntity>(editedPlayerAtGame);
         
         // Add / remove transactions
         var player = players.Single(p => p.RowKey == editedPlayerAtGame.PlayerRowKey);
         if (editedPlayerAtGame.Played)
         {
-            var transaction = new Transaction()
+            var transaction = new TransactionEntity()
             {
                 PlayerRowKey = editedPlayerAtGame.PlayerRowKey,
                 Amount = -player.DefaultRate,
@@ -174,15 +174,15 @@
                 GameRowKey = editedPlayerAtGame.GameRowKey,
                 Notes = "Auto debited"
             };
-            await StorageService.UpsertEntity<Transaction>(transaction);
+            await StorageService.UpsertEntity<TransactionEntity>(transaction);
         }
         else
         {
             // Get debit transactions (less than £0) for player and game
-            var existingTransactions = StorageService.QueryEntities<Transaction>($"PlayerRowKey eq '{editedPlayerAtGame.PlayerRowKey}' and GameRowKey eq '{editedPlayerAtGame.GameRowKey}' and Amount lt 0");
+            var existingTransactions = StorageService.QueryEntities<TransactionEntity>($"PlayerRowKey eq '{editedPlayerAtGame.PlayerRowKey}' and GameRowKey eq '{editedPlayerAtGame.GameRowKey}' and Amount lt 0");
             foreach (var existingTransaction in existingTransactions)
             {
-                await StorageService.DeleteEntity<Transaction>(existingTransaction.RowKey);
+                await StorageService.DeleteEntity<TransactionEntity>(existingTransaction.RowKey);
             }
         }
 
@@ -191,12 +191,12 @@
 
     private void RefreshData()
     {
-        players = StorageService.QueryEntities<Player>(default)            
+        players = StorageService.QueryEntities<PlayerEntity>(default)            
             .OrderBy(p => p.Name)
             .ToList();
-        game = StorageService.QueryEntities<Game>($"RowKey eq '{GameRowKey}'").First();
-        playersAtGame = StorageService.QueryEntities<PlayerAtGame>($"GameRowKey eq '{GameRowKey}'");
-        transactionsForGame = StorageService.QueryEntities<Transaction>($"GameRowKey eq '{GameRowKey}'")
+        game = StorageService.QueryEntities<GameEntity>($"RowKey eq '{GameRowKey}'").First();
+        playersAtGame = StorageService.QueryEntities<PlayerAtGameEntity>($"GameRowKey eq '{GameRowKey}'");
+        transactionsForGame = StorageService.QueryEntities<TransactionEntity>($"GameRowKey eq '{GameRowKey}'")
             .OrderByDescending(t => t.Date)
             .ToList();
         
@@ -206,7 +206,7 @@
             var existingPag = playersAtGame.SingleOrDefault(p => p.PlayerRowKey == player.RowKey && p.GameRowKey == GameRowKey);
             if (existingPag == default)
             {
-                var pag = new PlayerAtGame()
+                var pag = new PlayerAtGameEntity()
                 {
                     GameRowKey = game.RowKey,
                     PlayerRowKey = player.RowKey,

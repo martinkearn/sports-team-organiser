@@ -39,37 +39,37 @@
 </table>
 
 @code {
-    private List<Transaction> transactions = new();
-    private List<Player> players = new();
+    private List<TransactionEntity> transactions = new();
+    private List<PlayerEntity> players = new();
 
-    private List<Game> games = new();
+    private List<GameEntity> games = new();
 
     protected override void OnInitialized()
     {
         RefreshData();
     }
 
-    protected async Task EditTransaction(Transaction editedTransaction)
+    protected async Task EditTransaction(TransactionEntity editedTransaction)
     {
-        await StorageService.UpsertEntity<Transaction>(editedTransaction);
+        await StorageService.UpsertEntity<TransactionEntity>(editedTransaction);
         RefreshData();
     }
 
     async Task DeleteTransaction(string rowKey)
     {
-        await StorageService.DeleteEntity<Transaction>(rowKey);
+        await StorageService.DeleteEntity<TransactionEntity>(rowKey);
         RefreshData();
     }
 
     private void RefreshData()
     {
-        transactions = StorageService.QueryEntities<Transaction>(default)
+        transactions = StorageService.QueryEntities<TransactionEntity>(default)
             .OrderByDescending(t => t.Date)
             .ToList();
-        players = StorageService.QueryEntities<Player>(default)            
+        players = StorageService.QueryEntities<PlayerEntity>(default)            
             .OrderBy(p => p.Name)
             .ToList();
-        games = StorageService.QueryEntities<Game>(default)
+        games = StorageService.QueryEntities<GameEntity>(default)
             .OrderByDescending(g => g.Date)
             .ToList();
     }

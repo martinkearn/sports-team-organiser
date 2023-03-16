@@ -60,9 +60,9 @@
 </div>
 
 @code {
-    private List<Game> games = new();
+    private List<GameEntity> games = new();
 
-    private Game newGame = new();
+    private GameEntity newGame = new();
 
     protected override void OnInitialized()
     {
@@ -71,27 +71,27 @@
 
     protected async Task AddGame()
     {
-        await StorageService.UpsertEntity<Game>(newGame);
+        await StorageService.UpsertEntity<GameEntity>(newGame);
         RefreshData();
     }
 
-    protected async Task EditGame(Game editedGame)
+    protected async Task EditGame(GameEntity editedGame)
     {
-        await StorageService.UpsertEntity<Game>(editedGame);
+        await StorageService.UpsertEntity<GameEntity>(editedGame);
         RefreshData();
     }
 
     async Task DeleteGame(string rowKey)
     {
         // Get and delete PAGs
-        var pags = StorageService.QueryEntities<PlayerAtGame>($"GameRowKey eq '{rowKey}'");
+        var pags = StorageService.QueryEntities<PlayerAtGameEntity>($"GameRowKey eq '{rowKey}'");
         foreach (var pag in pags)
         {
-            await StorageService.DeleteEntity<PlayerAtGame>(pag.RowKey);
+            await StorageService.DeleteEntity<PlayerAtGameEntity>(pag.RowKey);
         }
 
         // Delete game
-        await StorageService.DeleteEntity<Game>(rowKey);
+        await StorageService.DeleteEntity<GameEntity>(rowKey);
 
         RefreshData();
     }
@@ -104,7 +104,7 @@
     private void RefreshData()
     {
         newGame = new();
-        games = StorageService.QueryEntities<Game>(default)
+        games = StorageService.QueryEntities<GameEntity>(default)
             .OrderByDescending(g => g.Date)
             .ToList();
     }

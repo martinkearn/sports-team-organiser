@@ -75,30 +75,30 @@
 
     <h4>Transactions associated with this game.</h4>
     <table class="table table-striped">
-    <thead>
-        <tr>
-            <th scope="col">Date</th>
-            <th scope="col">Amount</th>
-            <th scope="col">Player</th>
-            <th scope="col" class="d-none d-lg-table-cell">Notes</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var transactionForGame in transactionsForGame)
-        {
+        <thead>
             <tr>
-                <td>@transactionForGame.Date.Date.ToShortDateString()</td>
-                <td><CurrencyDisplay Amount="@transactionForGame.Amount" /></td>
-                <td>@players.Single(p => p.PlayerEntity.RowKey == transactionForGame.PlayerRowKey).PlayerEntity.Name</td>
-                <td class="d-none d-lg-table-cell">@transactionForGame.Notes</td>
+                <th scope="col">Date</th>
+                <th scope="col">Amount</th>
+                <th scope="col">Player</th>
+                <th scope="col" class="d-none d-lg-table-cell">Notes</th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @foreach (var transactionForGame in transactionsForGame)
+            {
+                <tr>
+                    <td>@transactionForGame.Date.Date.ToShortDateString()</td>
+                    <td><CurrencyDisplay Amount="@transactionForGame.Amount" /></td>
+                    <td>@players.Single(p => p.PlayerEntity.RowKey == transactionForGame.PlayerRowKey).PlayerEntity.Name</td>
+                    <td class="d-none d-lg-table-cell">@transactionForGame.Notes</td>
+                </tr>
+            }
+        </tbody>
+    </table>
 
-<div>
-    <a class="btn btn-secondary me-3 mb-3" href="/transactions/"><i class="fa-solid fa-arrow-left"></i> All Transactions</a>
-</div>
+    <div>
+        <a class="btn btn-secondary me-3 mb-3" href="/transactions/"><i class="fa-solid fa-arrow-left"></i> All Transactions</a>
+    </div>
 }
 
 @if (currentTab == "teams")

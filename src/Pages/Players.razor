@@ -1,12 +1,12 @@
 @page "/players"
 @inject IStorageService StorageService
-@using Microsoft.AspNetCore.Components.Forms
+@inject IPlayerService PlayerService
 
 <PageTitle>TNF - Players</PageTitle>
 
 <h1>Players</h1>
 
-<p>@playersWithbalance.Count players registered.</p>
+<p>@players.Count players registered.</p>
 
 <div>
     <button class="btn btn-secondary me-3 mb-3" data-bs-toggle="modal" data-bs-target="#addPlayerModal"><i class="fa-solid fa-plus"></i> Add Player</button>
@@ -23,21 +23,21 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (var playerWithBalance in playersWithbalance)
+        @foreach (var player in players)
         {
             <tr>
-                <td><InputText class="form-control" @bind-Value=playerWithBalance.Player.Name @bind-Value:after="() => EditPlayer(playerWithBalance.Player)"></InputText></td>
+                <td><InputText class="form-control" @bind-Value=player.PlayerEntity.Name @bind-Value:after="() => EditPlayer(player.PlayerEntity)"></InputText></td>
                 <td class="d-none d-lg-table-cell">
-                    <InputSelect class="form-select" @bind-Value=playerWithBalance.Player.Position @bind-Value:after="() => EditPlayer(playerWithBalance.Player)">
+                    <InputSelect class="form-select" @bind-Value=player.PlayerEntity.Position @bind-Value:after="() => EditPlayer(player.PlayerEntity)">
                         @foreach (string option in Enum.GetNames(typeof(PlayerPosition)))
                         {
                             <option value="@option">@option</option>
                         }
                     </InputSelect>
                 </td>
-                <td class="d-none d-lg-table-cell"><div class="input-group"><span class="input-group-text">£</span><InputNumber min="0" class="form-control" @bind-Value=playerWithBalance.Player.DefaultRate @bind-Value:after="() => EditPlayer(playerWithBalance.Player)"></InputNumber></div></td>
-                <td><CurrencyDisplay Amount="@playerWithBalance.Balance" /></td>
-                <td><button type="button" class="btn btn-outline-secondary" @onclick="() => DeletePlayer(playerWithBalance.Player.RowKey)"><i class="fa-solid fa-trash"></i> Delete</button></td>
+                <td class="d-none d-lg-table-cell"><div class="input-group"><span class="input-group-text">£</span><InputNumber min="0" class="form-control" @bind-Value=player.PlayerEntity.DefaultRate @bind-Value:after="() => EditPlayer(player.PlayerEntity)"></InputNumber></div></td>
+                <td><CurrencyDisplay Amount="@player.Balance" /></td>
+                <td><button type="button" class="btn btn-outline-secondary" @onclick="() => DeletePlayer(player.PlayerEntity.RowKey)"><i class="fa-solid fa-trash"></i> Delete</button></td>
             </tr>
         }
     </tbody>
@@ -89,7 +89,7 @@
 </div>
 
 @code {
-    private List<PlayerWithBalance> playersWithbalance = new();
+    private List<Player> players = new();
 
     private PlayerEntity newPlayer = new();
 
@@ -112,36 +112,13 @@
 
     async Task DeletePlayer(string rowKey)
     {
-        // Get and delete PAGs
-        var pags = StorageService.QueryEntities<PlayerAtGameEntity>($"PlayerRowKey eq '{rowKey}'");
-        foreach (var pag in pags)
-        {
-            await StorageService.DeleteEntity<PlayerAtGameEntity>(pag.RowKey);
-        }
-
-        // Delete Player
-        await StorageService.DeleteEntity<PlayerEntity>(rowKey);
-
+        await PlayerService.DeletePlayer(rowKey);
         RefreshData();
     }
 
     private void RefreshData()
     {
         newPlayer = new();
-        var players = StorageService.QueryEntities<PlayerEntity>(default)
-            .OrderBy(p => p.Name)
-            .ToList();
-
-        playersWithbalance.Clear();
-        foreach (var player in players)
-        {
-            var playersTransactions = StorageService.QueryEntities<TransactionEntity>($"PlayerRowKey eq '{player.RowKey}'");
-            var playerBalance = playersTransactions.Sum(t => t.Amount);
-            var playerWithBalance = new PlayerWithBalance(player)
-            {
-                Balance = playerBalance,
-            };
-            playersWithbalance.Add(playerWithBalance);
-        }
+        players = PlayerService.GetPlayers();
     }
 }

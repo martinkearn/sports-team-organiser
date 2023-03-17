@@ -1,5 +1,6 @@
 @page "/games/{GameRowKey}"
 @inject IStorageService StorageService
+@inject IPlayerService PlayerService
 
 <PageTitle>TNF - Game @game?.Date</PageTitle>
 
@@ -33,11 +34,11 @@
         <tbody>
             @foreach (var player in players)
             {
-                var thisPag = playersAtGame.Single(p => p.PlayerRowKey == player.RowKey);
-                var transactionsForPlayerSum = transactionsForGame.Where(t => t.PlayerRowKey == player.RowKey).Sum(t => t.Amount);
+                var thisPag = playersAtGame.Single(p => p.PlayerRowKey == player.PlayerEntity.RowKey);
+                var transactionsForPlayerSum = transactionsForGame.Where(t => t.PlayerRowKey == player.PlayerEntity.RowKey).Sum(t => t.Amount);
                 <tr>
-                    <td>@player.Name</td>
-                    <td class="d-none d-lg-table-cell">@player.Position</td>
+                    <td>@player.PlayerEntity.Name</td>
+                    <td class="d-none d-lg-table-cell">@player.PlayerEntity.Position</td>
                     <td class="d-none d-lg-table-cell"><CurrencyDisplay Amount="@transactionsForPlayerSum" /></td>
                     <td>
                         <InputSelect class="form-select" @bind-Value=thisPag.Forecast @bind-Value:after="() => EditPlayerAtGame(thisPag)">
@@ -88,7 +89,7 @@
             <tr>
                 <td>@transactionForGame.Date.Date.ToShortDateString()</td>
                 <td><CurrencyDisplay Amount="@transactionForGame.Amount" /></td>
-                <td>@players.Single(p => p.RowKey == transactionForGame.PlayerRowKey).Name</td>
+                <td>@players.Single(p => p.PlayerEntity.RowKey == transactionForGame.PlayerRowKey).PlayerEntity.Name</td>
                 <td class="d-none d-lg-table-cell">@transactionForGame.Notes</td>
             </tr>
         }
@@ -119,15 +120,15 @@
     <h4>Team A - @teamA.Count()</h4>
     @foreach (var pag in teamA)
     {
-        var thisPlayer = players.Single(p => p.RowKey == pag.PlayerRowKey);
-        <p><b>@thisPlayer.Name</b>, @thisPlayer.Position, @pag.Forecast</p>
+        var thisPlayer = players.Single(p => p.PlayerEntity.RowKey == pag.PlayerRowKey);
+        <p><b>@thisPlayer.PlayerEntity.Name</b>, @thisPlayer.PlayerEntity.Position, @pag.Forecast</p>
     }
 
     <h4>Team B - @teamB.Count()</h4>
     @foreach (var pag in teamB)
     {
-        var thisPlayer = players.Single(p => p.RowKey == pag.PlayerRowKey);
-        <p><b>@thisPlayer.Name</b>, @thisPlayer.Position, @pag.Forecast</p>
+        var thisPlayer = players.Single(p => p.PlayerEntity.RowKey == pag.PlayerRowKey);
+        <p><b>@thisPlayer.PlayerEntity.Name</b>, @thisPlayer.PlayerEntity.Position, @pag.Forecast</p>
     }
 }
 
@@ -141,7 +142,7 @@
 
     private GameEntity game = new();
 
-    private List<PlayerEntity> players = new();
+    private List<Player> players = new();
 
     private List<PlayerAtGameEntity> playersAtGame = new();
 
@@ -163,13 +164,13 @@
         await StorageService.UpsertEntity<PlayerAtGameEntity>(editedPlayerAtGame);
         
         // Add / remove transactions
-        var player = players.Single(p => p.RowKey == editedPlayerAtGame.PlayerRowKey);
+        var player = players.Single(p => p.PlayerEntity.RowKey == editedPlayerAtGame.PlayerRowKey);
         if (editedPlayerAtGame.Played)
         {
             var transaction = new TransactionEntity()
             {
                 PlayerRowKey = editedPlayerAtGame.PlayerRowKey,
-                Amount = -player.DefaultRate,
+                Amount = -player.PlayerEntity.DefaultRate,
                 Date = DateTimeOffset.UtcNow,
                 GameRowKey = editedPlayerAtGame.GameRowKey,
                 Notes = "Auto debited"
@@ -191,9 +192,7 @@
 
     private void RefreshData()
     {
-        players = StorageService.QueryEntities<PlayerEntity>(default)            
-            .OrderBy(p => p.Name)
-            .ToList();
+        players = PlayerService.GetPlayers();
         game = StorageService.QueryEntities<GameEntity>($"RowKey eq '{GameRowKey}'").First();
         playersAtGame = StorageService.QueryEntities<PlayerAtGameEntity>($"GameRowKey eq '{GameRowKey}'");
         transactionsForGame = StorageService.QueryEntities<TransactionEntity>($"GameRowKey eq '{GameRowKey}'")
@@ -203,13 +202,13 @@
         // Create PAG entity locally for any player who does not already exist as a PAG
         foreach (var player in players)
         {
-            var existingPag = playersAtGame.SingleOrDefault(p => p.PlayerRowKey == player.RowKey && p.GameRowKey == GameRowKey);
+            var existingPag = playersAtGame.SingleOrDefault(p => p.PlayerRowKey == player.PlayerEntity.RowKey && p.GameRowKey == GameRowKey);
             if (existingPag == default)
             {
                 var pag = new PlayerAtGameEntity()
                 {
                     GameRowKey = game.RowKey,
-                    PlayerRowKey = player.RowKey,
+                    PlayerRowKey = player.PlayerEntity.RowKey,
                     Forecast = PlayingOptions.Unstated.ToString(),
                     Played = false,
                     Team = string.Empty
@@ -234,11 +233,11 @@
 
         foreach (var position in Enum.GetNames(typeof(PlayerPosition)))
         {
-            var playersInPosition = players.Where(p => p.Position.ToString() == position);
+            var playersInPosition = players.Where(p => p.PlayerEntity.Position.ToString() == position);
 
             foreach (var playerInPosition in playersInPosition)
             {
-                var pag = playersAtGame.Single(p => p.PlayerRowKey == playerInPosition.RowKey);
+                var pag = playersAtGame.Single(p => p.PlayerRowKey == playerInPosition.PlayerEntity.RowKey);
 
                 if (pag.Forecast == PlayingOptions.Yes.ToString() || pag.Forecast == PlayingOptions.Maybe.ToString()) 
                 {

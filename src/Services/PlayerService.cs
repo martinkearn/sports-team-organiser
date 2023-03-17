@@ -51,7 +51,8 @@ namespace STO.Services
                 var playerBalance = playersTransactions.Sum(t => t.Amount);
                 var player = new Player(pe)
                 {
-                    Balance = playerBalance,
+                    Transactions = playersTransactions,
+                    Balance = playerBalance
                 };
                 players.Add(player);
             }

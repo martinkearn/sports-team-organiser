@@ -35,7 +35,7 @@
             @foreach (var player in players)
             {
                 var thisPag = playersAtGame.Single(p => p.PlayerRowKey == player.PlayerEntity.RowKey);
-                var transactionsForPlayerSum = transactionsForGame.Where(t => t.PlayerRowKey == player.PlayerEntity.RowKey).Sum(t => t.Amount);
+                var transactionsForPlayerSum = player.Transactions.Where(t => t.GameRowKey == game.RowKey).Sum(t => t.Amount);
                 <tr>
                     <td>@player.PlayerEntity.Name</td>
                     <td class="d-none d-lg-table-cell">@player.PlayerEntity.Position</td>
@@ -73,7 +73,7 @@
         </li>
     </ul>
 
-    <h4>Transactions assoicated with this game.</h4>
+    <h4>Transactions associated with this game.</h4>
     <table class="table table-striped">
     <thead>
         <tr>

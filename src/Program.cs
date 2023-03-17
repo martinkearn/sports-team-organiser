@@ -9,6 +9,7 @@ builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddSingleton<IStorageService, StorageService>();
 builder.Services.AddSingleton<IPlayerService, PlayerService>();
+builder.Services.AddSingleton<IGameService, GameService>();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddOptions<StorageConfiguration>()
     .Configure<IConfiguration>((settings, configuration) =>

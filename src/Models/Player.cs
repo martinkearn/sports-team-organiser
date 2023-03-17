@@ -1,20 +1,13 @@
-using System.ComponentModel.DataAnnotations;
-using Azure;
-using Azure.Data.Tables;
-
 namespace STO.Models
 {
-    public class Player : ITableEntity
+    public class Player
     {
-        [Required]
-        public string Name { get; set; }
-        public string Tags { get; set; }
-        public PlayerPosition Position { get; set; }
-        [Required]
-        public double DefaultRate { get; set; } = default!;
-        public string PartitionKey { get; set; } = default!;
-        public string RowKey { get; set; } = default!;
-        public DateTimeOffset? Timestamp { get; set; } = DateTimeOffset.UtcNow!;
-        public ETag ETag { get; set; } = default!;
+        public Player(PlayerEntity playerEntity)
+        {
+            this.PlayerEntity = playerEntity;
+        } 
+        public PlayerEntity PlayerEntity { get; set; } = default!;
+        public double Balance { get; set; } = default!;
+        public List<TransactionEntity> Transactions { get; set; }
     }
 }

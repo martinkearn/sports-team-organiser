@@ -1,7 +1,7 @@
 @page "/games"
 @inject IStorageService StorageService
+@inject IGameService GameService
 @inject NavigationManager Navigation
-@using Microsoft.AspNetCore.Components.Forms
 
 <PageTitle>TNF - Games</PageTitle>
 
@@ -23,11 +23,11 @@
         {
             <tr>
                 <td>
-                    <InputDate class="form-control" @bind-Value=game.Date @bind-Value:after="() => EditGame(game)"></InputDate>
+                    <InputDate class="form-control" @bind-Value=game.GameEntity.Date @bind-Value:after="() => EditGame(game.GameEntity)"></InputDate>
                 </td>
                 <td>
-                    <button type="button" class="btn btn-outline-secondary" @onclick="() => DeleteGame(game.RowKey)"><i class="fa-solid fa-trash"></i> Delete</button>
-                    <button type="button" class="btn btn-outline-secondary" @onclick="() => NavigateGame(game.RowKey)"><i class="fa-solid fa-pen-to-square"></i> Details</button>
+                    <button type="button" class="btn btn-outline-secondary" @onclick="() => DeleteGame(game.GameEntity.RowKey)"><i class="fa-solid fa-trash"></i> Delete</button>
+                    <button type="button" class="btn btn-outline-secondary" @onclick="() => NavigateGame(game.GameEntity.RowKey)"><i class="fa-solid fa-pen-to-square"></i> Details</button>
                 </td>
             </tr>
         }
@@ -62,7 +62,7 @@
 @code {
     private List<Game> games = new();
 
-    private Game newGame = new();
+    private GameEntity newGame = new();
 
     protected override void OnInitialized()
     {
@@ -71,27 +71,27 @@
 
     protected async Task AddGame()
     {
-        await StorageService.UpsertEntity<Game>(newGame);
+        await StorageService.UpsertEntity<GameEntity>(newGame);
         RefreshData();
     }
 
-    protected async Task EditGame(Game editedGame)
+    protected async Task EditGame(GameEntity editedGame)
     {
-        await StorageService.UpsertEntity<Game>(editedGame);
+        await StorageService.UpsertEntity<GameEntity>(editedGame);
         RefreshData();
     }
 
     async Task DeleteGame(string rowKey)
     {
         // Get and delete PAGs
-        var pags = StorageService.QueryEntities<PlayerAtGame>($"GameRowKey eq '{rowKey}'");
+        var pags = StorageService.QueryEntities<PlayerAtGameEntity>($"GameRowKey eq '{rowKey}'");
         foreach (var pag in pags)
         {
-            await StorageService.DeleteEntity<PlayerAtGame>(pag.RowKey);
+            await StorageService.DeleteEntity<PlayerAtGameEntity>(pag.RowKey);
         }
 
         // Delete game
-        await StorageService.DeleteEntity<Game>(rowKey);
+        await StorageService.DeleteEntity<GameEntity>(rowKey);
 
         RefreshData();
     }
@@ -104,8 +104,6 @@
     private void RefreshData()
     {
         newGame = new();
-        games = StorageService.QueryEntities<Game>(default)
-            .OrderByDescending(g => g.Date)
-            .ToList();
+        games = GameService.GetGames();
     }
 }

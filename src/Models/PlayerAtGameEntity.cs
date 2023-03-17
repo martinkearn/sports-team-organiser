@@ -4,7 +4,7 @@ using Azure.Data.Tables;
 
 namespace STO.Models
 {
-    public class PlayerAtGame : ITableEntity
+    public class PlayerAtGameEntity : ITableEntity
     {
         [Required]
         public string PlayerRowKey { get; set; } = default!;
@@ -13,7 +13,7 @@ namespace STO.Models
         [Required]
         public string Forecast { get; set; } = "unstated";
         [Required]
-        public  bool Played { get; set;} = false;
+        public bool Played { get; set;} = false;
         public string Team { get; set; } = default!;
         public string PartitionKey { get; set; } = default!;
         public string RowKey { get; set; } = default!;

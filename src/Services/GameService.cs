@@ -67,6 +67,20 @@ namespace STO.Services
             }
         }
 
+        public async Task DeletePlayerAtGame(PlayerAtGameEntity pag)
+        {
+            // Delete transactions for PAG less than £0 (debits)
+            var player = _playerService.GetPlayer(pag.PlayerRowKey);
+            var playerGameDebits = player.Transactions.Where(t => t.GameRowKey == pag.GameRowKey).Where(t => t.Amount < 0);
+            foreach (var playerGameDebit in playerGameDebits)
+            {
+                await _storageService.DeleteEntity<TransactionEntity>(playerGameDebit.RowKey);
+            }
+
+            // Delete PAG itself
+            await _storageService.DeleteEntity<PlayerAtGameEntity>(pag.RowKey);
+        }       
+
         private List<Game> GameEntitiesToGames(List<GameEntity> gameEntities)
         {
             var players = _storageService.QueryEntities<PlayerEntity>(default);

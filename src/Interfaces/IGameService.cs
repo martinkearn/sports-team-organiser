@@ -29,5 +29,11 @@ namespace STO.Interfaces
         /// </summary>
         /// <param name="pag">The PlayerAtGame.</param>     
         public Task UpsertPlayerAtGame(PlayerAtGameEntity pag);
+
+        /// <summary>
+        /// Deletes a player from a game, including debit trasnactions.
+        /// </summary>
+        /// <param name="pag">The PlayerAtGame to delete.</param>     
+        public Task DeletePlayerAtGame(PlayerAtGameEntity pag);
     }
 }

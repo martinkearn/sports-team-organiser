@@ -9,9 +9,17 @@ namespace STO.Services
             _storageService = storageService;
         }
 
-        public Task DeleteGame(string gameRowkey)
+        public async Task DeleteGame(string gameRowkey)
         {
-            throw new NotImplementedException();
+            // Get and delete PAGs
+            var pags = _storageService.QueryEntities<PlayerAtGameEntity>($"GameRowKey eq '{gameRowkey}'");
+            foreach (var pag in pags)
+            {
+                await _storageService.DeleteEntity<PlayerAtGameEntity>(pag.RowKey);
+            }
+
+            // Delete game
+            await _storageService.DeleteEntity<GameEntity>(gameRowkey);
         }
 
         public List<Game> GetGames(List<GameEntity> gameEntities)

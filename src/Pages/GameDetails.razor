@@ -95,6 +95,29 @@
         </li>
     </ul>
 
+    <h4>Add Transaction</h4>
+    <div class="pb-4">
+        <EditForm Model="@newPagTransaction" OnValidSubmit="AddPagTransaction" class="row row-cols-lg-auto g-3 align-items-center">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+            <div class="col-12">
+                <InputSelect class="form-select" @bind-Value="newPagTransaction.PlayerRowKey">
+                    <option value="">Select player ...</option>
+                    @foreach (var player in players)
+                    {
+                        <option value="@player.PlayerEntity.RowKey">@player.PlayerEntity.Name</option>
+                    }
+                </InputSelect>
+            </div>
+            <div class="col-12">
+                <InputNumber class="form-select" @bind-Value="newPagTransaction.Amount"></InputNumber>
+            </div>
+            <div class="col-12">
+                <button type="submit" class="btn btn-secondary">Add Transaction for Game</button>
+            </div>
+        </EditForm>
+    </div>
+
     <h4>Transactions associated with this game.</h4>
     <table class="table table-striped">
         <thead>
@@ -139,6 +162,8 @@
 
     private PlayerAtGameEntity newPag;
 
+    private TransactionEntity newPagTransaction;
+
     protected override void OnInitialized()
     {
         RefreshData();
@@ -147,6 +172,12 @@
     private async Task AddPag()
     {
         await GameService.UpsertPlayerAtGame(newPag);
+        RefreshData();
+    }
+
+    private async Task AddPagTransaction()
+    {
+        await StorageService.UpsertEntity<TransactionEntity>(newPagTransaction);
         RefreshData();
     }
 
@@ -172,6 +203,12 @@
         {
             GameRowKey = game.GameEntity.RowKey,
             Played = false
+        };
+        newPagTransaction = new TransactionEntity()
+        {
+            GameRowKey = game.GameEntity.RowKey,
+            Date = DateTimeOffset.UtcNow,
+            Notes = $"Added from game {game.GameEntity.Date.Date.ToShortDateString()}"
         };
     }
 

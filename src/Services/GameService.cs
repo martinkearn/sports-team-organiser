@@ -4,9 +4,11 @@ namespace STO.Services
     public class GameService : IGameService
     {
         private readonly IStorageService _storageService;
-        public GameService(IStorageService storageService)
+        private readonly IPlayerService _playerService;
+        public GameService(IStorageService storageService, IPlayerService playerService)
         {
             _storageService = storageService;
+            _playerService = playerService;
         }
 
         public async Task DeleteGame(string gameRowkey)
@@ -33,6 +35,36 @@ namespace STO.Services
                 .OrderByDescending(g => g.Date)
                 .ToList();
             return GameEntitiesToGames(gameEntities);
+        }
+
+        public async Task UpsertPlayerAtGame(PlayerAtGameEntity pag)
+        {
+            // Update PAG itself
+            await _storageService.UpsertEntity<PlayerAtGameEntity>(pag);
+        
+            // Add / remove transactions
+            var player = _playerService.GetPlayer(pag.PlayerRowKey);
+            if (pag.Played)
+            {
+                var transaction = new TransactionEntity()
+                {
+                    PlayerRowKey = pag.PlayerRowKey,
+                    Amount = -player.PlayerEntity.DefaultRate,
+                    Date = DateTimeOffset.UtcNow,
+                    GameRowKey = pag.GameRowKey,
+                    Notes = "Auto debited"
+                };
+                await _storageService.UpsertEntity<TransactionEntity>(transaction);
+            }
+            else
+            {
+                // Get debit transactions (less than £0) for player and game
+                var playerGameDebits = player.Transactions.Where(t => t.GameRowKey == pag.GameRowKey).Where(t => t.Amount < 0);
+                foreach (var playerGameDebit in playerGameDebits)
+                {
+                    await _storageService.DeleteEntity<TransactionEntity>(playerGameDebit.RowKey);
+                }
+            }
         }
 
         private List<Game> GameEntitiesToGames(List<GameEntity> gameEntities)

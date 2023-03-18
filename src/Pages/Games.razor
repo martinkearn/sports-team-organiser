@@ -83,7 +83,15 @@
 
     async Task DeleteGame(string rowKey)
     {
-        await GameService.DeleteGame(rowKey);
+        // Get and delete PAGs
+        var pags = StorageService.QueryEntities<PlayerAtGameEntity>($"GameRowKey eq '{rowKey}'");
+        foreach (var pag in pags)
+        {
+            await StorageService.DeleteEntity<PlayerAtGameEntity>(pag.RowKey);
+        }
+
+        // Delete game
+        await StorageService.DeleteEntity<GameEntity>(rowKey);
 
         RefreshData();
     }

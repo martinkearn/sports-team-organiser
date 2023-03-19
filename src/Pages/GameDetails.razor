@@ -10,7 +10,19 @@
 
 @if (currentTab == "players")
 {
-    <h4>Add Player</h4>
+    <ul class="nav nav-tabs">
+        <li class="nav-item">
+            <a class="nav-link active" @onclick="SwitchTabPlayers">Players</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" @onclick="SwitchTabTransactions">Transactions</a>
+        </li>
+                <li class="nav-item">
+            <a class="nav-link" @onclick="SwitchTabTeams">Teams</a>
+        </li>
+    </ul>
+
+    <h4>Add Player at Game</h4>
     <div class="pb-4">
         <EditForm Model="@newPag" OnValidSubmit="AddPag" class="row row-cols-lg-auto g-3 align-items-center">
             <DataAnnotationsValidator />
@@ -37,16 +49,7 @@
         </EditForm>
     </div>
 
-    <h4>Players</h4>
-    <ul class="nav nav-tabs">
-        <li class="nav-item">
-            <a class="nav-link active" @onclick="SwitchTabPlayers">Players</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" @onclick="SwitchTabTransactions">Transactions</a>
-        </li>
-    </ul>
-
+    <h4>Players at Game</h4>
     <table class="table table-striped">
         <thead>
             <tr>
@@ -93,6 +96,9 @@
         <li class="nav-item">
             <a class="nav-link active" @onclick="SwitchTabTransactions">Transactions</a>
         </li>
+        <li class="nav-item">
+            <a class="nav-link" @onclick="SwitchTabTeams">Teams</a>
+        </li>
     </ul>
 
     <h4>Add Transaction</h4>
@@ -118,7 +124,7 @@
         </EditForm>
     </div>
 
-    <h4>Transactions associated with this game.</h4>
+    <h4>Transactions for Game</h4>
     <table class="table table-striped">
         <thead>
             <tr>
@@ -144,6 +150,21 @@
     <div>
         <a class="btn btn-secondary me-3 mb-3" href="/transactions/"><i class="fa-solid fa-arrow-left"></i> All Transactions</a>
     </div>
+}
+
+@if (currentTab == "teams")
+{
+    <ul class="nav nav-tabs">
+        <li class="nav-item">
+            <a class="nav-link" @onclick="SwitchTabPlayers">Players</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" @onclick="SwitchTabTransactions">Transactions</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link active" @onclick="SwitchTabTeams">Teams</a>
+        </li>
+    </ul>
 }
 
 <div>
@@ -224,4 +245,5 @@
 
     private void SwitchTabPlayers() => currentTab = "players";
     private void SwitchTabTransactions() => currentTab = "transactions";
+    private void SwitchTabTeams() => currentTab = "teams";
 }

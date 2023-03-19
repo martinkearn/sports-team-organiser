@@ -6,7 +6,7 @@
 <PageTitle>TNF - Game @game.GameEntity.Date</PageTitle>
 
 <h1>@game.GameEntity.Date.Date.ToLongDateString()</h1>
-<p>Forecast: @game.PlayersAtGame.Where(p => p.Forecast == PlayingOptions.Yes.ToString()).Count() yes / @game.PlayersAtGame.Where(p => p.Forecast == PlayingOptions.Maybe.ToString()).Count() maybe <br> Actual: @game.PlayersAtGame.Where(p => p.Played == true).Count()</p>
+<p>Forecast: @game.PlayersAtGame.Where(p => p.PlayerAtGameEntity.Forecast == PlayingOptions.Yes.ToString()).Count() yes / @game.PlayersAtGame.Where(p => p.PlayerAtGameEntity.Forecast == PlayingOptions.Maybe.ToString()).Count() maybe <br> Actual: @game.PlayersAtGame.Where(p => p.PlayerAtGameEntity.Played == true).Count()</p>
 
 @if (currentTab == "players")
 {
@@ -63,23 +63,22 @@
         <tbody>
             @foreach (var pag in game.PlayersAtGame)
             {
-                var thisPlayer = players.Single(p => p.PlayerEntity.RowKey == pag.PlayerRowKey);
                 <tr>
-                    <td>@thisPlayer.PlayerEntity.Name</td>
-                    <td class="d-none d-lg-table-cell">@thisPlayer.PlayerEntity.Position</td>
+                    <td>@pag.Player.PlayerEntity.Name</td>
+                    <td class="d-none d-lg-table-cell">@pag.Player.PlayerEntity.Position</td>
                     <td>
-                        <InputSelect class="form-select" @bind-Value=pag.Forecast @bind-Value:after="() => EditPlayerAtGame(pag)">
+                        <InputSelect class="form-select" @bind-Value=pag.PlayerAtGameEntity.Forecast @bind-Value:after="() => EditPlayerAtGame(pag.PlayerAtGameEntity)" >
                             <option value="Yes">Yes</option>
                             <option value="Maybe">Maybe</option>
                         </InputSelect>
                     </td>
                     <td>
                         <div class="form-check form-switch">
-                            <InputCheckbox class="form-check-input" type="checkbox" role="switch" @bind-Value=pag.Played @bind-Value:after="() => EditPlayerAtGame(pag)"></InputCheckbox>
+                            <InputCheckbox class="form-check-input" type="checkbox" role="switch" @bind-Value=pag.PlayerAtGameEntity.Played @bind-Value:after="() => EditPlayerAtGame(pag.PlayerAtGameEntity)"></InputCheckbox>
                         </div>
                     </td>
                     <td>
-                        <button type="button" class="btn btn-outline-secondary" @onclick="() => DeletePag(pag)"><i class="fa-solid fa-trash"></i> Remove from game</button>
+                        <button type="button" class="btn btn-outline-secondary" @onclick="() => DeletePag(pag.PlayerAtGameEntity)"><i class="fa-solid fa-trash"></i> Remove from game</button>
                     </td>
                 </tr>
             }

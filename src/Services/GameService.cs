@@ -44,7 +44,7 @@ namespace STO.Services
                     Amount = -player.PlayerEntity.DefaultRate,
                     Date = DateTimeOffset.UtcNow,
                     GameRowKey = pag.GameRowKey,
-                    Notes = "Auto debited"
+                    Notes = $"Auto debited from game {pag.GameRowKey}"
                 };
                 await _storageService.UpsertEntity<TransactionEntity>(transaction);
             }
@@ -71,7 +71,22 @@ namespace STO.Services
 
             // Delete PAG itself
             await _storageService.DeleteEntity<PlayerAtGameEntity>(pag.RowKey);
-        }       
+        }   
+
+        public List<PlayerAtGameEntity> CalculateTeams(List<PlayerAtGameEntity> pags)
+        {
+            var newPags = pags;
+            var teams = new List<Team>();
+            teams.Add(new Team() { Name = "A", Count = 0});
+            teams.Add(new Team() { Name = "B", Count = 0});
+
+            foreach (var position in Enum.GetNames(typeof(PlayerPosition)))
+            {
+
+            }
+
+            return newPags;
+        }    
 
         private List<Game> GameEntitiesToGames(List<GameEntity> gameEntities)
         {
@@ -79,11 +94,18 @@ namespace STO.Services
             var games = new List<Game>();
             foreach (var ge in gameEntities)
             {
-                var gamesTransactions = _storageService.QueryEntities<TransactionEntity>($"GameRowKey eq '{ge.RowKey}'");
-                var playersAtGame = _storageService.QueryEntities<PlayerAtGameEntity>($"GameRowKey eq '{ge.RowKey}'");
+                var gamesTransactionEntities = _storageService.QueryEntities<TransactionEntity>($"GameRowKey eq '{ge.RowKey}'").OrderBy(t => t.Amount).ToList();
+                var playersAtGameEntities = _storageService.QueryEntities<PlayerAtGameEntity>($"GameRowKey eq '{ge.RowKey}'");
+                var playersAtGame = new List<PlayerAtGame>();
+                foreach (var playersAtGameEntity in playersAtGameEntities)
+                {
+                    var pag = new PlayerAtGame(playersAtGameEntity);
+                    pag.Player = _playerService.GetPlayer(playersAtGameEntity.PlayerRowKey);
+                    playersAtGame.Add(pag);
+                }
                 var Game = new Game(ge)
                 {
-                    Transactions = gamesTransactions,
+                    Transactions = gamesTransactionEntities,
                     PlayersAtGame = playersAtGame,
                 };
                 games.Add(Game);

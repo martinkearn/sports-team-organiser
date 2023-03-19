@@ -19,6 +19,12 @@ namespace STO.Interfaces
         public List<Player> GetPlayers();
 
         /// <summary>
+        /// Gets a single player by row key.
+        /// </summary>
+        /// <returns>A Player.</returns>
+        public Player GetPlayer(string rowKey);
+
+        /// <summary>
         /// Deletes the PlayerEntity, TransactionEntity and PlayerAtGameEntity associated with a Player.
         /// </summary>
         /// <param name="playerRowkey">The RowKey for the PlayerEntities to delete.</param>

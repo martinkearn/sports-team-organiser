@@ -42,6 +42,11 @@ namespace STO.Services
             await _storageService.DeleteEntity<PlayerEntity>(playerRowkey);
         }
 
+        public Player GetPlayer(string rowKey)
+        {
+            return GetPlayers().Where(p => p.PlayerEntity.RowKey == rowKey).FirstOrDefault();
+        }
+
         private List<Player> PlayerEntitiesToPlayers(List<PlayerEntity> playerEntities)
         {
             var players = new List<Player>();

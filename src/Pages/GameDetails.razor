@@ -101,7 +101,7 @@
             <DataAnnotationsValidator />
             <ValidationSummary />
             <div class="col-12">
-                <InputSelect class="form-select" @bind-Value="newPagTransaction.PlayerRowKey">
+                <InputSelect class="form-select" @bind-Value="newPagTransaction.PlayerRowKey" @oninput="NewPagTransactionPlayerChanged">
                     <option value="">Select player ...</option>
                     @foreach (var player in players)
                     {
@@ -110,7 +110,7 @@
                 </InputSelect>
             </div>
             <div class="col-12">
-                <InputNumber class="form-select" @bind-Value="newPagTransaction.Amount"></InputNumber>
+                <CurrencyDisplay Amount="newPagTransaction.Amount" ></CurrencyDisplay>
             </div>
             <div class="col-12">
                 <button type="submit" class="btn btn-secondary">Add Transaction for Game</button>
@@ -180,6 +180,16 @@
         await StorageService.UpsertEntity<TransactionEntity>(newPagTransaction);
         RefreshData();
     }
+
+    private void NewPagTransactionPlayerChanged(ChangeEventArgs e)
+    {
+        if (e.Value != null)
+        {
+            var player = PlayerService.GetPlayer(e.Value.ToString());
+            newPagTransaction.Amount = player.PlayerEntity.DefaultRate;
+        }
+    }
+
 
     private async Task EditPlayerAtGame(PlayerAtGameEntity pag)
     {

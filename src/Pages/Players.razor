@@ -119,6 +119,7 @@
     private void RefreshData()
     {
         newPlayer = new();
+        newPlayer.DefaultRate = 4;
         players = PlayerService.GetPlayers();
     }
 }

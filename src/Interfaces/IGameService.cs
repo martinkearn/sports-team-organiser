@@ -45,7 +45,8 @@ namespace STO.Interfaces
         /// <summary>
         /// Distributes PAGs into teams
         /// </summary>
-        /// <param name="pag">The PlayerAtGame to delete.</param>    
-        public List<PlayerAtGameEntity> CalculateTeams(List<PlayerAtGameEntity> pags);
+        /// <param name="pag">The PlayerAtGame collection to assign teams to.</param> 
+        /// <returns>PlayerAtGame with team details.</returns>   
+        public List<PlayerAtGame> CalculateTeams(List<PlayerAtGame> pags);
     }
 }

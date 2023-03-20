@@ -12,5 +12,9 @@ namespace STO.Models
         public List<TransactionEntity> Transactions { get; set; }
 
         public List<PlayerAtGame> PlayersAtGame { get; set; }
+
+        public List<PlayerAtGame> TeamA { get; set; }
+
+        public List<PlayerAtGame> TeamB { get; set; }
     }
 }

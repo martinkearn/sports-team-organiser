@@ -32,7 +32,7 @@
                     <option value="">Select player ...</option>
                     @foreach (var player in players)
                     {
-                        if (game.PlayersAtGame.SingleOrDefault(pag => pag.PlayerAtGameEntity.PlayerRowKey == player.PlayerEntity.RowKey) == default)
+                        if (game.PlayersAtGame.FirstOrDefault(pag => pag.PlayerAtGameEntity.PlayerRowKey == player.PlayerEntity.RowKey) == default)
                         {
                             <option value="@player.PlayerEntity.RowKey">@player.PlayerEntity.Name</option>
                         }
@@ -163,6 +163,18 @@
             <a class="nav-link active" @onclick="SwitchTabTeams">Teams</a>
         </li>
     </ul>
+
+    <h4>Team A - @game.TeamA.Count()</h4>
+    @foreach (var pagWithTeam in game.TeamA)
+    {
+        <p><b>@pagWithTeam.Player.PlayerEntity.Name</b>: @pagWithTeam.Player.PlayerEntity.Position, @pagWithTeam.PlayerAtGameEntity.Forecast</p>
+    }
+
+    <h4>Team B - @game.TeamB.Count()</h4>
+    @foreach (var pagWithTeam in game.TeamB)
+    {
+        <p><b>@pagWithTeam.Player.PlayerEntity.Name</b>: @pagWithTeam.Player.PlayerEntity.Position, @pagWithTeam.PlayerAtGameEntity.Forecast</p>
+    }    
 }
 
 <div>

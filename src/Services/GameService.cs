@@ -31,7 +31,6 @@ namespace STO.Services
 
         public Game GetGame(string gameRowKey)
         {
-            //var gameEntities = _storageService.QueryEntities<GameEntity>($"RowKey eq '{gameRowKey}'");
             var gameEntities = _storageService.QueryEntities<GameEntity>().Where(g => g.RowKey == gameRowKey).ToList();
             var matchingGame = GetGames(gameEntities).FirstOrDefault();
             return matchingGame;
@@ -81,16 +80,20 @@ namespace STO.Services
             await _storageService.DeleteEntity<PlayerAtGameEntity>(pag.RowKey);
         }   
 
-        public List<PlayerAtGameEntity> CalculateTeams(List<PlayerAtGameEntity> pags)
+        public List<PlayerAtGame> CalculateTeams(List<PlayerAtGame> pags)
         {
-            var newPags = pags;
-            var teams = new List<Team>();
-            teams.Add(new Team() { Name = "A", Count = 0});
-            teams.Add(new Team() { Name = "B", Count = 0});
+            var newPags = new List<PlayerAtGame>();
+            var nextTeamToGetPag = "A";
 
             foreach (var position in Enum.GetNames(typeof(PlayerPosition)))
             {
-
+                var pagsInPosition = pags.Where(p => p.Player.PlayerEntity.Position.ToString() == position.ToString());
+                foreach (var pagInPosition in pagsInPosition)
+                {
+                    pagInPosition.PlayerAtGameEntity.Team = nextTeamToGetPag;
+                    newPags.Add(pagInPosition);
+                    nextTeamToGetPag = (nextTeamToGetPag == "A") ? "B": "A";
+                }
             }
 
             return newPags;
@@ -101,12 +104,15 @@ namespace STO.Services
             var games = new List<Game>();
             foreach (var ge in gameEntities)
             {
+                // Get entities from storage
                 var gamesTransactionEntities = _storageService.QueryEntities<TransactionEntity>()
                     .Where(t => t.GameRowKey == ge.RowKey)
                     .OrderBy(t => t.Amount)
                     .ToList();
                 var playersAtGameEntities = _storageService.QueryEntities<PlayerAtGameEntity>()
                     .Where(pag => pag.GameRowKey == ge.RowKey);
+
+                // Calculate PlayerAtGame
                 var playersAtGame = new List<PlayerAtGame>();
                 foreach (var playersAtGameEntity in playersAtGameEntities)
                 {
@@ -114,10 +120,19 @@ namespace STO.Services
                     pag.Player = _playerService.GetPlayer(playersAtGameEntity.PlayerRowKey);
                     playersAtGame.Add(pag);
                 }
+
+                // Add teams to PlayerAtGame
+                var playersAtGameWithTeams = CalculateTeams(playersAtGame);
+                var teamA = playersAtGameWithTeams.Where(pag => pag.PlayerAtGameEntity.Team == "A").ToList();
+                var teamB = playersAtGameWithTeams.Where(pag => pag.PlayerAtGameEntity.Team == "B").ToList();
+
+                // Construct Game
                 var Game = new Game(ge)
                 {
                     Transactions = gamesTransactionEntities,
-                    PlayersAtGame = playersAtGame,
+                    PlayersAtGame = playersAtGameWithTeams,
+                    TeamA = teamA,
+                    TeamB = teamB
                 };
                 games.Add(Game);
             }

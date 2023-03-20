@@ -12,32 +12,23 @@
     <button class="btn btn-secondary me-3 mb-3" data-bs-toggle="modal" data-bs-target="#addPlayerModal"><i class="fa-solid fa-plus"></i> Add Player</button>
 </div>
 
-<table class="table table-striped">
+<table class="table striped-columns table-hover">
     <thead>
         <tr>
             <th scope="col">Name</th>
             <th scope="col" class="d-none d-lg-table-cell">Position</th>
             <th scope="col" class="d-none d-lg-table-cell">Rate</th>
             <th scope="col">Balance</th>
-            <th scope="col">Actions</th>
         </tr>
     </thead>
     <tbody>
         @foreach (var player in players)
         {
             <tr>
-                <td><InputText class="form-control" @bind-Value=player.PlayerEntity.Name @bind-Value:after="() => EditPlayer(player.PlayerEntity)"></InputText></td>
-                <td class="d-none d-lg-table-cell">
-                    <InputSelect class="form-select" @bind-Value=player.PlayerEntity.Position @bind-Value:after="() => EditPlayer(player.PlayerEntity)">
-                        @foreach (string option in Enum.GetNames(typeof(PlayerPosition)))
-                        {
-                            <option value="@option">@option</option>
-                        }
-                    </InputSelect>
-                </td>
-                <td class="d-none d-lg-table-cell"><div class="input-group"><span class="input-group-text">£</span><InputNumber min="0" class="form-control" @bind-Value=player.PlayerEntity.DefaultRate @bind-Value:after="() => EditPlayer(player.PlayerEntity)"></InputNumber></div></td>
+                <td><a href="/players/@player.PlayerEntity.RowKey">@player.PlayerEntity.Name</a></td>
+                <td class="d-none d-lg-table-cell">@player.PlayerEntity.Position</td>
+                <td class="d-none d-lg-table-cell"><CurrencyDisplay Amount="@player.PlayerEntity.DefaultRate" /></td>
                 <td><CurrencyDisplay Amount="@player.Balance" /></td>
-                <td><button type="button" class="btn btn-outline-secondary" @onclick="() => DeletePlayer(player.PlayerEntity.RowKey)"><i class="fa-solid fa-trash"></i> Delete</button></td>
             </tr>
         }
     </tbody>
@@ -101,18 +92,6 @@
     async Task AddPlayer()
     {
         await StorageService.UpsertEntity<PlayerEntity>(newPlayer);
-        RefreshData();
-    }
-
-    async Task EditPlayer(PlayerEntity editedPlayer)
-    {
-        await StorageService.UpsertEntity<PlayerEntity>(editedPlayer);
-        RefreshData();
-    }
-
-    async Task DeletePlayer(string rowKey)
-    {
-        await PlayerService.DeletePlayer(rowKey);
         RefreshData();
     }
 

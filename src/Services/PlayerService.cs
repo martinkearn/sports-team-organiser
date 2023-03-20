@@ -16,7 +16,7 @@ namespace STO.Services
 
         public List<Player> GetPlayers()
         {
-            var playerEntities = _storageService.QueryEntities<PlayerEntity>(default)
+            var playerEntities = _storageService.QueryEntities<PlayerEntity>()
                 .OrderBy(p => p.Name)
                 .ToList();
             return PlayerEntitiesToPlayers(playerEntities);
@@ -25,14 +25,14 @@ namespace STO.Services
         public async Task DeletePlayer(string playerRowkey)
         {
             // Delete TransactionEntity
-            var transactions = _storageService.QueryEntities<TransactionEntity>($"PlayerRowKey eq '{playerRowkey}'");
+            var transactions = _storageService.QueryEntities<TransactionEntity>().Where(t => t.PlayerRowKey == playerRowkey);
             foreach (var transaction in transactions)
             {
                 await _storageService.DeleteEntity<TransactionEntity>(transaction.RowKey);
             }
 
             // Delete PlayerAtGameEntity
-            var pags = _storageService.QueryEntities<PlayerAtGameEntity>($"PlayerRowKey eq '{playerRowkey}'");
+            var pags = _storageService.QueryEntities<PlayerAtGameEntity>().Where(pag => pag.PlayerRowKey == playerRowkey);
             foreach (var pag in pags)
             {
                 await _storageService.DeleteEntity<PlayerAtGameEntity>(pag.RowKey);
@@ -44,7 +44,9 @@ namespace STO.Services
 
         public Player GetPlayer(string rowKey)
         {
-            return GetPlayers().Where(p => p.PlayerEntity.RowKey == rowKey).FirstOrDefault();
+            var playerEntities = _storageService.QueryEntities<PlayerEntity>().Where(p => p.RowKey == rowKey).ToList();
+            var matchingPlayer = PlayerEntitiesToPlayers(playerEntities).FirstOrDefault();
+            return matchingPlayer;
         }
 
         private List<Player> PlayerEntitiesToPlayers(List<PlayerEntity> playerEntities)
@@ -52,7 +54,7 @@ namespace STO.Services
             var players = new List<Player>();
             foreach (var pe in playerEntities)
             {
-                var playersTransactions = _storageService.QueryEntities<TransactionEntity>($"PlayerRowKey eq '{pe.RowKey}'");
+                var playersTransactions = _storageService.QueryEntities<TransactionEntity>().Where(t => t.PlayerRowKey == pe.RowKey).ToList();
                 var playerBalance = playersTransactions.Sum(t => t.Amount);
                 var player = new Player(pe)
                 {

@@ -9,34 +9,32 @@ namespace STO.Services
         private readonly StorageConfiguration _options;
         private readonly TableClient _tableClient;
 
+        private List<PlayerEntity> _playerEntities;
+        private List<GameEntity> _gameEntities;
+        private List<TransactionEntity> _transactionEntities;
+        private List<PlayerAtGameEntity> _playerAtGameEntities;
+
         public StorageService(IOptions<StorageConfiguration> storageConfigurationOptions)
         { 
             _options = storageConfigurationOptions.Value;
 
             _tableClient = new TableClient(_options.ConnectionString, _options.DataTable);
             _tableClient.CreateIfNotExists();
+
+            // Load initial data
+            RefreshEntitiesFromStorage<PlayerEntity>();
+            RefreshEntitiesFromStorage<GameEntity>();
+            RefreshEntitiesFromStorage<TransactionEntity>();
+            RefreshEntitiesFromStorage<PlayerAtGameEntity>();
         }
 
         public async Task DeleteEntity<T>(string rowKey) where T : class, ITableEntity
         {
             await _tableClient.DeleteEntityAsync(typeof(T).ToString(), rowKey);
-        }
 
-        public List<T> QueryEntities<T>(string filter) where T : class, ITableEntity
-        {
-            if (string.IsNullOrEmpty(filter))
-            {
-                filter = $"PartitionKey eq '{typeof(T).ToString()}'";
-            }
-            else
-            {
-                filter += $"and PartitionKey eq '{typeof(T).ToString()}'";
-            }
-
-            var entities = _tableClient.Query<T>(filter).ToList();
-
-            return entities;
-        }  
+            // Refresh data from storage
+            RefreshEntitiesFromStorage<T>();
+        } 
 
         public async Task<T> UpsertEntity<T>(T entity) where T : class, ITableEntity
         {
@@ -47,11 +45,63 @@ namespace STO.Services
             // Upsert entity
             await _tableClient.UpsertEntityAsync<T>(entity, TableUpdateMode.Replace);
 
-            // Get player from storage
-            var upsertedEntity = this.QueryEntities<T>($"RowKey eq '{entity.RowKey}'").First();
+            // Refresh data from storage
+            RefreshEntitiesFromStorage<T>();
 
             // Return
-            return upsertedEntity;
-        }        
+            return entity;
+        } 
+
+        public List<T> QueryEntities<T>() where T : class, ITableEntity
+        {
+            var ty = typeof(T);
+            if (ty == typeof(PlayerEntity))
+            {
+                return (List<T>)Convert.ChangeType(_playerEntities, typeof(List<T>));
+            }
+            else if (ty == typeof(GameEntity))
+            {
+                return (List<T>)Convert.ChangeType(_gameEntities, typeof(List<T>));
+            }
+            else if (ty == typeof(TransactionEntity))
+            {
+                return (List<T>)Convert.ChangeType(_transactionEntities, typeof(List<T>));
+            }
+            else if (ty == typeof(PlayerAtGameEntity))
+            {
+                return (List<T>)Convert.ChangeType(_playerAtGameEntities, typeof(List<T>));
+            }
+            else
+            {
+                return _tableClient.Query<T>($"PartitionKey eq '{typeof(T).ToString()}'").ToList();
+            }
+        }   
+
+        private void RefreshEntitiesFromStorage<T>() where T : class, ITableEntity
+        {
+            var entities = _tableClient.Query<T>($"PartitionKey eq '{typeof(T).ToString()}'").ToList();
+
+            var ty = typeof(T);
+
+            if (ty == typeof(PlayerEntity))
+            {
+                _playerEntities = (List<PlayerEntity>)Convert.ChangeType(entities, typeof(List<PlayerEntity>));
+            }
+
+            if (ty == typeof(GameEntity))
+            {
+                _gameEntities = (List<GameEntity>)Convert.ChangeType(entities, typeof(List<GameEntity>));
+            }
+
+            if (ty == typeof(TransactionEntity))
+            {
+                _transactionEntities = (List<TransactionEntity>)Convert.ChangeType(entities, typeof(List<TransactionEntity>));
+            }
+                        
+            if (ty == typeof(PlayerAtGameEntity))
+            {
+                _playerAtGameEntities = (List<PlayerAtGameEntity>)Convert.ChangeType(entities, typeof(List<PlayerAtGameEntity>));
+            }
+        }     
     }
 }

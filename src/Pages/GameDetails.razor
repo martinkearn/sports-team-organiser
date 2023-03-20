@@ -32,15 +32,11 @@
                     <option value="">Select player ...</option>
                     @foreach (var player in players)
                     {
-                        <option value="@player.PlayerEntity.RowKey">@player.PlayerEntity.Name</option>
+                        if (game.PlayersAtGame.SingleOrDefault(pag => pag.PlayerAtGameEntity.PlayerRowKey == player.PlayerEntity.RowKey) == default)
+                        {
+                            <option value="@player.PlayerEntity.RowKey">@player.PlayerEntity.Name</option>
+                        }
                     }
-                </InputSelect>
-            </div>
-            <div class="col-12">
-                <InputSelect class="form-select" @bind-Value="newPag.Forecast">
-                    <option value="">Forecast ...</option>
-                    <option value="Yes">Yes</option>
-                    <option value="Maybe">Maybe</option>
                 </InputSelect>
             </div>
             <div class="col-12">
@@ -110,7 +106,10 @@
                     <option value="">Select player ...</option>
                     @foreach (var player in players)
                     {
-                        <option value="@player.PlayerEntity.RowKey">@player.PlayerEntity.Name</option>
+                        if (game.PlayersAtGame.SingleOrDefault(pag => pag.PlayerAtGameEntity.PlayerRowKey == player.PlayerEntity.RowKey) != default)
+                        {
+                            <option value="@player.PlayerEntity.RowKey">@player.PlayerEntity.Name</option>
+                        }
                     }
                 </InputSelect>
             </div>
@@ -226,13 +225,12 @@
     private void RefreshData()
     {
         players = PlayerService.GetPlayers();
-        game = GameService.GetGames()
-            .Where(g => g.GameEntity.RowKey == GameRowKey)
-            .FirstOrDefault();
+        game = GameService.GetGame(GameRowKey);
         newPag = new PlayerAtGameEntity()
         {
             GameRowKey = game.GameEntity.RowKey,
-            Played = false
+            Played = false,
+            Forecast = PlayingOptions.Yes.ToString(),
         };
         newPagTransaction = new TransactionEntity()
         {

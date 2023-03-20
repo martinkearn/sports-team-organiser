@@ -23,10 +23,18 @@ namespace STO.Services
 
         public List<Game> GetGames()
         {
-            var gameEntities = _storageService.QueryEntities<GameEntity>(default)
+            var gameEntities = _storageService.QueryEntities<GameEntity>()
                 .OrderByDescending(g => g.Date)
                 .ToList();
             return GameEntitiesToGames(gameEntities);
+        }
+
+        public Game GetGame(string gameRowKey)
+        {
+            //var gameEntities = _storageService.QueryEntities<GameEntity>($"RowKey eq '{gameRowKey}'");
+            var gameEntities = _storageService.QueryEntities<GameEntity>().Where(g => g.RowKey == gameRowKey).ToList();
+            var matchingGame = GetGames(gameEntities).FirstOrDefault();
+            return matchingGame;
         }
 
         public async Task UpsertPlayerAtGame(PlayerAtGameEntity pag)
@@ -90,12 +98,15 @@ namespace STO.Services
 
         private List<Game> GameEntitiesToGames(List<GameEntity> gameEntities)
         {
-            var players = _storageService.QueryEntities<PlayerEntity>(default);
             var games = new List<Game>();
             foreach (var ge in gameEntities)
             {
-                var gamesTransactionEntities = _storageService.QueryEntities<TransactionEntity>($"GameRowKey eq '{ge.RowKey}'").OrderBy(t => t.Amount).ToList();
-                var playersAtGameEntities = _storageService.QueryEntities<PlayerAtGameEntity>($"GameRowKey eq '{ge.RowKey}'");
+                var gamesTransactionEntities = _storageService.QueryEntities<TransactionEntity>()
+                    .Where(t => t.GameRowKey == ge.RowKey)
+                    .OrderBy(t => t.Amount)
+                    .ToList();
+                var playersAtGameEntities = _storageService.QueryEntities<PlayerAtGameEntity>()
+                    .Where(pag => pag.GameRowKey == ge.RowKey);
                 var playersAtGame = new List<PlayerAtGame>();
                 foreach (var playersAtGameEntity in playersAtGameEntities)
                 {

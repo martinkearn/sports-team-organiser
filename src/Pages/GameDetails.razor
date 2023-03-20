@@ -37,13 +37,6 @@
                 </InputSelect>
             </div>
             <div class="col-12">
-                <InputSelect class="form-select" @bind-Value="newPag.Forecast">
-                    <option value="">Forecast ...</option>
-                    <option value="Yes">Yes</option>
-                    <option value="Maybe">Maybe</option>
-                </InputSelect>
-            </div>
-            <div class="col-12">
                 <button type="submit" class="btn btn-secondary">Add Player to Game</button>
             </div>
         </EditForm>
@@ -226,13 +219,12 @@
     private void RefreshData()
     {
         players = PlayerService.GetPlayers();
-        game = GameService.GetGames()
-            .Where(g => g.GameEntity.RowKey == GameRowKey)
-            .FirstOrDefault();
+        game = GameService.GetGame(GameRowKey);
         newPag = new PlayerAtGameEntity()
         {
             GameRowKey = game.GameEntity.RowKey,
-            Played = false
+            Played = false,
+            Forecast = PlayingOptions.Yes.ToString(),
         };
         newPagTransaction = new TransactionEntity()
         {

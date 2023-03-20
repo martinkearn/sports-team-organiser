@@ -19,6 +19,12 @@ namespace STO.Interfaces
         public List<Game> GetGames();
 
         /// <summary>
+        /// Gets a single Game.
+        /// </summary>
+        /// <returns>Game.</returns>
+        public Game GetGame(string gameRowKey);
+
+        /// <summary>
         /// Deletes the GameEntity and PlayerAtGameEntity associated with a Game.
         /// </summary>
         /// <param name="gameRowkey">The RowKey for the GameEntities to delete.</param>

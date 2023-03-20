@@ -29,6 +29,13 @@ namespace STO.Services
             return GameEntitiesToGames(gameEntities);
         }
 
+        public Game GetGame(string gameRowKey)
+        {
+            var gameEntities = _storageService.QueryEntities<GameEntity>($"RowKey eq '{gameRowKey}'");
+            var matchingGame = GetGames(gameEntities).FirstOrDefault();
+            return matchingGame;
+        }
+
         public async Task UpsertPlayerAtGame(PlayerAtGameEntity pag)
         {
             // Update PAG itself
@@ -90,7 +97,6 @@ namespace STO.Services
 
         private List<Game> GameEntitiesToGames(List<GameEntity> gameEntities)
         {
-            var players = _storageService.QueryEntities<PlayerEntity>(default);
             var games = new List<Game>();
             foreach (var ge in gameEntities)
             {

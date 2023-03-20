@@ -44,7 +44,9 @@ namespace STO.Services
 
         public Player GetPlayer(string rowKey)
         {
-            return GetPlayers().Where(p => p.PlayerEntity.RowKey == rowKey).FirstOrDefault();
+            var playerEntities = _storageService.QueryEntities<PlayerEntity>($"RowKey eq '{rowKey}'");
+            var matchingPlayer = PlayerEntitiesToPlayers(playerEntities).FirstOrDefault();
+            return matchingPlayer;
         }
 
         private List<Player> PlayerEntitiesToPlayers(List<PlayerEntity> playerEntities)

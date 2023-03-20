@@ -77,3 +77,14 @@ a, .btn-link {
 .nav-tabs{
     margin-bottom: 1rem;
 }
+
+#components-reconnect-modal {
+    display: none;
+    color: white;
+}
+
+#components-reconnect-modal.components-reconnect-show, 
+#components-reconnect-modal.components-reconnect-failed, 
+#components-reconnect-modal.components-reconnect-rejected {
+    display: block;
+}

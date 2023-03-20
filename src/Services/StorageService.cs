@@ -47,11 +47,8 @@ namespace STO.Services
             // Upsert entity
             await _tableClient.UpsertEntityAsync<T>(entity, TableUpdateMode.Replace);
 
-            // Get player from storage
-            var upsertedEntity = this.QueryEntities<T>($"RowKey eq '{entity.RowKey}'").First();
-
             // Return
-            return upsertedEntity;
+            return entity;
         }        
     }
 }

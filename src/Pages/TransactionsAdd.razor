@@ -92,11 +92,11 @@
             newTransaction.GameRowKey = gameRowKey;
         }
 
-        players = StorageService.QueryEntities<PlayerEntity>(default)            
+        players = StorageService.QueryEntities<PlayerEntity>()            
             .OrderBy(p => p.Name)
             .ToList();
 
-        games = StorageService.QueryEntities<GameEntity>(default)
+        games = StorageService.QueryEntities<GameEntity>()
             .OrderByDescending(g => g.Date)
             .ToList();
     }

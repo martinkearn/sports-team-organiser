@@ -63,13 +63,13 @@
 
     private void RefreshData()
     {
-        transactions = StorageService.QueryEntities<TransactionEntity>(default)
+        transactions = StorageService.QueryEntities<TransactionEntity>()
             .OrderByDescending(t => t.Date)
             .ToList();
-        players = StorageService.QueryEntities<PlayerEntity>(default)            
+        players = StorageService.QueryEntities<PlayerEntity>()            
             .OrderBy(p => p.Name)
             .ToList();
-        games = StorageService.QueryEntities<GameEntity>(default)
+        games = StorageService.QueryEntities<GameEntity>()
             .OrderByDescending(g => g.Date)
             .ToList();
     }

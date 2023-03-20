@@ -22,10 +22,9 @@ namespace STO.Interfaces
         public Task DeleteEntity<T>(string rowKey) where T : class, ITableEntity;
 
         /// <summary>
-        /// Queries entities of type T using an Odata query syntax.
+        /// Queries entities of type T.
         /// </summary>
-        /// <param name="player">The OData filter string.</param>
         /// <returns>A list of entities of type T which match the query.</returns>
-        public List<T> QueryEntities<T>(string filter) where T : class, ITableEntity;
+        public List<T> QueryEntities<T>() where T : class, ITableEntity;
     }
 }

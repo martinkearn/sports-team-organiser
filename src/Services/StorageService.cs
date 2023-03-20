@@ -52,18 +52,8 @@ namespace STO.Services
             return entity;
         } 
 
-        public List<T> QueryEntities<T>(string filter) where T : class, ITableEntity
+        public List<T> QueryEntities<T>() where T : class, ITableEntity
         {
-            if (string.IsNullOrEmpty(filter))
-            {
-                filter = $"PartitionKey eq '{typeof(T).ToString()}'";
-            }
-            else
-            {
-                filter += $"and PartitionKey eq '{typeof(T).ToString()}'";
-            }
-            // TO DO filtering needs to happen in service
-
             var ty = typeof(T);
             if (ty == typeof(PlayerEntity))
             {
@@ -83,7 +73,7 @@ namespace STO.Services
             }
             else
             {
-                return _tableClient.Query<T>(filter).ToList();
+                return _tableClient.Query<T>($"PartitionKey eq '{typeof(T).ToString()}'").ToList();
             }
         }   
 

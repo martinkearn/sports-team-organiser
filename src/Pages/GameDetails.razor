@@ -32,7 +32,10 @@
                     <option value="">Select player ...</option>
                     @foreach (var player in players)
                     {
-                        <option value="@player.PlayerEntity.RowKey">@player.PlayerEntity.Name</option>
+                        if (game.PlayersAtGame.SingleOrDefault(pag => pag.PlayerAtGameEntity.PlayerRowKey == player.PlayerEntity.RowKey) == default)
+                        {
+                            <option value="@player.PlayerEntity.RowKey">@player.PlayerEntity.Name</option>
+                        }
                     }
                 </InputSelect>
             </div>
@@ -103,7 +106,10 @@
                     <option value="">Select player ...</option>
                     @foreach (var player in players)
                     {
-                        <option value="@player.PlayerEntity.RowKey">@player.PlayerEntity.Name</option>
+                        if (game.PlayersAtGame.SingleOrDefault(pag => pag.PlayerAtGameEntity.PlayerRowKey == player.PlayerEntity.RowKey) != default)
+                        {
+                            <option value="@player.PlayerEntity.RowKey">@player.PlayerEntity.Name</option>
+                        }
                     }
                 </InputSelect>
             </div>

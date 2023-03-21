@@ -31,16 +31,22 @@ namespace STO.Interfaces
         public Task DeleteGame(string gameRowkey);
 
         /// <summary>
+        /// Adds a new GameEntity.
+        /// </summary>
+        /// <param name="playerEntity">The GameEntity to upsert.</param>
+        public Task UpsertGameEntity(GameEntity gameEntity);
+
+        /// <summary>
         /// Upserts a player at a game, including transactions.
         /// </summary>
         /// <param name="pag">The PlayerAtGame.</param>     
-        public Task UpsertPlayerAtGame(PlayerAtGameEntity pag);
+        public Task UpsertPlayerAtGameEntity(PlayerAtGameEntity pag);
 
         /// <summary>
         /// Deletes a player from a game, including debit trasnactions.
         /// </summary>
         /// <param name="pag">The PlayerAtGame to delete.</param>     
-        public Task DeletePlayerAtGame(PlayerAtGameEntity pag);
+        public Task DeletePlayerAtGameEntity(PlayerAtGameEntity pag);
 
         /// <summary>
         /// Distributes PAGs into teams

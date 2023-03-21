@@ -202,7 +202,7 @@
 
     private async Task AddPag()
     {
-        await GameService.UpsertPlayerAtGame(newPag);
+        await GameService.UpsertPlayerAtGameEntity(newPag);
         RefreshData();
     }
 
@@ -224,13 +224,13 @@
 
     private async Task EditPlayerAtGame(PlayerAtGameEntity pag)
     {
-        await GameService.UpsertPlayerAtGame(pag);
+        await GameService.UpsertPlayerAtGameEntity(pag);
         RefreshData();
     }
 
     private async Task DeletePag(PlayerAtGameEntity pag)
     {
-        await GameService.DeletePlayerAtGame(pag);
+        await GameService.DeletePlayerAtGameEntity(pag);
         RefreshData();
     }
 

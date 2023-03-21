@@ -18,7 +18,7 @@ namespace STO.Services
             // Delete PAGs
             foreach(var pag in game.PlayersAtGame)
             {
-                await DeletePlayerAtGame(pag.PlayerAtGameEntity);
+                await DeletePlayerAtGameEntity(pag.PlayerAtGameEntity);
             }
 
             // Delete game
@@ -45,7 +45,12 @@ namespace STO.Services
             return matchingGame;
         }
 
-        public async Task UpsertPlayerAtGame(PlayerAtGameEntity pag)
+        public async Task UpsertGameEntity(GameEntity gameEntity)
+        {
+            await _storageService.UpsertEntity<GameEntity>(gameEntity);
+        }
+
+        public async Task UpsertPlayerAtGameEntity(PlayerAtGameEntity pag)
         {
             // Update PAG itself
             await _storageService.UpsertEntity<PlayerAtGameEntity>(pag);
@@ -75,7 +80,7 @@ namespace STO.Services
             }
         }
 
-        public async Task DeletePlayerAtGame(PlayerAtGameEntity pag)
+        public async Task DeletePlayerAtGameEntity(PlayerAtGameEntity pag)
         {
             // Delete transactions for PAG less than £0 (debits)
             var player = _playerService.GetPlayer(pag.PlayerRowKey);

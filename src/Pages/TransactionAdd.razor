@@ -9,7 +9,7 @@
 
 <h1>Add a Transaction</h1>
 
-<EditForm Model="@newTransactionEntity" OnValidSubmit="AddTransaction">
+<EditForm Model="@newTransactionEntity" OnValidSubmit="Add">
     <DataAnnotationsValidator />
     <ValidationSummary />
     <div class="mb-3">
@@ -80,7 +80,7 @@
         RefreshData();
     }
 
-    protected async Task AddTransaction()
+    protected async Task Add()
     {
         await TransactionService.UpsertTransactionEntity(newTransactionEntity);
         Navigation.NavigateTo("/transactions");

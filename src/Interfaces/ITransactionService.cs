@@ -34,7 +34,7 @@ namespace STO.Interfaces
         /// <summary>
         /// Adds a new TransactionEntity.
         /// </summary>
-        /// <param name="transactionEntity">The TransactionEntity to add.</param>
+        /// <param name="transactionEntity">The TransactionEntity to upsert.</param>
         public Task UpsertTransactionEntity(TransactionEntity transactionEntity);
         
     }

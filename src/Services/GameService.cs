@@ -11,9 +11,18 @@ namespace STO.Services
             _playerService = playerService;
         }
 
-        public Task DeleteGame(string gameRowkey)
+        public async Task DeleteGame(string gameRowkey)
         {
-            throw new NotImplementedException();
+            var game = GetGame(gameRowkey);
+
+            // Delete PAGs
+            foreach(var pag in game.PlayersAtGame)
+            {
+                await DeletePlayerAtGameEntity(pag.PlayerAtGameEntity);
+            }
+
+            // Delete game
+            await _storageService.DeleteEntity<GameEntity>(gameRowkey);
         }
 
         public List<Game> GetGames(List<GameEntity> gameEntities)
@@ -36,7 +45,12 @@ namespace STO.Services
             return matchingGame;
         }
 
-        public async Task UpsertPlayerAtGame(PlayerAtGameEntity pag)
+        public async Task UpsertGameEntity(GameEntity gameEntity)
+        {
+            await _storageService.UpsertEntity<GameEntity>(gameEntity);
+        }
+
+        public async Task UpsertPlayerAtGameEntity(PlayerAtGameEntity pag)
         {
             // Update PAG itself
             await _storageService.UpsertEntity<PlayerAtGameEntity>(pag);
@@ -66,7 +80,7 @@ namespace STO.Services
             }
         }
 
-        public async Task DeletePlayerAtGame(PlayerAtGameEntity pag)
+        public async Task DeletePlayerAtGameEntity(PlayerAtGameEntity pag)
         {
             // Delete transactions for PAG less than £0 (debits)
             var player = _playerService.GetPlayer(pag.PlayerRowKey);
@@ -129,7 +143,7 @@ namespace STO.Services
                 // Construct Game
                 var Game = new Game(ge)
                 {
-                    Transactions = gamesTransactionEntities,
+                    TransactionsEntities = gamesTransactionEntities,
                     PlayersAtGame = playersAtGameWithTeams,
                     TeamA = teamA,
                     TeamB = teamB

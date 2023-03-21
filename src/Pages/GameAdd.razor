@@ -1,0 +1,41 @@
+@page "/games/add"
+@inject IGameService GameService
+@inject NavigationManager Navigation
+
+<PageTitle>TNF - Add Game</PageTitle>
+
+<h1>Add a Game</h1>
+
+<EditForm Model="@newGameEntity" OnSubmit="@Add">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+    <div class="mb-3">
+        <label for="addDate" class="form-label">Date</label>
+        <InputDate class="form-control" id="addDate" @bind-Value="newGameEntity.Date" />
+    </div>
+    
+    <div class="modal-footer">
+        <button type="submit" class="btn btn-primary">Add Game</button>
+    </div>
+</EditForm>
+
+@code {
+    private GameEntity newGameEntity = new();
+
+    protected override void OnInitialized()
+    {
+        RefreshData();
+    }
+
+    protected async Task Add()
+    {
+        await GameService.UpsertGameEntity(newGameEntity);
+        Navigation.NavigateTo("/games");
+    }
+
+    private void RefreshData()
+    {
+        newGameEntity = new();
+        newGameEntity.Date = DateTimeOffset.UtcNow;
+    }
+}

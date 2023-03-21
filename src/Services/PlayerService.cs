@@ -49,6 +49,11 @@ namespace STO.Services
             return matchingPlayer;
         }
 
+        public async Task UpsertPlayerEntity(PlayerEntity playerEntity)
+        {
+            await _storageService.UpsertEntity<PlayerEntity>(playerEntity);
+        }
+
         private List<Player> PlayerEntitiesToPlayers(List<PlayerEntity> playerEntities)
         {
             var players = new List<Player>();
@@ -65,5 +70,6 @@ namespace STO.Services
             }
             return players;
         }
+
     }
 }

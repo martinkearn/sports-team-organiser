@@ -1,5 +1,7 @@
 @page "/transactions/add"
-@inject IStorageService StorageService
+@inject ITransactionService TransactionService
+@inject IPlayerService PlayerService
+@inject IGameService GameService
 @inject NavigationManager Navigation
 @using Microsoft.AspNetCore.WebUtilities 
 
@@ -7,27 +9,27 @@
 
 <h1>Add a Transaction</h1>
 
-<EditForm Model="@newTransaction" OnValidSubmit="AddTransaction">
+<EditForm Model="@newTransactionEntity" OnValidSubmit="Add">
     <DataAnnotationsValidator />
     <ValidationSummary />
     <div class="mb-3">
         <label for="addPlayerRowKey" class="form-label">Player</label>
-        <InputSelect class="form-select" @bind-Value="newTransaction.PlayerRowKey">
-            <option value="">Select player ...</option>
+        <InputSelect class="form-select" @bind-Value="newTransactionEntity.PlayerRowKey">
+            <option value="">Select Player ...</option>
             @foreach (var player in players)
             {
-                <option value="@player.RowKey">@player.Name</option>
+                <option value="@player.PlayerEntity.RowKey">@player.PlayerEntity.Name</option>
             }
         </InputSelect>
     </div>
 
     <div class="mb-3">
         <label for="addPlayerRowKey" class="form-label">Associated Game</label>
-        <InputSelect class="form-select" @bind-Value="newTransaction.GameRowKey">
-            <option value="">Select game ...</option>
+        <InputSelect class="form-select" @bind-Value="newTransactionEntity.GameRowKey">
+            <option value="">Select Game ...</option>
             @foreach (var game in games)
             {
-                <option value="@game.RowKey">@game.Date.Date.ToShortDateString()</option>
+                <option value="@game.GameEntity.RowKey">@game.GameEntity.Date.Date.ToLongDateString()</option>
             }
         </InputSelect>
         <div class="form-text">Optionally associate the transaction with a game.</div>
@@ -35,19 +37,19 @@
 
     <div class="mb-3">
         <label for="addDate" class="form-label">Date</label>
-        <InputDate class="form-control" id="addDate" @bind-Value="newTransaction.Date" />
+        <InputDate class="form-control" id="addDate" @bind-Value="newTransactionEntity.Date" />
     </div>
 
     <div class="mb-3">
         <label for="addNotes" class="form-label">Notes</label>
-        <InputText class="form-control" id="addNotes" @bind-Value="newTransaction.Notes" />
+        <InputText class="form-control" id="addNotes" @bind-Value="newTransactionEntity.Notes" />
     </div>
 
     <div class="mb-3">
         <label for="addAmount" class="form-label">Amount</label>
         <div class="input-group">
             <span class="input-group-text">£</span>
-            <InputNumber type="number" class="form-control" id="addAmount" @bind-Value="newTransaction.Amount" />
+            <InputNumber type="number" class="form-control" id="addAmount" @bind-Value="newTransactionEntity.Amount" />
         </div>
         <div class="form-text">Positive for payments, negative to pay for a played game.</div>
     </div>
@@ -60,11 +62,11 @@
 @code {
     private string gameRowKey = string.Empty;
 
-    private List<PlayerEntity> players = new();
+    private List<Player> players = new();
 
-    private List<GameEntity> games = new();
+    private List<Game> games = new();
 
-    private TransactionEntity newTransaction = new();
+    private TransactionEntity newTransactionEntity = new();
 
     protected override void OnInitialized()
     {
@@ -78,26 +80,22 @@
         RefreshData();
     }
 
-    protected async Task AddTransaction()
+    protected async Task Add()
     {
-        await StorageService.UpsertEntity<TransactionEntity>(newTransaction);
+        await TransactionService.UpsertTransactionEntity(newTransactionEntity);
         Navigation.NavigateTo("/transactions");
     }
 
     private void RefreshData()
     {
-        newTransaction = new();
+        newTransactionEntity = new();
         if (!string.IsNullOrEmpty(gameRowKey))
         {
-            newTransaction.GameRowKey = gameRowKey;
+            newTransactionEntity.GameRowKey = gameRowKey;
         }
 
-        players = StorageService.QueryEntities<PlayerEntity>()            
-            .OrderBy(p => p.Name)
-            .ToList();
+        players = PlayerService.GetPlayers();
 
-        games = StorageService.QueryEntities<GameEntity>()
-            .OrderByDescending(g => g.Date)
-            .ToList();
+        games = GameService.GetGames();
     }
 }

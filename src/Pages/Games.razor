@@ -1,7 +1,6 @@
 @page "/games"
 @inject IStorageService StorageService
 @inject IGameService GameService
-@inject NavigationManager Navigation
 
 <PageTitle>TNF - Games</PageTitle>
 
@@ -15,20 +14,17 @@
     <thead>
         <tr>
             <th scope="col">Date</th>
-            <th scope="col">Actions</th>
+            <th scope="col">Forecast Players</th>
+            <th scope="col">Actual Players</th>
         </tr>
     </thead>
     <tbody>
         @foreach (var game in games)
         {
             <tr>
-                <td>
-                    <InputDate class="form-control" @bind-Value=game.GameEntity.Date @bind-Value:after="() => EditGame(game.GameEntity)"></InputDate>
-                </td>
-                <td>
-                    <button type="button" class="btn btn-outline-secondary" @onclick="() => DeleteGame(game.GameEntity.RowKey)"><i class="fa-solid fa-trash"></i> Delete</button>
-                    <button type="button" class="btn btn-outline-secondary" @onclick="() => NavigateGame(game.GameEntity.RowKey)"><i class="fa-solid fa-pen-to-square"></i> Details</button>
-                </td>
+                <td><a href="/games/@game.GameEntity.RowKey">@game.GameEntity.Date.Date.ToLongDateString()</a></td>
+                <td>@game.PlayersAtGame.Count()</td>
+                <td>@game.PlayersAtGame.Where(pag => pag.PlayerAtGameEntity.Played).Count()</td>
             </tr>
         }
     </tbody>
@@ -43,7 +39,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <EditForm Model="@newGame" OnValidSubmit="AddGame">
+                <EditForm Model="@newGame" OnValidSubmit="Add">
                     <DataAnnotationsValidator />
                     <ValidationSummary />
                     <div class="mb-3">
@@ -69,37 +65,10 @@
         RefreshData();
     }
 
-    protected async Task AddGame()
+    protected async Task Add()
     {
         await StorageService.UpsertEntity<GameEntity>(newGame);
         RefreshData();
-    }
-
-    protected async Task EditGame(GameEntity editedGame)
-    {
-        await StorageService.UpsertEntity<GameEntity>(editedGame);
-        RefreshData();
-    }
-
-    async Task DeleteGame(string rowKey)
-    {
-        // Get and delete PAGs
-        //var pags = StorageService.QueryEntities<PlayerAtGameEntity>($"GameRowKey eq '{rowKey}'");
-        var pags = StorageService.QueryEntities<PlayerAtGameEntity>().Where(pag => pag.GameRowKey == rowKey);
-        foreach (var pag in pags)
-        {
-            await StorageService.DeleteEntity<PlayerAtGameEntity>(pag.RowKey);
-        }
-
-        // Delete game
-        await StorageService.DeleteEntity<GameEntity>(rowKey);
-
-        RefreshData();
-    }
-
-    private void NavigateGame(string rowKey)
-    {
-        Navigation.NavigateTo("/games/" + rowKey);
     }
 
     private void RefreshData()

@@ -29,6 +29,13 @@ namespace STO.Interfaces
         /// Deletes a TransactionEntity.
         /// </summary>
         /// <param name="rowKey">The RowKey for the TransactionEntity to delete.</param>
-        public Task DeleteTransaction(string rowKey);
+        public Task DeleteTransactionEntity(string rowKey);
+
+        /// <summary>
+        /// Adds a new TransactionEntity.
+        /// </summary>
+        /// <param name="transactionEntity">The TransactionEntity to add.</param>
+        public Task UpsertTransactionEntity(TransactionEntity transactionEntity);
+        
     }
 }

@@ -58,7 +58,7 @@ else
 
     private async Task Delete()
     {
-        await TransactionService.DeleteTransaction(transaction.TransactionEntity.RowKey);
+        await TransactionService.DeleteTransactionEntity(transaction.TransactionEntity.RowKey);
         Navigation.NavigateTo("/transactions");
     }
 

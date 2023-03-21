@@ -20,13 +20,11 @@ namespace STO.Services
 
         public List<Transaction> GetTransactions()
         {
-            var TransactionEntities = _storageService.QueryEntities<TransactionEntity>()
-                .OrderBy(o => o.Date)
-                .ToList();
+            var TransactionEntities = _storageService.QueryEntities<TransactionEntity>().ToList();
             return TransactionEntitiesToTransactions(TransactionEntities);
         }
 
-        public async Task DeleteTransaction(string rowKey)
+        public async Task DeleteTransactionEntity(string rowKey)
         {
             await _storageService.DeleteEntity<TransactionEntity>(rowKey);
         }
@@ -36,6 +34,11 @@ namespace STO.Services
             var transactionEntities = _storageService.QueryEntities<TransactionEntity>().Where(o => o.RowKey == rowKey).ToList();
             var matchingTransaction = TransactionEntitiesToTransactions(transactionEntities).FirstOrDefault();
             return matchingTransaction;
+        }
+
+        public async Task UpsertTransactionEntity(TransactionEntity transactionEntity)
+        {
+            await _storageService.UpsertEntity<TransactionEntity>(transactionEntity);
         }
 
         private List<Transaction> TransactionEntitiesToTransactions(List<TransactionEntity> transactionEntities)
@@ -53,7 +56,7 @@ namespace STO.Services
                 };
                 transactions.Add(Transaction);
             }
-            return transactions;
+            return transactions.OrderByDescending(o => o.TransactionEntity.Date).ToList();
         }
     }
 }

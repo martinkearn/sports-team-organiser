@@ -1,5 +1,6 @@
 @page "/players/{PlayerRowKey}"
 @inject IPlayerService PlayerService
+@inject NavigationManager Navigation
 
 <PageTitle>TNF - Players - @player.PlayerEntity.Name</PageTitle>
 
@@ -44,7 +45,7 @@
         </div>
     </div>
 
-    <div class="mb-3">
+    <div class="modal-footer">
         <a class="btn btn-secondary" href="/players/"><i class="fa-solid fa-arrow-left"></i>All Players</a>
         <button class="btn btn-secondary" @onclick="Delete"><i class="fa-solid fa-trash"></i> Delete Player</button>
         <button type="submit" class="btn btn-primary"><i class="fa-solid fa-floppy-disk"></i> Save</button>
@@ -65,13 +66,13 @@
     async Task Edit()
     {
         await PlayerService.UpsertPlayerEntity(player.PlayerEntity);
-        RefreshData();
+        Navigation.NavigateTo("/players");
     }
 
     async Task Delete()
     {
         await PlayerService.DeletePlayer(player.PlayerEntity.RowKey);
-        RefreshData();
+        Navigation.NavigateTo("/players");
     }
 
     private void RefreshData()

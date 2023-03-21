@@ -99,7 +99,8 @@
         </li>
     </ul>
 
-    <h4>Add Transaction</h4>
+    <h4>Add Payment Transaction</h4>
+    <p>Add default amount as a payment for selected player for this game.</p>
     <div class="pb-4">
         <EditForm Model="@newPagTransactionEntity" OnValidSubmit="AddPagTransaction" class="row row-cols-lg-auto g-3 align-items-center">
             <DataAnnotationsValidator />
@@ -117,10 +118,7 @@
                 </InputSelect>
             </div>
             <div class="col-12">
-                <CurrencyDisplay Amount="newPagTransactionEntity.Amount" ></CurrencyDisplay>
-            </div>
-            <div class="col-12">
-                <button type="submit" class="btn btn-secondary"><i class="fa-solid fa-plus"></i> Add Transaction for Game</button>
+                <button type="submit" class="btn btn-secondary"><i class="fa-solid fa-plus"></i> Add Transaction</button>
             </div>
         </EditForm>
     </div>

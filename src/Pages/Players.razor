@@ -43,7 +43,7 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <EditForm Model="@newPlayer" OnSubmit="@AddPlayer">
+        <EditForm Model="@newPlayer" OnSubmit="@Add">
             <DataAnnotationsValidator />
             <ValidationSummary />
             <div class="mb-3">
@@ -89,7 +89,7 @@
         RefreshData();
     }
 
-    async Task AddPlayer()
+    async Task Add()
     {
         await StorageService.UpsertEntity<PlayerEntity>(newPlayer);
         RefreshData();

@@ -6,7 +6,7 @@
 
 <h1>@player.PlayerEntity.Name</h1>
 
-<EditForm Model="@player.PlayerEntity" OnValidSubmit="EditPlayer">
+<EditForm Model="@player.PlayerEntity" OnValidSubmit="Edit">
     <DataAnnotationsValidator />
     <ValidationSummary />
     <div class="mb-3">
@@ -47,14 +47,10 @@
 
     <div class="mb-3">
         <a class="btn btn-secondary" href="/players/"><i class="fa-solid fa-arrow-left"></i>All Players</a>
-        <button class="btn btn-secondary" ><i class="fa-solid fa-trash"></i> Delete Player</button>
+        <button class="btn btn-secondary" @onclick="Delete"><i class="fa-solid fa-trash"></i> Delete Player</button>
         <button type="submit" class="btn btn-primary"><i class="fa-solid fa-floppy-disk"></i> Save</button>
     </div>
 </EditForm>
-
-<div>
-    
-</div>
 
 @code {
     [Parameter]
@@ -67,13 +63,13 @@
         RefreshData();
     }
 
-    async Task EditPlayer()
+    async Task Edit()
     {
         await StorageService.UpsertEntity<PlayerEntity>(player.PlayerEntity);
         RefreshData();
     }
 
-    async Task DeletePlayer()
+    async Task Delete()
     {
         await PlayerService.DeletePlayer(player.PlayerEntity.RowKey);
         RefreshData();

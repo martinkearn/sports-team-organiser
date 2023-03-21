@@ -110,6 +110,8 @@ namespace STO.Services
                 }
             }
 
+            newPags.OrderBy(o => o.Player.PlayerEntity.Name);
+
             return newPags;
         }    
 

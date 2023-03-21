@@ -123,7 +123,7 @@ namespace STO.Services
                 // Get entities from storage
                 var gamesTransactionEntities = _storageService.QueryEntities<TransactionEntity>()
                     .Where(t => t.GameRowKey == ge.RowKey)
-                    .OrderBy(t => t.Amount)
+                    .OrderByDescending(o => o.Date)
                     .ToList();
                 var playersAtGameEntities = _storageService.QueryEntities<PlayerAtGameEntity>()
                     .Where(pag => pag.GameRowKey == ge.RowKey);

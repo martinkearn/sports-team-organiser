@@ -176,13 +176,13 @@
     <h4>Team A - @game.TeamA.Count()</h4>
     @foreach (var pagWithTeam in game.TeamA)
     {
-        <p><b>@pagWithTeam.Player.PlayerEntity.Name</b>: @pagWithTeam.Player.PlayerEntity.Position, @pagWithTeam.PlayerAtGameEntity.Forecast</p>
+        <p><a href="/players/@pagWithTeam.Player.PlayerEntity.RowKey">@pagWithTeam.Player.PlayerEntity.Name</a>, @pagWithTeam.Player.PlayerEntity.Position, @pagWithTeam.PlayerAtGameEntity.Forecast</p>
     }
 
     <h4>Team B - @game.TeamB.Count()</h4>
     @foreach (var pagWithTeam in game.TeamB)
     {
-        <p><b>@pagWithTeam.Player.PlayerEntity.Name</b>: @pagWithTeam.Player.PlayerEntity.Position, @pagWithTeam.PlayerAtGameEntity.Forecast</p>
+        <p><a href="/players/@pagWithTeam.Player.PlayerEntity.RowKey">@pagWithTeam.Player.PlayerEntity.Name</a>, @pagWithTeam.Player.PlayerEntity.Position, @pagWithTeam.PlayerAtGameEntity.Forecast</p>
     }    
 }
 

@@ -2,6 +2,7 @@
 @inject IPlayerService PlayerService
 @inject IGameService GameService
 @inject ITransactionService TransactionService
+@inject NavigationManager Navigation
 
 <PageTitle>TNF - Game @game.GameEntity.Date</PageTitle>
 
@@ -138,7 +139,7 @@
                 <tr>
                     <td><a href="transaction/@transactionEntityForGame.RowKey">@transactionEntityForGame.Date.Date.ToShortDateString()</a></td>
                     <td><CurrencyDisplay Amount="@transactionEntityForGame.Amount" /></td>
-                    <td>@transactionEntityForGame.PlayerRowKey</td>
+                    <td><a href="players/@transactionEntityForGame.PlayerRowKey">@game.PlayersAtGame.SingleOrDefault(o => o.PlayerAtGameEntity.PlayerRowKey == transactionEntityForGame.PlayerRowKey).Player.PlayerEntity.Name</a></td>
                     <td class="d-none d-lg-table-cell">@transactionEntityForGame.Notes</td>
                 </tr>
             }
@@ -177,8 +178,9 @@
     }    
 }
 
-<div>
-    <a class="btn btn-secondary me-3 mb-3" href="/games/"><i class="fa-solid fa-arrow-left"></i> All Games</a>
+<div class="modal-footer">
+    <a class="btn btn-secondary" href="/games/"><i class="fa-solid fa-arrow-left"></i> All Games</a>
+    <button class="btn btn-secondary" @onclick="DeleteGame"><i class="fa-solid fa-trash"></i> Delete Game</button>
 </div>
 
 @code {
@@ -231,6 +233,12 @@
     {
         await GameService.DeletePlayerAtGameEntity(pag);
         RefreshData();
+    }
+
+    async Task DeleteGame()
+    {
+        await GameService.DeleteGame(game.GameEntity.RowKey);
+        Navigation.NavigateTo("/games");
     }
 
     private void RefreshData()

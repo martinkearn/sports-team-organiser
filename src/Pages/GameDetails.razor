@@ -54,6 +54,7 @@
                 <th scope="col" class="d-none d-lg-table-cell">Position</th>
                 <th scope="col">Playing</th>
                 <th scope="col">Played</th>
+                <th scope="col">Player's Balance</th>
                 <th scope="col">Actions</th>
             </tr>
         </thead>
@@ -74,6 +75,7 @@
                             <InputCheckbox class="form-check-input" type="checkbox" role="switch" @bind-Value=pag.PlayerAtGameEntity.Played @bind-Value:after="() => EditPagEntity(pag.PlayerAtGameEntity)"></InputCheckbox>
                         </div>
                     </td>
+                    <td><CurrencyDisplay Amount="@pag.Player.Transactions.Sum(o => o.Amount)" /></td>
                     <td>
                         <button type="button" class="btn btn-outline-secondary" @onclick="() => DeletePagEntity(pag.PlayerAtGameEntity)"><i class="fa-solid fa-trash"></i> Remove from game</button>
                     </td>
@@ -124,12 +126,13 @@
     </div>
 
     <h4>Transactions for Game</h4>
+    <p>Balance for the game: <CurrencyDisplay Amount="game.TransactionsEntities.Sum(o => o.Amount)"></CurrencyDisplay> </p>
     <table class="table table-striped">
         <thead>
             <tr>
+                <th scope="col">Player</th>
                 <th scope="col">Date</th>
                 <th scope="col">Amount</th>
-                <th scope="col">Player</th>
                 <th scope="col" class="d-none d-lg-table-cell">Notes</th>
             </tr>
         </thead>
@@ -137,14 +140,21 @@
             @foreach (var transactionEntityForGame in game.TransactionsEntities)
             {
                 <tr>
+                    <td><a href="players/@transactionEntityForGame.PlayerRowKey">@game.PlayersAtGame.SingleOrDefault(o => o.PlayerAtGameEntity.PlayerRowKey == transactionEntityForGame.PlayerRowKey).Player.PlayerEntity.Name</a></td>
                     <td><a href="transaction/@transactionEntityForGame.RowKey">@transactionEntityForGame.Date.Date.ToShortDateString()</a></td>
                     <td><CurrencyDisplay Amount="@transactionEntityForGame.Amount" /></td>
-                    <td><a href="players/@transactionEntityForGame.PlayerRowKey">@game.PlayersAtGame.SingleOrDefault(o => o.PlayerAtGameEntity.PlayerRowKey == transactionEntityForGame.PlayerRowKey).Player.PlayerEntity.Name</a></td>
                     <td class="d-none d-lg-table-cell">@transactionEntityForGame.Notes</td>
                 </tr>
             }
         </tbody>
     </table>
+
+    <h4>Players still to pay for Game</h4>
+    <p>Players at game with zero balance.</p>
+    @foreach (var pag in game.PlayersAtGame.Where(o => o.Player.Balance <= 0))
+    {
+        <p><a href="/players/@pag.Player.PlayerEntity.RowKey">@pag.Player.PlayerEntity.Name</a>, <CurrencyDisplay Amount="pag.Player.Balance" /></p>
+    }
 
     <div>
         <a class="btn btn-secondary me-3 mb-3" href="/transactions/"><i class="fa-solid fa-arrow-left"></i> All Transactions</a>

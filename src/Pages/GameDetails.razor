@@ -60,7 +60,7 @@
             @foreach (var pag in game.PlayersAtGame)
             {
                 <tr>
-                    <td>@pag.Player.PlayerEntity.Name</td>
+                    <td><a href="players/@pag.Player.PlayerEntity.RowKey">@pag.Player.PlayerEntity.Name</a></td>
                     <td class="d-none d-lg-table-cell">@pag.Player.PlayerEntity.Position</td>
                     <td>
                         <InputSelect class="form-select" @bind-Value=pag.PlayerAtGameEntity.Forecast @bind-Value:after="() => EditPagEntity(pag.PlayerAtGameEntity)" >

@@ -1,0 +1,69 @@
+@page "/transactions/{TransactionRowKey}"
+@inject ITransactionService TransactionService
+@inject NavigationManager Navigation
+
+<PageTitle>TNF - Transaction @transaction.Player.PlayerEntity.Name @transaction.TransactionEntity.Date.Date.ToShortDateString()</PageTitle>
+
+<h1>@transaction.Player.PlayerEntity.Name @transaction.TransactionEntity.Date.Date.ToShortDateString()</h1>
+
+<p>Transactions cannot be edited, only deleted</p>
+
+<h5>Row Key</h5>
+<p >@transaction.TransactionEntity.RowKey</p>
+
+<h5>Date</h5>
+<p>@transaction.TransactionEntity.Date.Date.ToLongDateString()</p>
+
+<h5>Amount</h5>
+<p><CurrencyDisplay Amount="@transaction.TransactionEntity.Amount" ></CurrencyDisplay></p>
+
+<h5>Notes</h5>
+@if (transaction.TransactionEntity.Notes is not null)
+{
+    <p>@transaction.TransactionEntity.Notes</p>
+}
+else
+{
+    <p>No Notes</p>
+}
+
+<h5>Player</h5>
+<p><a href="players/@transaction.Player.PlayerEntity.RowKey">@transaction.Player.PlayerEntity.Name</a></p>
+
+<h5>Game</h5>
+@if (transaction.Game is not null)
+{
+    <p><a href="games/@transaction.Game.GameEntity.RowKey">@transaction.Game.GameEntity.Date.Date.ToLongDateString()</a></p>
+}
+else
+{
+    <p>No Game</p>
+}
+
+<div class="mb-3">
+    <a class="btn btn-secondary" href="/transactions/"><i class="fa-solid fa-arrow-left"></i> All Transactions</a>
+    <button class="btn btn-secondary" @onclick="Delete" ><i class="fa-solid fa-trash"></i> Delete Transaction</button>
+</div>
+
+@code {
+    [Parameter]
+    public string TransactionRowKey { get; set; }
+
+    private Transaction transaction;
+
+    protected override void OnInitialized()
+    {
+        RefreshData();
+    }
+
+    private async Task Delete()
+    {
+        await TransactionService.DeleteTransaction(transaction.TransactionEntity.RowKey);
+        Navigation.NavigateTo("/transactions");
+    }
+
+    private void RefreshData()
+    {
+        transaction = TransactionService.GetTransaction(TransactionRowKey);
+    }
+}

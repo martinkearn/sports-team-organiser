@@ -1,6 +1,5 @@
 @page "/transactions"
-@inject IStorageService StorageService
-@inject NavigationManager Navigation
+@inject ITransactionService TransactionService
 
 <PageTitle>TNF - Transactions</PageTitle>
 
@@ -18,59 +17,34 @@
             <th scope="col">Player</th>
             <th scope="col" class="d-none d-lg-table-cell">Game</th>
             <th scope="col" class="d-none d-lg-table-cell">Notes</th>
-            <th scope="col">Actions</th>
         </tr>
     </thead>
     <tbody>
         @foreach (var transaction in transactions)
         {
+            var gameDate = (transaction.Game is null) ? "No game" : transaction.Game.GameEntity.Date.Date.ToShortDateString();
+            
             <tr>
-                <td>@transaction.Date.Date.ToShortDateString()</td>
-                <td><CurrencyDisplay Amount="@transaction.Amount" /></td>
-                <td>@players.Single(p => p.RowKey == transaction.PlayerRowKey).Name</td>
-                <td class="d-none d-lg-table-cell">@games.SingleOrDefault(g => g.RowKey == transaction.GameRowKey)?.Date.Date.ToShortDateString()</td>
-                <td class="d-none d-lg-table-cell">@transaction.Notes</td>
-                <td>
-                    <button type="button" class="btn btn-outline-secondary" @onclick="() => DeleteTransaction(transaction.RowKey)"><i class="fa-solid fa-trash"></i> Delete</button>
-                </td>
+                <td><a href="/transactions/@transaction.TransactionEntity.RowKey">@transaction.TransactionEntity.Date.Date.ToShortDateString()</a></td>
+                <td><CurrencyDisplay Amount="@transaction.TransactionEntity.Amount" /></td>
+                <td>@transaction.Player.PlayerEntity.Name</td>
+                <td class="d-none d-lg-table-cell">@gameDate</td>
+                <td class="d-none d-lg-table-cell">@transaction.TransactionEntity.Notes</td>
             </tr>
         }
     </tbody>
 </table>
 
 @code {
-    private List<TransactionEntity> transactions = new();
-    private List<PlayerEntity> players = new();
-
-    private List<GameEntity> games = new();
+    private List<Transaction> transactions = new();
 
     protected override void OnInitialized()
     {
         RefreshData();
     }
 
-    protected async Task EditTransaction(TransactionEntity editedTransaction)
-    {
-        await StorageService.UpsertEntity<TransactionEntity>(editedTransaction);
-        RefreshData();
-    }
-
-    async Task DeleteTransaction(string rowKey)
-    {
-        await StorageService.DeleteEntity<TransactionEntity>(rowKey);
-        RefreshData();
-    }
-
     private void RefreshData()
     {
-        transactions = StorageService.QueryEntities<TransactionEntity>()
-            .OrderByDescending(t => t.Date)
-            .ToList();
-        players = StorageService.QueryEntities<PlayerEntity>()            
-            .OrderBy(p => p.Name)
-            .ToList();
-        games = StorageService.QueryEntities<GameEntity>()
-            .OrderByDescending(g => g.Date)
-            .ToList();
+        transactions = TransactionService.GetTransactions();
     }
 }

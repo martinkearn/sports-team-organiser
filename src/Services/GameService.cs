@@ -143,7 +143,7 @@ namespace STO.Services
                 // Construct Game
                 var Game = new Game(ge)
                 {
-                    Transactions = gamesTransactionEntities,
+                    TransactionsEntities = gamesTransactionEntities,
                     PlayersAtGame = playersAtGameWithTeams,
                     TeamA = teamA,
                     TeamB = teamB

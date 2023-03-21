@@ -1,7 +1,7 @@
 @page "/games/{GameRowKey}"
-@inject IStorageService StorageService
 @inject IPlayerService PlayerService
 @inject IGameService GameService
+@inject ITransactionService TransactionService
 
 <PageTitle>TNF - Game @game.GameEntity.Date</PageTitle>
 
@@ -24,11 +24,11 @@
 
     <h4>Add Player at Game</h4>
     <div class="pb-4">
-        <EditForm Model="@newPag" OnValidSubmit="AddPag" class="row row-cols-lg-auto g-3 align-items-center">
+        <EditForm Model="@newPagEntity" OnValidSubmit="AddPagEntity" class="row row-cols-lg-auto g-3 align-items-center">
             <DataAnnotationsValidator />
             <ValidationSummary />
             <div class="col-12">
-                <InputSelect class="form-select" @bind-Value="newPag.PlayerRowKey">
+                <InputSelect class="form-select" @bind-Value="newPagEntity.PlayerRowKey">
                     <option value="">Select player ...</option>
                     @foreach (var player in players)
                     {
@@ -40,7 +40,7 @@
                 </InputSelect>
             </div>
             <div class="col-12">
-                <button type="submit" class="btn btn-secondary">Add Player to Game</button>
+                <button type="submit" class="btn btn-secondary"><i class="fa-solid fa-plus"></i> Add Player to Game</button>
             </div>
         </EditForm>
     </div>
@@ -63,18 +63,18 @@
                     <td>@pag.Player.PlayerEntity.Name</td>
                     <td class="d-none d-lg-table-cell">@pag.Player.PlayerEntity.Position</td>
                     <td>
-                        <InputSelect class="form-select" @bind-Value=pag.PlayerAtGameEntity.Forecast @bind-Value:after="() => EditPlayerAtGame(pag.PlayerAtGameEntity)" >
+                        <InputSelect class="form-select" @bind-Value=pag.PlayerAtGameEntity.Forecast @bind-Value:after="() => EditPagEntity(pag.PlayerAtGameEntity)" >
                             <option value="Yes">Yes</option>
                             <option value="Maybe">Maybe</option>
                         </InputSelect>
                     </td>
                     <td>
                         <div class="form-check form-switch">
-                            <InputCheckbox class="form-check-input" type="checkbox" role="switch" @bind-Value=pag.PlayerAtGameEntity.Played @bind-Value:after="() => EditPlayerAtGame(pag.PlayerAtGameEntity)"></InputCheckbox>
+                            <InputCheckbox class="form-check-input" type="checkbox" role="switch" @bind-Value=pag.PlayerAtGameEntity.Played @bind-Value:after="() => EditPagEntity(pag.PlayerAtGameEntity)"></InputCheckbox>
                         </div>
                     </td>
                     <td>
-                        <button type="button" class="btn btn-outline-secondary" @onclick="() => DeletePag(pag.PlayerAtGameEntity)"><i class="fa-solid fa-trash"></i> Remove from game</button>
+                        <button type="button" class="btn btn-outline-secondary" @onclick="() => DeletePagEntity(pag.PlayerAtGameEntity)"><i class="fa-solid fa-trash"></i> Remove from game</button>
                     </td>
                 </tr>
             }
@@ -98,11 +98,11 @@
 
     <h4>Add Transaction</h4>
     <div class="pb-4">
-        <EditForm Model="@newPagTransaction" OnValidSubmit="AddPagTransaction" class="row row-cols-lg-auto g-3 align-items-center">
+        <EditForm Model="@newPagTransactionEntity" OnValidSubmit="AddPagTransaction" class="row row-cols-lg-auto g-3 align-items-center">
             <DataAnnotationsValidator />
             <ValidationSummary />
             <div class="col-12">
-                <InputSelect class="form-select" @bind-Value="newPagTransaction.PlayerRowKey" @oninput="NewPagTransactionPlayerChanged">
+                <InputSelect class="form-select" @bind-Value="newPagTransactionEntity.PlayerRowKey" @oninput="NewPagTransactionPlayerChanged">
                     <option value="">Select player ...</option>
                     @foreach (var player in players)
                     {
@@ -114,10 +114,10 @@
                 </InputSelect>
             </div>
             <div class="col-12">
-                <CurrencyDisplay Amount="newPagTransaction.Amount" ></CurrencyDisplay>
+                <CurrencyDisplay Amount="newPagTransactionEntity.Amount" ></CurrencyDisplay>
             </div>
             <div class="col-12">
-                <button type="submit" class="btn btn-secondary">Add Transaction for Game</button>
+                <button type="submit" class="btn btn-secondary"><i class="fa-solid fa-plus"></i> Add Transaction for Game</button>
             </div>
         </EditForm>
     </div>
@@ -133,13 +133,13 @@
             </tr>
         </thead>
         <tbody>
-            @foreach (var transactionForGame in game.Transactions)
+            @foreach (var transactionEntityForGame in game.TransactionsEntities)
             {
                 <tr>
-                    <td>@transactionForGame.Date.Date.ToShortDateString()</td>
-                    <td><CurrencyDisplay Amount="@transactionForGame.Amount" /></td>
-                    <td>@players.Single(p => p.PlayerEntity.RowKey == transactionForGame.PlayerRowKey).PlayerEntity.Name</td>
-                    <td class="d-none d-lg-table-cell">@transactionForGame.Notes</td>
+                    <td><a href="transaction/@transactionEntityForGame.RowKey">@transactionEntityForGame.Date.Date.ToShortDateString()</a></td>
+                    <td><CurrencyDisplay Amount="@transactionEntityForGame.Amount" /></td>
+                    <td>@transactionEntityForGame.PlayerRowKey</td>
+                    <td class="d-none d-lg-table-cell">@transactionEntityForGame.Notes</td>
                 </tr>
             }
         </tbody>
@@ -191,24 +191,24 @@
 
     private string currentTab = "players";
 
-    private PlayerAtGameEntity newPag;
+    private PlayerAtGameEntity newPagEntity;
 
-    private TransactionEntity newPagTransaction;
+    private TransactionEntity newPagTransactionEntity;
 
     protected override void OnInitialized()
     {
         RefreshData();
     }
 
-    private async Task AddPag()
+    private async Task AddPagEntity()
     {
-        await GameService.UpsertPlayerAtGameEntity(newPag);
+        await GameService.UpsertPlayerAtGameEntity(newPagEntity);
         RefreshData();
     }
 
     private async Task AddPagTransaction()
     {
-        await StorageService.UpsertEntity<TransactionEntity>(newPagTransaction);
+        await TransactionService.UpsertTransactionEntity(newPagTransactionEntity);
         RefreshData();
     }
 
@@ -217,18 +217,17 @@
         if (e.Value != null)
         {
             var player = PlayerService.GetPlayer(e.Value.ToString());
-            newPagTransaction.Amount = player.PlayerEntity.DefaultRate;
+            newPagTransactionEntity.Amount = player.PlayerEntity.DefaultRate;
         }
     }
 
-
-    private async Task EditPlayerAtGame(PlayerAtGameEntity pag)
+    private async Task EditPagEntity(PlayerAtGameEntity pag)
     {
         await GameService.UpsertPlayerAtGameEntity(pag);
         RefreshData();
     }
 
-    private async Task DeletePag(PlayerAtGameEntity pag)
+    private async Task DeletePagEntity(PlayerAtGameEntity pag)
     {
         await GameService.DeletePlayerAtGameEntity(pag);
         RefreshData();
@@ -238,13 +237,13 @@
     {
         players = PlayerService.GetPlayers();
         game = GameService.GetGame(GameRowKey);
-        newPag = new PlayerAtGameEntity()
+        newPagEntity = new PlayerAtGameEntity()
         {
             GameRowKey = game.GameEntity.RowKey,
             Played = false,
             Forecast = PlayingOptions.Yes.ToString(),
         };
-        newPagTransaction = new TransactionEntity()
+        newPagTransactionEntity = new TransactionEntity()
         {
             GameRowKey = game.GameEntity.RowKey,
             Date = DateTimeOffset.UtcNow,

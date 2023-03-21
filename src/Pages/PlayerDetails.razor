@@ -1,5 +1,4 @@
 @page "/players/{PlayerRowKey}"
-@inject IStorageService StorageService
 @inject IPlayerService PlayerService
 
 <PageTitle>TNF - Players - @player.PlayerEntity.Name</PageTitle>
@@ -65,7 +64,7 @@
 
     async Task Edit()
     {
-        await StorageService.UpsertEntity<PlayerEntity>(player.PlayerEntity);
+        await PlayerService.UpsertPlayerEntity(player.PlayerEntity);
         RefreshData();
     }
 

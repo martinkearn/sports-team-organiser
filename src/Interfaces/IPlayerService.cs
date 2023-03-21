@@ -29,5 +29,11 @@ namespace STO.Interfaces
         /// </summary>
         /// <param name="playerRowkey">The RowKey for the PlayerEntities to delete.</param>
         public Task DeletePlayer(string playerRowkey);
+
+        /// <summary>
+        /// Adds a new PlayerEntity.
+        /// </summary>
+        /// <param name="playerEntity">The PlayerEntity to upsert.</param>
+        public Task UpsertPlayerEntity(PlayerEntity playerEntity);
     }
 }

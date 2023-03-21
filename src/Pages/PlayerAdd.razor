@@ -1,0 +1,60 @@
+@page "/players/add"
+@inject IPlayerService PlayerService
+@inject NavigationManager Navigation
+
+<PageTitle>TNF - Add Player</PageTitle>
+
+<h1>Add a PLayer</h1>
+
+<EditForm Model="@newPlayerEntity" OnSubmit="@Add">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+    <div class="mb-3">
+        <label for="addName" class="form-label">Name</label>
+        <InputText class="form-control" id="addName" @bind-Value="newPlayerEntity.Name" />
+    </div>
+
+    <div class="mb-3">
+        <label for="addTags" class="form-label">Position</label>
+        <InputSelect class="form-select" @bind-Value="newPlayerEntity.Position">
+            @foreach (string option in Enum.GetNames(typeof(PlayerPosition)))
+            {
+                <option value="@option">@option</option>
+            }
+        </InputSelect>
+    </div>
+
+    <div class="mb-3">
+        <label for="addDefaultRate" class="form-label">Default Rate</label>
+        <div class="input-group">
+            <span class="input-group-text">£</span>
+            <InputNumber type="number" min="0" class="form-control" id="addDefaultRate" @bind-Value="newPlayerEntity.DefaultRate" />
+        </div>
+        <div class="form-text">Default rate per game. Usually £3 or £4.</div>
+    </div>
+    
+    <div class="modal-footer">
+        <button type="submit" class="btn btn-primary">Add Player</button>
+    </div>
+</EditForm>
+
+@code {
+    private PlayerEntity newPlayerEntity = new();
+
+    protected override void OnInitialized()
+    {
+        RefreshData();
+    }
+
+    protected async Task Add()
+    {
+        await PlayerService.UpsertPlayerEntity(newPlayerEntity);
+        Navigation.NavigateTo("/players");
+    }
+
+    private void RefreshData()
+    {
+        newPlayerEntity = new();
+        newPlayerEntity.DefaultRate = 4;
+    }
+}

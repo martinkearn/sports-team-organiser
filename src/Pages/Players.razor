@@ -1,5 +1,4 @@
 @page "/players"
-@inject IStorageService StorageService
 @inject IPlayerService PlayerService
 
 <PageTitle>TNF - Players</PageTitle>
@@ -9,7 +8,7 @@
 <p>@players.Count players registered.</p>
 
 <div>
-    <button class="btn btn-secondary me-3 mb-3" data-bs-toggle="modal" data-bs-target="#addPlayerModal"><i class="fa-solid fa-plus"></i> Add Player</button>
+    <a class="btn btn-secondary me-3 mb-3" href="/players/add"><i class="fa-solid fa-plus"></i> Add Player</a>
 </div>
 
 <table class="table striped-columns table-hover">
@@ -34,71 +33,16 @@
     </tbody>
 </table>
 
-<!-- Add Modal -->
-<div class="modal fade" id="addPlayerModal" tabindex="-1" aria-labelledby="addPlayerModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h1 class="modal-title fs-5" id="addPlayerModalLabel">Add Shortcut</h1>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <EditForm Model="@newPlayer" OnSubmit="@Add">
-            <DataAnnotationsValidator />
-            <ValidationSummary />
-            <div class="mb-3">
-                <label for="addName" class="form-label">Name</label>
-                <InputText class="form-control" id="addName" @bind-Value="newPlayer.Name" />
-            </div>
-
-            <div class="mb-3">
-                <label for="addTags" class="form-label">Position</label>
-                <InputSelect class="form-select" @bind-Value="newPlayer.Position">
-                    @foreach (string option in Enum.GetNames(typeof(PlayerPosition)))
-                    {
-                        <option value="@option">@option</option>
-                    }
-                </InputSelect>
-            </div>
-
-            <div class="mb-3">
-                <label for="addDefaultRate" class="form-label">Default Rate</label>
-                <div class="input-group">
-                    <span class="input-group-text">£</span>
-                    <InputNumber type="number" min="0" class="form-control" id="addDefaultRate" @bind-Value="newPlayer.DefaultRate" />
-                </div>
-                <div class="form-text">Default rate per game. Usually £3 or £4.</div>
-            </div>
-            
-            <div class="modal-footer">
-                <button type="submit" class="btn btn-primary">Add Player</button>
-            </div>
-        </EditForm>
-      </div>
-    </div>
-  </div>
-</div>
-
 @code {
     private List<Player> players = new();
-
-    private PlayerEntity newPlayer = new();
 
     protected override void OnInitialized()
     {
         RefreshData();
     }
 
-    async Task Add()
-    {
-        await StorageService.UpsertEntity<PlayerEntity>(newPlayer);
-        RefreshData();
-    }
-
     private void RefreshData()
     {
-        newPlayer = new();
-        newPlayer.DefaultRate = 4;
         players = PlayerService.GetPlayers();
     }
 }

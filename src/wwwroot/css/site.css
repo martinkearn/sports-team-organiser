@@ -73,6 +73,9 @@ a, .btn-link {
     color: green; 
 }
 
+.black-text{
+    color: black; 
+}
 
 .nav-tabs{
     margin-bottom: 1rem;

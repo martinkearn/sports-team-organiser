@@ -54,6 +54,9 @@ namespace STO.Services
         {
             // Update PAG itself
             await _storageService.UpsertEntity<PlayerAtGameEntity>(pag);
+
+            // Get game
+            var game = GetGame(pag.GameRowKey);
         
             // Add / remove transactions
             var player = _playerService.GetPlayer(pag.PlayerRowKey);
@@ -65,7 +68,7 @@ namespace STO.Services
                     Amount = -player.PlayerEntity.DefaultRate,
                     Date = DateTimeOffset.UtcNow,
                     GameRowKey = pag.GameRowKey,
-                    Notes = $"Auto debited from game {pag.GameRowKey}"
+                    Notes = $"Debited for game {game.GameEntity.Date.Date.ToShortDateString()}"
                 };
                 await _storageService.UpsertEntity<TransactionEntity>(transaction);
             }

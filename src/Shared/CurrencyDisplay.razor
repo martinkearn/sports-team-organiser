@@ -6,7 +6,17 @@
 
     private string css;
 
+    protected override void OnParametersSet()
+    {
+        SetCss();
+    }
+
     protected override void OnInitialized()
+    {
+        SetCss();
+    }
+
+    private void SetCss()
     {
         switch (Amount)
         {

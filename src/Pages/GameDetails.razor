@@ -64,7 +64,7 @@
                 <tr>
                     <td><a href="players/@pag.Player.PlayerEntity.RowKey">@pag.Player.PlayerEntity.Name</a></td>
                     <td class="d-none d-lg-table-cell">@pag.Player.PlayerEntity.Position</td>
-                    <td  class="d-none d-lg-table-cell">
+                    <td class="d-none d-lg-table-cell">
                         <InputSelect class="form-select" @bind-Value=pag.PlayerAtGameEntity.Forecast @bind-Value:after="() => EditPagEntity(pag.PlayerAtGameEntity)" >
                             <option value="Yes">Yes</option>
                             <option value="Maybe">Maybe</option>
@@ -77,7 +77,7 @@
                     </td>
                     <td><CurrencyDisplay Amount="@pag.Player.Transactions.Sum(o => o.Amount)" /></td>
                     <td>
-                        <button type="button" class="btn btn-outline-secondary" @onclick="() => DeletePagEntity(pag.PlayerAtGameEntity)"><i class="fa-solid fa-trash"></i> Remove</button>
+                        <button type="button" class="btn btn-outline-secondary" @onclick="() => DeletePagEntity(pag.PlayerAtGameEntity)"><i class="fa-solid fa-trash"></i> <span class="d-none d-lg-block">Remove</span></button>
                     </td>
                 </tr>
             }

@@ -126,6 +126,7 @@
         <thead>
             <tr>
                 <th scope="col">Player</th>
+                <th scope="col" class="d-none d-lg-table-cell">Player at Game</th>
                 <th scope="col">Date/Time</th>
                 <th scope="col">Amount</th>
                 <th scope="col" class="d-none d-lg-table-cell">Notes</th>
@@ -135,7 +136,16 @@
             @foreach (var transactionEntityForGame in game.TransactionsEntities)
             {
                 <tr>
-                    <td><a href="players/@transactionEntityForGame.PlayerRowKey">@game.PlayersAtGame.SingleOrDefault(o => o.PlayerAtGameEntity.PlayerRowKey == transactionEntityForGame.PlayerRowKey).Player.PlayerEntity.Name</a></td>
+                    <td><a href="players/@transactionEntityForGame.PlayerRowKey">@players.SingleOrDefault(o => o.PlayerEntity.RowKey == transactionEntityForGame.PlayerRowKey).PlayerEntity.Name</a></td>
+                    @{var pagForTransaction = game.PlayersAtGame.SingleOrDefault(o => o.Player.PlayerEntity.RowKey == transactionEntityForGame.PlayerRowKey);}
+                    @if (pagForTransaction != default)
+                    {
+                        <td><a href="/pags/@pagForTransaction.PlayerAtGameEntity.RowKey">@pagForTransaction.Player.PlayerEntity.Name</a></td>
+                    }
+                    else
+                    {
+                        <td class="d-none d-lg-table-cell">No player at game</td>
+                    }
                     <td><a href="transaction/@transactionEntityForGame.RowKey">@transactionEntityForGame.Date.ToString("dd-MM-yy HH:mm")</a></td>
                     <td><CurrencyDisplay Amount="@transactionEntityForGame.Amount" /></td>
                     <td class="d-none d-lg-table-cell">@transactionEntityForGame.Notes</td>
@@ -171,15 +181,15 @@
     </ul>
 
     <h4>Team A - @game.TeamA.Count()</h4>
-    @foreach (var pagWithTeam in game.TeamA)
+    @foreach (var pag in game.TeamA)
     {
-        <p><a href="/players/@pagWithTeam.Player.PlayerEntity.RowKey">@pagWithTeam.Player.PlayerEntity.Name</a>, @pagWithTeam.Player.PlayerEntity.Position, @pagWithTeam.PlayerAtGameEntity.Forecast</p>
+        <p><a href="/pags/@pag.PlayerAtGameEntity.RowKey">@pag.Player.PlayerEntity.Name</a>, @pag.Player.PlayerEntity.Position, @pag.PlayerAtGameEntity.Forecast</p>
     }
 
     <h4>Team B - @game.TeamB.Count()</h4>
-    @foreach (var pagWithTeam in game.TeamB)
+    @foreach (var pag in game.TeamB)
     {
-        <p><a href="/players/@pagWithTeam.Player.PlayerEntity.RowKey">@pagWithTeam.Player.PlayerEntity.Name</a>, @pagWithTeam.Player.PlayerEntity.Position, @pagWithTeam.PlayerAtGameEntity.Forecast</p>
+        <p><a href="/pags/@pag.PlayerAtGameEntity.RowKey">@pag.Player.PlayerEntity.Name</a>, @pag.Player.PlayerEntity.Position, @pag.PlayerAtGameEntity.Forecast</p>
     }    
 }
 

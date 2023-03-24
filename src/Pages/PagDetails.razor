@@ -25,13 +25,13 @@
         <label class="form-label">Game</label>
         <span class="form-control-plaintext"><a href="/games/@pag.GameEntity.RowKey">@pag.GameEntity.Date.Date.ToLongDateString()</a></span>
     </div>    
-
-    <div class="modal-footer">
-        <a class="btn btn-secondary" href="/games/"><i class="fa-solid fa-arrow-left"></i> All Games</a>
-        <button class="btn btn-secondary" @onclick="Delete"><i class="fa-solid fa-trash"></i> Delete</button>
-        <button type="submit" class="btn btn-primary"><i class="fa-solid fa-floppy-disk"></i> Save</button>
-    </div>
 </EditForm>
+
+<div class="modal-footer">
+    <a class="btn btn-secondary" href="/games/"><i class="fa-solid fa-arrow-left"></i> All Games</a>
+    <button class="btn btn-secondary" @onclick="Delete"><i class="fa-solid fa-trash"></i> Delete</button>
+    <button type="submit" class="btn btn-primary"><i class="fa-solid fa-floppy-disk"></i> Save</button>
+</div>
 
 @code {
     [Parameter]
@@ -48,13 +48,13 @@
     async Task Edit()
     {
         await GameService.UpsertPlayerAtGameEntity(pag.PlayerAtGameEntity);
-        RefreshData();
+        Navigation.NavigateTo($"/games/{pag.PlayerAtGameEntity.GameRowKey}");
     }
 
     async Task Delete()
     {
         await GameService.DeletePlayerAtGameEntity(pag.PlayerAtGameEntity);
-        Navigation.NavigateTo("/games");
+        Navigation.NavigateTo($"/games/{pag.PlayerAtGameEntity.GameRowKey}");
     }
 
     private void RefreshData()

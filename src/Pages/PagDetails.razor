@@ -8,29 +8,48 @@
 
 <h1>@pageTitle</h1>
 
-<EditForm Model="@pag" OnValidSubmit="Edit">
-    <DataAnnotationsValidator />
-    <ValidationSummary />
-    <div class="mb-3">
-        <label class="form-label">RowKey</label>
-        <span class="form-control-plaintext">@pag.PlayerAtGameEntity.RowKey</span>
-    </div>
+<div class="mb-3">
+    <label class="form-label">RowKey</label>
+    <span class="form-control-plaintext">@pag.PlayerAtGameEntity.RowKey</span>
+</div>
 
-    <div class="mb-3">
-        <label class="form-label">Player Name</label>
-        <span class="form-control-plaintext"><a href="/players/@pag.Player.PlayerEntity.RowKey">@pag.Player.PlayerEntity.Name</a></span>
-    </div>
+<div class="mb-3">
+    <label class="form-label">Player Name</label>
+    <span class="form-control-plaintext"><a href="/players/@pag.Player.PlayerEntity.RowKey">@pag.Player.PlayerEntity.Name</a></span>
+</div>
 
-    <div class="mb-3">
-        <label class="form-label">Game</label>
-        <span class="form-control-plaintext"><a href="/games/@pag.GameEntity.RowKey">@pag.GameEntity.Date.Date.ToLongDateString()</a></span>
-    </div>    
-</EditForm>
+<div class="mb-3">
+    <label class="form-label">Game</label>
+    <span class="form-control-plaintext"><a href="/games/@pag.GameEntity.RowKey">@pag.GameEntity.Date.Date.ToLongDateString()</a></span>
+</div>    
+
+<div class="mb-3">
+    <label class="form-label">Playing Forecast</label>
+    <InputSelect class="form-select" @bind-Value=pag.PlayerAtGameEntity.Forecast @bind-Value:after="() => Edit()" >
+        <option value="Yes">Yes</option>
+        <option value="Maybe">Maybe</option>
+    </InputSelect>
+</div>
+
+<div class="mb-3">
+    <label class="form-label">Played</label>
+    <InputSelect class="form-select" @bind-Value=pag.PlayerAtGameEntity.Played @bind-Value:after="() => Edit()" >
+        <option value="true">Yes</option>
+        <option value="false">No</option>
+    </InputSelect>
+</div>
+
+<div class="mb-3">
+    <label class="form-label">Team</label>
+    <InputSelect class="form-select" @bind-Value=pag.PlayerAtGameEntity.Team @bind-Value:after="() => Edit()" >
+        <option value="A">Team A</option>
+        <option value="B">Team B</option>
+    </InputSelect>
+</div>
 
 <div class="modal-footer">
-    <a class="btn btn-secondary" href="/games/"><i class="fa-solid fa-arrow-left"></i> All Games</a>
+    <a class="btn btn-secondary" href="/games/@pag.GameEntity.RowKey"><i class="fa-solid fa-arrow-left"></i> Back to Game</a>
     <button class="btn btn-secondary" @onclick="Delete"><i class="fa-solid fa-trash"></i> Delete</button>
-    <button type="submit" class="btn btn-primary"><i class="fa-solid fa-floppy-disk"></i> Save</button>
 </div>
 
 @code {
@@ -48,7 +67,6 @@
     async Task Edit()
     {
         await GameService.UpsertPlayerAtGameEntity(pag.PlayerAtGameEntity);
-        Navigation.NavigateTo($"/games/{pag.PlayerAtGameEntity.GameRowKey}");
     }
 
     async Task Delete()

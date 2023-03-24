@@ -2,9 +2,9 @@
 @inject IGameService GameService
 @inject NavigationManager Navigation
 
-<PageTitle>TNF - Add Game</PageTitle>
+<PageTitle>TNF - @pageTitle</PageTitle>
 
-<h1>Add a Game</h1>
+<h1>@pageTitle</h1>
 
 <EditForm Model="@newGameEntity" OnSubmit="@Add">
     <DataAnnotationsValidator />
@@ -22,6 +22,8 @@
 @code {
     private GameEntity newGameEntity = new();
 
+    private string pageTitle;
+
     protected override void OnInitialized()
     {
         RefreshData();
@@ -37,5 +39,6 @@
     {
         newGameEntity = new();
         newGameEntity.Date = DateTimeOffset.UtcNow;
+        pageTitle = "Add a Game";
     }
 }

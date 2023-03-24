@@ -2,9 +2,9 @@
 @inject IPlayerService PlayerService
 @inject NavigationManager Navigation
 
-<PageTitle>TNF - Players - @player.PlayerEntity.Name</PageTitle>
+<PageTitle>TNF - @pageTitle</PageTitle>
 
-<h1>@player.PlayerEntity.Name</h1>
+<h1>@pageTitle</h1>
 
 <EditForm Model="@player.PlayerEntity" OnValidSubmit="Edit">
     <DataAnnotationsValidator />
@@ -47,7 +47,7 @@
 
     <div class="modal-footer">
         <a class="btn btn-secondary" href="/players/"><i class="fa-solid fa-arrow-left"></i>All Players</a>
-        <button class="btn btn-secondary" @onclick="Delete"><i class="fa-solid fa-trash"></i> Delete Player</button>
+        <button class="btn btn-secondary" @onclick="Delete"><i class="fa-solid fa-trash"></i> Delete</button>
         <button type="submit" class="btn btn-primary"><i class="fa-solid fa-floppy-disk"></i> Save</button>
     </div>
 </EditForm>
@@ -57,6 +57,8 @@
     public string PlayerRowKey { get; set; }
 
     private Player player;
+
+    private string pageTitle;
 
     protected override void OnInitialized()
     {
@@ -78,5 +80,6 @@
     private void RefreshData()
     {
         player = PlayerService.GetPlayer(PlayerRowKey);
+        pageTitle = $"Player: {player.PlayerEntity.Name}";
     }
 }

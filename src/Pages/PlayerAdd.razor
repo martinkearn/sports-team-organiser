@@ -2,9 +2,9 @@
 @inject IPlayerService PlayerService
 @inject NavigationManager Navigation
 
-<PageTitle>TNF - Add Player</PageTitle>
+<PageTitle>TNF - @pageTitle</PageTitle>
 
-<h1>Add a Player</h1>
+<h1>@pageTitle</h1>
 
 <EditForm Model="@newPlayerEntity" OnSubmit="@Add">
     <DataAnnotationsValidator />
@@ -41,6 +41,8 @@
 @code {
     private PlayerEntity newPlayerEntity = new();
 
+    private string pageTitle;
+
     protected override void OnInitialized()
     {
         RefreshData();
@@ -56,5 +58,6 @@
     {
         newPlayerEntity = new();
         newPlayerEntity.DefaultRate = 4;
+        pageTitle = "Add Player";
     }
 }

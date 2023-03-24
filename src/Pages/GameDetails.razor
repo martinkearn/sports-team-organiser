@@ -4,9 +4,10 @@
 @inject ITransactionService TransactionService
 @inject NavigationManager Navigation
 
-<PageTitle>TNF - Game @game.GameEntity.Date</PageTitle>
+<PageTitle>TNF - @pageTitle</PageTitle>
 
-<h1>@game.GameEntity.Date.Date.ToLongDateString()</h1>
+<h1>@pageTitle</h1>
+
 <p>Forecast: @game.PlayersAtGame.Where(p => p.PlayerAtGameEntity.Forecast == PlayingOptions.Yes.ToString()).Count() yes / @game.PlayersAtGame.Where(p => p.PlayerAtGameEntity.Forecast == PlayingOptions.Maybe.ToString()).Count() maybe <br> Actual: @game.PlayersAtGame.Where(p => p.PlayerAtGameEntity.Played == true).Count()</p>
 
 @if (currentTab == "players")
@@ -55,14 +56,13 @@
                 <th scope="col" class="d-none d-lg-table-cell">Playing</th>
                 <th scope="col">Played</th>
                 <th scope="col">Player's Balance</th>
-                <th scope="col">Actions</th>
             </tr>
         </thead>
         <tbody>
             @foreach (var pag in game.PlayersAtGame)
             {
                 <tr>
-                    <td><a href="players/@pag.Player.PlayerEntity.RowKey">@pag.Player.PlayerEntity.Name</a></td>
+                    <td><a href="/pags/@pag.PlayerAtGameEntity.RowKey">@pag.Player.PlayerEntity.Name</a></td>
                     <td class="d-none d-lg-table-cell">@pag.Player.PlayerEntity.Position</td>
                     <td class="d-none d-lg-table-cell">
                         <InputSelect class="form-select" @bind-Value=pag.PlayerAtGameEntity.Forecast @bind-Value:after="() => EditPagEntity(pag.PlayerAtGameEntity)" >
@@ -76,9 +76,6 @@
                         </div>
                     </td>
                     <td><CurrencyDisplay Amount="@pag.Player.Transactions.Sum(o => o.Amount)" /></td>
-                    <td>
-                        <button type="button" class="btn btn-outline-secondary" @onclick="() => DeletePagEntity(pag.PlayerAtGameEntity)"><i class="fa-solid fa-trash"></i> <span class="d-none d-lg-block">Remove</span></button>
-                    </td>
                 </tr>
             }
         </tbody>
@@ -205,6 +202,8 @@
 
     private TransactionEntity newPagTransactionEntity;
 
+    private string pageTitle;
+
     protected override void OnInitialized()
     {
         RefreshData();
@@ -237,12 +236,6 @@
         RefreshData();
     }
 
-    private async Task DeletePagEntity(PlayerAtGameEntity pag)
-    {
-        await GameService.DeletePlayerAtGameEntity(pag);
-        RefreshData();
-    }
-
     async Task DeleteGame()
     {
         await GameService.DeleteGame(game.GameEntity.RowKey);
@@ -265,6 +258,7 @@
             Date = DateTimeOffset.UtcNow,
             Notes = $"Credited for game {game.GameEntity.Date.Date.ToShortDateString()}"
         };
+        pageTitle = $"Game: {game.GameEntity.Date.Date.ToLongDateString()}";
     }
 
     private void SwitchTabPlayers() => currentTab = "players";

@@ -50,6 +50,15 @@ namespace STO.Services
             await _storageService.UpsertEntity<GameEntity>(gameEntity);
         }
 
+        public PlayerAtGame GetPlayerAtGame(string pagRowKey)
+        {
+            var pagEntity = _storageService.QueryEntities<PlayerAtGameEntity>().FirstOrDefault(o => o.RowKey == pagRowKey);
+            var pag = new PlayerAtGame(pagEntity);
+            pag.Player = _playerService.GetPlayer(pagEntity.PlayerRowKey);
+            pag.GameEntity = GetGame(pagEntity.GameRowKey).GameEntity;
+            return pag;
+        }
+
         public async Task UpsertPlayerAtGameEntity(PlayerAtGameEntity pag)
         {
             // Update PAG itself
@@ -137,6 +146,7 @@ namespace STO.Services
                 {
                     var pag = new PlayerAtGame(playersAtGameEntity);
                     pag.Player = _playerService.GetPlayer(playersAtGameEntity.PlayerRowKey);
+                    pag.GameEntity = ge;
                     playersAtGame.Add(pag);
                 }
 

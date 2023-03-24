@@ -2,9 +2,9 @@
 @inject ITransactionService TransactionService
 @inject NavigationManager Navigation
 
-<PageTitle>TNF - Transaction @transaction.Player.PlayerEntity.Name @transaction.TransactionEntity.Date.Date.ToShortDateString()</PageTitle>
+<PageTitle>TNF - @pageTitle</PageTitle>
 
-<h1>@transaction.Player.PlayerEntity.Name @transaction.TransactionEntity.Date.Date.ToShortDateString()</h1>
+<h1>@pageTitle</h1>
 
 <p>Transactions cannot be edited, only deleted</p>
 
@@ -51,6 +51,8 @@ else
 
     private Transaction transaction;
 
+    private string pageTitle;
+
     protected override void OnInitialized()
     {
         RefreshData();
@@ -65,5 +67,6 @@ else
     private void RefreshData()
     {
         transaction = TransactionService.GetTransaction(TransactionRowKey);
+        pageTitle = $"Transaction: {@transaction.Player.PlayerEntity.Name}, {@transaction.TransactionEntity.Date.Date.ToShortDateString()}";
     }
 }

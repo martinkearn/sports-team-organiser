@@ -1,0 +1,66 @@
+@page "/pags/{PagRowKey}"
+@inject IPlayerService PlayerService
+@inject IGameService GameService
+@inject ITransactionService TransactionService
+@inject NavigationManager Navigation
+
+<PageTitle>TNF - @pageTitle</PageTitle>
+
+<h1>@pageTitle</h1>
+
+<EditForm Model="@pag" OnValidSubmit="Edit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+    <div class="mb-3">
+        <label class="form-label">RowKey</label>
+        <span class="form-control-plaintext">@pag.PlayerAtGameEntity.RowKey</span>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Player Name</label>
+        <span class="form-control-plaintext"><a href="/players/@pag.Player.PlayerEntity.RowKey">@pag.Player.PlayerEntity.Name</a></span>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Game</label>
+        <span class="form-control-plaintext"><a href="/games/@pag.GameEntity.RowKey">@pag.GameEntity.Date.Date.ToLongDateString()</a></span>
+    </div>    
+
+    <div class="modal-footer">
+        <a class="btn btn-secondary" href="/games/"><i class="fa-solid fa-arrow-left"></i> All Games</a>
+        <button class="btn btn-secondary" @onclick="Delete"><i class="fa-solid fa-trash"></i> Delete</button>
+        <button type="submit" class="btn btn-primary"><i class="fa-solid fa-floppy-disk"></i> Save</button>
+    </div>
+</EditForm>
+
+@code {
+    [Parameter]
+    public string PagRowKey { get; set; }
+
+    private PlayerAtGame pag;
+    private string pageTitle;
+
+    protected override void OnInitialized()
+    {
+        RefreshData();
+    }
+
+    async Task Edit()
+    {
+        await GameService.UpsertPlayerAtGameEntity(pag.PlayerAtGameEntity);
+        RefreshData();
+    }
+
+    async Task Delete()
+    {
+        await GameService.DeletePlayerAtGameEntity(pag.PlayerAtGameEntity);
+        Navigation.NavigateTo("/games");
+    }
+
+    private void RefreshData()
+    {
+        pag = GameService.GetPlayerAtGame(PagRowKey);
+        pageTitle = $"Player at Game: {@pag.Player.PlayerEntity.Name}, {@pag.GameEntity.Date.Date.ToShortDateString()}";
+    }
+
+}

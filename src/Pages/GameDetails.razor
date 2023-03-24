@@ -154,13 +154,6 @@
         </tbody>
     </table>
 
-    <h4>Players still to pay for Game</h4>
-    <p>Players at game with zero balance.</p>
-    @foreach (var pag in game.PlayersAtGame.Where(o => o.Player.Balance <= 0))
-    {
-        <p><a href="/players/@pag.Player.PlayerEntity.RowKey">@pag.Player.PlayerEntity.Name</a>, <CurrencyDisplay Amount="pag.Player.Balance" /></p>
-    }
-
     <div>
         <a class="btn btn-secondary me-3 mb-3" href="/transactions/"><i class="fa-solid fa-arrow-left"></i> All Transactions</a>
     </div>
@@ -180,17 +173,91 @@
         </li>
     </ul>
 
-    <h4>Team A - @game.TeamA.Count()</h4>
-    @foreach (var pag in game.TeamA)
+    @if ((game.TeamA != null) && (game.TeamB != null))
     {
-        <p><a href="/pags/@pag.PlayerAtGameEntity.RowKey">@pag.Player.PlayerEntity.Name</a>, @pag.Player.PlayerEntity.Position, @pag.PlayerAtGameEntity.Forecast</p>
+        <h4>Team A - @game.TeamA.Count()</h4>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th scope="col">Player</th>
+                    <th scope="col">Position</th>
+                    <th scope="col" class="d-none d-lg-table-cell">Playing</th>
+                    <th scope="col">Switch Team</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var pag in game.TeamA)
+                {
+                    <tr>
+                        <td><a href="/pags/@pag.PlayerAtGameEntity.RowKey">@pag.Player.PlayerEntity.Name</a></td>
+                        <td>@pag.Player.PlayerEntity.Position</td>
+                        <td class="d-none d-lg-table-cell">@pag.PlayerAtGameEntity.Forecast</td>
+                        <td><button class="btn btn-outline-secondary" @onclick="() => SwitchPagTeam(pag.PlayerAtGameEntity)"><i class="fa-solid fa-repeat"></i></button></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        <h4>Team B - @game.TeamB.Count()</h4>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th scope="col">Player</th>
+                    <th scope="col">Position</th>
+                    <th scope="col" class="d-none d-lg-table-cell">Playing</th>
+                    <th scope="col">Switch Team</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var pag in game.TeamB)
+                {
+                    <tr>
+                        <td><a href="/pags/@pag.PlayerAtGameEntity.RowKey">@pag.Player.PlayerEntity.Name</a></td>
+                        <td>@pag.Player.PlayerEntity.Position</td>
+                        <td class="d-none d-lg-table-cell">@pag.PlayerAtGameEntity.Forecast</td>
+                        <td><button class="btn btn-outline-secondary" @onclick="() => SwitchPagTeam(pag.PlayerAtGameEntity)"><i class="fa-solid fa-repeat"></i></button></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        @if (pagsNoTeam.Count() > 0)
+        {
+            <h4>Players without a team</h4>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th scope="col">Player</th>
+                        <th scope="col">Position</th>
+                        <th scope="col" class="d-none d-lg-table-cell">Playing</th>
+                        <th scope="col">Assign Team</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var pag in pagsNoTeam)
+                    {
+                        <tr>
+                            <td><a href="/pags/@pag.PlayerAtGameEntity.RowKey">@pag.Player.PlayerEntity.Name</a></td>
+                            <td>@pag.Player.PlayerEntity.Position</td>
+                            <td class="d-none d-lg-table-cell">@pag.PlayerAtGameEntity.Forecast</td>
+                            <td>
+                                <button class="btn btn-outline-secondary" @onclick="() => AssignToTeamA(pag.PlayerAtGameEntity)"> <i class="fa-solid fa-a"></i> </button>
+                                <button class="btn btn-outline-secondary" @onclick="() => AssignToTeamB(pag.PlayerAtGameEntity)"> <i class="fa-solid fa-b"></i> </button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    }  
+    else
+    {
+        <p>No teams yet.</p>
     }
 
-    <h4>Team B - @game.TeamB.Count()</h4>
-    @foreach (var pag in game.TeamB)
-    {
-        <p><a href="/pags/@pag.PlayerAtGameEntity.RowKey">@pag.Player.PlayerEntity.Name</a>, @pag.Player.PlayerEntity.Position, @pag.PlayerAtGameEntity.Forecast</p>
-    }    
+    <div class="pb-4">
+        <button class="btn btn-secondary  me-3 mb-3" @onclick="CalculateTeams"><i class="fa-solid fa-gear"></i> Calculate Teams</button>
+    </div>
 }
 
 <div class="modal-footer">
@@ -212,23 +279,25 @@
 
     private TransactionEntity newPagTransactionEntity;
 
+    private List<PlayerAtGame> pagsNoTeam;
+
     private string pageTitle;
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        RefreshData();
+        await RefreshData();
     }
 
     private async Task AddPagEntity()
     {
         await GameService.UpsertPlayerAtGameEntity(newPagEntity);
-        RefreshData();
+        await RefreshData();
     }
 
     private async Task AddPagTransaction()
     {
         await TransactionService.UpsertTransactionEntity(newPagTransactionEntity);
-        RefreshData();
+        await RefreshData();
     }
 
     private void NewPagTransactionPlayerChanged(ChangeEventArgs e)
@@ -243,7 +312,7 @@
     private async Task EditPagEntity(PlayerAtGameEntity pag)
     {
         await GameService.UpsertPlayerAtGameEntity(pag);
-        RefreshData();
+        await RefreshData();
     }
 
     async Task DeleteGame()
@@ -252,10 +321,45 @@
         Navigation.NavigateTo("/games");
     }
 
-    private void RefreshData()
+    async Task CalculateTeams()
+    {
+        var playersAtGameWithTeams = await GameService.CalculateTeams(game.PlayersAtGame);
+        game.TeamA = playersAtGameWithTeams.Where(pag => pag.PlayerAtGameEntity.Team == "A").ToList();
+        game.TeamB = playersAtGameWithTeams.Where(pag => pag.PlayerAtGameEntity.Team == "B").ToList();
+    }
+
+    async Task SwitchPagTeam(PlayerAtGameEntity pag)
+    {
+        if (pag.Team == "A")
+        {
+            pag.Team = "B";
+        }
+        else
+        {
+            pag.Team = "A";
+        }
+        await GameService.UpsertPlayerAtGameEntity(pag);
+        await RefreshData();
+    }
+
+    async Task AssignToTeamA(PlayerAtGameEntity pag)
+    {
+        pag.Team = "A";
+        await GameService.UpsertPlayerAtGameEntity(pag);
+        await RefreshData();
+    }
+
+     async Task AssignToTeamB(PlayerAtGameEntity pag)
+    {
+        pag.Team = "B";
+        await GameService.UpsertPlayerAtGameEntity(pag);
+        await RefreshData();
+    }   
+
+    async Task RefreshData()
     {
         players = PlayerService.GetPlayers();
-        game = GameService.GetGame(GameRowKey);
+        game = await GameService.GetGame(GameRowKey);
         newPagEntity = new PlayerAtGameEntity()
         {
             GameRowKey = game.GameEntity.RowKey,
@@ -268,7 +372,9 @@
             Date = DateTimeOffset.UtcNow,
             Notes = $"Credited for game {game.GameEntity.Date.Date.ToShortDateString()}"
         };
+        pagsNoTeam = game.PlayersAtGame.Where(o => string.IsNullOrEmpty(o.PlayerAtGameEntity.Team)).ToList();
         pageTitle = $"Game: {game.GameEntity.Date.Date.ToLongDateString()}";
+
     }
 
     private void SwitchTabPlayers() => currentTab = "players";

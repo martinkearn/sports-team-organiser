@@ -40,14 +40,14 @@
 
     private string pageTitle;
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        RefreshData();
+        await RefreshData();
     }
 
-    private void RefreshData()
+    async Task RefreshData()
     {
-        transactions = TransactionService.GetTransactions();
+        transactions = await TransactionService.GetTransactions();
         pageTitle = "Transactions";
     }
 }

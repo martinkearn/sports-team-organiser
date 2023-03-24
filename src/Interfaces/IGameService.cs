@@ -10,19 +10,19 @@ namespace STO.Interfaces
         /// </summary>
         /// <param name="gameEntities">The list of GameEntities to convert.</param>
         /// <returns>List of Games.</returns>
-        public List<Game> GetGames(List<GameEntity> gameEntities);
+        public Task<List<Game>> GetGames(List<GameEntity> gameEntities);
 
         /// <summary>
         /// Converts all GameEntities to a full list of Games.
         /// </summary>
         /// <returns>List of Games.</returns>
-        public List<Game> GetGames();
+        public Task<List<Game>> GetGames();
 
         /// <summary>
         /// Gets a single Game.
         /// </summary>
         /// <returns>Game.</returns>
-        public Game GetGame(string gameRowKey);
+        public Task<Game> GetGame(string gameRowKey);
 
         /// <summary>
         /// Deletes the GameEntity and PlayerAtGameEntity associated with a Game.
@@ -40,7 +40,7 @@ namespace STO.Interfaces
         /// Gets a single Pag (player at game).
         /// </summary>
         /// <returns>PlayerAtGame.</returns>
-        public PlayerAtGame GetPlayerAtGame(string pagRowKey);
+        public Task<PlayerAtGame> GetPlayerAtGame(string pagRowKey);
 
         /// <summary>
         /// Upserts a player at a game, including transactions.
@@ -59,6 +59,6 @@ namespace STO.Interfaces
         /// </summary>
         /// <param name="pag">The PlayerAtGame collection to assign teams to.</param> 
         /// <returns>PlayerAtGame with team details.</returns>   
-        public List<PlayerAtGame> CalculateTeams(List<PlayerAtGame> pags);
+        public Task<List<PlayerAtGame>> CalculateTeams(List<PlayerAtGame> pags);
     }
 }

@@ -34,14 +34,14 @@
 
         private string pageTitle;
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        RefreshData();
+        await RefreshData();
     }
 
-    private void RefreshData()
+    private async Task RefreshData()
     {
-        games = GameService.GetGames();
+        games = await GameService.GetGames();
         pageTitle = "Games";
     }
 }

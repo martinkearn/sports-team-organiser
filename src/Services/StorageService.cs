@@ -22,10 +22,7 @@ namespace STO.Services
             _tableClient.CreateIfNotExists();
 
             // Load initial data
-            RefreshEntitiesFromStorage<PlayerEntity>();
-            RefreshEntitiesFromStorage<GameEntity>();
-            RefreshEntitiesFromStorage<TransactionEntity>();
-            RefreshEntitiesFromStorage<PlayerAtGameEntity>();
+            RefreshData();
         }
 
         public async Task DeleteEntity<T>(string rowKey) where T : class, ITableEntity
@@ -86,6 +83,14 @@ namespace STO.Services
                 return _tableClient.Query<T>($"PartitionKey eq '{typeof(T).ToString()}'").ToList();
             }
         }   
+
+        public void RefreshData()
+        {
+            RefreshEntitiesFromStorage<PlayerEntity>();
+            RefreshEntitiesFromStorage<GameEntity>();
+            RefreshEntitiesFromStorage<TransactionEntity>();
+            RefreshEntitiesFromStorage<PlayerAtGameEntity>();
+        }
 
         private void RefreshEntitiesFromStorage<T>() where T : class, ITableEntity
         {

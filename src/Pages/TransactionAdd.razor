@@ -5,9 +5,9 @@
 @inject NavigationManager Navigation
 @using Microsoft.AspNetCore.WebUtilities 
 
-<PageTitle>TNF - Add Transaction</PageTitle>
+<PageTitle>TNF - @pageTitle</PageTitle>
 
-<h1>Add a Transaction</h1>
+<h1>@pageTitle</h1>
 
 <EditForm Model="@newTransactionEntity" OnValidSubmit="Add">
     <DataAnnotationsValidator />
@@ -68,6 +68,8 @@
 
     private TransactionEntity newTransactionEntity = new();
 
+    private string pageTitle;
+
     protected override void OnInitialized()
     {
         // Get query string params
@@ -97,5 +99,7 @@
         players = PlayerService.GetPlayers();
 
         games = GameService.GetGames();
+
+        pageTitle = "Add Transaction";
     }
 }

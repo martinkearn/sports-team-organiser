@@ -1,9 +1,9 @@
 @page "/games"
 @inject IGameService GameService
 
-<PageTitle>TNF - Games</PageTitle>
+<PageTitle>TNF - @pageTitle</PageTitle>
 
-<h1>Games</h1>
+<h1>@pageTitle</h1>
 
 <div>
     <a class="btn btn-secondary me-3 mb-3" href="/games/add"><i class="fa-solid fa-plus"></i> Add Game</a>
@@ -32,6 +32,8 @@
 @code {
     private List<Game> games = new();
 
+        private string pageTitle;
+
     protected override void OnInitialized()
     {
         RefreshData();
@@ -40,5 +42,6 @@
     private void RefreshData()
     {
         games = GameService.GetGames();
+        pageTitle = "Games";
     }
 }

@@ -1,9 +1,9 @@
 @page "/transactions"
 @inject ITransactionService TransactionService
 
-<PageTitle>TNF - Transactions</PageTitle>
+<PageTitle>TNF - @pageTitle</PageTitle>
 
-<h1>Transactions</h1>
+<h1>@pageTitle</h1>
 
 <div>
     <a class="btn btn-secondary me-3 mb-3" href="/transactions/add"><i class="fa-solid fa-plus"></i> Add Transaction</a>
@@ -38,6 +38,8 @@
 @code {
     private List<Transaction> transactions = new();
 
+    private string pageTitle;
+
     protected override void OnInitialized()
     {
         RefreshData();
@@ -46,5 +48,6 @@
     private void RefreshData()
     {
         transactions = TransactionService.GetTransactions();
+        pageTitle = "Transactions";
     }
 }

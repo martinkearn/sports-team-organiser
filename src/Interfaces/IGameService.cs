@@ -37,6 +37,12 @@ namespace STO.Interfaces
         public Task UpsertGameEntity(GameEntity gameEntity);
 
         /// <summary>
+        /// Gets a single Pag (player at game).
+        /// </summary>
+        /// <returns>PlayerAtGame.</returns>
+        public PlayerAtGame GetPlayerAtGame(string pagRowKey);
+
+        /// <summary>
         /// Upserts a player at a game, including transactions.
         /// </summary>
         /// <param name="pag">The PlayerAtGame.</param>     

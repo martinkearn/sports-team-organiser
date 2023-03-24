@@ -1,9 +1,9 @@
 @page "/players"
 @inject IPlayerService PlayerService
 
-<PageTitle>TNF - Players</PageTitle>
+<PageTitle>TNF - @pageTitle</PageTitle>
 
-<h1>Players</h1>
+<h1>@pageTitle</h1>
 
 <p>@players.Count players registered.</p>
 
@@ -36,6 +36,8 @@
 @code {
     private List<Player> players = new();
 
+        private string pageTitle;
+
     protected override void OnInitialized()
     {
         RefreshData();
@@ -44,5 +46,6 @@
     private void RefreshData()
     {
         players = PlayerService.GetPlayers();
+        pageTitle = "Players";
     }
 }

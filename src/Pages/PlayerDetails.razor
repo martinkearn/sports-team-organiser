@@ -2,61 +2,58 @@
 @inject IPlayerService PlayerService
 @inject NavigationManager Navigation
 
-<PageTitle>TNF - Players - @player.PlayerEntity.Name</PageTitle>
+<PageTitle>TNF - @pageTitle</PageTitle>
 
-<h1>@player.PlayerEntity.Name</h1>
+<h1>@pageTitle</h1>
 
-<EditForm Model="@player.PlayerEntity" OnValidSubmit="Edit">
-    <DataAnnotationsValidator />
-    <ValidationSummary />
-    <div class="mb-3">
-        <label class="form-label">RowKey</label>
-        <span class="form-control-plaintext">@player.PlayerEntity.RowKey</span>
+<div class="mb-3">
+    <label class="form-label">RowKey</label>
+    <span class="form-control-plaintext">@player.PlayerEntity.RowKey</span>
+</div>
+
+<div class="mb-3">
+    <label class="form-label">Name</label>
+    <InputText class="form-control" id="addName" @bind-Value="player.PlayerEntity.Name" @bind-Value:after="() => Edit()" />
+</div>
+
+<div class="mb-3">
+    <label fclass="form-label">Position</label>
+    <InputSelect class="form-select" @bind-Value="player.PlayerEntity.Position" @bind-Value:after="() => Edit()">
+        @foreach (string option in Enum.GetNames(typeof(PlayerPosition)))
+        {
+            <option value="@option">@option</option>
+        }
+    </InputSelect>
+</div>
+
+<div class="mb-3">
+    <label class="form-label">Default Rate</label>
+    <div class="input-group">
+        <span class="input-group-text">£</span>
+        <InputNumber type="number" min="0" class="form-control" id="addDefaultRate" @bind-Value="player.PlayerEntity.DefaultRate" @bind-Value:after="() => Edit()"/>
     </div>
+    <div class="form-text">Default rate per game. Usually £3 or £4.</div>
+</div>
 
-    <div class="mb-3">
-        <label class="form-label">Name</label>
-        <InputText class="form-control" id="addName" @bind-Value="player.PlayerEntity.Name" />
-    </div>
+<div class="mb-3">
+    <label class="form-label">Balance</label>
+    <span class="form-control-plaintext">
+        <CurrencyDisplay Amount="@player.Balance"/>
+    </span>
+</div>
 
-    <div class="mb-3">
-        <label fclass="form-label">Position</label>
-        <InputSelect class="form-select" @bind-Value="player.PlayerEntity.Position">
-            @foreach (string option in Enum.GetNames(typeof(PlayerPosition)))
-            {
-                <option value="@option">@option</option>
-            }
-        </InputSelect>
-    </div>
-
-    <div class="mb-3">
-        <label class="form-label">Default Rate</label>
-        <div class="input-group">
-            <span class="input-group-text">£</span>
-            <InputNumber type="number" min="0" class="form-control" id="addDefaultRate" @bind-Value="player.PlayerEntity.DefaultRate" />
-        </div>
-        <div class="form-text">Default rate per game. Usually £3 or £4.</div>
-    </div>
-
-    <div class="mb-3">
-        <label class="form-label">Balance</label>
-        <span class="form-control-plaintext">
-            <CurrencyDisplay Amount="@player.Balance" />
-        </span>
-    </div>
-
-    <div class="modal-footer">
-        <a class="btn btn-secondary" href="/players/"><i class="fa-solid fa-arrow-left"></i>All Players</a>
-        <button class="btn btn-secondary" @onclick="Delete"><i class="fa-solid fa-trash"></i> Delete Player</button>
-        <button type="submit" class="btn btn-primary"><i class="fa-solid fa-floppy-disk"></i> Save</button>
-    </div>
-</EditForm>
+<div class="modal-footer">
+    <a class="btn btn-secondary" href="/players/"><i class="fa-solid fa-arrow-left"></i>All Players</a>
+    <button class="btn btn-secondary" @onclick="Delete"><i class="fa-solid fa-trash"></i> Delete</button>
+</div>
 
 @code {
     [Parameter]
     public string PlayerRowKey { get; set; }
 
     private Player player;
+
+    private string pageTitle;
 
     protected override void OnInitialized()
     {
@@ -66,7 +63,6 @@
     async Task Edit()
     {
         await PlayerService.UpsertPlayerEntity(player.PlayerEntity);
-        Navigation.NavigateTo("/players");
     }
 
     async Task Delete()
@@ -78,5 +74,6 @@
     private void RefreshData()
     {
         player = PlayerService.GetPlayer(PlayerRowKey);
+        pageTitle = $"Player: {player.PlayerEntity.Name}";
     }
 }

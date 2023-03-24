@@ -70,7 +70,7 @@
 
     private string pageTitle;
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
         // Get query string params
         var uri = Navigation.ToAbsoluteUri(Navigation.Uri);
@@ -79,7 +79,7 @@
             gameRowKey = token.First();
         }
         
-        RefreshData();
+        await RefreshData();
     }
 
     protected async Task Add()
@@ -88,7 +88,7 @@
         Navigation.NavigateTo("/transactions");
     }
 
-    private void RefreshData()
+    async Task RefreshData()
     {
         newTransactionEntity = new();
         if (!string.IsNullOrEmpty(gameRowKey))
@@ -98,7 +98,7 @@
 
         players = PlayerService.GetPlayers();
 
-        games = GameService.GetGames();
+        games = await GameService.GetGames();
 
         pageTitle = "Add Transaction";
     }

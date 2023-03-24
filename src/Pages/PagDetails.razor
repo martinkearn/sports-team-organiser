@@ -59,9 +59,9 @@
     private PlayerAtGame pag;
     private string pageTitle;
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        RefreshData();
+        await RefreshData();
     }
 
     async Task Edit()
@@ -75,9 +75,9 @@
         Navigation.NavigateTo($"/games/{pag.PlayerAtGameEntity.GameRowKey}");
     }
 
-    private void RefreshData()
+    async Task RefreshData()
     {
-        pag = GameService.GetPlayerAtGame(PagRowKey);
+        pag = await GameService.GetPlayerAtGame(PagRowKey);
         pageTitle = $"Player at Game: {@pag.Player.PlayerEntity.Name}, {@pag.GameEntity.Date.Date.ToShortDateString()}";
     }
 

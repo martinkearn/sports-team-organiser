@@ -13,7 +13,7 @@ namespace STO.Services
 
         public async Task DeleteGame(string gameRowkey)
         {
-            var game = GetGame(gameRowkey);
+            var game = await GetGame(gameRowkey);
 
             // Delete PAGs
             foreach(var pag in game.PlayersAtGame)
@@ -25,23 +25,24 @@ namespace STO.Services
             await _storageService.DeleteEntity<GameEntity>(gameRowkey);
         }
 
-        public List<Game> GetGames(List<GameEntity> gameEntities)
+        public async Task<List<Game>> GetGames(List<GameEntity> gameEntities)
         {
-            return GameEntitiesToGames(gameEntities);
+            return await GameEntitiesToGames(gameEntities);
         }
 
-        public List<Game> GetGames()
+        public async Task<List<Game>> GetGames()
         {
             var gameEntities = _storageService.QueryEntities<GameEntity>()
                 .OrderByDescending(g => g.Date)
                 .ToList();
-            return GameEntitiesToGames(gameEntities);
+            return await GameEntitiesToGames(gameEntities);
         }
 
-        public Game GetGame(string gameRowKey)
+        public async Task<Game> GetGame(string gameRowKey)
         {
             var gameEntities = _storageService.QueryEntities<GameEntity>().Where(g => g.RowKey == gameRowKey).ToList();
-            var matchingGame = GetGames(gameEntities).FirstOrDefault();
+            var games = await GetGames(gameEntities);
+            var matchingGame = games.FirstOrDefault();
             return matchingGame;
         }
 
@@ -50,12 +51,13 @@ namespace STO.Services
             await _storageService.UpsertEntity<GameEntity>(gameEntity);
         }
 
-        public PlayerAtGame GetPlayerAtGame(string pagRowKey)
+        public async Task<PlayerAtGame> GetPlayerAtGame(string pagRowKey)
         {
             var pagEntity = _storageService.QueryEntities<PlayerAtGameEntity>().FirstOrDefault(o => o.RowKey == pagRowKey);
+            var game = await GetGame(pagEntity.GameRowKey);
             var pag = new PlayerAtGame(pagEntity);
             pag.Player = _playerService.GetPlayer(pagEntity.PlayerRowKey);
-            pag.GameEntity = GetGame(pagEntity.GameRowKey).GameEntity;
+            pag.GameEntity = game.GameEntity;
             return pag;
         }
 
@@ -65,7 +67,7 @@ namespace STO.Services
             await _storageService.UpsertEntity<PlayerAtGameEntity>(pag);
 
             // Get game
-            var game = GetGame(pag.GameRowKey);
+            var game = await GetGame(pag.GameRowKey);
         
             // Add / remove transactions
             var player = _playerService.GetPlayer(pag.PlayerRowKey);
@@ -106,18 +108,27 @@ namespace STO.Services
             await _storageService.DeleteEntity<PlayerAtGameEntity>(pag.RowKey);
         }   
 
-        public List<PlayerAtGame> CalculateTeams(List<PlayerAtGame> pags)
+        public async Task<List<PlayerAtGame>> CalculateTeams(List<PlayerAtGame> pags)
         {
             var newPags = new List<PlayerAtGame>();
             var nextTeamToGetPag = "A";
 
             foreach (var position in Enum.GetNames(typeof(PlayerPosition)))
             {
-                var pagsInPosition = pags.Where(p => p.Player.PlayerEntity.Position.ToString() == position.ToString());
+                // Get pags in this position
+                var pagsInPosition = pags.Where(o => o.Player.PlayerEntity.Position.ToString() == position.ToString());
+
+                // Distribute pags in this position between teams
                 foreach (var pagInPosition in pagsInPosition)
                 {
+                    // Set team for page
                     pagInPosition.PlayerAtGameEntity.Team = nextTeamToGetPag;
                     newPags.Add(pagInPosition);
+
+                    // Update pag in storage
+                    await UpsertPlayerAtGameEntity(pagInPosition.PlayerAtGameEntity);
+
+                    // Set team for next pag
                     nextTeamToGetPag = (nextTeamToGetPag == "A") ? "B": "A";
                 }
             }
@@ -127,7 +138,7 @@ namespace STO.Services
             return newPags;
         }    
 
-        private List<Game> GameEntitiesToGames(List<GameEntity> gameEntities)
+        private async Task<List<Game>> GameEntitiesToGames(List<GameEntity> gameEntities)
         {
             var games = new List<Game>();
             foreach (var ge in gameEntities)
@@ -151,15 +162,14 @@ namespace STO.Services
                 }
 
                 // Add teams to PlayerAtGame
-                var playersAtGameWithTeams = CalculateTeams(playersAtGame);
-                var teamA = playersAtGameWithTeams.Where(pag => pag.PlayerAtGameEntity.Team == "A").ToList();
-                var teamB = playersAtGameWithTeams.Where(pag => pag.PlayerAtGameEntity.Team == "B").ToList();
+                var teamA = playersAtGame.Where(pag => pag.PlayerAtGameEntity.Team == "A").ToList();
+                var teamB = playersAtGame.Where(pag => pag.PlayerAtGameEntity.Team == "B").ToList();
 
                 // Construct Game
                 var Game = new Game(ge)
                 {
                     TransactionsEntities = gamesTransactionEntities,
-                    PlayersAtGame = playersAtGameWithTeams,
+                    PlayersAtGame = playersAtGame,
                     TeamA = teamA,
                     TeamB = teamB
                 };

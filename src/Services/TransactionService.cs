@@ -13,15 +13,15 @@ namespace STO.Services
             _gameService = gameService;
         }
 
-        public List<Transaction> GetTransactions(List<TransactionEntity> transactionEntities)
+        public async Task<List<Transaction>> GetTransactions(List<TransactionEntity> transactionEntities)
         {
-            return TransactionEntitiesToTransactions(transactionEntities);
+            return await TransactionEntitiesToTransactions(transactionEntities);
         }
 
-        public List<Transaction> GetTransactions()
+        public async Task<List<Transaction>> GetTransactions()
         {
             var TransactionEntities = _storageService.QueryEntities<TransactionEntity>().ToList();
-            return TransactionEntitiesToTransactions(TransactionEntities);
+            return await TransactionEntitiesToTransactions(TransactionEntities);
         }
 
         public async Task DeleteTransactionEntity(string rowKey)
@@ -29,10 +29,11 @@ namespace STO.Services
             await _storageService.DeleteEntity<TransactionEntity>(rowKey);
         }
 
-        public Transaction GetTransaction(string rowKey)
+        public async Task<Transaction> GetTransaction(string rowKey)
         {
             var transactionEntities = _storageService.QueryEntities<TransactionEntity>().Where(o => o.RowKey == rowKey).ToList();
-            var matchingTransaction = TransactionEntitiesToTransactions(transactionEntities).FirstOrDefault();
+            var transactions = await TransactionEntitiesToTransactions(transactionEntities);
+            var matchingTransaction = transactions.FirstOrDefault();
             return matchingTransaction;
         }
 
@@ -41,13 +42,13 @@ namespace STO.Services
             await _storageService.UpsertEntity<TransactionEntity>(transactionEntity);
         }
 
-        private List<Transaction> TransactionEntitiesToTransactions(List<TransactionEntity> transactionEntities)
+        private async Task<List<Transaction>> TransactionEntitiesToTransactions(List<TransactionEntity> transactionEntities)
         {
             var transactions = new List<Transaction>();
             foreach (var te in transactionEntities)
             {
                 var transactionPlayer = _playerService.GetPlayer(te.PlayerRowKey);
-                var transactionGame = _gameService.GetGame(te.GameRowKey);
+                var transactionGame = await _gameService.GetGame(te.GameRowKey);
 
                 var Transaction = new Transaction(te)
                 {

@@ -6,11 +6,18 @@
 
 <h1>Welcome to tuesday.football @username</h1>
 
+<button class="btn btn-primary" @onclick="RefreshData">Refresh Data</button>
+
 @code {
     private string username;
 
     protected override void OnInitialized()
     {
         username = HttpContextAccessor?.HttpContext?.Request.Headers["X-MS-CLIENT-PRINCIPAL-NAME"];
+    }
+
+    void RefreshData()
+    {
+        StorageService.RefreshData();
     }
 }

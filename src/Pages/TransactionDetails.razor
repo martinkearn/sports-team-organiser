@@ -53,9 +53,9 @@ else
 
     private string pageTitle;
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        RefreshData();
+        await RefreshData();
     }
 
     private async Task Delete()
@@ -64,9 +64,9 @@ else
         Navigation.NavigateTo("/transactions");
     }
 
-    private void RefreshData()
+    async Task RefreshData()
     {
-        transaction = TransactionService.GetTransaction(TransactionRowKey);
+        transaction = await TransactionService.GetTransaction(TransactionRowKey);
         pageTitle = $"Transaction: {@transaction.Player.PlayerEntity.Name}, {@transaction.TransactionEntity.Date.Date.ToShortDateString()}";
     }
 }

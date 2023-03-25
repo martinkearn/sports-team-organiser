@@ -162,14 +162,20 @@ namespace STO.Services
                 }
 
                 // Add teams to PlayerAtGame
-                var teamA = playersAtGame.Where(pag => pag.PlayerAtGameEntity.Team == "A").ToList();
-                var teamB = playersAtGame.Where(pag => pag.PlayerAtGameEntity.Team == "B").ToList();
+                var teamA = playersAtGame
+                    .Where(pag => pag.PlayerAtGameEntity.Team == "A")
+                    .OrderBy(o => o.Player.PlayerEntity.Name)
+                    .ToList();
+                var teamB = playersAtGame
+                    .Where(pag => pag.PlayerAtGameEntity.Team == "B")
+                    .OrderBy(o => o.Player.PlayerEntity.Name)
+                    .ToList();
 
                 // Construct Game
                 var Game = new Game(ge)
                 {
                     TransactionsEntities = gamesTransactionEntities,
-                    PlayersAtGame = playersAtGame,
+                    PlayersAtGame = playersAtGame.OrderBy(o => o.Player.PlayerEntity.Name).ToList(),
                     TeamA = teamA,
                     TeamB = teamB
                 };

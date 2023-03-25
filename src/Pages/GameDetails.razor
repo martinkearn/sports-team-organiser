@@ -136,9 +136,9 @@
             @foreach (var transactionEntityForGame in game.TransactionsEntities)
             {
                 <tr>
-                    <td><a href="transaction/@transactionEntityForGame.RowKey">@transactionEntityForGame.Date.ToString("dd MMM yyyy HH:mm")</a></td>
+                    <td><a href="/transactions/@transactionEntityForGame.RowKey">@transactionEntityForGame.Date.ToString("dd MMM yyyy HH:mm")</a></td>
                     <td><CurrencyDisplay Amount="@transactionEntityForGame.Amount" /></td>
-                    <td><a href="players/@transactionEntityForGame.PlayerRowKey">@players.SingleOrDefault(o => o.PlayerEntity.RowKey == transactionEntityForGame.PlayerRowKey).PlayerEntity.Name</a></td>
+                    <td><a href="/players/@transactionEntityForGame.PlayerRowKey">@players.SingleOrDefault(o => o.PlayerEntity.RowKey == transactionEntityForGame.PlayerRowKey).PlayerEntity.Name</a></td>
                     @{var pagForTransaction = game.PlayersAtGame.SingleOrDefault(o => o.Player.PlayerEntity.RowKey == transactionEntityForGame.PlayerRowKey);}
                     @if (pagForTransaction != default)
                     {

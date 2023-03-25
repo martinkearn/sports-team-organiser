@@ -146,7 +146,7 @@
                     {
                         <td class="d-none d-lg-table-cell">No player at game</td>
                     }
-                    <td><a href="transaction/@transactionEntityForGame.RowKey">@transactionEntityForGame.Date.ToString("dd-MM-yy HH:mm")</a></td>
+                    <td><a href="transaction/@transactionEntityForGame.RowKey">@transactionEntityForGame.Date.ToString("dd MMM yyyy HH:mm")</a></td>
                     <td><CurrencyDisplay Amount="@transactionEntityForGame.Amount" /></td>
                     <td class="d-none d-lg-table-cell">@transactionEntityForGame.Notes</td>
                 </tr>

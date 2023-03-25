@@ -59,8 +59,11 @@ namespace STO.Services
             var players = new List<Player>();
             foreach (var pe in playerEntities)
             {
-                var playersTransactions = _storageService.QueryEntities<TransactionEntity>().Where(t => t.PlayerRowKey == pe.RowKey).ToList();
-                var playerBalance = playersTransactions.Sum(t => t.Amount);
+                var playersTransactions = _storageService.QueryEntities<TransactionEntity>()
+                    .Where(o => o.PlayerRowKey == pe.RowKey)
+                    .OrderByDescending(o => o.Amount)
+                    .ToList();
+                var playerBalance = playersTransactions.Sum(o => o.Amount);
                 var player = new Player(pe)
                 {
                     Transactions = playersTransactions,

@@ -78,7 +78,7 @@
             @foreach (var transactionEntity in player.Transactions)
             {
                 <tr>
-                    <td><a href="/transactions/@transactionEntity.RowKey">@transactionEntity.Date.Date.ToShortDateString()</a></td>
+                    <td><a href="/transactions/@transactionEntity.RowKey">@transactionEntity.Date.ToString("dd MMM yyyy HH:mm")</a></td>
                     <td><CurrencyDisplay Amount="@transactionEntity.Amount" /></td>
                     <td class="d-none d-lg-table-cell"></td>
                     <td class="d-none d-lg-table-cell">@transactionEntity.Notes</td>

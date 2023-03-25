@@ -125,10 +125,10 @@
     <table class="table table-striped">
         <thead>
             <tr>
-                <th scope="col">Player</th>
-                <th scope="col" class="d-none d-lg-table-cell">Player at Game</th>
                 <th scope="col">Date/Time</th>
                 <th scope="col">Amount</th>
+                <th scope="col">Player</th>
+                <th scope="col" class="d-none d-lg-table-cell">Player at Game</th>
                 <th scope="col" class="d-none d-lg-table-cell">Notes</th>
             </tr>
         </thead>
@@ -136,7 +136,9 @@
             @foreach (var transactionEntityForGame in game.TransactionsEntities)
             {
                 <tr>
-                    <td><a href="players/@transactionEntityForGame.PlayerRowKey">@players.SingleOrDefault(o => o.PlayerEntity.RowKey == transactionEntityForGame.PlayerRowKey).PlayerEntity.Name</a></td>
+                    <td><a href="/transactions/@transactionEntityForGame.RowKey">@transactionEntityForGame.Date.ToString("dd MMM yyyy HH:mm")</a></td>
+                    <td><CurrencyDisplay Amount="@transactionEntityForGame.Amount" /></td>
+                    <td><a href="/players/@transactionEntityForGame.PlayerRowKey">@players.SingleOrDefault(o => o.PlayerEntity.RowKey == transactionEntityForGame.PlayerRowKey).PlayerEntity.Name</a></td>
                     @{var pagForTransaction = game.PlayersAtGame.SingleOrDefault(o => o.Player.PlayerEntity.RowKey == transactionEntityForGame.PlayerRowKey);}
                     @if (pagForTransaction != default)
                     {
@@ -146,8 +148,6 @@
                     {
                         <td class="d-none d-lg-table-cell">No player at game</td>
                     }
-                    <td><a href="transaction/@transactionEntityForGame.RowKey">@transactionEntityForGame.Date.ToString("dd-MM-yy HH:mm")</a></td>
-                    <td><CurrencyDisplay Amount="@transactionEntityForGame.Amount" /></td>
                     <td class="d-none d-lg-table-cell">@transactionEntityForGame.Notes</td>
                 </tr>
             }
@@ -324,8 +324,14 @@
     async Task CalculateTeams()
     {
         var playersAtGameWithTeams = await GameService.CalculateTeams(game.PlayersAtGame);
-        game.TeamA = playersAtGameWithTeams.Where(pag => pag.PlayerAtGameEntity.Team == "A").ToList();
-        game.TeamB = playersAtGameWithTeams.Where(pag => pag.PlayerAtGameEntity.Team == "B").ToList();
+        game.TeamA = playersAtGameWithTeams
+            .Where(pag => pag.PlayerAtGameEntity.Team == "A")
+            .OrderBy(o => o.Player.PlayerEntity.Name)
+            .ToList();
+        game.TeamB = playersAtGameWithTeams
+            .Where(pag => pag.PlayerAtGameEntity.Team == "B")
+            .OrderBy(o => o.Player.PlayerEntity.Name)
+            .ToList();
     }
 
     async Task SwitchPagTeam(PlayerAtGameEntity pag)

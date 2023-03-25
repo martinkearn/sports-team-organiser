@@ -61,7 +61,7 @@ namespace STO.Services
             {
                 var playersTransactions = _storageService.QueryEntities<TransactionEntity>()
                     .Where(o => o.PlayerRowKey == pe.RowKey)
-                    .OrderByDescending(o => o.Amount)
+                    .OrderByDescending(o => o.Date)
                     .ToList();
                 var playerBalance = playersTransactions.Sum(o => o.Amount);
                 var player = new Player(pe)

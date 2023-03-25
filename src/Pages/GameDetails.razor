@@ -125,10 +125,10 @@
     <table class="table table-striped">
         <thead>
             <tr>
-                <th scope="col">Player</th>
-                <th scope="col" class="d-none d-lg-table-cell">Player at Game</th>
                 <th scope="col">Date/Time</th>
                 <th scope="col">Amount</th>
+                <th scope="col">Player</th>
+                <th scope="col" class="d-none d-lg-table-cell">Player at Game</th>
                 <th scope="col" class="d-none d-lg-table-cell">Notes</th>
             </tr>
         </thead>
@@ -136,6 +136,8 @@
             @foreach (var transactionEntityForGame in game.TransactionsEntities)
             {
                 <tr>
+                    <td><a href="transaction/@transactionEntityForGame.RowKey">@transactionEntityForGame.Date.ToString("dd MMM yyyy HH:mm")</a></td>
+                    <td><CurrencyDisplay Amount="@transactionEntityForGame.Amount" /></td>
                     <td><a href="players/@transactionEntityForGame.PlayerRowKey">@players.SingleOrDefault(o => o.PlayerEntity.RowKey == transactionEntityForGame.PlayerRowKey).PlayerEntity.Name</a></td>
                     @{var pagForTransaction = game.PlayersAtGame.SingleOrDefault(o => o.Player.PlayerEntity.RowKey == transactionEntityForGame.PlayerRowKey);}
                     @if (pagForTransaction != default)
@@ -146,8 +148,6 @@
                     {
                         <td class="d-none d-lg-table-cell">No player at game</td>
                     }
-                    <td><a href="transaction/@transactionEntityForGame.RowKey">@transactionEntityForGame.Date.ToString("dd MMM yyyy HH:mm")</a></td>
-                    <td><CurrencyDisplay Amount="@transactionEntityForGame.Amount" /></td>
                     <td class="d-none d-lg-table-cell">@transactionEntityForGame.Notes</td>
                 </tr>
             }

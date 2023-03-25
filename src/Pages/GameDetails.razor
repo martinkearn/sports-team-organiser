@@ -324,8 +324,14 @@
     async Task CalculateTeams()
     {
         var playersAtGameWithTeams = await GameService.CalculateTeams(game.PlayersAtGame);
-        game.TeamA = playersAtGameWithTeams.Where(pag => pag.PlayerAtGameEntity.Team == "A").ToList();
-        game.TeamB = playersAtGameWithTeams.Where(pag => pag.PlayerAtGameEntity.Team == "B").ToList();
+        game.TeamA = playersAtGameWithTeams
+            .Where(pag => pag.PlayerAtGameEntity.Team == "A")
+            .OrderBy(o => o.Player.PlayerEntity.Name)
+            .ToList();
+        game.TeamB = playersAtGameWithTeams
+            .Where(pag => pag.PlayerAtGameEntity.Team == "B")
+            .OrderBy(o => o.Player.PlayerEntity.Name)
+            .ToList();
     }
 
     async Task SwitchPagTeam(PlayerAtGameEntity pag)

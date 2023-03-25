@@ -138,7 +138,7 @@ namespace STO.Services
             return newPags;
         }    
 
-        private async Task<List<Game>> GameEntitiesToGames(List<GameEntity> gameEntities)
+        private Task<List<Game>> GameEntitiesToGames(List<GameEntity> gameEntities)
         {
             var games = new List<Game>();
             foreach (var ge in gameEntities)
@@ -181,7 +181,7 @@ namespace STO.Services
                 };
                 games.Add(Game);
             }
-            return games;
+            return Task.FromResult(games);
         }
     }
 }

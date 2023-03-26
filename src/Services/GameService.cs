@@ -63,35 +63,7 @@ namespace STO.Services
 
         public async Task UpsertPlayerAtGameEntity(PlayerAtGameEntity pag)
         {
-            // Update PAG itself
             await _storageService.UpsertEntity<PlayerAtGameEntity>(pag);
-
-            // Get game
-            var game = await GetGame(pag.GameRowKey);
-        
-            // Add / remove transactions
-            var player = _playerService.GetPlayer(pag.PlayerRowKey);
-            if (pag.Played)
-            {
-                var transaction = new TransactionEntity()
-                {
-                    PlayerRowKey = pag.PlayerRowKey,
-                    Amount = -player.PlayerEntity.DefaultRate,
-                    Date = DateTimeOffset.UtcNow,
-                    GameRowKey = pag.GameRowKey,
-                    Notes = $"Debited for game {game.GameEntity.Date.Date.ToShortDateString()}"
-                };
-                await _storageService.UpsertEntity<TransactionEntity>(transaction);
-            }
-            else
-            {
-                // Get debit transactions (less than £0) for player and game
-                var playerGameDebits = player.Transactions.Where(t => t.GameRowKey == pag.GameRowKey).Where(t => t.Amount < 0);
-                foreach (var playerGameDebit in playerGameDebits)
-                {
-                    await _storageService.DeleteEntity<TransactionEntity>(playerGameDebit.RowKey);
-                }
-            }
         }
 
         public async Task DeletePlayerAtGameEntity(PlayerAtGameEntity pag)

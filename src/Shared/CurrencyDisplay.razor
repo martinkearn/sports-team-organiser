@@ -4,6 +4,9 @@
     [Parameter]
     public double Amount { get; set; }
 
+    [Parameter]
+    public bool BlackText { get; set; }
+
     private string css;
 
     protected override void OnParametersSet()
@@ -18,19 +21,26 @@
 
     private void SetCss()
     {
-        switch (Amount)
+        if (!BlackText)
         {
-            case (<0):
-                css = "red-text";
-                break;
-            case (0):
-                css = "black-text";
-                break;
-            case (>0):
-                css = "green-text";
-                break;
-            default:
-                break;
+            switch (Amount)
+            {
+                case (<0):
+                    css = "red-text";
+                    break;
+                case (0):
+                    css = "black-text";
+                    break;
+                case (>0):
+                    css = "green-text";
+                    break;
+                default:
+                    break;
+            }
+        }
+        else
+        {
+            css = "black-text";
         }
     }
 }

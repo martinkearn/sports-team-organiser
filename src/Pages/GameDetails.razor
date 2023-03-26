@@ -19,8 +19,11 @@
         <li class="nav-item">
             <a class="nav-link" @onclick="SwitchTabTransactions">Transactions</a>
         </li>
-                <li class="nav-item">
+        <li class="nav-item">
             <a class="nav-link" @onclick="SwitchTabTeams">Teams</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" @onclick="SwitchTabGame">Game</a>
         </li>
     </ul>
 
@@ -72,7 +75,7 @@
                     </td>
                     <td>
                         <div class="form-check form-switch">
-                            <InputCheckbox class="form-check-input" type="checkbox" role="switch" @bind-Value=pag.PlayerAtGameEntity.Played @bind-Value:after="() => EditPagEntity(pag.PlayerAtGameEntity)"></InputCheckbox>
+                            <InputCheckbox class="form-check-input" type="checkbox" role="switch" @bind-Value=pag.PlayerAtGameEntity.Played @bind-Value:after="() => BillRefundPagEntity(pag.PlayerAtGameEntity)"></InputCheckbox>
                         </div>
                     </td>
                     <td><CurrencyDisplay Amount="@pag.Player.Transactions.Sum(o => o.Amount)" /></td>
@@ -93,6 +96,9 @@
         </li>
         <li class="nav-item">
             <a class="nav-link" @onclick="SwitchTabTeams">Teams</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" @onclick="SwitchTabGame">Game</a>
         </li>
     </ul>
 
@@ -121,7 +127,6 @@
     </div>
 
     <h4>Transactions for Game</h4>
-    <p>Balance for the game: <CurrencyDisplay Amount="game.TransactionsEntities.Sum(o => o.Amount)"></CurrencyDisplay> </p>
     <table class="table table-striped">
         <thead>
             <tr>
@@ -171,11 +176,15 @@
         <li class="nav-item">
             <a class="nav-link active" @onclick="SwitchTabTeams">Teams</a>
         </li>
+        <li class="nav-item">
+            <a class="nav-link" @onclick="SwitchTabGame">Game</a>
+        </li>
     </ul>
 
     @if ((game.TeamA != null) && (game.TeamB != null))
     {
         <h4>Team A - @game.TeamA.Count()</h4>
+        <p>@game.TeamA.Where(t => t.Player.PlayerEntity.Position == PlayerPosition.Defender).Count() defenders, @game.TeamA.Where(t => t.Player.PlayerEntity.Position == PlayerPosition.Midfielder).Count() midfielders, @game.TeamA.Where(t => t.Player.PlayerEntity.Position == PlayerPosition.Forward).Count() forwards</p>
         <table class="table table-striped">
             <thead>
                 <tr>
@@ -199,6 +208,7 @@
         </table>
 
         <h4>Team B - @game.TeamB.Count()</h4>
+        <p>@game.TeamB.Where(t => t.Player.PlayerEntity.Position == PlayerPosition.Defender).Count() defenders, @game.TeamB.Where(t => t.Player.PlayerEntity.Position == PlayerPosition.Midfielder).Count() midfielders, @game.TeamB.Where(t => t.Player.PlayerEntity.Position == PlayerPosition.Forward).Count() forwards</p>
         <table class="table table-striped">
             <thead>
                 <tr>
@@ -260,6 +270,27 @@
     </div>
 }
 
+@if (currentTab == "game")
+{
+    <ul class="nav nav-tabs">
+        <li class="nav-item">
+            <a class="nav-link" @onclick="SwitchTabPlayers">Players</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" @onclick="SwitchTabTransactions">Transactions</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" @onclick="SwitchTabTeams">Teams</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link active" @onclick="SwitchTabGame">Game</a>
+        </li>
+    </ul>
+
+    <h4>Game Details</h4>
+    <p>Date: @game.GameEntity.Date.Date.ToString("dd MMM yyyy HH:mm") </p>
+}
+
 <div class="modal-footer">
     <a class="btn btn-secondary" href="/games/"><i class="fa-solid fa-arrow-left"></i> All Games</a>
     <button class="btn btn-secondary" @onclick="DeleteGame"><i class="fa-solid fa-trash"></i> Delete Game</button>
@@ -315,6 +346,42 @@
         await RefreshData();
     }
 
+    async Task BillRefundPagEntity(PlayerAtGameEntity pag)
+    {
+        // Get player for pag
+        var player = PlayerService.GetPlayer(pag.PlayerRowKey);
+
+        // Add / remove transactions if played / not played
+        if (pag.Played)
+        {
+            var transaction = new TransactionEntity()
+            {
+                PlayerRowKey = pag.PlayerRowKey,
+                Amount = -player.PlayerEntity.DefaultRate,
+                Date = DateTimeOffset.UtcNow,
+                GameRowKey = pag.GameRowKey,
+                Notes = $"Debited for game {game.GameEntity.Date.Date.ToShortDateString()}"
+            };
+            await TransactionService.UpsertTransactionEntity(transaction);
+        }
+        else
+        {
+            // Get debit transactions (less than £0) for player and game
+            var pagDebitTransactionEntities = player.Transactions
+                .Where(o => o.GameRowKey == pag.GameRowKey)
+                .Where(o => o.Amount < 0);
+            foreach (var pagDebitTransactionEntity in pagDebitTransactionEntities)
+            {
+                await TransactionService.DeleteTransactionEntity(pagDebitTransactionEntity.RowKey);
+            }
+        }
+
+        // Upsert pag
+        await GameService.UpsertPlayerAtGameEntity(pag);
+
+        await RefreshData();
+    }
+
     async Task DeleteGame()
     {
         await GameService.DeleteGame(game.GameEntity.RowKey);
@@ -332,6 +399,8 @@
             .Where(pag => pag.PlayerAtGameEntity.Team == "B")
             .OrderBy(o => o.Player.PlayerEntity.Name)
             .ToList();
+
+        await RefreshData();
     }
 
     async Task SwitchPagTeam(PlayerAtGameEntity pag)
@@ -386,4 +455,5 @@
     private void SwitchTabPlayers() => currentTab = "players";
     private void SwitchTabTransactions() => currentTab = "transactions";
     private void SwitchTabTeams() => currentTab = "teams";
+    private void SwitchTabGame() => currentTab = "game";
 }

@@ -17,10 +17,10 @@
             <a class="nav-link active" @onclick="SwitchTabPlayers">Players</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" @onclick="SwitchTabTransactions">Transactions</a>
+            <a class="nav-link" @onclick="SwitchTabTeams">Teams</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" @onclick="SwitchTabTeams">Teams</a>
+            <a class="nav-link" @onclick="SwitchTabTransactions">Transactions</a>
         </li>
         <li class="nav-item">
             <a class="nav-link" @onclick="SwitchTabGame">Game</a>
@@ -57,8 +57,9 @@
                 <th scope="col">Name</th>
                 <th scope="col" class="d-none d-lg-table-cell">Position</th>
                 <th scope="col" class="d-none d-lg-table-cell">Playing</th>
+                <th scope="col" class="d-none d-lg-table-cell">Balance</th>
                 <th scope="col">Played</th>
-                <th scope="col">Player's Balance</th>
+                <th scope="col">Team</th>
             </tr>
         </thead>
         <tbody>
@@ -73,95 +74,17 @@
                             <option value="Maybe">Maybe</option>
                         </InputSelect>
                     </td>
+                    <td class="d-none d-lg-table-cell"><CurrencyDisplay Amount="@pag.Player.Transactions.Sum(o => o.Amount)" /></td>
                     <td>
                         <div class="form-check form-switch">
                             <InputCheckbox class="form-check-input" type="checkbox" role="switch" @bind-Value=pag.PlayerAtGameEntity.Played @bind-Value:after="() => BillRefundPagEntity(pag.PlayerAtGameEntity)"></InputCheckbox>
                         </div>
                     </td>
-                    <td><CurrencyDisplay Amount="@pag.Player.Transactions.Sum(o => o.Amount)" /></td>
+                    <td>@pag.PlayerAtGameEntity.Team</td>
                 </tr>
             }
         </tbody>
     </table>
-}
-
-@if (currentTab == "transactions")
-{
-    <ul class="nav nav-tabs">
-        <li class="nav-item">
-            <a class="nav-link" @onclick="SwitchTabPlayers">Players</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link active" @onclick="SwitchTabTransactions">Transactions</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" @onclick="SwitchTabTeams">Teams</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" @onclick="SwitchTabGame">Game</a>
-        </li>
-    </ul>
-
-    <h4>Add Payment Transaction</h4>
-    <p>Add default amount as a payment for selected player for this game.</p>
-    <div class="pb-4">
-        <EditForm Model="@newPagTransactionEntity" OnValidSubmit="AddPagTransaction" class="row row-cols-lg-auto g-3 align-items-center">
-            <DataAnnotationsValidator />
-            <ValidationSummary />
-            <div class="col-12">
-                <InputSelect class="form-select" @bind-Value="newPagTransactionEntity.PlayerRowKey" @oninput="NewPagTransactionPlayerChanged">
-                    <option value="">Select player ...</option>
-                    @foreach (var player in players)
-                    {
-                        if (game.PlayersAtGame.SingleOrDefault(pag => pag.PlayerAtGameEntity.PlayerRowKey == player.PlayerEntity.RowKey) != default)
-                        {
-                            <option value="@player.PlayerEntity.RowKey">@player.PlayerEntity.Name</option>
-                        }
-                    }
-                </InputSelect>
-            </div>
-            <div class="col-12">
-                <button type="submit" class="btn btn-secondary"><i class="fa-solid fa-plus"></i> Add Transaction</button>
-            </div>
-        </EditForm>
-    </div>
-
-    <h4>Transactions for Game</h4>
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th scope="col">Date/Time</th>
-                <th scope="col">Amount</th>
-                <th scope="col">Player</th>
-                <th scope="col" class="d-none d-lg-table-cell">Player at Game</th>
-                <th scope="col" class="d-none d-lg-table-cell">Notes</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var transactionEntityForGame in game.TransactionsEntities)
-            {
-                <tr>
-                    <td><a href="/transactions/@transactionEntityForGame.RowKey">@transactionEntityForGame.Date.ToString("dd MMM yyyy HH:mm")</a></td>
-                    <td><CurrencyDisplay Amount="@transactionEntityForGame.Amount" /></td>
-                    <td><a href="/players/@transactionEntityForGame.PlayerRowKey">@players.SingleOrDefault(o => o.PlayerEntity.RowKey == transactionEntityForGame.PlayerRowKey).PlayerEntity.Name</a></td>
-                    @{var pagForTransaction = game.PlayersAtGame.SingleOrDefault(o => o.Player.PlayerEntity.RowKey == transactionEntityForGame.PlayerRowKey);}
-                    @if (pagForTransaction != default)
-                    {
-                        <td><a href="/pags/@pagForTransaction.PlayerAtGameEntity.RowKey">@pagForTransaction.Player.PlayerEntity.Name</a></td>
-                    }
-                    else
-                    {
-                        <td class="d-none d-lg-table-cell">No player at game</td>
-                    }
-                    <td class="d-none d-lg-table-cell">@transactionEntityForGame.Notes</td>
-                </tr>
-            }
-        </tbody>
-    </table>
-
-    <div>
-        <a class="btn btn-secondary me-3 mb-3" href="/transactions/"><i class="fa-solid fa-arrow-left"></i> All Transactions</a>
-    </div>
 }
 
 @if (currentTab == "teams")
@@ -171,10 +94,10 @@
             <a class="nav-link" @onclick="SwitchTabPlayers">Players</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" @onclick="SwitchTabTransactions">Transactions</a>
+            <a class="nav-link active" @onclick="SwitchTabTeams">Teams</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link active" @onclick="SwitchTabTeams">Teams</a>
+            <a class="nav-link" @onclick="SwitchTabTransactions">Transactions</a>
         </li>
         <li class="nav-item">
             <a class="nav-link" @onclick="SwitchTabGame">Game</a>
@@ -266,7 +189,94 @@
     }
 
     <div class="pb-4">
+        <a class="btn btn-secondary me-3 mb-3" href="/teamsheet/@game.GameEntity.RowKey"><i class="fa-solid fa-rectangle-list"></i> Teamsheet</a>
         <button class="btn btn-secondary  me-3 mb-3" @onclick="CalculateTeams"><i class="fa-solid fa-gear"></i> Calculate Teams</button>
+    </div>
+}
+
+@if (currentTab == "transactions")
+{
+    <ul class="nav nav-tabs">
+        <li class="nav-item">
+            <a class="nav-link" @onclick="SwitchTabPlayers">Players</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" @onclick="SwitchTabTeams">Teams</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link active" @onclick="SwitchTabTransactions">Transactions</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" @onclick="SwitchTabGame">Game</a>
+        </li>
+    </ul>
+
+    <h4>Add Payment Transaction</h4>
+    <p>Add default amount as a payment for selected player for this game.</p>
+    <div class="pb-4">
+        <EditForm Model="@newPagTransactionEntity" OnValidSubmit="AddPagTransaction" class="row row-cols-lg-auto g-3 align-items-center">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+            <div class="col-12">
+                <InputSelect class="form-select" @bind-Value="newPagTransactionEntity.PlayerRowKey" @oninput="NewPagTransactionPlayerChanged">
+                    <option value="">Select player ...</option>
+                    @foreach (var player in players)
+                    {
+                        if (game.PlayersAtGame.SingleOrDefault(pag => pag.PlayerAtGameEntity.PlayerRowKey == player.PlayerEntity.RowKey) != default)
+                        {
+                            <option value="@player.PlayerEntity.RowKey">@player.PlayerEntity.Name</option>
+                        }
+                    }
+                </InputSelect>
+            </div>
+            <div class="col-12">
+                <button type="submit" class="btn btn-secondary"><i class="fa-solid fa-plus"></i> Add Transaction</button>
+            </div>
+        </EditForm>
+    </div>
+
+    <h4>Transactions for Game</h4>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th scope="col">Date/Time</th>
+                <th scope="col">Amount</th>
+                <th scope="col">Player</th>
+                <th scope="col" class="d-none d-lg-table-cell">Player at Game</th>
+                <th scope="col" class="d-none d-lg-table-cell">Notes</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var transactionEntityForGame in game.TransactionsEntities)
+            {
+                <tr>
+                    <td><a href="/transactions/@transactionEntityForGame.RowKey">@transactionEntityForGame.Date.ToString("dd MMM yyyy HH:mm")</a></td>
+                    <td><CurrencyDisplay Amount="@transactionEntityForGame.Amount" /></td>
+                    <td><a href="/players/@transactionEntityForGame.PlayerRowKey">@players.SingleOrDefault(o => o.PlayerEntity.RowKey == transactionEntityForGame.PlayerRowKey).PlayerEntity.Name</a></td>
+                    @{var pagForTransaction = game.PlayersAtGame.SingleOrDefault(o => o.Player.PlayerEntity.RowKey == transactionEntityForGame.PlayerRowKey);}
+                    @if (pagForTransaction != default)
+                    {
+                        <td><a href="/pags/@pagForTransaction.PlayerAtGameEntity.RowKey">@pagForTransaction.Player.PlayerEntity.Name</a></td>
+                    }
+                    else
+                    {
+                        <td class="d-none d-lg-table-cell">No player at game</td>
+                    }
+                    <td class="d-none d-lg-table-cell">@transactionEntityForGame.Notes</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <h4>Players to chase</h4>
+    <p>Players that do not have enough funds on account to cover this game.</p>
+    @foreach (var pagLowFunds in game.PlayersAtGame.Where(o => o.Player.Balance < o.Player.PlayerEntity.DefaultRate))
+    {
+        <p>@pagLowFunds.Player.PlayerEntity.Name, <CurrencyDisplay Amount="@pagLowFunds.Player.Transactions.Sum(o => o.Amount)" /> on account</p>
+    }
+
+    <div>
+        <a class="btn btn-secondary me-3 mb-3" href="/transactions/"><i class="fa-solid fa-arrow-left"></i> All Transactions</a>
     </div>
 }
 
@@ -277,10 +287,10 @@
             <a class="nav-link" @onclick="SwitchTabPlayers">Players</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" @onclick="SwitchTabTransactions">Transactions</a>
+            <a class="nav-link" @onclick="SwitchTabTeams">Teams</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" @onclick="SwitchTabTeams">Teams</a>
+            <a class="nav-link" @onclick="SwitchTabTransactions">Transactions</a>
         </li>
         <li class="nav-item">
             <a class="nav-link active" @onclick="SwitchTabGame">Game</a>

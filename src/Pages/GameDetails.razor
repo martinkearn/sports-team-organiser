@@ -57,7 +57,7 @@
                 <th scope="col">Name</th>
                 <th scope="col" class="d-none d-lg-table-cell">Position</th>
                 <th scope="col" class="d-none d-lg-table-cell">Playing</th>
-                <th scope="col" class="d-none d-lg-table-cell">Player's Balance</th>
+                <th scope="col" class="d-none d-lg-table-cell">Balance</th>
                 <th scope="col">Played</th>
                 <th scope="col">Team</th>
             </tr>
@@ -266,6 +266,13 @@
             }
         </tbody>
     </table>
+
+    <h4>Players to chase</h4>
+    <p>Players that do not have enough funds on account to cover this game.</p>
+    @foreach (var pagLowFunds in game.PlayersAtGame.Where(o => o.Player.Balance < o.Player.PlayerEntity.DefaultRate))
+    {
+        <p>@pagLowFunds.Player.PlayerEntity.Name, <CurrencyDisplay Amount="@pagLowFunds.Player.Transactions.Sum(o => o.Amount)" /> on account</p>
+    }
 
     <div>
         <a class="btn btn-secondary me-3 mb-3" href="/transactions/"><i class="fa-solid fa-arrow-left"></i> All Transactions</a>

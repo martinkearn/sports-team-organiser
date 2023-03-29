@@ -1,0 +1,57 @@
+@page "/teamsheet/{GameRowKey}"
+@inject IGameService GameService
+@inject NavigationManager Navigation
+
+<PageTitle>TNF - @pageTitle</PageTitle>
+
+<h1>@pageTitle</h1>
+
+@if ((game.TeamA != null) && (game.TeamB != null))
+{
+    <hr>
+
+    <h4>Team A - @game.TeamA.Count()</h4>
+    <p>@game.TeamA.Where(t => t.Player.PlayerEntity.Position == PlayerPosition.Defender).Count() defenders, @game.TeamA.Where(t => t.Player.PlayerEntity.Position == PlayerPosition.Midfielder).Count() midfielders, @game.TeamA.Where(t => t.Player.PlayerEntity.Position == PlayerPosition.Forward).Count() forwards</p>
+    @foreach (var pag in game.TeamA)
+    {
+        <p><b>@pag.Player.PlayerEntity.Name</b>, @pag.Player.PlayerEntity.Position, @pag.PlayerAtGameEntity.Forecast</p>
+    }
+
+    <hr>
+
+    <h4>Team B - @game.TeamB.Count() (wear bibs)</h4>
+    <p>@game.TeamB.Where(t => t.Player.PlayerEntity.Position == PlayerPosition.Defender).Count() defenders, @game.TeamB.Where(t => t.Player.PlayerEntity.Position == PlayerPosition.Midfielder).Count() midfielders, @game.TeamB.Where(t => t.Player.PlayerEntity.Position == PlayerPosition.Forward).Count() forwards</p>
+    @foreach (var pag in game.TeamB)
+    {
+        <p><b>@pag.Player.PlayerEntity.Name</b>, @pag.Player.PlayerEntity.Position, @pag.PlayerAtGameEntity.Forecast</p>
+    }
+}  
+else
+{
+    <p>No teams yet.</p>
+}
+
+<div class="modal-footer">
+    <a class="btn btn-secondary" href="/games/@GameRowKey"><i class="fa-solid fa-arrow-left"></i> Back to Game</a>
+</div>
+
+@code {
+    [Parameter]
+    public string GameRowKey { get; set; }
+
+    private Game game;
+
+    private string pageTitle;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await RefreshData();
+    }
+
+    async Task RefreshData()
+    {
+        game = await GameService.GetGame(GameRowKey);
+        pageTitle = $"Teamsheet: {game.GameEntity.Date.Date.ToLongDateString()}";
+
+    }
+}

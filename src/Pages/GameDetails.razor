@@ -148,108 +148,6 @@
     </table>
 }
 
-@* @if (currentTab == "teams")
-{
-    <ul class="nav nav-tabs">
-        <li class="nav-item">
-            <a class="nav-link" @onclick="SwitchTabGame">Game</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" @onclick="SwitchTabPlayers">Players</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link active" @onclick="SwitchTabTeams">Teams</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" @onclick="SwitchTabTransactions">Transactions</a>
-        </li>
-    </ul>
-
-    @if ((game.TeamA != null) && (game.TeamB != null))
-    {
-        <h4>Team A - @game.TeamA.Count()</h4>
-        <p>@game.TeamA.Where(t => t.Player.PlayerEntity.Position == PlayerPosition.Defender).Count() defenders, @game.TeamA.Where(t => t.Player.PlayerEntity.Position == PlayerPosition.Midfielder).Count() midfielders, @game.TeamA.Where(t => t.Player.PlayerEntity.Position == PlayerPosition.Forward).Count() forwards</p>
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th scope="col">Player</th>
-                    <th scope="col">Position</th>
-                    <th scope="col" class="d-none d-lg-table-cell">Playing</th>
-                    <th scope="col">Switch Team</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var pag in game.TeamA)
-                {
-                    <tr>
-                        <td><a href="/pags/@pag.PlayerAtGameEntity.RowKey">@pag.Player.PlayerEntity.Name</a></td>
-                        <td>@pag.Player.PlayerEntity.Position</td>
-                        <td class="d-none d-lg-table-cell">@pag.PlayerAtGameEntity.Forecast</td>
-                        <td><button class="btn btn-outline-secondary" @onclick="() => SwitchPagTeam(pag.PlayerAtGameEntity)"><i class="fa-solid fa-repeat"></i></button></td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-
-        <h4>Team B - @game.TeamB.Count()</h4>
-        <p>@game.TeamB.Where(t => t.Player.PlayerEntity.Position == PlayerPosition.Defender).Count() defenders, @game.TeamB.Where(t => t.Player.PlayerEntity.Position == PlayerPosition.Midfielder).Count() midfielders, @game.TeamB.Where(t => t.Player.PlayerEntity.Position == PlayerPosition.Forward).Count() forwards</p>
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th scope="col">Player</th>
-                    <th scope="col">Position</th>
-                    <th scope="col" class="d-none d-lg-table-cell">Playing</th>
-                    <th scope="col">Switch Team</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var pag in game.TeamB)
-                {
-                    <tr>
-                        <td><a href="/pags/@pag.PlayerAtGameEntity.RowKey">@pag.Player.PlayerEntity.Name</a></td>
-                        <td>@pag.Player.PlayerEntity.Position</td>
-                        <td class="d-none d-lg-table-cell">@pag.PlayerAtGameEntity.Forecast</td>
-                        <td><button class="btn btn-outline-secondary" @onclick="() => SwitchPagTeam(pag.PlayerAtGameEntity)"><i class="fa-solid fa-repeat"></i></button></td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-
-        @if (pagsNoTeam.Count() > 0)
-        {
-            <h4>Players without a team</h4>
-            <table class="table table-striped">
-                <thead>
-                    <tr>
-                        <th scope="col">Player</th>
-                        <th scope="col">Position</th>
-                        <th scope="col" class="d-none d-lg-table-cell">Playing</th>
-                        <th scope="col">Assign Team</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var pag in pagsNoTeam)
-                    {
-                        <tr>
-                            <td><a href="/pags/@pag.PlayerAtGameEntity.RowKey">@pag.Player.PlayerEntity.Name</a></td>
-                            <td>@pag.Player.PlayerEntity.Position</td>
-                            <td class="d-none d-lg-table-cell">@pag.PlayerAtGameEntity.Forecast</td>
-                            <td>
-                                <button class="btn btn-outline-secondary" @onclick="() => AssignToTeamA(pag.PlayerAtGameEntity)"> <i class="fa-solid fa-a"></i> </button>
-                                <button class="btn btn-outline-secondary" @onclick="() => AssignToTeamB(pag.PlayerAtGameEntity)"> <i class="fa-solid fa-b"></i> </button>
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        }
-    }  
-    else
-    {
-        <p>No teams yet.</p>
-    }
-} *@
-
 @if (currentTab == "transactions")
 {
     <ul class="nav nav-tabs">
@@ -440,7 +338,7 @@
         await RefreshData();
     }
 
-     async Task AssignToTeamB(PlayerAtGameEntity pag)
+    async Task AssignToTeamB(PlayerAtGameEntity pag)
     {
         pag.Team = "B";
         await GameService.UpsertPlayerAtGameEntity(pag);
@@ -502,6 +400,5 @@
 
     private void SwitchTabPlayers() => currentTab = "players";
     private void SwitchTabTransactions() => currentTab = "transactions";
-    private void SwitchTabTeams() => currentTab = "teams";
     private void SwitchTabGame() => currentTab = "game";
 }

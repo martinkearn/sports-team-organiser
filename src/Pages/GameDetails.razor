@@ -6,7 +6,7 @@
 
 <PageTitle>TNF - @pageTitle</PageTitle>
 
-<h1>@pageTitle</h1>
+<h1><i class="fa-solid fa-people-group me-2"></i> @pageTitle</h1>
 
 <p>Forecast: @game.PlayersAtGame.Where(p => p.PlayerAtGameEntity.Forecast == PlayingOptions.Yes.ToString()).Count() yes / @game.PlayersAtGame.Where(p => p.PlayerAtGameEntity.Forecast == PlayingOptions.Maybe.ToString()).Count() maybe <br> Actual: @game.PlayersAtGame.Where(p => p.PlayerAtGameEntity.Played == true).Count()</p>
 
@@ -298,7 +298,7 @@
     </ul>
 
     <h4>Game Details</h4>
-    <p>Date: @game.GameEntity.Date.Date.ToString("dd MMM yyyy HH:mm") </p>
+    <p>Date: @game.GameEntity.Date.Date.ToLongDateString() </p>
 }
 
 <div class="modal-footer">
@@ -458,7 +458,7 @@
             Notes = $"Credited for game {game.GameEntity.Date.Date.ToShortDateString()}"
         };
         pagsNoTeam = game.PlayersAtGame.Where(o => string.IsNullOrEmpty(o.PlayerAtGameEntity.Team)).ToList();
-        pageTitle = $"Game: {game.GameEntity.Date.Date.ToLongDateString()}";
+        pageTitle = $"{game.GameEntity.Date.Date.ToString("dd MMM")}";
 
     }
 

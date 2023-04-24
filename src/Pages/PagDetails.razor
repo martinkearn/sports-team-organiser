@@ -6,7 +6,7 @@
 
 <PageTitle>TNF - @pageTitle</PageTitle>
 
-<h1>@pageTitle</h1>
+<h1><i class="fa-solid fa-people-group me-2"></i> @pageTitle</h1>
 
 <div class="mb-3">
     <label class="form-label">RowKey</label>
@@ -78,7 +78,7 @@
     async Task RefreshData()
     {
         pag = await GameService.GetPlayerAtGame(PagRowKey);
-        pageTitle = $"Player at Game: {@pag.Player.PlayerEntity.Name}, {@pag.GameEntity.Date.Date.ToShortDateString()}";
+        pageTitle = $"{@pag.Player.PlayerEntity.Name} at {@pag.GameEntity.Date.Date.ToString("dd MMM")}";
     }
 
 }

@@ -6,28 +6,25 @@
 
 <PageTitle>TNF - @pageTitle</PageTitle>
 
-<h1>@pageTitle</h1>
+<h1><i class="fa-solid fa-people-group me-2"></i> @pageTitle</h1>
 
 <p>Forecast: @game.PlayersAtGame.Where(p => p.PlayerAtGameEntity.Forecast == PlayingOptions.Yes.ToString()).Count() yes / @game.PlayersAtGame.Where(p => p.PlayerAtGameEntity.Forecast == PlayingOptions.Maybe.ToString()).Count() maybe <br> Actual: @game.PlayersAtGame.Where(p => p.PlayerAtGameEntity.Played == true).Count()</p>
 
-@if (currentTab == "players")
+@if (currentTab == "game")
 {
     <ul class="nav nav-tabs">
         <li class="nav-item">
-            <a class="nav-link active" @onclick="SwitchTabPlayers">Players</a>
+            <a class="nav-link active" @onclick="SwitchTabGame">Game</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" @onclick="SwitchTabTeams">Teams</a>
+            <a class="nav-link" @onclick="SwitchTabPlayers">Players</a>
         </li>
         <li class="nav-item">
             <a class="nav-link" @onclick="SwitchTabTransactions">Transactions</a>
         </li>
-        <li class="nav-item">
-            <a class="nav-link" @onclick="SwitchTabGame">Game</a>
-        </li>
     </ul>
 
-    <h4>Add Player at Game</h4>
+    <h4>Add Player to Game</h4>
     <div class="pb-4">
         <EditForm Model="@newPagEntity" OnValidSubmit="AddPagEntity" class="row row-cols-lg-auto g-3 align-items-center">
             <DataAnnotationsValidator />
@@ -50,169 +47,9 @@
         </EditForm>
     </div>
 
-    <h4>Players at Game</h4>
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th scope="col">Name</th>
-                <th scope="col" class="d-none d-lg-table-cell">Position</th>
-                <th scope="col" class="d-none d-lg-table-cell">Playing</th>
-                <th scope="col" class="d-none d-lg-table-cell">Balance</th>
-                <th scope="col">Played</th>
-                <th scope="col">Team</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var pag in game.PlayersAtGame)
-            {
-                <tr>
-                    <td><a href="/pags/@pag.PlayerAtGameEntity.RowKey">@pag.Player.PlayerEntity.Name</a></td>
-                    <td class="d-none d-lg-table-cell">@pag.Player.PlayerEntity.Position</td>
-                    <td class="d-none d-lg-table-cell">
-                        <InputSelect class="form-select" @bind-Value=pag.PlayerAtGameEntity.Forecast @bind-Value:after="() => EditPagEntity(pag.PlayerAtGameEntity)" >
-                            <option value="Yes">Yes</option>
-                            <option value="Maybe">Maybe</option>
-                        </InputSelect>
-                    </td>
-                    <td class="d-none d-lg-table-cell"><CurrencyDisplay Amount="@pag.Player.Transactions.Sum(o => o.Amount)" /></td>
-                    <td>
-                        <div class="form-check form-switch">
-                            <InputCheckbox class="form-check-input" type="checkbox" role="switch" @bind-Value=pag.PlayerAtGameEntity.Played @bind-Value:after="() => BillRefundPagEntity(pag.PlayerAtGameEntity)"></InputCheckbox>
-                        </div>
-                    </td>
-                    <td>@pag.PlayerAtGameEntity.Team</td>
-                </tr>
-            }
-        </tbody>
-    </table>
-}
+    <hr>
 
-@if (currentTab == "teams")
-{
-    <ul class="nav nav-tabs">
-        <li class="nav-item">
-            <a class="nav-link" @onclick="SwitchTabPlayers">Players</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link active" @onclick="SwitchTabTeams">Teams</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" @onclick="SwitchTabTransactions">Transactions</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" @onclick="SwitchTabGame">Game</a>
-        </li>
-    </ul>
-
-    @if ((game.TeamA != null) && (game.TeamB != null))
-    {
-        <h4>Team A - @game.TeamA.Count()</h4>
-        <p>@game.TeamA.Where(t => t.Player.PlayerEntity.Position == PlayerPosition.Defender).Count() defenders, @game.TeamA.Where(t => t.Player.PlayerEntity.Position == PlayerPosition.Midfielder).Count() midfielders, @game.TeamA.Where(t => t.Player.PlayerEntity.Position == PlayerPosition.Forward).Count() forwards</p>
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th scope="col">Player</th>
-                    <th scope="col">Position</th>
-                    <th scope="col" class="d-none d-lg-table-cell">Playing</th>
-                    <th scope="col">Switch Team</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var pag in game.TeamA)
-                {
-                    <tr>
-                        <td><a href="/pags/@pag.PlayerAtGameEntity.RowKey">@pag.Player.PlayerEntity.Name</a></td>
-                        <td>@pag.Player.PlayerEntity.Position</td>
-                        <td class="d-none d-lg-table-cell">@pag.PlayerAtGameEntity.Forecast</td>
-                        <td><button class="btn btn-outline-secondary" @onclick="() => SwitchPagTeam(pag.PlayerAtGameEntity)"><i class="fa-solid fa-repeat"></i></button></td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-
-        <h4>Team B - @game.TeamB.Count()</h4>
-        <p>@game.TeamB.Where(t => t.Player.PlayerEntity.Position == PlayerPosition.Defender).Count() defenders, @game.TeamB.Where(t => t.Player.PlayerEntity.Position == PlayerPosition.Midfielder).Count() midfielders, @game.TeamB.Where(t => t.Player.PlayerEntity.Position == PlayerPosition.Forward).Count() forwards</p>
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th scope="col">Player</th>
-                    <th scope="col">Position</th>
-                    <th scope="col" class="d-none d-lg-table-cell">Playing</th>
-                    <th scope="col">Switch Team</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var pag in game.TeamB)
-                {
-                    <tr>
-                        <td><a href="/pags/@pag.PlayerAtGameEntity.RowKey">@pag.Player.PlayerEntity.Name</a></td>
-                        <td>@pag.Player.PlayerEntity.Position</td>
-                        <td class="d-none d-lg-table-cell">@pag.PlayerAtGameEntity.Forecast</td>
-                        <td><button class="btn btn-outline-secondary" @onclick="() => SwitchPagTeam(pag.PlayerAtGameEntity)"><i class="fa-solid fa-repeat"></i></button></td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-
-        @if (pagsNoTeam.Count() > 0)
-        {
-            <h4>Players without a team</h4>
-            <table class="table table-striped">
-                <thead>
-                    <tr>
-                        <th scope="col">Player</th>
-                        <th scope="col">Position</th>
-                        <th scope="col" class="d-none d-lg-table-cell">Playing</th>
-                        <th scope="col">Assign Team</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var pag in pagsNoTeam)
-                    {
-                        <tr>
-                            <td><a href="/pags/@pag.PlayerAtGameEntity.RowKey">@pag.Player.PlayerEntity.Name</a></td>
-                            <td>@pag.Player.PlayerEntity.Position</td>
-                            <td class="d-none d-lg-table-cell">@pag.PlayerAtGameEntity.Forecast</td>
-                            <td>
-                                <button class="btn btn-outline-secondary" @onclick="() => AssignToTeamA(pag.PlayerAtGameEntity)"> <i class="fa-solid fa-a"></i> </button>
-                                <button class="btn btn-outline-secondary" @onclick="() => AssignToTeamB(pag.PlayerAtGameEntity)"> <i class="fa-solid fa-b"></i> </button>
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        }
-    }  
-    else
-    {
-        <p>No teams yet.</p>
-    }
-
-    <div class="pb-4">
-        <a class="btn btn-secondary me-3 mb-3" href="/teamsheet/@game.GameEntity.RowKey"><i class="fa-solid fa-rectangle-list"></i> Teamsheet</a>
-        <button class="btn btn-secondary  me-3 mb-3" @onclick="CalculateTeams"><i class="fa-solid fa-gear"></i> Calculate Teams</button>
-    </div>
-}
-
-@if (currentTab == "transactions")
-{
-    <ul class="nav nav-tabs">
-        <li class="nav-item">
-            <a class="nav-link" @onclick="SwitchTabPlayers">Players</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" @onclick="SwitchTabTeams">Teams</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link active" @onclick="SwitchTabTransactions">Transactions</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" @onclick="SwitchTabGame">Game</a>
-        </li>
-    </ul>
-
-    <h4>Add Payment Transaction</h4>
-    <p>Add default amount as a payment for selected player for this game.</p>
+    <h4>Add Player Payment Transaction</h4>
     <div class="pb-4">
         <EditForm Model="@newPagTransactionEntity" OnValidSubmit="AddPagTransaction" class="row row-cols-lg-auto g-3 align-items-center">
             <DataAnnotationsValidator />
@@ -235,6 +72,96 @@
         </EditForm>
     </div>
 
+    <hr>
+
+    <h4>Teams</h4>
+    <div class="pb-4">
+        <a class="btn btn-secondary me-3 mb-3" href="/teamsheet/@game.GameEntity.RowKey"><i class="fa-solid fa-rectangle-list"></i> Teamsheet</a>
+        <button class="btn btn-secondary  me-3 mb-3" @onclick="CalculateTeams"><i class="fa-solid fa-gear"></i> Calculate Teams</button>
+    </div>
+}
+
+@if (currentTab == "players")
+{
+    <ul class="nav nav-tabs">
+        <li class="nav-item">
+            <a class="nav-link" @onclick="SwitchTabGame">Game</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link active" @onclick="SwitchTabPlayers">Players</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" @onclick="SwitchTabTransactions">Transactions</a>
+        </li>
+    </ul>
+
+    <h4>Players at Game</h4>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th scope="col"><button class="btn btn-link m-0 p-0" @onclick="() => SortPags(Enums.SortPagsBy.Name)">Name</button></th>
+                <th scope="col"><button class="btn btn-link m-0 p-0" @onclick="() => SortPags(Enums.SortPagsBy.Position)">Position</button></th>
+                <th scope="col" class="d-none d-lg-table-cell"><button class="btn btn-link m-0 p-0" @onclick="() => SortPags(Enums.SortPagsBy.Playing)">Playing</button></th>
+                <th scope="col" class="d-none d-lg-table-cell"><button class="btn btn-link m-0 p-0" @onclick="() => SortPags(Enums.SortPagsBy.Balance)">Balance</button></th>
+                <th scope="col"><button class="btn btn-link m-0 p-0" @onclick="() => SortPags(Enums.SortPagsBy.Played)">Played</button></th>
+                <th scope="col"><button class="btn btn-link m-0 p-0" @onclick="() => SortPags(Enums.SortPagsBy.Team)">Team</button></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var pag in game.PlayersAtGame)
+            {
+                <tr>
+                    <td><a href="/pags/@pag.PlayerAtGameEntity.RowKey">@pag.Player.PlayerEntity.Name</a></td>
+                    <td>
+                        @switch (pag.Player.PlayerEntity.Position)
+                        {
+                            case PlayerPosition.Forward:
+                                <i class="fa-solid fa-bullseye"></i>
+                                break;
+                            case PlayerPosition.Midfielder:
+                                <i class="fa-solid fa-arrows-spin"></i>
+                                break;
+                            case PlayerPosition.Defender:
+                                <i class="fa-solid fa-shield-halved"></i>
+                                break;
+                            default:
+                                @pag.Player.PlayerEntity.Position
+                                break;
+                        }
+                    </td>
+                    <td class="d-none d-lg-table-cell">
+                        <InputSelect class="form-select" @bind-Value=pag.PlayerAtGameEntity.Forecast @bind-Value:after="() => EditPagEntity(pag.PlayerAtGameEntity)" >
+                            <option value="Yes">Yes</option>
+                            <option value="Maybe">Maybe</option>
+                        </InputSelect>
+                    </td>
+                    <td class="d-none d-lg-table-cell"><CurrencyDisplay Amount="@pag.Player.Transactions.Sum(o => o.Amount)" /></td>
+                    <td>
+                        <div class="form-check form-switch">
+                            <InputCheckbox class="form-check-input" type="checkbox" role="switch" @bind-Value=pag.PlayerAtGameEntity.Played @bind-Value:after="() => BillRefundPagEntity(pag.PlayerAtGameEntity)"></InputCheckbox>
+                        </div>
+                    </td>
+                    <td>@pag.PlayerAtGameEntity.Team <button class="btn btn-outline-secondary" @onclick="() => SwitchPagTeam(pag.PlayerAtGameEntity)"><i class="fa-solid fa-repeat"></i></button></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@if (currentTab == "transactions")
+{
+    <ul class="nav nav-tabs">
+        <li class="nav-item">
+            <a class="nav-link" @onclick="SwitchTabGame">Game</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" @onclick="SwitchTabPlayers">Players</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link active" @onclick="SwitchTabTransactions">Transactions</a>
+        </li>
+    </ul>
+
     <h4>Transactions for Game</h4>
     <table class="table table-striped">
         <thead>
@@ -256,7 +183,7 @@
                     @{var pagForTransaction = game.PlayersAtGame.SingleOrDefault(o => o.Player.PlayerEntity.RowKey == transactionEntityForGame.PlayerRowKey);}
                     @if (pagForTransaction != default)
                     {
-                        <td><a href="/pags/@pagForTransaction.PlayerAtGameEntity.RowKey">@pagForTransaction.Player.PlayerEntity.Name</a></td>
+                        <td class="d-none d-lg-table-cell"><a href="/pags/@pagForTransaction.PlayerAtGameEntity.RowKey">@pagForTransaction.Player.PlayerEntity.Name</a></td>
                     }
                     else
                     {
@@ -274,31 +201,6 @@
     {
         <p>@pagLowFunds.Player.PlayerEntity.Name, <CurrencyDisplay Amount="@pagLowFunds.Player.Transactions.Sum(o => o.Amount)" /> on account</p>
     }
-
-    <div>
-        <a class="btn btn-secondary me-3 mb-3" href="/transactions/"><i class="fa-solid fa-arrow-left"></i> All Transactions</a>
-    </div>
-}
-
-@if (currentTab == "game")
-{
-    <ul class="nav nav-tabs">
-        <li class="nav-item">
-            <a class="nav-link" @onclick="SwitchTabPlayers">Players</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" @onclick="SwitchTabTeams">Teams</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" @onclick="SwitchTabTransactions">Transactions</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link active" @onclick="SwitchTabGame">Game</a>
-        </li>
-    </ul>
-
-    <h4>Game Details</h4>
-    <p>Date: @game.GameEntity.Date.Date.ToString("dd MMM yyyy HH:mm") </p>
 }
 
 <div class="modal-footer">
@@ -314,7 +216,7 @@
 
     private List<Player> players = new();
 
-    private string currentTab = "players";
+    private string currentTab = "game";
 
     private PlayerAtGameEntity newPagEntity;
 
@@ -323,6 +225,8 @@
     private List<PlayerAtGame> pagsNoTeam;
 
     private string pageTitle;
+
+    private Enums.SortPagsBy currentPagSortBy;
 
     protected override async Task OnInitializedAsync()
     {
@@ -434,12 +338,44 @@
         await RefreshData();
     }
 
-     async Task AssignToTeamB(PlayerAtGameEntity pag)
+    async Task AssignToTeamB(PlayerAtGameEntity pag)
     {
         pag.Team = "B";
         await GameService.UpsertPlayerAtGameEntity(pag);
         await RefreshData();
-    }   
+    }  
+
+    private void SortPags(Enums.SortPagsBy by)
+    {
+        switch(by)
+        {
+            case Enums.SortPagsBy.Name:
+                game.PlayersAtGame = (currentPagSortBy == by) ? 
+                    game.PlayersAtGame.OrderByDescending(o => o.Player.PlayerEntity.Name).ToList() :
+                    game.PlayersAtGame.OrderBy(o => o.Player.PlayerEntity.Name).ToList();
+                break;
+            case Enums.SortPagsBy.Position:
+                game.PlayersAtGame = game.PlayersAtGame.OrderBy(o => o.Player.PlayerEntity.Position).ToList();
+                break;
+            case Enums.SortPagsBy.Playing:
+                game.PlayersAtGame = game.PlayersAtGame.OrderByDescending(o => o.PlayerAtGameEntity.Forecast).ToList();
+                break;
+            case Enums.SortPagsBy.Balance:
+                game.PlayersAtGame = game.PlayersAtGame.OrderByDescending(o => o.Player.Balance).ToList();
+                break;
+            case Enums.SortPagsBy.Team:
+                game.PlayersAtGame = game.PlayersAtGame.OrderBy(o => o.PlayerAtGameEntity.Team).ToList();
+                break;
+            case Enums.SortPagsBy.Played:
+                game.PlayersAtGame = game.PlayersAtGame.OrderByDescending(o => o.PlayerAtGameEntity.Played).ToList();
+                break;
+            default:
+                game.PlayersAtGame = game.PlayersAtGame.OrderBy(o => o.Player.PlayerEntity.Name).ToList();
+                break;
+        }
+
+        currentPagSortBy = by;
+    } 
 
     async Task RefreshData()
     {
@@ -458,12 +394,11 @@
             Notes = $"Credited for game {game.GameEntity.Date.Date.ToShortDateString()}"
         };
         pagsNoTeam = game.PlayersAtGame.Where(o => string.IsNullOrEmpty(o.PlayerAtGameEntity.Team)).ToList();
-        pageTitle = $"Game: {game.GameEntity.Date.Date.ToLongDateString()}";
+        pageTitle = $"{game.GameEntity.Date.Date.ToString("dd MMM")}";
 
     }
 
     private void SwitchTabPlayers() => currentTab = "players";
     private void SwitchTabTransactions() => currentTab = "transactions";
-    private void SwitchTabTeams() => currentTab = "teams";
     private void SwitchTabGame() => currentTab = "game";
 }

@@ -4,7 +4,7 @@
 
 <PageTitle>TNF - @pageTitle</PageTitle>
 
-<h1>@pageTitle</h1>
+<h1><i class="fa-solid fa-user me-2"></i> @pageTitle</h1>
 
 @if (currentTab == "player")
 {
@@ -123,7 +123,7 @@
     private void RefreshData()
     {
         player = PlayerService.GetPlayer(PlayerRowKey);
-        pageTitle = $"Player: {player.PlayerEntity.Name}";
+        pageTitle = $"{player.PlayerEntity.Name}";
     }
 
     private void SwitchTabPlayer() => currentTab = "player";

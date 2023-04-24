@@ -3,11 +3,13 @@
 
 <PageTitle>TNF - @pageTitle</PageTitle>
 
-<h1>@pageTitle</h1>
+<h1><i class="fa-solid fa-people-group me-2"></i> @pageTitle</h1>
 
 <div>
     <a class="btn btn-secondary me-3 mb-3" href="/games/add"><i class="fa-solid fa-plus"></i> Add Game</a>
+    <a class="btn btn-secondary me-3 mb-3" href="controllers/routing/latestgame"><i class="fa-solid fa-calendar-day"></i> Latest Game</a>
 </div>
+
 
 <table class="table table-striped">
     <thead>
@@ -21,7 +23,7 @@
         @foreach (var game in games)
         {
             <tr>
-                <td><a href="/games/@game.GameEntity.RowKey">@game.GameEntity.Date.Date.ToLongDateString()</a></td>
+                <td><a href="/games/@game.GameEntity.RowKey">@game.GameEntity.Date.Date.ToString("dd MMM")</a></td>
                 <td>@game.PlayersAtGame.Count()</td>
                 <td>@game.PlayersAtGame.Where(pag => pag.PlayerAtGameEntity.Played).Count()</td>
             </tr>

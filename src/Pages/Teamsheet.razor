@@ -52,7 +52,7 @@ else
     async Task RefreshData()
     {
         game = await GameService.GetGame(GameRowKey);
-        pageTitle = $"Teamsheet: {game.GameEntity.Date.Date.ToLongDateString()}";
+        pageTitle = $"{game.GameEntity.Date.Date.ToString("dd MMM")}";
 
     }
 }

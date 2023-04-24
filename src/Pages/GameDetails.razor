@@ -10,11 +10,14 @@
 
 <p>Forecast: @game.PlayersAtGame.Where(p => p.PlayerAtGameEntity.Forecast == PlayingOptions.Yes.ToString()).Count() yes / @game.PlayersAtGame.Where(p => p.PlayerAtGameEntity.Forecast == PlayingOptions.Maybe.ToString()).Count() maybe <br> Actual: @game.PlayersAtGame.Where(p => p.PlayerAtGameEntity.Played == true).Count()</p>
 
-@if (currentTab == "players")
+@if (currentTab == "game")
 {
     <ul class="nav nav-tabs">
         <li class="nav-item">
-            <a class="nav-link active" @onclick="SwitchTabPlayers">Players</a>
+            <a class="nav-link active" @onclick="SwitchTabGame">Game</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" @onclick="SwitchTabPlayers">Players</a>
         </li>
         <li class="nav-item">
             <a class="nav-link" @onclick="SwitchTabTeams">Teams</a>
@@ -22,12 +25,9 @@
         <li class="nav-item">
             <a class="nav-link" @onclick="SwitchTabTransactions">Transactions</a>
         </li>
-        <li class="nav-item">
-            <a class="nav-link" @onclick="SwitchTabGame">Game</a>
-        </li>
     </ul>
 
-    <h4>Add Player at Game</h4>
+    <h4>Add Player to Game</h4>
     <div class="pb-4">
         <EditForm Model="@newPagEntity" OnValidSubmit="AddPagEntity" class="row row-cols-lg-auto g-3 align-items-center">
             <DataAnnotationsValidator />
@@ -49,6 +49,57 @@
             </div>
         </EditForm>
     </div>
+
+    <hr>
+
+    <h4>Add Player Payment Transaction</h4>
+    <div class="pb-4">
+        <EditForm Model="@newPagTransactionEntity" OnValidSubmit="AddPagTransaction" class="row row-cols-lg-auto g-3 align-items-center">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+            <div class="col-12">
+                <InputSelect class="form-select" @bind-Value="newPagTransactionEntity.PlayerRowKey" @oninput="NewPagTransactionPlayerChanged">
+                    <option value="">Select player ...</option>
+                    @foreach (var player in players)
+                    {
+                        if (game.PlayersAtGame.SingleOrDefault(pag => pag.PlayerAtGameEntity.PlayerRowKey == player.PlayerEntity.RowKey) != default)
+                        {
+                            <option value="@player.PlayerEntity.RowKey">@player.PlayerEntity.Name</option>
+                        }
+                    }
+                </InputSelect>
+            </div>
+            <div class="col-12">
+                <button type="submit" class="btn btn-secondary"><i class="fa-solid fa-plus"></i> Add Transaction</button>
+            </div>
+        </EditForm>
+    </div>
+
+    <hr>
+
+    <h4>Teams</h4>
+    <div class="pb-4">
+        <a class="btn btn-secondary me-3 mb-3" href="/teamsheet/@game.GameEntity.RowKey"><i class="fa-solid fa-rectangle-list"></i> Teamsheet</a>
+        <button class="btn btn-secondary  me-3 mb-3" @onclick="CalculateTeams"><i class="fa-solid fa-gear"></i> Calculate Teams</button>
+    </div>
+}
+
+@if (currentTab == "players")
+{
+    <ul class="nav nav-tabs">
+        <li class="nav-item">
+            <a class="nav-link" @onclick="SwitchTabGame">Game</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" @onclick="SwitchTabPlayers">Players</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" @onclick="SwitchTabTeams">Teams</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" @onclick="SwitchTabTransactions">Transactions</a>
+        </li>
+    </ul>
 
     <h4>Players at Game</h4>
     <table class="table table-striped">
@@ -91,6 +142,9 @@
 {
     <ul class="nav nav-tabs">
         <li class="nav-item">
+            <a class="nav-link" @onclick="SwitchTabGame">Game</a>
+        </li>
+        <li class="nav-item">
             <a class="nav-link" @onclick="SwitchTabPlayers">Players</a>
         </li>
         <li class="nav-item">
@@ -98,9 +152,6 @@
         </li>
         <li class="nav-item">
             <a class="nav-link" @onclick="SwitchTabTransactions">Transactions</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" @onclick="SwitchTabGame">Game</a>
         </li>
     </ul>
 
@@ -187,16 +238,14 @@
     {
         <p>No teams yet.</p>
     }
-
-    <div class="pb-4">
-        <a class="btn btn-secondary me-3 mb-3" href="/teamsheet/@game.GameEntity.RowKey"><i class="fa-solid fa-rectangle-list"></i> Teamsheet</a>
-        <button class="btn btn-secondary  me-3 mb-3" @onclick="CalculateTeams"><i class="fa-solid fa-gear"></i> Calculate Teams</button>
-    </div>
 }
 
 @if (currentTab == "transactions")
 {
     <ul class="nav nav-tabs">
+        <li class="nav-item">
+            <a class="nav-link" @onclick="SwitchTabGame">Game</a>
+        </li>
         <li class="nav-item">
             <a class="nav-link" @onclick="SwitchTabPlayers">Players</a>
         </li>
@@ -206,34 +255,7 @@
         <li class="nav-item">
             <a class="nav-link active" @onclick="SwitchTabTransactions">Transactions</a>
         </li>
-        <li class="nav-item">
-            <a class="nav-link" @onclick="SwitchTabGame">Game</a>
-        </li>
     </ul>
-
-    <h4>Add Payment Transaction</h4>
-    <p>Add default amount as a payment for selected player for this game.</p>
-    <div class="pb-4">
-        <EditForm Model="@newPagTransactionEntity" OnValidSubmit="AddPagTransaction" class="row row-cols-lg-auto g-3 align-items-center">
-            <DataAnnotationsValidator />
-            <ValidationSummary />
-            <div class="col-12">
-                <InputSelect class="form-select" @bind-Value="newPagTransactionEntity.PlayerRowKey" @oninput="NewPagTransactionPlayerChanged">
-                    <option value="">Select player ...</option>
-                    @foreach (var player in players)
-                    {
-                        if (game.PlayersAtGame.SingleOrDefault(pag => pag.PlayerAtGameEntity.PlayerRowKey == player.PlayerEntity.RowKey) != default)
-                        {
-                            <option value="@player.PlayerEntity.RowKey">@player.PlayerEntity.Name</option>
-                        }
-                    }
-                </InputSelect>
-            </div>
-            <div class="col-12">
-                <button type="submit" class="btn btn-secondary"><i class="fa-solid fa-plus"></i> Add Transaction</button>
-            </div>
-        </EditForm>
-    </div>
 
     <h4>Transactions for Game</h4>
     <table class="table table-striped">
@@ -256,7 +278,7 @@
                     @{var pagForTransaction = game.PlayersAtGame.SingleOrDefault(o => o.Player.PlayerEntity.RowKey == transactionEntityForGame.PlayerRowKey);}
                     @if (pagForTransaction != default)
                     {
-                        <td><a href="/pags/@pagForTransaction.PlayerAtGameEntity.RowKey">@pagForTransaction.Player.PlayerEntity.Name</a></td>
+                        <td class="d-none d-lg-table-cell"><a href="/pags/@pagForTransaction.PlayerAtGameEntity.RowKey">@pagForTransaction.Player.PlayerEntity.Name</a></td>
                     }
                     else
                     {
@@ -274,31 +296,6 @@
     {
         <p>@pagLowFunds.Player.PlayerEntity.Name, <CurrencyDisplay Amount="@pagLowFunds.Player.Transactions.Sum(o => o.Amount)" /> on account</p>
     }
-
-    <div>
-        <a class="btn btn-secondary me-3 mb-3" href="/transactions/"><i class="fa-solid fa-arrow-left"></i> All Transactions</a>
-    </div>
-}
-
-@if (currentTab == "game")
-{
-    <ul class="nav nav-tabs">
-        <li class="nav-item">
-            <a class="nav-link" @onclick="SwitchTabPlayers">Players</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" @onclick="SwitchTabTeams">Teams</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" @onclick="SwitchTabTransactions">Transactions</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link active" @onclick="SwitchTabGame">Game</a>
-        </li>
-    </ul>
-
-    <h4>Game Details</h4>
-    <p>Date: @game.GameEntity.Date.Date.ToLongDateString() </p>
 }
 
 <div class="modal-footer">
@@ -314,7 +311,7 @@
 
     private List<Player> players = new();
 
-    private string currentTab = "players";
+    private string currentTab = "game";
 
     private PlayerAtGameEntity newPagEntity;
 

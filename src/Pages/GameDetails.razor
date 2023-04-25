@@ -112,23 +112,7 @@
             {
                 <tr>
                     <td><a href="/pags/@pag.PlayerAtGameEntity.RowKey">@pag.Player.PlayerEntity.Name</a></td>
-                    <td>
-                        @switch (pag.Player.PlayerEntity.Position)
-                        {
-                            case PlayerPosition.Forward:
-                                <i class="fa-solid fa-bullseye"></i>
-                                break;
-                            case PlayerPosition.Midfielder:
-                                <i class="fa-solid fa-arrows-spin"></i>
-                                break;
-                            case PlayerPosition.Defender:
-                                <i class="fa-solid fa-shield-halved"></i>
-                                break;
-                            default:
-                                @pag.Player.PlayerEntity.Position
-                                break;
-                        }
-                    </td>
+                    <td><PositionIcon Position="pag.Player.PlayerEntity.Position" /></td>
                     <td class="d-none d-lg-table-cell">
                         <InputSelect class="form-select" @bind-Value=pag.PlayerAtGameEntity.Forecast @bind-Value:after="() => EditPagEntity(pag.PlayerAtGameEntity)" >
                             <option value="Yes">Yes</option>

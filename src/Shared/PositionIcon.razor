@@ -1,0 +1,47 @@
+@if (!string.IsNullOrEmpty(css))
+{
+    <i class="@css"></i>
+}
+else
+{
+    @Position.ToString()
+}
+
+
+@code {
+    [Parameter]
+    public PlayerPosition Position { get; set; }
+
+    private string css;
+
+    protected override void OnParametersSet()
+    {
+        SetCss();
+    }
+
+    protected override void OnInitialized()
+    {
+        SetCss();
+    }
+
+    private void SetCss()
+    {
+        switch (Position)
+        {
+            case PlayerPosition.Defender:
+                css = "fa-solid fa-shield-halved";
+                break;
+            case PlayerPosition.Midfielder:
+                css = "fa-solid fa-arrows-spin";
+                break;
+            case PlayerPosition.Forward:
+                css = "fa-solid fa-bullseye";
+                break;
+            case PlayerPosition.Goalie:
+                css = "fa-solid fa-hand-dots";
+                break;           
+            default:
+                break;
+        }
+    }
+}

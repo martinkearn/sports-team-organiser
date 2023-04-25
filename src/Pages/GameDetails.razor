@@ -22,16 +22,18 @@
         <li class="nav-item">
             <a class="nav-link" @onclick="SwitchTabTransactions">Transactions</a>
         </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/teamsheet/@game.GameEntity.RowKey">Teamsheet</a>
+        </li>
     </ul>
 
-    <h4>Add Player to Game</h4>
     <div class="pb-4">
         <EditForm Model="@newPagEntity" OnValidSubmit="AddPagEntity" class="row row-cols-lg-auto g-3 align-items-center">
             <DataAnnotationsValidator />
             <ValidationSummary />
-            <div class="col-12">
+            <div class="col-10">
                 <InputSelect class="form-select" @bind-Value="newPagEntity.PlayerRowKey">
-                    <option value="">Select player ...</option>
+                    <option value="">Add player to game ...</option>
                     @foreach (var player in players)
                     {
                         if (game.PlayersAtGame.FirstOrDefault(pag => pag.PlayerAtGameEntity.PlayerRowKey == player.PlayerEntity.RowKey) == default)
@@ -41,22 +43,19 @@
                     }
                 </InputSelect>
             </div>
-            <div class="col-12">
-                <button type="submit" class="btn btn-secondary"><i class="fa-solid fa-plus"></i> Add Player to Game</button>
+            <div class="col-2">
+                <button type="submit" class="btn btn-secondary"><i class="fa-solid fa-plus"></i></button>
             </div>
         </EditForm>
     </div>
 
-    <hr>
-
-    <h4>Add Player Payment Transaction</h4>
     <div class="pb-4">
         <EditForm Model="@newPagTransactionEntity" OnValidSubmit="AddPagTransaction" class="row row-cols-lg-auto g-3 align-items-center">
             <DataAnnotationsValidator />
             <ValidationSummary />
-            <div class="col-12">
+            <div class="col-10">
                 <InputSelect class="form-select" @bind-Value="newPagTransactionEntity.PlayerRowKey" @oninput="NewPagTransactionPlayerChanged">
-                    <option value="">Select player ...</option>
+                    <option value="">Add payment from ...</option>
                     @foreach (var player in players)
                     {
                         if (game.PlayersAtGame.SingleOrDefault(pag => pag.PlayerAtGameEntity.PlayerRowKey == player.PlayerEntity.RowKey) != default)
@@ -66,18 +65,10 @@
                     }
                 </InputSelect>
             </div>
-            <div class="col-12">
-                <button type="submit" class="btn btn-secondary"><i class="fa-solid fa-plus"></i> Add Transaction</button>
+            <div class="col-2">
+                <button type="submit" class="btn btn-secondary"><i class="fa-solid fa-plus"></i></button>
             </div>
         </EditForm>
-    </div>
-
-    <hr>
-
-    <h4>Teams</h4>
-    <div class="pb-4">
-        <a class="btn btn-secondary me-3 mb-3" href="/teamsheet/@game.GameEntity.RowKey"><i class="fa-solid fa-rectangle-list"></i> Teamsheet</a>
-        <button class="btn btn-secondary  me-3 mb-3" @onclick="CalculateTeams"><i class="fa-solid fa-gear"></i> Calculate Teams</button>
     </div>
 }
 
@@ -93,9 +84,11 @@
         <li class="nav-item">
             <a class="nav-link" @onclick="SwitchTabTransactions">Transactions</a>
         </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/teamsheet/@game.GameEntity.RowKey">Teamsheet</a>
+        </li>
     </ul>
 
-    <h4>Players at Game</h4>
     <table class="table table-striped">
         <thead>
             <tr>
@@ -144,9 +137,11 @@
         <li class="nav-item">
             <a class="nav-link active" @onclick="SwitchTabTransactions">Transactions</a>
         </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/teamsheet/@game.GameEntity.RowKey">Teamsheet</a>
+        </li>
     </ul>
 
-    <h4>Transactions for Game</h4>
     <table class="table table-striped">
         <thead>
             <tr>
@@ -179,7 +174,6 @@
         </tbody>
     </table>
 
-    <h4>Players to chase</h4>
     <p>Players that do not have enough funds on account to cover this game.</p>
     @foreach (var pagLowFunds in game.PlayersAtGame.Where(o => o.Player.Balance < o.Player.PlayerEntity.DefaultRate))
     {
@@ -189,7 +183,8 @@
 
 <div class="modal-footer">
     <a class="btn btn-secondary" href="/games/"><i class="fa-solid fa-arrow-left"></i> All Games</a>
-    <button class="btn btn-secondary" @onclick="DeleteGame"><i class="fa-solid fa-trash"></i> Delete Game</button>
+    <button class="btn btn-secondary" @onclick="CalculateTeams"><i class="fa-solid fa-gear"></i> Calculate Teams</button>
+    <button class="btn btn-secondary" @onclick="DeleteGame"><i class="fa-solid fa-trash"></i> Delete</button>
 </div>
 
 @code {

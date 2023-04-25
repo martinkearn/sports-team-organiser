@@ -9,19 +9,13 @@
 
 @if ((game.TeamA != null) && (game.TeamB != null))
 {
-    <hr>
-
-    <h4>Team A - @game.TeamA.Count()</h4>
-    <p>@game.TeamA.Where(t => t.Player.PlayerEntity.Position == PlayerPosition.Defender).Count() defenders, @game.TeamA.Where(t => t.Player.PlayerEntity.Position == PlayerPosition.Midfielder).Count() midfielders, @game.TeamA.Where(t => t.Player.PlayerEntity.Position == PlayerPosition.Forward).Count() forwards</p>
+    <h2>Team A - @game.TeamA.Count()</h2>
     @foreach (var pag in game.TeamA)
     {
         <p>@pag.Player.PlayerEntity.Name <PositionIcon Position="pag.Player.PlayerEntity.Position" /></p>
     }
 
-    <hr>
-
-    <h4>Team B - @game.TeamB.Count() (wear bibs)</h4>
-    <p>@game.TeamB.Where(t => t.Player.PlayerEntity.Position == PlayerPosition.Defender).Count() defenders, @game.TeamB.Where(t => t.Player.PlayerEntity.Position == PlayerPosition.Midfielder).Count() midfielders, @game.TeamB.Where(t => t.Player.PlayerEntity.Position == PlayerPosition.Forward).Count() forwards</p>
+    <h2>Team B - @game.TeamB.Count() (wear bibs)</h2>
     @foreach (var pag in game.TeamB)
     {
         <p>@pag.Player.PlayerEntity.Name <PositionIcon Position="pag.Player.PlayerEntity.Position" /></p>
@@ -31,10 +25,6 @@ else
 {
     <p>No teams yet.</p>
 }
-
-<div class="modal-footer">
-    <a class="btn btn-secondary" href="/games/@GameRowKey"><i class="fa-solid fa-arrow-left"></i> Back to Game</a>
-</div>
 
 @code {
     [Parameter]
@@ -54,7 +44,7 @@ else
         game = await GameService.GetGame(GameRowKey);
         game.TeamA = game.TeamA.OrderBy(o => o.Player.PlayerEntity.Position).ToList();
         game.TeamB = game.TeamB.OrderBy(o => o.Player.PlayerEntity.Position).ToList();
-        pageTitle = $"{game.GameEntity.Date.Date.ToString("dd MMM")}";
+        pageTitle = game.GameEntity.Date.Date.ToLongDateString();
 
     }
 }

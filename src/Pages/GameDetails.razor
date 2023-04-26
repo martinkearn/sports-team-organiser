@@ -66,7 +66,7 @@
             
             <div class="input-group col-12">
                 <InputSelect class="form-select" @bind-Value="newPagTransactionEntity.PlayerRowKey" @oninput="NewPagTransactionPlayerChanged">
-                    <option value="">Add payment from ...</option>
+                    <option value="">Add payment to game ...</option>
                     @foreach (var player in players)
                     {
                         if (game.PlayersAtGame.SingleOrDefault(pag => pag.PlayerAtGameEntity.PlayerRowKey == player.PlayerEntity.RowKey) != default)
@@ -139,7 +139,7 @@
                             <InputCheckbox class="form-check-input" type="checkbox" role="switch" @bind-Value=pag.PlayerAtGameEntity.Played @bind-Value:after="() => BillRefundPagEntity(pag.PlayerAtGameEntity)"></InputCheckbox>
                         </div>
                     </td>
-                    <td>@pag.PlayerAtGameEntity.Team <button class="btn btn-outline-secondary btn-sm" @onclick="() => SwitchPagTeam(pag.PlayerAtGameEntity)"><i class="fa-solid fa-repeat"></i></button></td>
+                    <td><button class="btn btn-outline-secondary btn-sm" @onclick="() => SwitchPagTeam(pag.PlayerAtGameEntity)">@pag.PlayerAtGameEntity.Team <i class="fa-solid fa-repeat"></i></button></td>
                 </tr>
             }
         </tbody>

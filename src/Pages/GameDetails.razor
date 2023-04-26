@@ -14,16 +14,28 @@
 {
     <ul class="nav nav-tabs">
         <li class="nav-item">
-            <a class="nav-link active" @onclick="SwitchTabGame">Game</a>
+            <a class="nav-link active" @onclick="SwitchTabGame">
+                <span class="d-md-none"><i class="fa-solid fa-people-group"></i></span>
+                <span class="d-none d-md-block">Game</span>
+            </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" @onclick="SwitchTabPlayers">Players</a>
+            <a class="nav-link" @onclick="SwitchTabPlayers">
+                <span class="d-md-none"><i class="fa-solid fa-user"></i></span>
+                <span class="d-none d-md-block">Players</span>
+            </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" @onclick="SwitchTabTransactions">Transactions</a>
+            <a class="nav-link" @onclick="SwitchTabTransactions">
+                <span class="d-md-none"><i class="fa-solid fa-coins"></i></span>
+                <span class="d-none d-md-block">Transactions</span>
+            </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="/teamsheet/@game.GameEntity.RowKey">Teamsheet</a>
+            <a class="nav-link" href="/teamsheet/@game.GameEntity.RowKey">
+                <span class="d-md-none"><i class="fa-solid fa-table"></i></span>
+                <span class="d-none d-md-block">Teamsheet</span>
+            </a>
         </li>
     </ul>
 
@@ -31,7 +43,7 @@
         <EditForm Model="@newPagEntity" OnValidSubmit="AddPagEntity" class="row row-cols-lg-auto g-3 align-items-center">
             <DataAnnotationsValidator />
             <ValidationSummary />
-            <div class="col-10">
+            <div class="input-group col-12">
                 <InputSelect class="form-select" @bind-Value="newPagEntity.PlayerRowKey">
                     <option value="">Add player to game ...</option>
                     @foreach (var player in players)
@@ -42,9 +54,7 @@
                         }
                     }
                 </InputSelect>
-            </div>
-            <div class="col-2">
-                <button type="submit" class="btn btn-secondary"><i class="fa-solid fa-plus"></i></button>
+                <button class="btn btn-outline-secondary" type="submit"><i class="fa-solid fa-plus"></i></button>
             </div>
         </EditForm>
     </div>
@@ -53,9 +63,10 @@
         <EditForm Model="@newPagTransactionEntity" OnValidSubmit="AddPagTransaction" class="row row-cols-lg-auto g-3 align-items-center">
             <DataAnnotationsValidator />
             <ValidationSummary />
-            <div class="col-10">
+            
+            <div class="input-group col-12">
                 <InputSelect class="form-select" @bind-Value="newPagTransactionEntity.PlayerRowKey" @oninput="NewPagTransactionPlayerChanged">
-                    <option value="">Add payment from ...</option>
+                    <option value="">Add payment to game ...</option>
                     @foreach (var player in players)
                     {
                         if (game.PlayersAtGame.SingleOrDefault(pag => pag.PlayerAtGameEntity.PlayerRowKey == player.PlayerEntity.RowKey) != default)
@@ -64,9 +75,7 @@
                         }
                     }
                 </InputSelect>
-            </div>
-            <div class="col-2">
-                <button type="submit" class="btn btn-secondary"><i class="fa-solid fa-plus"></i></button>
+                <button class="btn btn-outline-secondary" type="submit"><i class="fa-solid fa-plus"></i></button>
             </div>
         </EditForm>
     </div>
@@ -76,16 +85,28 @@
 {
     <ul class="nav nav-tabs">
         <li class="nav-item">
-            <a class="nav-link" @onclick="SwitchTabGame">Game</a>
+            <a class="nav-link" @onclick="SwitchTabGame">
+                <span class="d-md-none"><i class="fa-solid fa-people-group"></i></span>
+                <span class="d-none d-md-block">Game</span>
+            </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link active" @onclick="SwitchTabPlayers">Players</a>
+            <a class="nav-link active" @onclick="SwitchTabPlayers">
+                <span class="d-md-none"><i class="fa-solid fa-user"></i></span>
+                <span class="d-none d-md-block">Players</span>
+            </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" @onclick="SwitchTabTransactions">Transactions</a>
+            <a class="nav-link" @onclick="SwitchTabTransactions">
+                <span class="d-md-none"><i class="fa-solid fa-coins"></i></span>
+                <span class="d-none d-md-block">Transactions</span>
+            </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="/teamsheet/@game.GameEntity.RowKey">Teamsheet</a>
+            <a class="nav-link" href="/teamsheet/@game.GameEntity.RowKey">
+                <span class="d-md-none"><i class="fa-solid fa-table"></i></span>
+                <span class="d-none d-md-block">Teamsheet</span>
+            </a>
         </li>
     </ul>
 
@@ -93,7 +114,7 @@
         <thead>
             <tr>
                 <th scope="col"><button class="btn btn-link m-0 p-0" @onclick="() => SortPags(Enums.SortPagsBy.Name)">Name</button></th>
-                <th scope="col"><button class="btn btn-link m-0 p-0" @onclick="() => SortPags(Enums.SortPagsBy.Position)">Position</button></th>
+                <th scope="col"><button class="btn btn-link m-0 p-0" @onclick="() => SortPags(Enums.SortPagsBy.Position)">Pos</button></th>
                 <th scope="col" class="d-none d-lg-table-cell"><button class="btn btn-link m-0 p-0" @onclick="() => SortPags(Enums.SortPagsBy.Playing)">Playing</button></th>
                 <th scope="col" class="d-none d-lg-table-cell"><button class="btn btn-link m-0 p-0" @onclick="() => SortPags(Enums.SortPagsBy.Balance)">Balance</button></th>
                 <th scope="col"><button class="btn btn-link m-0 p-0" @onclick="() => SortPags(Enums.SortPagsBy.Played)">Played</button></th>
@@ -118,7 +139,7 @@
                             <InputCheckbox class="form-check-input" type="checkbox" role="switch" @bind-Value=pag.PlayerAtGameEntity.Played @bind-Value:after="() => BillRefundPagEntity(pag.PlayerAtGameEntity)"></InputCheckbox>
                         </div>
                     </td>
-                    <td>@pag.PlayerAtGameEntity.Team <button class="btn btn-outline-secondary" @onclick="() => SwitchPagTeam(pag.PlayerAtGameEntity)"><i class="fa-solid fa-repeat"></i></button></td>
+                    <td><button class="btn btn-outline-secondary btn-sm" @onclick="() => SwitchPagTeam(pag.PlayerAtGameEntity)">@pag.PlayerAtGameEntity.Team <i class="fa-solid fa-repeat"></i></button></td>
                 </tr>
             }
         </tbody>
@@ -129,16 +150,28 @@
 {
     <ul class="nav nav-tabs">
         <li class="nav-item">
-            <a class="nav-link" @onclick="SwitchTabGame">Game</a>
+            <a class="nav-link" @onclick="SwitchTabGame">
+                <span class="d-md-none"><i class="fa-solid fa-people-group"></i></span>
+                <span class="d-none d-md-block">Game</span>
+            </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" @onclick="SwitchTabPlayers">Players</a>
+            <a class="nav-link" @onclick="SwitchTabPlayers">
+                <span class="d-md-none"><i class="fa-solid fa-user"></i></span>
+                <span class="d-none d-md-block">Players</span>
+            </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link active" @onclick="SwitchTabTransactions">Transactions</a>
+            <a class="nav-link active" @onclick="SwitchTabTransactions">
+                <span class="d-md-none"><i class="fa-solid fa-coins"></i></span>
+                <span class="d-none d-md-block">Transactions</span>
+            </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="/teamsheet/@game.GameEntity.RowKey">Teamsheet</a>
+            <a class="nav-link" href="/teamsheet/@game.GameEntity.RowKey">
+                <span class="d-md-none"><i class="fa-solid fa-table"></i></span>
+                <span class="d-none d-md-block">Teamsheet</span>
+            </a>
         </li>
     </ul>
 
@@ -181,8 +214,7 @@
     }
 }
 
-<div class="modal-footer">
-    <a class="btn btn-secondary" href="/games/"><i class="fa-solid fa-arrow-left"></i> All Games</a>
+<div class="modal-footer px-0">
     <button class="btn btn-secondary" @onclick="CalculateTeams"><i class="fa-solid fa-gear"></i> Calculate Teams</button>
     <button class="btn btn-secondary" @onclick="DeleteGame"><i class="fa-solid fa-trash"></i> Delete</button>
 </div>

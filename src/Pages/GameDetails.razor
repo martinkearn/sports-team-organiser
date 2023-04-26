@@ -117,7 +117,7 @@
         <thead>
             <tr>
                 <th scope="col"><button class="btn btn-link m-0 p-0" @onclick="() => SortPags(Enums.SortPagsBy.Name)">Name</button></th>
-                <th scope="col"><button class="btn btn-link m-0 p-0" @onclick="() => SortPags(Enums.SortPagsBy.Position)">Position</button></th>
+                <th scope="col"><button class="btn btn-link m-0 p-0" @onclick="() => SortPags(Enums.SortPagsBy.Position)">Pos</button></th>
                 <th scope="col" class="d-none d-lg-table-cell"><button class="btn btn-link m-0 p-0" @onclick="() => SortPags(Enums.SortPagsBy.Playing)">Playing</button></th>
                 <th scope="col" class="d-none d-lg-table-cell"><button class="btn btn-link m-0 p-0" @onclick="() => SortPags(Enums.SortPagsBy.Balance)">Balance</button></th>
                 <th scope="col"><button class="btn btn-link m-0 p-0" @onclick="() => SortPags(Enums.SortPagsBy.Played)">Played</button></th>
@@ -142,7 +142,7 @@
                             <InputCheckbox class="form-check-input" type="checkbox" role="switch" @bind-Value=pag.PlayerAtGameEntity.Played @bind-Value:after="() => BillRefundPagEntity(pag.PlayerAtGameEntity)"></InputCheckbox>
                         </div>
                     </td>
-                    <td>@pag.PlayerAtGameEntity.Team <button class="btn btn-outline-secondary" @onclick="() => SwitchPagTeam(pag.PlayerAtGameEntity)"><i class="fa-solid fa-repeat"></i></button></td>
+                    <td>@pag.PlayerAtGameEntity.Team <button class="btn btn-outline-secondary btn-sm" @onclick="() => SwitchPagTeam(pag.PlayerAtGameEntity)"><i class="fa-solid fa-repeat"></i></button></td>
                 </tr>
             }
         </tbody>
@@ -218,7 +218,6 @@
 }
 
 <div class="modal-footer">
-    <a class="btn btn-secondary" href="/games/"><i class="fa-solid fa-arrow-left"></i> All Games</a>
     <button class="btn btn-secondary" @onclick="CalculateTeams"><i class="fa-solid fa-gear"></i> Calculate Teams</button>
     <button class="btn btn-secondary" @onclick="DeleteGame"><i class="fa-solid fa-trash"></i> Delete</button>
 </div>

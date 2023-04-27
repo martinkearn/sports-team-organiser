@@ -8,7 +8,7 @@
 
 <h1><i class="fa-solid fa-people-group me-2"></i> @pageTitle</h1>
 
-<p>Forecast: @game.PlayersAtGame.Where(p => p.PlayerAtGameEntity.Forecast == PlayingOptions.Yes.ToString()).Count() yes / @game.PlayersAtGame.Where(p => p.PlayerAtGameEntity.Forecast == PlayingOptions.Maybe.ToString()).Count() maybe <br> Actual: @game.PlayersAtGame.Where(p => p.PlayerAtGameEntity.Played == true).Count()</p>
+<p>@game.PlayersAtGame.Where(p => p.PlayerAtGameEntity.Forecast == PlayingOptions.Yes.ToString()).Count() yes, @game.PlayersAtGame.Where(p => p.PlayerAtGameEntity.Forecast == PlayingOptions.Maybe.ToString()).Count() maybe, @game.PlayersAtGame.Where(p => p.PlayerAtGameEntity.Played == true).Count() actual</p>
 
 @if (currentTab == "game")
 {
@@ -57,6 +57,7 @@
                 <button class="btn btn-outline-secondary" type="submit"><i class="fa-solid fa-plus"></i></button>
             </div>
         </EditForm>
+        <p>@game.PlayersAtGame.Count() players.</p>
     </div>
 
     <div class="pb-4">
@@ -78,6 +79,7 @@
                 <button class="btn btn-outline-secondary" type="submit"><i class="fa-solid fa-plus"></i></button>
             </div>
         </EditForm>
+        <p>@game.TransactionsEntities.Count transactions totalling <CurrencyDisplay Amount="@game.TransactionsEntities.Sum(o => o.Amount)" />.</p>
     </div>
 }
 
@@ -175,6 +177,7 @@
         </li>
     </ul>
 
+    <p>@game.TransactionsEntities.Count transactions totalling <CurrencyDisplay Amount="@game.TransactionsEntities.Sum(o => o.Amount)" />.</p>
     <table class="table table-striped">
         <thead>
             <tr>

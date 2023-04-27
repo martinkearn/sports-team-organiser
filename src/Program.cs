@@ -34,17 +34,12 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseStaticFiles();
-
 app.UseRouting();
-
-app.UseEndpoints(endpoints =>
-{
-    endpoints.MapControllerRoute(
-        name: "default",
-        pattern: "{controller}/{action}");
-    endpoints.MapControllers();
-    endpoints.MapBlazorHub();
-    endpoints.MapFallbackToPage("/_Host");
-});
+app.MapControllerRoute(
+    name: "default",
+    pattern: "{controller}/{action}");
+app.MapControllers();
+app.MapBlazorHub();
+app.MapFallbackToPage("/_Host");
 
 app.Run();

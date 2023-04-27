@@ -64,7 +64,7 @@ resource webApp 'Microsoft.Web/sites@2022-03-01' = {
       appSettings: [
         {
           name: 'APPINSIGHTS_INSTRUMENTATIONKEY'
-          value: reference(applicationInsights.id, '2020-02-02').InstrumentationKey
+          value: applicationInsights.properties.InstrumentationKey
         }
         {
           name: 'StorageConfiguration__DataTable'

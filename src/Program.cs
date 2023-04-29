@@ -1,6 +1,7 @@
 global using STO.Services;
 global using STO.Interfaces;
 global using STO.Models;
+using Microsoft.AspNetCore.Authentication.OAuth;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,6 +26,22 @@ builder.Services.AddOptions<StorageConfiguration>()
         configuration.GetSection(nameof(StorageConfiguration)).Bind(settings);
     });
 var configuration = builder.Configuration;
+builder.Services.AddAuthentication().AddFacebook(facebookOptions =>
+    {
+        facebookOptions.AppId = configuration["Authentication:Facebook:AppId"];
+        facebookOptions.AppSecret = configuration["Authentication:Facebook:AppSecret"];
+
+        facebookOptions.Events = new OAuthEvents()
+        {
+            OnRemoteFailure = loginFailureHandler =>
+            {
+            var authProperties = facebookOptions.StateDataFormat.Unprotect(loginFailureHandler.Request.Query["state"]);
+            loginFailureHandler.Response.Redirect("/Identity/Account/Login");
+            loginFailureHandler.HandleResponse();
+            return Task.FromResult(0);
+            }
+        };
+    });
 
 var app = builder.Build();
 

@@ -24,6 +24,7 @@ builder.Services.AddOptions<StorageConfiguration>()
     {
         configuration.GetSection(nameof(StorageConfiguration)).Bind(settings);
     });
+var configuration = builder.Configuration;
 
 var app = builder.Build();
 

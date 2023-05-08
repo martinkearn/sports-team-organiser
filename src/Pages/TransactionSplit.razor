@@ -5,12 +5,65 @@
 <PageTitle>TNF - @pageTitle</PageTitle>
 
 <h1><i class="fa-solid fa-coins me-2"></i> @pageTitle</h1>
+<p>This page will create a new transaction by taking money from an existing one.</p>
+
+<h2>Original Transaction</h2>
+<EditForm Model="@originalTransaction">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+    <div class="mb-3">
+        <label for="addPlayerRowKey" class="form-label">Player & Game</label>
+        <p class="form-control">@originalTransaction.Player.PlayerEntity.Name at @originalTransaction.Game.GameEntity.Date.Date.ToShortDateString()</p>
+    </div>
+
+    <div class="mb-3">
+        <label for="addNotes" class="form-label">Notes</label>
+        <p class="form-control">@originalTransaction.TransactionEntity.Notes"</p>
+    </div>
+
+    <div class="mb-3">
+        <label for="addAmount" class="form-label">Amount</label>
+        <p class="form-control">@originalTransaction.TransactionEntity.Amount</p>
+    </div>
+</EditForm>
+
+<h2>New Transaction</h2>
+<EditForm Model="@updatedOriginalTransaction">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="mb-3">
+        <label for="addAmount" class="form-label">Notes for original transaction</label>        
+        <InputText class="form-control" id="addNotes" @bind-Value="originalTransaction.TransactionEntity.Notes" />
+    </div>
+</EditForm>
+<EditForm Model="@newTransaction">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+    <div class="mb-3">
+        <label for="addAmount" class="form-label">Amount to take</label>        
+        <div class="input-group">
+            <span class="input-group-text">£</span>
+            <InputNumber type="number" class="form-control" id="addAmount" @bind-Value="newTransaction.Amount" />
+            @* TO DO - ensure we cannot set more than the initial transaction *@
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <label for="addAmount" class="form-label">Notes for new transaction</label>        
+        <InputText class="form-control" id="addNotes" @bind-Value="newTransaction.Notes" />
+    </div>
+</EditForm>
 
 @code {
     [Parameter]
     public string TransactionRowKey { get; set; }
 
     private Transaction originalTransaction;
+
+    private TransactionEntity newTransaction;
+
+    private TransactionEntity updatedOriginalTransaction;
 
     private string pageTitle;
 
@@ -21,6 +74,8 @@
 
     async Task RefreshData()
     {
+        updatedOriginalTransaction = new TransactionEntity();
+        newTransaction = new TransactionEntity();
         originalTransaction = await TransactionService.GetTransaction(TransactionRowKey);
         pageTitle = $"Split transaction: {@originalTransaction.Player.PlayerEntity.Name}, {@originalTransaction.TransactionEntity.Date.Date.ToShortDateString()}";
     }

@@ -16,20 +16,20 @@
 
 <div class="mb-3">
     <label for="addAmount" class="form-label">Amount</label>
-    <p><CurrencyDisplay Amount="@originalAmount" /></p>
+    <p><CurrencyDisplay Amount="@originalTransactionEntity.Amount" /></p>
 </div>
 
 <h2>New Transaction</h2>
-<EditForm Model="@newTransaction">
+<EditForm Model="@newTransactionEntity" OnValidSubmit="Add">
     <DataAnnotationsValidator />
     <ValidationSummary />
     <div class="mb-3">
         <label for="addAmount" class="form-label">Amount to take</label>        
         <div class="input-group">
             <span class="input-group-text">£</span>
-            <InputNumber type="number" class="form-control" id="addAmount" @bind-Value="newTransaction.Amount" @bind-Value:after="() => CalculateUpdates()"/>
+            <InputNumber type="number" class="form-control" id="addAmount" @bind-Value="newTransactionEntity.Amount" @bind-Value:after="() => CalculateUpdates()"/>
         </div>
-        @if (newTransaction.Amount > originalAmount)
+        @if (newTransactionEntity.Amount > originalTransactionEntity.Amount)
         {
             <div class="form-text">This will take more than the original amount, making the original transaction a negative one.</div>
         }
@@ -37,7 +37,7 @@
 
     <div class="mb-3">
         <label for="addPlayerRowKey" class="form-label">Associated Game</label>
-        <InputSelect class="form-select" @bind-Value="newTransaction.GameRowKey" @bind-Value:after="() => CalculateUpdates()">
+        <InputSelect class="form-select" @bind-Value="newTransactionEntity.GameRowKey" @bind-Value:after="() => CalculateUpdates()">
             <option value="">Select Game ...</option>
             @foreach (var game in games)
             {
@@ -54,7 +54,11 @@
 
     <div class="mb-3">
         <label for="addAmount" class="form-label">Notes for new transaction</label>        
-        <InputTextArea class="form-control" id="addNotes" @bind-Value="newTransaction.Notes" />
+        <InputTextArea class="form-control" id="addNotes" @bind-Value="newTransactionEntity.Notes" />
+    </div>
+
+    <div class="modal-footer">
+        <button type="submit" class="btn btn-primary">Add Split Transaction</button>
     </div>
 </EditForm>
 
@@ -64,17 +68,15 @@
 
     private List<Game> games = new();
 
-    private TransactionEntity newTransaction;
+    private TransactionEntity newTransactionEntity;
+
+    private TransactionEntity originalTransactionEntity;
 
     private string updatedOriginalNotes;
 
     private string pageTitle;
 
     private string originalPlayerGame;
-
-    private double originalAmount;
-
-    private string originalNotes;
 
     protected override async Task OnInitializedAsync()
     {
@@ -84,26 +86,38 @@
     private async Task CalculateUpdates()
     {   
         var gameDetails = "no game";
-        if (newTransaction.GameRowKey != null)
+        if (newTransactionEntity.GameRowKey != null)
         {
             // A game was selelcted
-            var game = await GameService.GetGame(newTransaction.GameRowKey);
+            var game = await GameService.GetGame(newTransactionEntity.GameRowKey);
             gameDetails = $"game on {game.GameEntity.Date.Date.ToShortDateString()}";
         }
 
-        var newOriginalAmount = originalAmount - newTransaction.Amount;
-        updatedOriginalNotes = $"{originalNotes} / Split on {DateTime.Now.Date.ToString("dd MMM")}. £{@newTransaction.Amount} taken into a new transaction for {@gameDetails}, leaving £{@newOriginalAmount} left in this one.";
-        newTransaction.Notes = $"Created by spliting transaction {@TransactionRowKey}. Split on {DateTime.Now.Date.ToString("dd MMM")}. £{@newTransaction.Amount} taken into this transaction for {@gameDetails}, leaving £{@newOriginalAmount} left in the original one.";
+        var newOriginalAmount = originalTransactionEntity.Amount - newTransactionEntity.Amount;
+        updatedOriginalNotes = $"{originalTransactionEntity.Notes} / Split on {DateTime.Now.Date.ToString("dd MMM")}. £{@newTransactionEntity.Amount} taken into a new transaction for {@gameDetails}, leaving £{@newOriginalAmount} left in this one.";
+        newTransactionEntity.Notes = $"Created by spliting transaction {@TransactionRowKey}. Split on {DateTime.Now.Date.ToString("dd MMM")}. £{@newTransactionEntity.Amount} taken into this transaction for {@gameDetails}, leaving £{@newOriginalAmount} left in the original one.";
+    }
+
+    protected async Task Add()
+    {
+        // Update original transaction
+        var newOriginalTransaction = new TransactionEntity()
+        {
+            PlayerRowKey = originalTransactionEntity.PlayerRowKey,
+        };
+        await TransactionService.UpsertTransactionEntity(newOriginalTransaction);
+
+        // Add new trasnaction
+        Navigation.NavigateTo("/transactions");
     }
 
     async Task RefreshData()
     {
         games = await GameService.GetGames();
-        newTransaction = new TransactionEntity();
+        newTransactionEntity = new TransactionEntity();
         var originalTransaction = await TransactionService.GetTransaction(TransactionRowKey);
+        originalTransactionEntity = originalTransaction.TransactionEntity;
         originalPlayerGame = $"{originalTransaction.Player.PlayerEntity.Name} at {originalTransaction.Game.GameEntity.Date.Date.ToShortDateString()}";
-        originalAmount = originalTransaction.TransactionEntity.Amount; 
-        originalNotes = originalTransaction.TransactionEntity.Notes;
-        pageTitle = $"Split transaction: {@originalTransaction.Player.PlayerEntity.Name}, {@originalTransaction.TransactionEntity.Date.Date.ToString("dd MMM")}";
+        pageTitle = $"Split transaction: {@originalTransaction.Player.PlayerEntity.Name}, {originalTransactionEntity.Date.Date.ToString("dd MMM")}";
     }
 }

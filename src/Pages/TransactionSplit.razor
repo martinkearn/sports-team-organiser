@@ -37,7 +37,7 @@
 
     <div class="mb-3">
         <label for="addPlayerRowKey" class="form-label">Associated Game</label>
-        <InputSelect class="form-select" @bind-Value="newTransaction.GameRowKey">
+        <InputSelect class="form-select" @bind-Value="newTransaction.GameRowKey" @bind-Value:after="() => CalculateUpdates()">
             <option value="">Select Game ...</option>
             @foreach (var game in games)
             {
@@ -81,11 +81,19 @@
         await RefreshData();
     }
 
-    private void CalculateUpdates()
+    private async Task CalculateUpdates()
     {   
+        var gameDetails = "no game";
+        if (newTransaction.GameRowKey != null)
+        {
+            // A game was selelcted
+            var game = await GameService.GetGame(newTransaction.GameRowKey);
+            gameDetails = $"game on {game.GameEntity.Date.Date.ToShortDateString()}";
+        }
+
         var newOriginalAmount = originalAmount - newTransaction.Amount;
-        updatedOriginalNotes = $"{originalNotes} / Split on {DateTime.Now.Date.ToString("dd MMM")}. £{@newTransaction.Amount} taken into a new transaction, leaving £{@newOriginalAmount} left in this one.";
-        newTransaction.Notes = $"Created by spliting transaction {@TransactionRowKey}. Split on {DateTime.Now.Date.ToString("dd MMM")}. £{@newTransaction.Amount} taken into this transaction, leaving £{@newOriginalAmount} left in the original one.";
+        updatedOriginalNotes = $"{originalNotes} / Split on {DateTime.Now.Date.ToString("dd MMM")}. £{@newTransaction.Amount} taken into a new transaction for {@gameDetails}, leaving £{@newOriginalAmount} left in this one.";
+        newTransaction.Notes = $"Created by spliting transaction {@TransactionRowKey}. Split on {DateTime.Now.Date.ToString("dd MMM")}. £{@newTransaction.Amount} taken into this transaction for {@gameDetails}, leaving £{@newOriginalAmount} left in the original one.";
     }
 
     async Task RefreshData()

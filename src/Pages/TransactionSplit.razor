@@ -49,7 +49,7 @@
 
     <div class="mb-3">
         <label for="addAmount" class="form-label">Notes for original transaction</label>        
-        <InputText class="form-control" id="addNotes" @bind-Value="originalTransaction.TransactionEntity.Notes" />
+        <InputText class="form-control" id="addNotes" @bind-Value="updatedOriginalNotes" />
     </div>
 
     <div class="mb-3">
@@ -64,9 +64,9 @@
 
     private List<Game> games = new();
 
-    private Transaction originalTransaction;
-
     private TransactionEntity newTransaction;
+
+    private string updatedOriginalNotes;
 
     private string pageTitle;
 
@@ -83,16 +83,16 @@
 
     private void CalculateUpdates()
     {   
-        originalTransaction.TransactionEntity.Amount = originalAmount - newTransaction.Amount;
-        originalTransaction.TransactionEntity.Notes = $"{originalNotes} / Split on {DateTime.Now.Date.ToString("dd MMM")}. £{@newTransaction.Amount} taken into a new transaction, leaving £{@originalTransaction.TransactionEntity.Amount} left in this one.";
-        newTransaction.Notes = $"Created by spliting transaction {@originalTransaction.TransactionEntity.RowKey}. Split on {DateTime.Now.Date.ToString("dd MMM")}. £{@newTransaction.Amount} taken into this transaction, leaving £{@originalTransaction.TransactionEntity.Amount} left in the original one.";
+        var newOriginalAmount = originalAmount - newTransaction.Amount;
+        updatedOriginalNotes = $"{originalNotes} / Split on {DateTime.Now.Date.ToString("dd MMM")}. £{@newTransaction.Amount} taken into a new transaction, leaving £{@newOriginalAmount} left in this one.";
+        newTransaction.Notes = $"Created by spliting transaction {@TransactionRowKey}. Split on {DateTime.Now.Date.ToString("dd MMM")}. £{@newTransaction.Amount} taken into this transaction, leaving £{@newOriginalAmount} left in the original one.";
     }
 
     async Task RefreshData()
     {
         games = await GameService.GetGames();
         newTransaction = new TransactionEntity();
-        originalTransaction = await TransactionService.GetTransaction(TransactionRowKey);
+        var originalTransaction = await TransactionService.GetTransaction(TransactionRowKey);
         originalPlayerGame = $"{originalTransaction.Player.PlayerEntity.Name} at {originalTransaction.Game.GameEntity.Date.Date.ToShortDateString()}";
         originalAmount = originalTransaction.TransactionEntity.Amount; 
         originalNotes = originalTransaction.TransactionEntity.Notes;

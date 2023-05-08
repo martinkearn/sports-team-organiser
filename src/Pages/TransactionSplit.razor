@@ -1,5 +1,6 @@
 @page "/transactions/split/{TransactionRowKey}"
 @inject ITransactionService TransactionService
+@inject IGameService GameService
 @inject NavigationManager Navigation
 
 <PageTitle>TNF - @pageTitle</PageTitle>
@@ -15,7 +16,7 @@
 
 <div class="mb-3">
     <label for="addAmount" class="form-label">Amount</label>
-    <p>£@originalAmount</p>
+    <p><CurrencyDisplay Amount="@originalAmount" /></p>
 </div>
 
 <h2>New Transaction</h2>
@@ -27,8 +28,23 @@
         <div class="input-group">
             <span class="input-group-text">£</span>
             <InputNumber type="number" class="form-control" id="addAmount" @bind-Value="newTransaction.Amount" @bind-Value:after="() => CalculateUpdates()"/>
-            @* TO DO - ensure we cannot set more than the initial transaction *@
         </div>
+        @if (newTransaction.Amount > originalAmount)
+        {
+            <div class="form-text">This will take more than the original amount, making the original transaction a negative one.</div>
+        }
+    </div>
+
+    <div class="mb-3">
+        <label for="addPlayerRowKey" class="form-label">Associated Game</label>
+        <InputSelect class="form-select" @bind-Value="newTransaction.GameRowKey">
+            <option value="">Select Game ...</option>
+            @foreach (var game in games)
+            {
+                <option value="@game.GameEntity.RowKey">@game.GameEntity.Date.Date.ToLongDateString()</option>
+            }
+        </InputSelect>
+        <div class="form-text">Optionally associate the transaction with a game.</div>
     </div>
 
     <div class="mb-3">
@@ -45,6 +61,8 @@
 @code {
     [Parameter]
     public string TransactionRowKey { get; set; }
+
+    private List<Game> games = new();
 
     private Transaction originalTransaction;
 
@@ -72,6 +90,7 @@
 
     async Task RefreshData()
     {
+        games = await GameService.GetGames();
         newTransaction = new TransactionEntity();
         originalTransaction = await TransactionService.GetTransaction(TransactionRowKey);
         originalPlayerGame = $"{originalTransaction.Player.PlayerEntity.Name} at {originalTransaction.Game.GameEntity.Date.Date.ToShortDateString()}";

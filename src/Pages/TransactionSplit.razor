@@ -8,19 +8,15 @@
 <p>This page will create a new transaction by taking money from an existing one.</p>
 
 <h2>Original Transaction</h2>
-<EditForm Model="@originalTransaction">
-    <DataAnnotationsValidator />
-    <ValidationSummary />
-    <div class="mb-3">
-        <label for="addPlayerRowKey" class="form-label">Player & Game</label>
-        <p class="form-control">@originalTransaction.Player.PlayerEntity.Name at @originalTransaction.Game.GameEntity.Date.Date.ToShortDateString()</p>
-    </div>
+<div class="mb-3">
+    <label for="addPlayerRowKey" class="form-label">Player & Game</label>
+    <p>@originalPlayerGame</p>
+</div>
 
-    <div class="mb-3">
-        <label for="addAmount" class="form-label">Amount</label>
-        <p class="form-control">@originalTransaction.TransactionEntity.Amount</p>
-    </div>
-</EditForm>
+<div class="mb-3">
+    <label for="addAmount" class="form-label">Amount</label>
+    <p>£@originalAmount</p>
+</div>
 
 <h2>New Transaction</h2>
 <EditForm Model="@newTransaction">
@@ -30,14 +26,14 @@
         <label for="addAmount" class="form-label">Amount to take</label>        
         <div class="input-group">
             <span class="input-group-text">£</span>
-            <InputNumber type="number" class="form-control" id="addAmount" @bind-Value="newTransaction.Amount" @bind-Value:after="() => UpdateNotes()"/>
+            <InputNumber type="number" class="form-control" id="addAmount" @bind-Value="newTransaction.Amount" @bind-Value:after="() => CalculateUpdates()"/>
             @* TO DO - ensure we cannot set more than the initial transaction *@
         </div>
     </div>
 
     <div class="mb-3">
         <label for="addAmount" class="form-label">Notes for original transaction</label>        
-        <InputText class="form-control" id="addNotes" @bind-Value="updatedOriginalTransaction.Notes" />
+        <InputText class="form-control" id="addNotes" @bind-Value="originalTransaction.TransactionEntity.Notes" />
     </div>
 
     <div class="mb-3">
@@ -54,27 +50,33 @@
 
     private TransactionEntity newTransaction;
 
-    private TransactionEntity updatedOriginalTransaction;
-
     private string pageTitle;
+
+    private string originalPlayerGame;
+
+    private double originalAmount;
+
+    private string originalNotes;
 
     protected override async Task OnInitializedAsync()
     {
         await RefreshData();
     }
 
-    private void UpdateNotes()
+    private void CalculateUpdates()
     {   
-        updatedOriginalTransaction.Amount = originalTransaction.TransactionEntity.Amount - newTransaction.Amount;
-        updatedOriginalTransaction.Notes = $"Split on {DateTime.Now.Date.ToString("dd MMM")}. £{@newTransaction.Amount} taken into a new transaction, leaving £{@updatedOriginalTransaction.Amount} left in this one.";
-        newTransaction.Notes = $"Created by spliting transaction {@originalTransaction.TransactionEntity.RowKey}. Split on {DateTime.Now.Date.ToString("dd MMM")}. £{@newTransaction.Amount} taken into this transaction, leaving £{@updatedOriginalTransaction.Amount} left in the original one.";
+        originalTransaction.TransactionEntity.Amount = originalAmount - newTransaction.Amount;
+        originalTransaction.TransactionEntity.Notes = $"{originalNotes} / Split on {DateTime.Now.Date.ToString("dd MMM")}. £{@newTransaction.Amount} taken into a new transaction, leaving £{@originalTransaction.TransactionEntity.Amount} left in this one.";
+        newTransaction.Notes = $"Created by spliting transaction {@originalTransaction.TransactionEntity.RowKey}. Split on {DateTime.Now.Date.ToString("dd MMM")}. £{@newTransaction.Amount} taken into this transaction, leaving £{@originalTransaction.TransactionEntity.Amount} left in the original one.";
     }
 
     async Task RefreshData()
     {
-        updatedOriginalTransaction = new TransactionEntity();
         newTransaction = new TransactionEntity();
         originalTransaction = await TransactionService.GetTransaction(TransactionRowKey);
+        originalPlayerGame = $"{originalTransaction.Player.PlayerEntity.Name} at {originalTransaction.Game.GameEntity.Date.Date.ToShortDateString()}";
+        originalAmount = originalTransaction.TransactionEntity.Amount; 
+        originalNotes = originalTransaction.TransactionEntity.Notes;
         pageTitle = $"Split transaction: {@originalTransaction.Player.PlayerEntity.Name}, {@originalTransaction.TransactionEntity.Date.Date.ToString("dd MMM")}";
     }
 }

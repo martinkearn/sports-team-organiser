@@ -17,26 +17,12 @@
     </div>
 
     <div class="mb-3">
-        <label for="addNotes" class="form-label">Notes</label>
-        <p class="form-control">@originalTransaction.TransactionEntity.Notes"</p>
-    </div>
-
-    <div class="mb-3">
         <label for="addAmount" class="form-label">Amount</label>
         <p class="form-control">@originalTransaction.TransactionEntity.Amount</p>
     </div>
 </EditForm>
 
 <h2>New Transaction</h2>
-<EditForm Model="@updatedOriginalTransaction">
-    <DataAnnotationsValidator />
-    <ValidationSummary />
-
-    <div class="mb-3">
-        <label for="addAmount" class="form-label">Notes for original transaction</label>        
-        <InputText class="form-control" id="addNotes" @bind-Value="originalTransaction.TransactionEntity.Notes" />
-    </div>
-</EditForm>
 <EditForm Model="@newTransaction">
     <DataAnnotationsValidator />
     <ValidationSummary />
@@ -44,14 +30,19 @@
         <label for="addAmount" class="form-label">Amount to take</label>        
         <div class="input-group">
             <span class="input-group-text">£</span>
-            <InputNumber type="number" class="form-control" id="addAmount" @bind-Value="newTransaction.Amount" />
+            <InputNumber type="number" class="form-control" id="addAmount" @bind-Value="newTransaction.Amount" @bind-Value:after="() => UpdateNotes()"/>
             @* TO DO - ensure we cannot set more than the initial transaction *@
         </div>
     </div>
 
     <div class="mb-3">
+        <label for="addAmount" class="form-label">Notes for original transaction</label>        
+        <InputText class="form-control" id="addNotes" @bind-Value="updatedOriginalTransaction.Notes" />
+    </div>
+
+    <div class="mb-3">
         <label for="addAmount" class="form-label">Notes for new transaction</label>        
-        <InputText class="form-control" id="addNotes" @bind-Value="newTransaction.Notes" />
+        <InputTextArea class="form-control" id="addNotes" @bind-Value="newTransaction.Notes" />
     </div>
 </EditForm>
 
@@ -72,11 +63,18 @@
         await RefreshData();
     }
 
+    private void UpdateNotes()
+    {   
+        updatedOriginalTransaction.Amount = originalTransaction.TransactionEntity.Amount - newTransaction.Amount;
+        updatedOriginalTransaction.Notes = $"Split on {DateTime.Now.Date.ToString("dd MMM")}. £{@newTransaction.Amount} taken into a new transaction, leaving £{@updatedOriginalTransaction.Amount} left in this one.";
+        newTransaction.Notes = $"Created by spliting transaction {@originalTransaction.TransactionEntity.RowKey}. Split on {DateTime.Now.Date.ToString("dd MMM")}. £{@newTransaction.Amount} taken into this transaction, leaving £{@updatedOriginalTransaction.Amount} left in the original one.";
+    }
+
     async Task RefreshData()
     {
         updatedOriginalTransaction = new TransactionEntity();
         newTransaction = new TransactionEntity();
         originalTransaction = await TransactionService.GetTransaction(TransactionRowKey);
-        pageTitle = $"Split transaction: {@originalTransaction.Player.PlayerEntity.Name}, {@originalTransaction.TransactionEntity.Date.Date.ToShortDateString()}";
+        pageTitle = $"Split transaction: {@originalTransaction.Player.PlayerEntity.Name}, {@originalTransaction.TransactionEntity.Date.Date.ToString("dd MMM")}";
     }
 }

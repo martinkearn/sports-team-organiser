@@ -1,0 +1,27 @@
+@page "/transactions/split/{TransactionRowKey}"
+@inject ITransactionService TransactionService
+@inject NavigationManager Navigation
+
+<PageTitle>TNF - @pageTitle</PageTitle>
+
+<h1><i class="fa-solid fa-coins me-2"></i> @pageTitle</h1>
+
+@code {
+    [Parameter]
+    public string TransactionRowKey { get; set; }
+
+    private Transaction originalTransaction;
+
+    private string pageTitle;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await RefreshData();
+    }
+
+    async Task RefreshData()
+    {
+        originalTransaction = await TransactionService.GetTransaction(TransactionRowKey);
+        pageTitle = $"Split transaction: {@originalTransaction.Player.PlayerEntity.Name}, {@originalTransaction.TransactionEntity.Date.Date.ToShortDateString()}";
+    }
+}

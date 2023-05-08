@@ -74,9 +74,11 @@
 
     private string updatedOriginalNotes;
 
-    private string pageTitle;
+    private double updatedOriginalAmount;
 
     private string originalPlayerGame;
+
+    private string pageTitle;
 
     protected override async Task OnInitializedAsync()
     {
@@ -93,9 +95,9 @@
             gameDetails = $"game on {game.GameEntity.Date.Date.ToShortDateString()}";
         }
 
-        var newOriginalAmount = originalTransactionEntity.Amount - newTransactionEntity.Amount;
-        updatedOriginalNotes = $"{originalTransactionEntity.Notes} / Split on {DateTime.Now.Date.ToString("dd MMM")}. £{@newTransactionEntity.Amount} taken into a new transaction for {@gameDetails}, leaving £{@newOriginalAmount} left in this one.";
-        newTransactionEntity.Notes = $"Created by spliting transaction {@TransactionRowKey}. Split on {DateTime.Now.Date.ToString("dd MMM")}. £{@newTransactionEntity.Amount} taken into this transaction for {@gameDetails}, leaving £{@newOriginalAmount} left in the original one.";
+        updatedOriginalAmount = originalTransactionEntity.Amount - newTransactionEntity.Amount;
+        updatedOriginalNotes = $"{originalTransactionEntity.Notes} / Split on {DateTime.Now.Date.ToString("dd MMM")}. £{@newTransactionEntity.Amount} taken into a new transaction for {@gameDetails}, £{@updatedOriginalAmount} left in this one.";
+        newTransactionEntity.Notes = $"Split from transaction {@TransactionRowKey} on {DateTime.Now.Date.ToString("dd MMM")}. £{@newTransactionEntity.Amount} taken into this transaction for {@gameDetails}, £{@updatedOriginalAmount} left in the original one.";
     }
 
     protected async Task Add()
@@ -104,20 +106,36 @@
         var newOriginalTransaction = new TransactionEntity()
         {
             PlayerRowKey = originalTransactionEntity.PlayerRowKey,
+            Amount = updatedOriginalAmount,
+            Date = originalTransactionEntity.Date,
+            Notes = updatedOriginalNotes,
+            GameRowKey = originalTransactionEntity.GameRowKey,
+            PartitionKey = originalTransactionEntity.PartitionKey,
+            RowKey = originalTransactionEntity.RowKey,
+            Timestamp = originalTransactionEntity.Timestamp,
+            ETag = originalTransactionEntity.ETag
         };
         await TransactionService.UpsertTransactionEntity(newOriginalTransaction);
 
-        // Add new trasnaction
+        // Add new transaction - transaction is already completed from form
+        await TransactionService.UpsertTransactionEntity(newTransactionEntity);
+
         Navigation.NavigateTo("/transactions");
     }
 
     async Task RefreshData()
     {
         games = await GameService.GetGames();
-        newTransactionEntity = new TransactionEntity();
+
         var originalTransaction = await TransactionService.GetTransaction(TransactionRowKey);
         originalTransactionEntity = originalTransaction.TransactionEntity;
-        originalPlayerGame = $"{originalTransaction.Player.PlayerEntity.Name} at {originalTransaction.Game.GameEntity.Date.Date.ToShortDateString()}";
-        pageTitle = $"Split transaction: {@originalTransaction.Player.PlayerEntity.Name}, {originalTransactionEntity.Date.Date.ToString("dd MMM")}";
+        originalPlayerGame = (originalTransactionEntity.GameRowKey == null) ?
+            $"{originalTransaction.Player.PlayerEntity.Name} with no game" : 
+            $"{originalTransaction.Player.PlayerEntity.Name} at {originalTransaction.Game.GameEntity.Date.Date.ToShortDateString()}";
+        
+        newTransactionEntity = new TransactionEntity();
+        newTransactionEntity.PlayerRowKey = originalTransactionEntity.PlayerRowKey;
+        
+        pageTitle = $"Split transaction: {originalPlayerGame}";
     }
 }

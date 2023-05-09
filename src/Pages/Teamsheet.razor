@@ -5,21 +5,27 @@
 
 <PageTitle>TNF - @pageTitle</PageTitle>
 
-<h1>@pageTitle</h1>
+<h4>@pageTitle</h4>
 
 @if ((game.TeamA != null) && (game.TeamB != null))
 {
-    <h2>Team A - @game.TeamA.Count()</h2>
+    <h5>Team A - @game.TeamA.Count()</h5>
+    <p>
     @foreach (var pag in game.TeamA)
     {
-        <p>@pag.Player.PlayerEntity.Name <PositionIcon Position="pag.Player.PlayerEntity.Position" /></p>
+        <span>@pag.Player.PlayerEntity.Name <PositionIcon Position="pag.Player.PlayerEntity.Position" /></span>
+        <br>
     }
+    </p>
 
-    <h2>Team B - @game.TeamB.Count() (wear bibs)</h2>
+    <h5>Team B - @game.TeamB.Count() (wear bibs)</h5>
+    <p>
     @foreach (var pag in game.TeamB)
     {
-        <p>@pag.Player.PlayerEntity.Name <PositionIcon Position="pag.Player.PlayerEntity.Position" /></p>
+        <span>@pag.Player.PlayerEntity.Name <PositionIcon Position="pag.Player.PlayerEntity.Position" /></span>
+        <br>
     }
+    </p>
 }  
 else
 {
@@ -44,7 +50,7 @@ else
         game = await GameService.GetGame(GameRowKey);
         game.TeamA = game.TeamA.OrderBy(o => o.Player.PlayerEntity.Position).ToList();
         game.TeamB = game.TeamB.OrderBy(o => o.Player.PlayerEntity.Position).ToList();
-        pageTitle = game.GameEntity.Date.Date.ToLongDateString();
+        pageTitle = game.GameEntity.Date.Date.ToString("dd MMM yyyy");
 
     }
 }

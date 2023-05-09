@@ -13,7 +13,7 @@
     <p>
     @foreach (var pag in game.TeamA)
     {
-        <span>@pag.Player.PlayerEntity.Name <PositionIcon Position="pag.Player.PlayerEntity.Position" /></span>
+        <span>@pag.Player.PlayerEntity.Name <PlayingForecastIcon Forecast="@pag.PlayerAtGameEntity.Forecast" /> <PositionIcon Position="pag.Player.PlayerEntity.Position" /></span>
         <br>
     }
     </p>
@@ -22,7 +22,7 @@
     <p>
     @foreach (var pag in game.TeamB)
     {
-        <span>@pag.Player.PlayerEntity.Name <PositionIcon Position="pag.Player.PlayerEntity.Position" /></span>
+        <span>@pag.Player.PlayerEntity.Name <PlayingForecastIcon Forecast="@pag.PlayerAtGameEntity.Forecast" /> <PositionIcon Position="pag.Player.PlayerEntity.Position" /></span>
         <br>
     }
     </p>

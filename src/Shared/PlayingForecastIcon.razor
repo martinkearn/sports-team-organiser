@@ -1,0 +1,29 @@
+@if (!string.IsNullOrEmpty(css))
+{
+    <i class="@css red-text"></i>
+}
+@code {
+    [Parameter]
+    public string Forecast { get; set; }
+
+    private string css;
+
+    protected override void OnParametersSet()
+    {
+        SetCss();
+    }
+
+    protected override void OnInitialized()
+    {
+        SetCss();
+    }
+
+    private void SetCss()
+    {
+        if (Forecast.ToLowerInvariant() == "maybe")
+        {
+            css = "fa-solid fa-question";
+        }
+    }
+
+}

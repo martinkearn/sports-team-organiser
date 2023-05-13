@@ -304,7 +304,7 @@
                 Amount = -player.PlayerEntity.DefaultRate,
                 Date = DateTimeOffset.UtcNow,
                 GameRowKey = pag.GameRowKey,
-                Notes = $"Debited for game {game.GameEntity.Date.Date.ToShortDateString()}"
+                Notes = $"Debited for game {game.GameEntity.Date.Date.ToString("dd MMM yyyy")}"
             };
             await TransactionService.UpsertTransactionEntity(transaction);
         }
@@ -421,7 +421,7 @@
         {
             GameRowKey = game.GameEntity.RowKey,
             Date = DateTimeOffset.UtcNow,
-            Notes = $"Credited for game {game.GameEntity.Date.Date.ToShortDateString()}"
+            Notes = $"Credited for game {game.GameEntity.Date.Date.ToString("dd MMM yyyy")}"
         };
         pagsNoTeam = game.PlayersAtGame.Where(o => string.IsNullOrEmpty(o.PlayerAtGameEntity.Team)).ToList();
         pageTitle = $"{game.GameEntity.Date.Date.ToString("dd MMM")}";

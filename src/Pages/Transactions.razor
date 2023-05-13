@@ -25,7 +25,7 @@
             <tr>
                 <td><a href="/transactions/@transaction.TransactionEntity.RowKey">@transaction.TransactionEntity.Date.ToString("dd MMM yyyy HH:mm")</a></td>
                 <td><CurrencyDisplay Amount="@transaction.TransactionEntity.Amount" /></td>
-                <td>@transaction.Player.PlayerEntity.Name</td>
+                <td><a href="players/@transaction.Player.PlayerEntity.RowKey">@transaction.Player.PlayerEntity.Name</a></td>
                 @if (transaction.Game != null)
                 {
                     <td class="d-none d-lg-table-cell"><GameTitle GameRowKey="@transaction.Game.GameEntity.RowKey" Link="true" /></td>

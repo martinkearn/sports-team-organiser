@@ -1,5 +1,6 @@
 @page "/players/{PlayerRowKey}"
 @inject IPlayerService PlayerService
+@inject IGameService GameService
 @inject NavigationManager Navigation
 
 <PageTitle>TNF - @pageTitle</PageTitle>
@@ -77,10 +78,16 @@
         <tbody>
             @foreach (var transactionEntity in player.Transactions)
             {
+                var game = games.SingleOrDefault(o => o.GameEntity.RowKey == transactionEntity.GameRowKey);
                 <tr>
                     <td><a href="/transactions/@transactionEntity.RowKey">@transactionEntity.Date.ToString("dd MMM yyyy HH:mm")</a></td>
                     <td><CurrencyDisplay Amount="@transactionEntity.Amount" /></td>
-                    <td class="d-none d-lg-table-cell"></td>
+                    <td class="d-none d-lg-table-cell">
+                        @if (game != default)
+                        {
+                            <GameTitle GameRowKey="@game.GameEntity.RowKey" Link="true" />
+                        }
+                    </td>
                     <td class="d-none d-lg-table-cell">@transactionEntity.Notes</td>
                 </tr>
             }
@@ -100,13 +107,15 @@
 
     private Player player;
 
+    private List<Game> games = new();
+
     private string pageTitle;
 
     private string currentTab = "player";
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        RefreshData();
+        await RefreshData();
     }
 
     async Task Edit()
@@ -120,8 +129,9 @@
         Navigation.NavigateTo("/players");
     }
 
-    private void RefreshData()
+    private async Task RefreshData()
     {
+        games = await GameService.GetGames();
         player = PlayerService.GetPlayer(PlayerRowKey);
         pageTitle = $"{player.PlayerEntity.Name}";
     }

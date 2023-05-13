@@ -23,7 +23,7 @@
         @foreach (var game in games)
         {
             <tr>
-                <td><a href="/games/@game.GameEntity.RowKey">@game.GameEntity.Date.Date.ToString("dd MMM")</a></td>
+                <td><GameTitle GameRowKey="@game.GameEntity.RowKey" Link="true" /></td>
                 <td>@game.PlayersAtGame.Count()</td>
                 <td>@game.PlayersAtGame.Where(pag => pag.PlayerAtGameEntity.Played).Count()</td>
             </tr>
@@ -34,7 +34,7 @@
 @code {
     private List<Game> games = new();
 
-        private string pageTitle;
+    private string pageTitle;
 
     protected override async Task OnInitializedAsync()
     {

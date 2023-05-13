@@ -33,7 +33,7 @@ else
 <h5>Game</h5>
 @if (transaction.Game is not null)
 {
-    <p><a href="games/@transaction.Game.GameEntity.RowKey">@transaction.Game.GameEntity.Date.ToString("dd MMM yyyy HH:mm")</a></p>
+    <p><GameTitle GameRowKey="@transaction.Game.GameEntity.RowKey" Link="true" /></p>
 }
 else
 {

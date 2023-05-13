@@ -22,13 +22,18 @@
     <tbody>
         @foreach (var transaction in transactions)
         {
-            var gameDate = (transaction.Game is null) ? "No game" : transaction.Game.GameEntity.Date.ToString("dd MMM yyyy HH:mm");
-            
             <tr>
                 <td><a href="/transactions/@transaction.TransactionEntity.RowKey">@transaction.TransactionEntity.Date.ToString("dd MMM yyyy HH:mm")</a></td>
                 <td><CurrencyDisplay Amount="@transaction.TransactionEntity.Amount" /></td>
-                <td>@transaction.Player.PlayerEntity.Name</td>
-                <td class="d-none d-lg-table-cell">@gameDate</td>
+                <td><a href="players/@transaction.Player.PlayerEntity.RowKey">@transaction.Player.PlayerEntity.Name</a></td>
+                @if (transaction.Game != null)
+                {
+                    <td class="d-none d-lg-table-cell"><GameTitle GameRowKey="@transaction.Game.GameEntity.RowKey" Link="true" /></td>
+                }
+                else
+                {
+                    <td class="d-none d-lg-table-cell"></td>
+                }
                 <td class="d-none d-lg-table-cell">@transaction.TransactionEntity.Notes</td>
             </tr>
         }

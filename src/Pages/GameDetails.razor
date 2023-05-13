@@ -118,7 +118,7 @@
                 <th scope="col"><button class="btn btn-link m-0 p-0" @onclick="() => SortPags(Enums.SortPagsBy.Name)">Name</button></th>
                 <th scope="col"><button class="btn btn-link m-0 p-0" @onclick="() => SortPags(Enums.SortPagsBy.Position)">Pos</button></th>
                 <th scope="col" class="d-none d-lg-table-cell"><button class="btn btn-link m-0 p-0" @onclick="() => SortPags(Enums.SortPagsBy.Playing)">Playing</button></th>
-                <th scope="col" class="d-none d-lg-table-cell"><button class="btn btn-link m-0 p-0" @onclick="() => SortPags(Enums.SortPagsBy.Balance)">Balance</button></th>
+                <th scope="col" class="d-none d-lg-table-cell"><button class="btn btn-link m-0 p-0" @onclick="() => SortPags(Enums.SortPagsBy.Balance)">Game Balance</button></th>
                 <th scope="col"><button class="btn btn-link m-0 p-0" @onclick="() => SortPags(Enums.SortPagsBy.Played)">Played</button></th>
                 <th scope="col"><button class="btn btn-link m-0 p-0" @onclick="() => SortPags(Enums.SortPagsBy.Team)">Team</button></th>
             </tr>
@@ -135,7 +135,7 @@
                             <option value="Maybe">Maybe</option>
                         </InputSelect>
                     </td>
-                    <td class="d-none d-lg-table-cell"><CurrencyDisplay Amount="@pag.Player.Transactions.Sum(o => o.Amount)" /></td>
+                    <td class="d-none d-lg-table-cell"><CurrencyDisplay Amount="@pag.Player.Transactions.Where(o => o.GameRowKey == game.GameEntity.RowKey).Sum(o => o.Amount)" /></td>
                     <td>
                         <div class="form-check form-switch">
                             <InputCheckbox class="form-check-input" type="checkbox" role="switch" @bind-Value=pag.PlayerAtGameEntity.Played @bind-Value:after="() => BillRefundPagEntity(pag.PlayerAtGameEntity)"></InputCheckbox>
@@ -177,6 +177,28 @@
         </li>
     </ul>
 
+    <h4>Players transactions in game</h4>
+    <p>Players that do not have enough funds on account to cover this game:</p>
+    <ul>
+    @foreach (var pagLowFunds in game.PlayersAtGame.Where(o => o.Player.Balance < o.Player.PlayerEntity.DefaultRate))
+    {
+        <li><a href="/players/@pagLowFunds.Player.PlayerEntity.RowKey">@pagLowFunds.Player.PlayerEntity.Name</a>, balance on account: <CurrencyDisplay Amount="@pagLowFunds.Player.Transactions.Sum(o => o.Amount)" /></li>
+    }
+    </ul>
+
+    <p>Players with no transactions for this game:</p>
+    <ul>
+    @foreach (var pag in game.PlayersAtGame)
+    {
+        var pagTrasnactions = game.TransactionsEntities.Where(o => o.PlayerRowKey == pag.Player.PlayerEntity.RowKey).Count();
+        if (pagTrasnactions == 0)
+        {
+            <li><a href="/players/@pag.Player.PlayerEntity.RowKey">@pag.Player.PlayerEntity.Name</a></li>
+        } 
+    }
+    </ul>
+
+    <h4>Transactions in game</h4>
     <p>@game.TransactionsEntities.Count transactions totalling <CurrencyDisplay Amount="@game.TransactionsEntities.Sum(o => o.Amount)" />.</p>
     <table class="table table-striped">
         <thead>
@@ -209,12 +231,6 @@
             }
         </tbody>
     </table>
-
-    <p>Players that do not have enough funds on account to cover this game.</p>
-    @foreach (var pagLowFunds in game.PlayersAtGame.Where(o => o.Player.Balance < o.Player.PlayerEntity.DefaultRate))
-    {
-        <p>@pagLowFunds.Player.PlayerEntity.Name, <CurrencyDisplay Amount="@pagLowFunds.Player.Transactions.Sum(o => o.Amount)" /> on account</p>
-    }
 }
 
 <div class="modal-footer px-0">

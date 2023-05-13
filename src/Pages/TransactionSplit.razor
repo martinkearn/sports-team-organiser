@@ -41,7 +41,7 @@
             <option value="">Select Game ...</option>
             @foreach (var game in games)
             {
-                <option value="@game.GameEntity.RowKey">@game.GameEntity.Date.Date.ToLongDateString()</option>
+                <option value="@game.GameEntity.RowKey"><GameTitle GameRowKey="@game.GameEntity.RowKey" Link="false" /></option>
             }
         </InputSelect>
         <div class="form-text">Optionally associate the transaction with a game.</div>

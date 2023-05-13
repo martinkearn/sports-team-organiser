@@ -85,7 +85,7 @@
                     <td class="d-none d-lg-table-cell">
                         @if (game != default)
                         {
-                            <a href="/games/@game.GameEntity.RowKey">@game.GameEntity.Date.Date.ToString("dd MMM")</a>
+                            <GameTitle GameRowKey="@game.GameEntity.RowKey" Link="true" />
                         }
                     </td>
                     <td class="d-none d-lg-table-cell">@transactionEntity.Notes</td>

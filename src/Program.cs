@@ -1,9 +1,19 @@
 global using STO.Services;
 global using STO.Interfaces;
 global using STO.Models;
-using Microsoft.AspNetCore.Authentication.OAuth;
+global using Microsoft.AspNetCore.Http;
+global using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+global using Microsoft.Identity.Web;
+global using Microsoft.Identity.Web.UI;
+using System.IdentityModel.Tokens.Jwt;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// This is required to be instantiated before the OpenIdConnectOptions starts getting configured.
+// By default, the claims mapping will map claim names in the old format to accommodate older SAML applications.
+// 'http://schemas.microsoft.com/ws/2008/06/identity/claims/role' instead of 'roles'
+// This flag ensures that the ClaimsIdentity claims collection will be built from the claims in the token.
+JwtSecurityTokenHandler.DefaultMapInboundClaims = false;
 
 // Add services to the container.
 builder.Services.AddRazorPages();
@@ -26,22 +36,28 @@ builder.Services.AddOptions<StorageConfiguration>()
         configuration.GetSection(nameof(StorageConfiguration)).Bind(settings);
     });
 var configuration = builder.Configuration;
-builder.Services.AddAuthentication().AddFacebook(facebookOptions =>
-    {
-        facebookOptions.AppId = configuration["Authentication:Facebook:AppId"];
-        facebookOptions.AppSecret = configuration["Authentication:Facebook:AppSecret"];
 
-        facebookOptions.Events = new OAuthEvents()
-        {
-            OnRemoteFailure = loginFailureHandler =>
-            {
-            var authProperties = facebookOptions.StateDataFormat.Unprotect(loginFailureHandler.Request.Query["state"]);
-            loginFailureHandler.Response.Redirect("/Identity/Account/Login");
-            loginFailureHandler.HandleResponse();
-            return Task.FromResult(0);
-            }
-        };
+builder.Services.Configure<CookiePolicyOptions>(options =>
+    {
+        // This lambda determines whether user consent for non-essential cookies is needed for a given request.
+        options.CheckConsentNeeded = context => true;
+        options.MinimumSameSitePolicy = SameSiteMode.Unspecified;
+        // Handling SameSite cookie according to https://learn.microsoft.com/aspnet/core/security/samesite?view=aspnetcore-3.1
+        options.HandleSameSiteCookieCompatibility();
     });
+
+// Configuration to sign-in users with Azure AD B2C
+builder.Services.AddMicrosoftIdentityWebAppAuthentication(configuration, "AzureAdB2C");
+builder.Services.AddHttpContextAccessor();
+
+builder.Services.AddControllersWithViews()
+    .AddMicrosoftIdentityUI();
+
+builder.Services.AddRazorPages();
+
+//Configuring appsettings section AzureAdB2C, into IOptions
+builder.Services.AddOptions();
+builder.Services.Configure<OpenIdConnectOptions>(configuration.GetSection("AzureAdB2C"));
 
 var app = builder.Build();
 
@@ -51,8 +67,12 @@ if (!app.Environment.IsDevelopment())
     app.UseExceptionHandler("/Error");
 }
 
+app.UseHttpsRedirection();
 app.UseStaticFiles();
+app.UseCookiePolicy();
 app.UseRouting();
+app.UseAuthentication();
+app.UseAuthorization();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller}/{action}");

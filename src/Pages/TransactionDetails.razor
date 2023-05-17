@@ -42,7 +42,7 @@ else
 
 <div class="modal-footer">
     <a class="btn btn-secondary" href="/transactions/split/@transaction.TransactionEntity.RowKey"><i class="fa-solid fa-code-branch"></i> Split Transaction</a>
-    <button class="btn btn-secondary" @onclick="Delete" ><i class="fa-solid fa-trash"></i> Delete Transaction</button>
+    <DeleteButtonWithCheck EntityRowKey="@transaction.TransactionEntity.RowKey" EntityLabel="@pageTitle" EntityType="@typeof(TransactionEntity).ToString()" NavigateToUrl="/transactions" />
 </div>
 
 @code {
@@ -56,12 +56,6 @@ else
     protected override async Task OnInitializedAsync()
     {
         await RefreshData();
-    }
-
-    private async Task Delete()
-    {
-        await TransactionService.DeleteTransactionEntity(transaction.TransactionEntity.RowKey);
-        Navigation.NavigateTo("/transactions");
     }
 
     async Task RefreshData()

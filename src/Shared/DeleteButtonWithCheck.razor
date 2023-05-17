@@ -1,0 +1,60 @@
+@inject NavigationManager Navigation
+@inject IPlayerService PlayerService
+@inject IGameService GameService
+@inject ITransactionService TransactionService
+
+<button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#confirmationModal"><i class="fa-solid fa-trash"></i> Delete</button>
+
+<!-- Modal -->
+<div class="modal" id="confirmationModal" tabindex="-1" aria-labelledby="confirmationModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="confirmationModalLabel">Are you sure?</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p>Deleting <b>@EntityLabel</b>.</p>
+        <p>This will permanently delete this item.</p>
+        <p>Please confirm.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-bs-dismiss="modal" @onclick="Delete"><i class="fa-solid fa-trash"></i> Yes, really delete</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+@code {
+    [Parameter]
+    public string EntityRowKey { get; set; }
+
+    [Parameter]
+    public string EntityLabel { get; set; }
+
+    [Parameter]
+    public string EntityType { get; set; }
+
+    [Parameter]
+    public string NavigateToUrl { get; set; }
+
+    async Task Delete()
+    {
+        if (EntityType == typeof(PlayerEntity).ToString())
+        {
+            await PlayerService.DeletePlayer(EntityRowKey);
+        }
+
+        if (EntityType == typeof(GameEntity).ToString())
+        {
+            await GameService.DeleteGame(EntityRowKey);
+        }
+
+        if (EntityType == typeof(TransactionEntity).ToString())
+        {
+            await TransactionService.DeleteTransactionEntity(EntityRowKey);
+        }
+
+        Navigation.NavigateTo(NavigateToUrl);
+    }
+}

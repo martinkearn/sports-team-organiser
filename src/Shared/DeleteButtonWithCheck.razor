@@ -1,6 +1,7 @@
 @inject NavigationManager Navigation
 @inject IPlayerService PlayerService
 @inject IGameService GameService
+@inject ITransactionService TransactionService
 
 <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#confirmationModal"><i class="fa-solid fa-trash"></i> Delete</button>
 
@@ -47,6 +48,11 @@
         if (EntityType == typeof(GameEntity).ToString())
         {
             await GameService.DeleteGame(EntityRowKey);
+        }
+
+        if (EntityType == typeof(TransactionEntity).ToString())
+        {
+            await TransactionService.DeleteTransactionEntity(EntityRowKey);
         }
 
         Navigation.NavigateTo(NavigateToUrl);

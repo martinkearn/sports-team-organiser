@@ -98,7 +98,7 @@
 
 <div class="modal-footer">
     <a class="btn btn-secondary" href="/players/"><i class="fa-solid fa-arrow-left"></i>All Players</a>
-    <DeleteButtonWithCheck EmtityRowKey="@player.PlayerEntity.RowKey" EntityLabel="@player.PlayerEntity.Name" EntityType="@typeof(PlayerEntity).ToString()" NavigateToUrl="/players" />
+    <DeleteButtonWithCheck EntityRowKey="@player.PlayerEntity.RowKey" EntityLabel="@player.PlayerEntity.Name" EntityType="@typeof(PlayerEntity).ToString()" NavigateToUrl="/players" />
 </div>
 
 @code {
@@ -121,12 +121,6 @@
     async Task Edit()
     {
         await PlayerService.UpsertPlayerEntity(player.PlayerEntity);
-    }
-
-    async Task Delete()
-    {
-        await PlayerService.DeletePlayer(player.PlayerEntity.RowKey);
-        Navigation.NavigateTo("/players");
     }
 
     private async Task RefreshData()

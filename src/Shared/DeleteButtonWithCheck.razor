@@ -1,4 +1,6 @@
 @inject NavigationManager Navigation
+@inject IPlayerService PlayerService
+@inject IGameService GameService
 
 <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#confirmationModal"><i class="fa-solid fa-trash"></i> Delete</button>
 
@@ -24,7 +26,7 @@
 
 @code {
     [Parameter]
-    public string EmtityRowKey { get; set; }
+    public string EntityRowKey { get; set; }
 
     [Parameter]
     public string EntityLabel { get; set; }
@@ -37,7 +39,16 @@
 
     async Task Delete()
     {
-        
+        if (EntityType == typeof(PlayerEntity).ToString())
+        {
+            await PlayerService.DeletePlayer(EntityRowKey);
+        }
+
+        if (EntityType == typeof(GameEntity).ToString())
+        {
+            await GameService.DeleteGame(EntityRowKey);
+        }
+
         Navigation.NavigateTo(NavigateToUrl);
     }
 }

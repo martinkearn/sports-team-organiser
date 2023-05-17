@@ -98,7 +98,7 @@
 
 <div class="modal-footer">
     <a class="btn btn-secondary" href="/players/"><i class="fa-solid fa-arrow-left"></i>All Players</a>
-    <button class="btn btn-secondary" @onclick="Delete"><i class="fa-solid fa-trash"></i> Delete</button>
+    <DeleteButtonWithCheck EmtityRowKey="@player.PlayerEntity.RowKey" EntityLabel="@player.PlayerEntity.Name" EntityType="@typeof(PlayerEntity).ToString()" NavigateToUrl="/players" />
 </div>
 
 @code {

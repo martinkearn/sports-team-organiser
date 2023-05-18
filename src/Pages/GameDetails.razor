@@ -347,6 +347,10 @@
         {
             pag.Team = "B";
         }
+        else if (pag.Team == "B")
+        {
+            pag.Team = "";
+        }
         else
         {
             pag.Team = "A";
@@ -354,20 +358,6 @@
         await GameService.UpsertPlayerAtGameEntity(pag);
         await RefreshData();
     }
-
-    async Task AssignToTeamA(PlayerAtGameEntity pag)
-    {
-        pag.Team = "A";
-        await GameService.UpsertPlayerAtGameEntity(pag);
-        await RefreshData();
-    }
-
-    async Task AssignToTeamB(PlayerAtGameEntity pag)
-    {
-        pag.Team = "B";
-        await GameService.UpsertPlayerAtGameEntity(pag);
-        await RefreshData();
-    }  
 
     private void SortPags(Enums.SortPagsBy by)
     {

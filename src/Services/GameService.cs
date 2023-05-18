@@ -83,12 +83,13 @@ namespace STO.Services
         public async Task<List<PlayerAtGame>> CalculateTeams(List<PlayerAtGame> pags)
         {
             var newPags = new List<PlayerAtGame>();
+            var yesPags = pags.Where(o => o.PlayerAtGameEntity.Forecast.ToLowerInvariant() == "yes");
             var nextTeamToGetPag = "A";
 
             foreach (var position in Enum.GetNames(typeof(PlayerPosition)))
             {
                 // Get pags in this position
-                var pagsInPosition = pags.Where(o => o.Player.PlayerEntity.Position.ToString() == position.ToString());
+                var pagsInPosition = yesPags.Where(o => o.Player.PlayerEntity.Position.ToString() == position.ToString());
 
                 // Distribute pags in this position between teams
                 foreach (var pagInPosition in pagsInPosition)

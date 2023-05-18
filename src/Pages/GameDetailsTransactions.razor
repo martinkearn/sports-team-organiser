@@ -74,7 +74,7 @@
 </ul>
 
 <h4>Transactions in game</h4>
-<p>@game.TransactionsEntities.Count transactions totalling <CurrencyDisplay Amount="@game.TransactionsEntities.Sum(o => o.Amount)" />.</p>
+<p>@game.TransactionsEntities.Count transactions. <CurrencyDisplay Amount="@game.TransactionsEntities.Where(o => o.Amount > 0).Sum(o => o.Amount)" /> credited, <CurrencyDisplay Amount="@game.TransactionsEntities.Where(o => o.Amount <= 0).Sum(o => o.Amount)" /> debited totalling <CurrencyDisplay Amount="@game.TransactionsEntities.Sum(o => o.Amount)" />.</p>
 <table class="table table-striped">
     <thead>
         <tr>

@@ -24,7 +24,7 @@
         @foreach (var player in players)
         {
             <tr>
-                <td><a href="/players/@player.PlayerEntity.RowKey">@player.PlayerEntity.Name</a></td>
+                <td><a href="/players/@player.PlayerEntity.RowKey/player">@player.PlayerEntity.Name</a></td>
                 <td class="d-none d-lg-table-cell">@player.PlayerEntity.Position</td>
                 <td class="d-none d-lg-table-cell"><CurrencyDisplay Amount="@player.PlayerEntity.DefaultRate" BlackText="true" /></td>
                 <td><CurrencyDisplay Amount="@player.Balance" /></td>

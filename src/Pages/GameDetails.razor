@@ -182,7 +182,7 @@
     <ul>
     @foreach (var pagLowFunds in game.PlayersAtGame.Where(o => o.Player.Balance < o.Player.PlayerEntity.DefaultRate))
     {
-        <li><a href="/players/@pagLowFunds.Player.PlayerEntity.RowKey">@pagLowFunds.Player.PlayerEntity.Name</a>, balance on account: <CurrencyDisplay Amount="@pagLowFunds.Player.Transactions.Sum(o => o.Amount)" /></li>
+        <li><a href="/players/@pagLowFunds.Player.PlayerEntity.RowKey/player">@pagLowFunds.Player.PlayerEntity.Name</a>, balance on account: <CurrencyDisplay Amount="@pagLowFunds.Player.Transactions.Sum(o => o.Amount)" /></li>
     }
     </ul>
 
@@ -193,7 +193,7 @@
         var pagTrasnactions = game.TransactionsEntities.Where(o => o.PlayerRowKey == pag.Player.PlayerEntity.RowKey).Count();
         if (pagTrasnactions == 0)
         {
-            <li><a href="/players/@pag.Player.PlayerEntity.RowKey">@pag.Player.PlayerEntity.Name</a></li>
+            <li><a href="/players/@pag.Player.PlayerEntity.RowKey/player">@pag.Player.PlayerEntity.Name</a></li>
         } 
     }
     </ul>
@@ -216,7 +216,7 @@
                 <tr>
                     <td><a href="/transactions/@transactionEntityForGame.RowKey">@transactionEntityForGame.Date.ToString("dd MMM yyyy HH:mm")</a></td>
                     <td><CurrencyDisplay Amount="@transactionEntityForGame.Amount" /></td>
-                    <td><a href="/players/@transactionEntityForGame.PlayerRowKey">@players.SingleOrDefault(o => o.PlayerEntity.RowKey == transactionEntityForGame.PlayerRowKey).PlayerEntity.Name</a></td>
+                    <td><a href="/players/@transactionEntityForGame.PlayerRowKey/player">@players.SingleOrDefault(o => o.PlayerEntity.RowKey == transactionEntityForGame.PlayerRowKey).PlayerEntity.Name</a></td>
                     @{var pagForTransaction = game.PlayersAtGame.SingleOrDefault(o => o.Player.PlayerEntity.RowKey == transactionEntityForGame.PlayerRowKey);}
                     @if (pagForTransaction != default)
                     {

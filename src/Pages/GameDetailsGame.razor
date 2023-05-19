@@ -31,7 +31,28 @@
     </li>
 </ul>
 
-<div class="pb-4">
+
+
+<h4>Goals</h4>
+<div class="mb-3">
+    <label class="form-label">Team A</label>
+    <div class="input-group col-12">
+        <InputNumber type="number" min="0" class="form-control" @bind-Value="game.GameEntity.TeamAGoals" @bind-Value:after="() => Edit()"/>
+        <button class="btn btn-outline-secondary" @onclick="() => Goal(Enums.Team.A, -1)"><i class="fa-solid fa-minus"></i></button>
+        <button class="btn btn-outline-secondary" @onclick="() => Goal(Enums.Team.A, 1)"><i class="fa-solid fa-plus"></i></button>
+    </div>
+</div>
+<div class="mb-3">
+    <label class="form-label">Team B</label>
+    <div class="input-group col-12">
+        <InputNumber type="number" min="0" class="form-control" @bind-Value="game.GameEntity.TeamBGoals" @bind-Value:after="() => Edit()"/>
+        <button class="btn btn-outline-secondary" @onclick="() => Goal(Enums.Team.B, -1)"><i class="fa-solid fa-minus"></i></button>
+        <button class="btn btn-outline-secondary" @onclick="() => Goal(Enums.Team.B, 1)"><i class="fa-solid fa-plus"></i></button>
+    </div>
+</div>
+
+<h4>Players at game</h4>
+<div>
     <EditForm Model="@newPagEntity" OnValidSubmit="AddPagEntity" class="row row-cols-lg-auto g-3 align-items-center">
         <DataAnnotationsValidator />
         <ValidationSummary />
@@ -51,8 +72,6 @@
     </EditForm>
     <p>@game.PlayersAtGame.Count() players.</p>
 </div>
-
-<h4>Players at game</h4>
 <table class="table table-striped">
     <thead>
         <tr>
@@ -112,6 +131,24 @@
     protected override async Task OnInitializedAsync()
     {
         await RefreshData();
+    }
+
+    async Task Edit()
+    {
+        await GameService.UpsertGameEntity(game.GameEntity);
+    }
+
+    async Task Goal(Enums.Team team, int goal)
+    {
+        if (team == Enums.Team.A)
+        {
+            game.GameEntity.TeamAGoals += goal;
+        }
+        else if (team == Enums.Team.B)
+        {
+            game.GameEntity.TeamBGoals += goal; 
+        }
+        await GameService.UpsertGameEntity(game.GameEntity);
     }
 
     private async Task AddPagEntity()

@@ -12,10 +12,10 @@
 <table class="table table-striped">
     <thead>
         <tr>
-            <th scope="col">Date</th>
-            <th scope="col">Amount</th>
-            <th scope="col">Player</th>
-            <th scope="col" class="d-none d-lg-table-cell">Game</th>
+            <th scope="col"><button class="btn btn-link m-0 p-0" @onclick="() => SortTransactions(Enums.SortTransactionsBy.Date)">Date</button></th>
+            <th scope="col"><button class="btn btn-link m-0 p-0" @onclick="() => SortTransactions(Enums.SortTransactionsBy.Amount)">Amount</button></th>
+            <th scope="col"><button class="btn btn-link m-0 p-0" @onclick="() => SortTransactions(Enums.SortTransactionsBy.Player)">Player</button></th>
+            <th scope="col" class="d-none d-lg-table-cell"><button class="btn btn-link m-0 p-0" @onclick="() => SortTransactions(Enums.SortTransactionsBy.Game)">Game</button></th>
             <th scope="col" class="d-none d-lg-table-cell">Notes</th>
         </tr>
     </thead>
@@ -25,7 +25,7 @@
             <tr>
                 <td><a href="/transactions/@transaction.TransactionEntity.RowKey">@transaction.TransactionEntity.Date.ToString("dd MMM yyyy HH:mm")</a></td>
                 <td><CurrencyDisplay Amount="@transaction.TransactionEntity.Amount" /></td>
-                <td><a href="players/@transaction.Player.PlayerEntity.RowKey">@transaction.Player.PlayerEntity.Name</a></td>
+                <td><a href="/players/@transaction.Player.PlayerEntity.RowKey/player">@transaction.Player.PlayerEntity.Name</a></td>
                 @if (transaction.Game != null)
                 {
                     <td class="d-none d-lg-table-cell"><GameTitle GameRowKey="@transaction.Game.GameEntity.RowKey" Link="true" /></td>
@@ -42,6 +42,7 @@
 
 @code {
     private List<Transaction> transactions = new();
+    private Enums.SortTransactionsBy currentSortBy;
 
     private string pageTitle;
 
@@ -49,6 +50,38 @@
     {
         await RefreshData();
     }
+
+    private void SortTransactions(Enums.SortTransactionsBy by)
+    {
+        switch(by)
+        {
+            case Enums.SortTransactionsBy.Date:
+                transactions = (currentSortBy == by) ? 
+                    transactions.OrderByDescending(o => o.TransactionEntity.Date.Date).ToList() :
+                    transactions.OrderBy(o => o.TransactionEntity.Date.Date).ToList();
+                break;
+            case Enums.SortTransactionsBy.Amount:
+                transactions = (currentSortBy == by) ? 
+                    transactions.OrderByDescending(o => o.TransactionEntity.Amount).ToList() :
+                    transactions.OrderBy(o => o.TransactionEntity.Amount).ToList();
+                break;
+            case Enums.SortTransactionsBy.Player:
+                transactions = (currentSortBy == by) ? 
+                    transactions.OrderByDescending(o => o.Player.PlayerEntity.Name).ToList() :
+                    transactions.OrderBy(o => o.Player.PlayerEntity.Name).ToList();
+                break;
+            case Enums.SortTransactionsBy.Game:
+                transactions = (currentSortBy == by) ? 
+                    transactions.OrderByDescending(o => o.Game == null ? DateTime.MinValue : o.Game.GameEntity.Date.Date).ToList() :
+                    transactions.OrderBy(o => o.Game == null ? DateTime.MinValue : o.Game.GameEntity.Date.Date).ToList();
+                break;
+            default:
+                transactions = transactions.OrderBy(o => o.TransactionEntity.Date.Date).ToList();
+                break;
+        }
+
+        currentSortBy = by;
+    }  
 
     async Task RefreshData()
     {

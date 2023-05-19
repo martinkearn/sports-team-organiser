@@ -26,6 +26,15 @@
         <br>
     }
     </p>
+
+    <h5>No team assigned</h5>
+    <p>
+    @foreach (var pag in game.PlayersAtGame.Where(o => string.IsNullOrEmpty(o.PlayerAtGameEntity.Team)))
+    {
+        <span>@pag.Player.PlayerEntity.Name <PlayingForecastIcon Forecast="@pag.PlayerAtGameEntity.Forecast" /> <PositionIcon Position="pag.Player.PlayerEntity.Position" /></span>
+        <br>  
+    }
+    </p>
 }  
 else
 {

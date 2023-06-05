@@ -10,7 +10,7 @@ else
 
 @code {
     [Parameter]
-    public PlayerPosition Position { get; set; }
+    public Enums.PlayerPosition Position { get; set; }
 
     private string css;
 
@@ -28,16 +28,16 @@ else
     {
         switch (Position)
         {
-            case PlayerPosition.Defender:
+            case Enums.PlayerPosition.Defender:
                 css = "fa-solid fa-shield-halved";
                 break;
-            case PlayerPosition.Midfielder:
+            case Enums.PlayerPosition.Midfielder:
                 css = "fa-solid fa-arrows-spin";
                 break;
-            case PlayerPosition.Forward:
+            case Enums.PlayerPosition.Forward:
                 css = "fa-solid fa-bullseye";
                 break;
-            case PlayerPosition.Goalie:
+            case Enums.PlayerPosition.Goalie:
                 css = "fa-solid fa-hand-dots";
                 break;           
             default:

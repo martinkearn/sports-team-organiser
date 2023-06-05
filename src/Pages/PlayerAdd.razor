@@ -17,7 +17,7 @@
     <div class="mb-3">
         <label for="addTags" class="form-label">Position</label>
         <InputSelect class="form-select" @bind-Value="newPlayerEntity.Position">
-            @foreach (string option in Enum.GetNames(typeof(PlayerPosition)))
+            @foreach (string option in Enum.GetNames(typeof(Enums.PlayerPosition)))
             {
                 <option value="@option">@option</option>
             }

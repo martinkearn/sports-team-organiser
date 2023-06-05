@@ -18,7 +18,10 @@
         <label for="addDate" class="form-label">Time</label>
         <div class="row">
             <div class="col-auto">
-                <InputNumber class="form-control" min="0" max="23"  @bind-Value="hour" /> : <InputNumber class="form-control" min="0" max="59" @bind-Value="minute" />
+                <div class="input-group">
+                    <InputNumber class="form-control" min="0" max="23"  @bind-Value="hour" />
+                    <InputNumber class="form-control" min="0" max="59" @bind-Value="minute" />
+                </div>
             </div>
         </div>
     </div>
@@ -31,9 +34,9 @@
 @code {
     private GameEntity newGameEntity = new();
 
-    private double hour;
+    private int hour;
 
-    private double minute;
+    private int minute;
 
     private string pageTitle;
 
@@ -44,6 +47,8 @@
 
     protected async Task Add()
     {
+        var dt = new DateTime(newGameEntity.Date.Year, newGameEntity.Date.Month, newGameEntity.Date.Day, hour, minute, 0, DateTimeKind.Utc);
+        newGameEntity.Date = dt;
         await GameService.UpsertGameEntity(newGameEntity);
         Navigation.NavigateTo("/games");
     }

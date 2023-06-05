@@ -78,8 +78,6 @@
             <th scope="col"><button class="btn btn-link m-0 p-0" @onclick="() => SortPags(Enums.SortPagsBy.Name)">Name</button></th>
             <th scope="col"><button class="btn btn-link m-0 p-0" @onclick="() => SortPags(Enums.SortPagsBy.Position)">Pos</button></th>
             <th scope="col" class="d-none d-lg-table-cell"><button class="btn btn-link m-0 p-0" @onclick="() => SortPags(Enums.SortPagsBy.Playing)">Playing</button></th>
-            <th scope="col" class="d-none d-lg-table-cell"><button class="btn btn-link m-0 p-0" @onclick="() => SortPags(Enums.SortPagsBy.GameBalance)">Game Balance</button></th>
-            <th scope="col" class="d-none d-lg-table-cell"><button class="btn btn-link m-0 p-0" @onclick="() => SortPags(Enums.SortPagsBy.PlayerBalance)">Player Balance</button></th>
             <th scope="col"><button class="btn btn-link m-0 p-0" @onclick="() => SortPags(Enums.SortPagsBy.Played)">Played</button></th>
             <th scope="col"><button class="btn btn-link m-0 p-0" @onclick="() => SortPags(Enums.SortPagsBy.Team)">Team</button></th>
         </tr>
@@ -96,8 +94,6 @@
                         <option value="Maybe">Maybe</option>
                     </InputSelect>
                 </td>
-                <td class="d-none d-lg-table-cell"><CurrencyDisplay Amount="@pag.Player.Transactions.Where(o => o.GameRowKey == game.GameEntity.RowKey).Sum(o => o.Amount)" /></td>
-                <td class="d-none d-lg-table-cell"><CurrencyDisplay Amount="@pag.Player.Balance" /></td>
                 <td>
                     <div class="form-check form-switch">
                         <InputCheckbox class="form-check-input" type="checkbox" role="switch" @bind-Value=pag.PlayerAtGameEntity.Played @bind-Value:after="() => BillRefundPagEntity(pag.PlayerAtGameEntity)"></InputCheckbox>

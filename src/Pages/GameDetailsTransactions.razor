@@ -53,6 +53,16 @@
 </div>
 
 <h4>Player accounts</h4>
+<p>@DateTime.Now.ToString("dd MMM yyyy HH:mm")</p>
+@if (DateTime.Now <= game.GameEntity.Date.DateTime)
+{
+    <p>Currently Pre-game</p>
+}
+else
+{
+    <p>Current post-game</p>
+}
+
 <table class="table table-striped">
     <thead>
         <tr>
@@ -68,21 +78,21 @@
             var pagBalanceForGame = @pag.Player.Transactions.Where(o => o.GameRowKey == game.GameEntity.RowKey).Sum(o => o.Amount);
 
             // pre-game rag
-            var pagRagPre = "red";
+            var pagRag = "red";
             if (pagBalanceForGame == 0)
             {
-                pagRagPre = "amber";
+                pagRag = "amber";
             }
             if (pagBalanceForGame > 0)
             {
-                pagRagPre = "green";
+                pagRag = "green";
             }
 
             <tr>
                 <td><a href="/pags/@pag.PlayerAtGameEntity.RowKey">@pag.Player.PlayerEntity.Name</a></td>
                 <td><CurrencyDisplay Amount="@pagBalanceForGame" /></td>
                 <td><CurrencyDisplay Amount="@pag.Player.Balance" /></td>
-                <td><RagIcon Rag="@pagRagPre" /></td>
+                <td><RagIcon Rag="@pagRag" /></td>
             </tr>
         }
     </tbody>
@@ -191,7 +201,7 @@
             Notes = $"Credited for game {game.GameEntity.Date.Date.ToString("dd MMM yyyy")}"
         };
         pagsNoTeam = game.PlayersAtGame.Where(o => string.IsNullOrEmpty(o.PlayerAtGameEntity.Team)).ToList();
-        pageTitle = $"{game.GameEntity.Date.Date.ToString("dd MMM")}";
+        pageTitle = $"{game.GameEntity.Date.ToString("dd MMM yyyy HH:mm")}";
 
     }
     private void SwitchTabGame() => Navigation.NavigateTo($"/games/{@GameRowKey}/game");

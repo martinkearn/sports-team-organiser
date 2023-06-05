@@ -277,7 +277,7 @@
             Forecast = PlayingOptions.Yes.ToString(),
         };
         pagsNoTeam = game.PlayersAtGame.Where(o => string.IsNullOrEmpty(o.PlayerAtGameEntity.Team)).ToList();
-        pageTitle = $"{game.GameEntity.Date.Date.ToString("dd MMM")}";
+        pageTitle = $"{game.GameEntity.Date.ToString("dd MMM yyyy HH:mm")}";
 
     }
 

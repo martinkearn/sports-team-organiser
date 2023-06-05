@@ -8,7 +8,7 @@ namespace STO.Models
     {
         public string Name { get; set; }
         public string Tags { get; set; }
-        public PlayerPosition Position { get; set; }
+        public Enums.PlayerPosition Position { get; set; }
         public double DefaultRate { get; set; } = default!;
         public string PartitionKey { get; set; } = default!;
         public string RowKey { get; set; } = default!;

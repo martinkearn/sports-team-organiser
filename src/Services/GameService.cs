@@ -86,7 +86,7 @@ namespace STO.Services
             var yesPags = pags.Where(o => o.PlayerAtGameEntity.Forecast.ToLowerInvariant() == "yes");
             var nextTeamToGetPag = "A";
 
-            foreach (var position in Enum.GetNames(typeof(PlayerPosition)))
+            foreach (var position in Enum.GetNames(typeof(Enums.PlayerPosition)))
             {
                 // Get pags in this position
                 var pagsInPosition = yesPags.Where(o => o.Player.PlayerEntity.Position.ToString() == position.ToString());

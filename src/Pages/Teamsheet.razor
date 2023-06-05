@@ -59,7 +59,7 @@ else
         game = await GameService.GetGame(GameRowKey);
         game.TeamA = game.TeamA.OrderBy(o => o.Player.PlayerEntity.Position).ToList();
         game.TeamB = game.TeamB.OrderBy(o => o.Player.PlayerEntity.Position).ToList();
-        pageTitle = game.GameEntity.Date.Date.ToString("dd MMM yyyy");
+        pageTitle = game.GameEntity.Date.ToString("dd MMM yyyy HH:mm");
 
     }
 }

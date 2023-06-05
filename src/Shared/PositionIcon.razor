@@ -31,8 +31,11 @@ else
             case Enums.PlayerPosition.Defender:
                 css = "fa-solid fa-shield-halved";
                 break;
-            case Enums.PlayerPosition.Midfielder:
+            case Enums.PlayerPosition.PlayMaker:
                 css = "fa-solid fa-arrows-spin";
+                break;
+            case Enums.PlayerPosition.BoxToBox:
+                css = "fa-solid fa-up-down";
                 break;
             case Enums.PlayerPosition.Forward:
                 css = "fa-solid fa-bullseye";
@@ -41,6 +44,7 @@ else
                 css = "fa-solid fa-hand-dots";
                 break;           
             default:
+                css = "fa-solid fa-circle-notch";
                 break;
         }
     }

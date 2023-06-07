@@ -1,6 +1,7 @@
 # Workflows
-There are three workflows in this repo. `deployment.yaml` is the main deployment workflow template which is used to create a deployment and deploy the application code to it. This accepts inputs with specific environmental settings in.
+There are three workflows in this repo. `deployment.yaml` is the main deployment workflow template which is used to create a deployment and deploy the application code to it. This uses Bicep for infrastrcuture deployment and various other actions to build and deploy the application code. This accepts inputs with specific environmental settings in.
 
+## Secrets
 The `cd-prod.yml` and `cd-dev.yml` workflows are for the dev/test and production envinrments. Both workflows rely on secrets being stored in Github (Settings > Secrets & Variables > Actions):
 - `AZURE_SUBSCRIPTION` is used by both workflows and represents the subscription to deploy to.
 - `AZURE_CREDENTIALS` is used by `cd-prod.yml` and is used for the production deployment.

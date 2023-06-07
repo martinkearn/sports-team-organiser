@@ -12,8 +12,8 @@ jobs:
   CD-Dev:
     uses: ./.github/workflows/deployment.yml
     with:
-      rg: 'SportsTeamOrganiserDev'
-      uniquelabel: 'stodev'
+      rg: 'TNF-Dev'
+      uniquelabel: 'tnfdev'
       csprojpath: './src/STO.csproj'
       dotnetoutputpath: './src/output'
     secrets:

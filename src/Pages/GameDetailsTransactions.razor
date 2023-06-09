@@ -31,7 +31,75 @@
     </li>
 </ul>
 
-<div class="pb-4">
+<h4>Player accounts for game</h4>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th scope="col">Pag</th>
+            <th scope="col">Game Balance</th>
+            <th scope="col" class="d-none d-lg-table-cell">Player Balance</th>
+            <th scope="col">
+                @if (DateTime.Now <= game.GameEntity.Date.DateTime)
+                {
+                    <span>Pre-game Status</span>
+                }
+                else
+                {
+                    <span>Post-game Status</span>
+                }
+            </th>
+            <th scope="col">Add Payment</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var pag in game.PlayersAtGame)
+        {
+            var pagBalanceForGame = @pag.Player.Transactions.Where(o => o.GameRowKey == game.GameEntity.RowKey).Sum(o => o.Amount);
+
+            // Work out pag RAG status
+            var pagRag = "red";
+            if (!pag.PlayerAtGameEntity.Played)
+            {
+                // Not played, so pre-game rag
+                if (pag.Player.Balance < 0)
+                {
+                    pagRag = "red";
+                }
+                else if ((pagBalanceForGame >= 0) && (pagBalanceForGame < pag.Player.PlayerEntity.DefaultRate))
+                {
+                    pagRag = "amber";
+                }
+                else if (pagBalanceForGame >= pag.Player.PlayerEntity.DefaultRate)
+                {
+                    pagRag = "green";
+                }
+            }
+            else
+            {
+                // Has played so post game rag
+                if (pagBalanceForGame >= 0)
+                {
+                    pagRag = "green";
+                }
+                else if ((pagBalanceForGame == 0) && (pag.Player.Balance > 0))
+                {
+                    pagRag = "amber";
+                }
+            }
+
+            <tr>
+                <td><a href="/pags/@pag.PlayerAtGameEntity.RowKey">@pag.Player.PlayerEntity.Name</a></td>
+                <td><CurrencyDisplay Amount="@pagBalanceForGame" /></td>
+                <td class="d-none d-lg-table-cell"><a href="/players/@pag.Player.PlayerEntity.RowKey/transactions"><CurrencyDisplay Amount="@pag.Player.Balance" /></a> </td>
+                <td><RagIcon Rag="@pagRag" /></td>
+                <td><button class="btn btn-outline-secondary btn-sm" @onclick="() => AddTransactionForPlayer(pag.Player.PlayerEntity.RowKey, pag.Player.PlayerEntity.DefaultRate)"><i class="fa-solid fa-plus"></i> £@pag.Player.PlayerEntity.DefaultRate</button></td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<h4>Transactions in game</h4>
+@* <div class="pb-4">
     <EditForm Model="@newPagTransactionEntity" OnValidSubmit="AddPagTransaction" class="row row-cols-lg-auto g-3 align-items-center">
         <DataAnnotationsValidator />
         <ValidationSummary />
@@ -50,30 +118,7 @@
             <button class="btn btn-outline-secondary" type="submit"><i class="fa-solid fa-plus"></i></button>
         </div>
     </EditForm>
-</div>
-
-<h4>Players transactions in game</h4>
-<p>Players that do not have enough funds on account to cover this game:</p>
-<ul>
-@foreach (var pagLowFunds in game.PlayersAtGame.Where(o => o.Player.Balance < o.Player.PlayerEntity.DefaultRate))
-{
-    <li><a href="/players/@pagLowFunds.Player.PlayerEntity.RowKey/player">@pagLowFunds.Player.PlayerEntity.Name</a>, balance on account: <CurrencyDisplay Amount="@pagLowFunds.Player.Transactions.Sum(o => o.Amount)" /></li>
-}
-</ul>
-
-<p>Players with no transactions for this game:</p>
-<ul>
-@foreach (var pag in game.PlayersAtGame)
-{
-    var pagTrasnactions = game.TransactionsEntities.Where(o => o.PlayerRowKey == pag.Player.PlayerEntity.RowKey).Count();
-    if (pagTrasnactions == 0)
-    {
-        <li><a href="/players/@pag.Player.PlayerEntity.RowKey/player">@pag.Player.PlayerEntity.Name</a></li>
-    } 
-}
-</ul>
-
-<h4>Transactions in game</h4>
+</div> *@
 <p>@game.TransactionsEntities.Count transactions. <CurrencyDisplay Amount="@game.TransactionsEntities.Where(o => o.Amount > 0).Sum(o => o.Amount)" /> credited, <CurrencyDisplay Amount="@game.TransactionsEntities.Where(o => o.Amount <= 0).Sum(o => o.Amount)" /> debited totalling <CurrencyDisplay Amount="@game.TransactionsEntities.Sum(o => o.Amount)" />.</p>
 <table class="table table-striped">
     <thead>
@@ -135,6 +180,20 @@
         await RefreshData();
     }
 
+    private async Task AddTransactionForPlayer(string playerRowKey, double amount)
+    {
+        var newTransactionEntityForPag = new TransactionEntity()
+        {
+            GameRowKey = game.GameEntity.RowKey,
+            Date = DateTimeOffset.UtcNow,
+            Notes = $"Credited for game {game.GameEntity.Date.Date.ToString("dd MMM yyyy")}",
+            PlayerRowKey = playerRowKey,
+            Amount = amount
+        };
+        await TransactionService.UpsertTransactionEntity(newTransactionEntityForPag);
+        await RefreshData();
+    }
+
     private void NewPagTransactionPlayerChanged(ChangeEventArgs e)
     {
         if (e.Value != null)
@@ -155,7 +214,7 @@
             Notes = $"Credited for game {game.GameEntity.Date.Date.ToString("dd MMM yyyy")}"
         };
         pagsNoTeam = game.PlayersAtGame.Where(o => string.IsNullOrEmpty(o.PlayerAtGameEntity.Team)).ToList();
-        pageTitle = $"{game.GameEntity.Date.Date.ToString("dd MMM")}";
+        pageTitle = $"{game.GameEntity.Date.ToString("dd MMM yyyy HH:mm")}";
 
     }
     private void SwitchTabGame() => Navigation.NavigateTo($"/games/{@GameRowKey}/game");

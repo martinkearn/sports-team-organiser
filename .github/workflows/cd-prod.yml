@@ -12,8 +12,8 @@ jobs:
   CD-Prod:
     uses: ./.github/workflows/deployment.yml
     with:
-      rg: 'SportsTeamOrganiser'
-      uniquelabel: 'stoprod'
+      rg: 'TNF-Prod'
+      uniquelabel: 'tnfprod'
       csprojpath: './src/STO.csproj'
       dotnetoutputpath: './src/output'
     secrets:

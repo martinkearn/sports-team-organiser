@@ -1,0 +1,43 @@
+@if (!string.IsNullOrEmpty(css))
+{
+    <i class="@css"></i>  
+}
+else
+{
+    @Rag.ToString()
+}
+
+@code {
+    [Parameter]
+    public string Rag { get; set; }
+
+    private string css;
+
+    protected override void OnParametersSet()
+    {
+        SetCss();
+    }
+
+    protected override void OnInitialized()
+    {
+        SetCss();
+    }
+
+    private void SetCss()
+    {
+        switch (Rag)
+        {
+            case "green":
+                css = "fa-solid fa-circle-check text-success";
+                break;   
+            case "amber":
+                css = "fa-solid fa-circle-question text-warning";
+                break;  
+            case "red":
+                css = "fa-solid fa-circle-exclamation text-danger";
+                break; 
+            default:
+                break;
+        }
+    }
+}

@@ -13,6 +13,18 @@
         <label for="addDate" class="form-label">Date</label>
         <InputDate class="form-control" id="addDate" @bind-Value="newGameEntity.Date" />
     </div>
+
+    <div class="mb-3">
+        <label for="addDate" class="form-label">Time</label>
+        <div class="row">
+            <div class="col-auto">
+                <div class="input-group">
+                    <InputNumber class="form-control" min="0" max="23"  @bind-Value="hour" />
+                    <InputNumber class="form-control" min="0" max="59" @bind-Value="minute" />
+                </div>
+            </div>
+        </div>
+    </div>
     
     <div class="modal-footer">
         <button type="submit" class="btn btn-primary">Add Game</button>
@@ -21,6 +33,10 @@
 
 @code {
     private GameEntity newGameEntity = new();
+
+    private int hour;
+
+    private int minute;
 
     private string pageTitle;
 
@@ -31,12 +47,16 @@
 
     protected async Task Add()
     {
+        var dt = new DateTime(newGameEntity.Date.Year, newGameEntity.Date.Month, newGameEntity.Date.Day, hour, minute, 0, DateTimeKind.Utc);
+        newGameEntity.Date = dt;
         await GameService.UpsertGameEntity(newGameEntity);
         Navigation.NavigateTo("/games");
     }
 
     private void RefreshData()
     {
+        hour = 18;
+        minute = 30;
         newGameEntity = new();
         newGameEntity.Date = DateTimeOffset.UtcNow;
         pageTitle = "Add a Game";

@@ -31,7 +31,8 @@
     </li>
 </ul>
 
-
+<h4>Game details</h4>
+<p>Date & Time: @game.GameEntity.Date.DayOfWeek @game.GameEntity.Date.ToString("dd MMM yyyy HH:mm")</p>
 
 <h4>Goals</h4>
 <div class="mb-3">
@@ -78,7 +79,6 @@
             <th scope="col"><button class="btn btn-link m-0 p-0" @onclick="() => SortPags(Enums.SortPagsBy.Name)">Name</button></th>
             <th scope="col"><button class="btn btn-link m-0 p-0" @onclick="() => SortPags(Enums.SortPagsBy.Position)">Pos</button></th>
             <th scope="col" class="d-none d-lg-table-cell"><button class="btn btn-link m-0 p-0" @onclick="() => SortPags(Enums.SortPagsBy.Playing)">Playing</button></th>
-            <th scope="col" class="d-none d-lg-table-cell"><button class="btn btn-link m-0 p-0" @onclick="() => SortPags(Enums.SortPagsBy.Balance)">Game Balance</button></th>
             <th scope="col"><button class="btn btn-link m-0 p-0" @onclick="() => SortPags(Enums.SortPagsBy.Played)">Played</button></th>
             <th scope="col"><button class="btn btn-link m-0 p-0" @onclick="() => SortPags(Enums.SortPagsBy.Team)">Team</button></th>
         </tr>
@@ -95,7 +95,6 @@
                         <option value="Maybe">Maybe</option>
                     </InputSelect>
                 </td>
-                <td class="d-none d-lg-table-cell"><CurrencyDisplay Amount="@pag.Player.Transactions.Where(o => o.GameRowKey == game.GameEntity.RowKey).Sum(o => o.Amount)" /></td>
                 <td>
                     <div class="form-check form-switch">
                         <InputCheckbox class="form-check-input" type="checkbox" role="switch" @bind-Value=pag.PlayerAtGameEntity.Played @bind-Value:after="() => BillRefundPagEntity(pag.PlayerAtGameEntity)"></InputCheckbox>
@@ -247,9 +246,12 @@
             case Enums.SortPagsBy.Playing:
                 game.PlayersAtGame = game.PlayersAtGame.OrderByDescending(o => o.PlayerAtGameEntity.Forecast).ToList();
                 break;
-            case Enums.SortPagsBy.Balance:
-                game.PlayersAtGame = game.PlayersAtGame.OrderByDescending(o => o.Player.Balance).ToList();
+            case Enums.SortPagsBy.GameBalance:
+                game.PlayersAtGame = game.PlayersAtGame.OrderByDescending(o => o.Player.Transactions.Where(t => t.GameRowKey == GameRowKey).Sum(t => t.Amount)).ToList();
                 break;
+            case Enums.SortPagsBy.PlayerBalance:
+                game.PlayersAtGame = game.PlayersAtGame.OrderByDescending(o => o.Player.Transactions.Sum(t => t.Amount)).ToList();
+                break;    
             case Enums.SortPagsBy.Team:
                 game.PlayersAtGame = game.PlayersAtGame.OrderBy(o => o.PlayerAtGameEntity.Team).ToList();
                 break;
@@ -275,7 +277,7 @@
             Forecast = PlayingOptions.Yes.ToString(),
         };
         pagsNoTeam = game.PlayersAtGame.Where(o => string.IsNullOrEmpty(o.PlayerAtGameEntity.Team)).ToList();
-        pageTitle = $"{game.GameEntity.Date.Date.ToString("dd MMM")}";
+        pageTitle = $"{game.GameEntity.Date.ToString("dd MMM yyyy HH:mm")}";
 
     }
 

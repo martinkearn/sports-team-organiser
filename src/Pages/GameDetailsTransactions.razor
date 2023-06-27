@@ -12,9 +12,9 @@
 
 <ul class="nav nav-tabs">
     <li class="nav-item">
-        <a class="nav-link" @onclick="SwitchTabGame">
+        <a class="nav-link" @onclick="SwitchTabPlayers">
             <span class="d-md-none"><i class="fa-solid fa-people-group"></i></span>
-            <span class="d-none d-md-block">Game</span>
+            <span class="d-none d-md-block">Players</span>
         </a>
     </li>
     <li class="nav-item">
@@ -24,9 +24,15 @@
         </a>
     </li>
     <li class="nav-item">
-        <a class="nav-link"  @onclick="SwitchTabTeamsheet">
+        <a class="nav-link" href="/teamsheet/@game.GameEntity.RowKey">
             <span class="d-md-none"><i class="fa-solid fa-table"></i></span>
             <span class="d-none d-md-block">Teamsheet</span>
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" @onclick="SwitchTabGame">
+            <span class="d-md-none"><i class="fa-solid fa-table"></i></span>
+            <span class="d-none d-md-block">Game</span>
         </a>
     </li>
 </ul>
@@ -99,26 +105,6 @@
 </table>
 
 <h4>Transactions in game</h4>
-@* <div class="pb-4">
-    <EditForm Model="@newPagTransactionEntity" OnValidSubmit="AddPagTransaction" class="row row-cols-lg-auto g-3 align-items-center">
-        <DataAnnotationsValidator />
-        <ValidationSummary />
-        
-        <div class="input-group col-12">
-            <InputSelect class="form-select" @bind-Value="newPagTransactionEntity.PlayerRowKey" @oninput="NewPagTransactionPlayerChanged">
-                <option value="">Add payment to game ...</option>
-                @foreach (var player in players)
-                {
-                    if (game.PlayersAtGame.SingleOrDefault(pag => pag.PlayerAtGameEntity.PlayerRowKey == player.PlayerEntity.RowKey) != default)
-                    {
-                        <option value="@player.PlayerEntity.RowKey">@player.PlayerEntity.Name</option>
-                    }
-                }
-            </InputSelect>
-            <button class="btn btn-outline-secondary" type="submit"><i class="fa-solid fa-plus"></i></button>
-        </div>
-    </EditForm>
-</div> *@
 <p>@game.TransactionsEntities.Count transactions. <CurrencyDisplay Amount="@game.TransactionsEntities.Where(o => o.Amount > 0).Sum(o => o.Amount)" /> credited, <CurrencyDisplay Amount="@game.TransactionsEntities.Where(o => o.Amount <= 0).Sum(o => o.Amount)" /> debited totalling <CurrencyDisplay Amount="@game.TransactionsEntities.Sum(o => o.Amount)" />.</p>
 <table class="table table-striped">
     <thead>
@@ -151,10 +137,6 @@
         }
     </tbody>
 </table>
-
-<div class="modal-footer px-0">
-    <DeleteButtonWithCheck EntityRowKey="@game.GameEntity.RowKey" EntityLabel="@pageTitle" EntityType="@typeof(GameEntity).ToString()" NavigateToUrl="/games" />
-</div>
 
 @code {
     [Parameter]
@@ -214,9 +196,10 @@
             Notes = $"Credited for game {game.GameEntity.Date.Date.ToString("dd MMM yyyy")}"
         };
         pagsNoTeam = game.PlayersAtGame.Where(o => string.IsNullOrEmpty(o.PlayerAtGameEntity.Team)).ToList();
-        pageTitle = $"{game.GameEntity.Date.ToString("dd MMM yyyy HH:mm")}";
+        pageTitle = $"{game.GameEntity.Date.ToString("dd MMM yyyy HH:mm")} transactions";
 
     }
+    private void SwitchTabPlayers() => Navigation.NavigateTo($"/games/{@GameRowKey}/players");
     private void SwitchTabGame() => Navigation.NavigateTo($"/games/{@GameRowKey}/game");
     private void SwitchTabTeamsheet() => Navigation.NavigateTo($"/teamsheet/{@GameRowKey}");
 }

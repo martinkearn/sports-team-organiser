@@ -129,7 +129,7 @@
 
         var originalTransaction = await TransactionService.GetTransaction(TransactionRowKey);
         originalTransactionEntity = originalTransaction.TransactionEntity;
-        originalPlayerGame = (originalTransactionEntity.GameRowKey == null) ?
+        originalPlayerGame = (string.IsNullOrEmpty(originalTransactionEntity.GameRowKey)) ?
             $"{originalTransaction.Player.PlayerEntity.Name} with no game" : 
             $"{originalTransaction.Player.PlayerEntity.Name} at {originalTransaction.Game.GameEntity.Date.Date.ToShortDateString()}";
         

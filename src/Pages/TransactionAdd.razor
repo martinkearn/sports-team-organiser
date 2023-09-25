@@ -24,18 +24,6 @@
     </div>
 
     <div class="mb-3">
-        <label for="addPlayerRowKey" class="form-label">Associated Game</label>
-        <InputSelect class="form-select" @bind-Value="newTransactionEntity.GameRowKey">
-            <option value="">Select Game ...</option>
-            @foreach (var game in games)
-            {
-                <option value="@game.GameEntity.RowKey"><GameTitle GameRowKey="@game.GameEntity.RowKey" Link="false" /></option>
-            }
-        </InputSelect>
-        <div class="form-text">Optionally associate the transaction with a game.</div>
-    </div>
-
-    <div class="mb-3">
         <label for="addDate" class="form-label">Date</label>
         <InputDate class="form-control" id="addDate" @bind-Value="newTransactionEntity.Date" />
     </div>
@@ -64,8 +52,6 @@
 
     private List<Player> players = new();
 
-    private List<Game> games = new();
-
     private TransactionEntity newTransactionEntity = new();
 
     private string pageTitle;
@@ -91,14 +77,8 @@
     async Task RefreshData()
     {
         newTransactionEntity = new();
-        if (!string.IsNullOrEmpty(gameRowKey))
-        {
-            newTransactionEntity.GameRowKey = gameRowKey;
-        }
 
         players = PlayerService.GetPlayers();
-
-        games = await GameService.GetGames();
 
         pageTitle = "Add Transaction";
     }

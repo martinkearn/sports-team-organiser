@@ -30,18 +30,7 @@ else
 <h5>Player</h5>
 <p><a href="players/@transaction.Player.PlayerEntity.RowKey">@transaction.Player.PlayerEntity.Name</a></p>
 
-<h5>Game</h5>
-@if (transaction.Game is not null)
-{
-    <p><GameTitle GameRowKey="@transaction.Game.GameEntity.RowKey" Link="true" /></p>
-}
-else
-{
-    <p>No Game</p>
-}
-
 <div class="modal-footer">
-    <a class="btn btn-secondary" href="/transactions/split/@transaction.TransactionEntity.RowKey"><i class="fa-solid fa-code-branch"></i> Split Transaction</a>
     <DeleteButtonWithCheck EntityRowKey="@transaction.TransactionEntity.RowKey" EntityLabel="@pageTitle" EntityType="@typeof(TransactionEntity).ToString()" NavigateToUrl="/transactions" />
 </div>
 

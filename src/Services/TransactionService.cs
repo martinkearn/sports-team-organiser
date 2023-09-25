@@ -5,12 +5,10 @@ namespace STO.Services
     {
         private readonly IStorageService _storageService;
         private readonly IPlayerService _playerService;
-        private readonly IGameService _gameService;
-        public TransactionService(IStorageService storageService, IPlayerService playerService, IGameService gameService)
+        public TransactionService(IStorageService storageService, IPlayerService playerService)
         {
             _storageService = storageService;
             _playerService = playerService;
-            _gameService = gameService;
         }
 
         public async Task<List<Transaction>> GetTransactions(List<TransactionEntity> transactionEntities)
@@ -42,18 +40,23 @@ namespace STO.Services
             await _storageService.UpsertEntity<TransactionEntity>(transactionEntity);
         }
 
+        public string GetNotesForGame(string gameRowKey)
+        {
+            var gameEntity = _storageService.QueryEntities<GameEntity>().Where(o => o.RowKey == gameRowKey).FirstOrDefault();
+            var notes = $"For game {gameEntity.Date.Date.ToString("dd MMM yyyy")}";
+            return notes;
+        }
+
         private async Task<List<Transaction>> TransactionEntitiesToTransactions(List<TransactionEntity> transactionEntities)
         {
             var transactions = new List<Transaction>();
             foreach (var te in transactionEntities)
             {
                 var transactionPlayer = _playerService.GetPlayer(te.PlayerRowKey);
-                var transactionGame = await _gameService.GetGame(te.GameRowKey);
 
                 var Transaction = new Transaction(te)
                 {
-                    Player = transactionPlayer,
-                    Game = transactionGame,
+                    Player = transactionPlayer
                 };
                 transactions.Add(Transaction);
             }

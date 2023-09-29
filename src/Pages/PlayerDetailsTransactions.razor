@@ -38,7 +38,7 @@
 
 <div class="modal-footer">
     <a class="btn btn-secondary" href="/players/"><i class="fa-solid fa-arrow-left"></i>All Players</a>
-    <DeleteButtonWithCheck EntityRowKey="@player.PlayerEntity.RowKey" EntityLabel="@player.PlayerEntity.Name" EntityType="@typeof(PlayerEntity).ToString()" NavigateToUrl="/players" />
+    <DeleteButtonWithCheck EntityRowKey="@player.PlayerEntity.RowKey" EntityLabel="@player.PlayerEntity.Name" EntityType="alltransactionsforplayer" NavigateToUrl="/players" ButtonLabel="Delete all transactions" />
 </div>
 
 @code {

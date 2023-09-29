@@ -31,7 +31,7 @@ else
 <p><a href="players/@transaction.Player.PlayerEntity.RowKey">@transaction.Player.PlayerEntity.Name</a></p>
 
 <div class="modal-footer">
-    <DeleteButtonWithCheck EntityRowKey="@transaction.TransactionEntity.RowKey" EntityLabel="@pageTitle" EntityType="@typeof(TransactionEntity).ToString()" NavigateToUrl="/transactions" />
+    <DeleteButtonWithCheck EntityRowKey="@transaction.TransactionEntity.RowKey" EntityLabel="@pageTitle" EntityType="@typeof(TransactionEntity).ToString()" NavigateToUrl="/transactions" ButtonLabel="Delete" />
 </div>
 
 @code {

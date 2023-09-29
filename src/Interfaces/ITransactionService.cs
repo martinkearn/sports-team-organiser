@@ -32,6 +32,12 @@ namespace STO.Interfaces
         public Task DeleteTransactionEntity(string rowKey);
 
         /// <summary>
+        /// Deletes all TransactionEntity for a player.
+        /// </summary>
+        /// <param name="rowKey">The RowKey for the PlayerEntity to delete TransactionEntity for.</param>
+        public Task DeleteTransactionEntiesForPlayer(string playerRowKey);
+
+        /// <summary>
         /// Adds a new TransactionEntity.
         /// </summary>
         /// <param name="transactionEntity">The TransactionEntity to upsert.</param>

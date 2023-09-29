@@ -9,7 +9,5 @@ namespace STO.Models
         public TransactionEntity TransactionEntity { get; set; } = default!;
         
         public Player Player { get; set; } = default!;
-
-        public Game Game { get; set; } = default!;
     }
 }

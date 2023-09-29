@@ -21,23 +21,15 @@
         <tr>
             <th scope="col">Date</th>
             <th scope="col">Amount</th>
-            <th scope="col" class="d-none d-lg-table-cell">Game</th>
             <th scope="col" class="d-none d-lg-table-cell">Notes</th>
         </tr>
     </thead>
     <tbody>
         @foreach (var transactionEntity in player.Transactions)
         {
-            var game = games.SingleOrDefault(o => o.GameEntity.RowKey == transactionEntity.GameRowKey);
             <tr>
                 <td><a href="/transactions/@transactionEntity.RowKey">@transactionEntity.Date.ToString("dd MMM yyyy HH:mm")</a></td>
                 <td><CurrencyDisplay Amount="@transactionEntity.Amount" /></td>
-                <td class="d-none d-lg-table-cell">
-                    @if (game != default)
-                    {
-                        <GameTitle GameRowKey="@game.GameEntity.RowKey" Link="true" />
-                    }
-                </td>
                 <td class="d-none d-lg-table-cell">@transactionEntity.Notes</td>
             </tr>
         }
@@ -46,7 +38,7 @@
 
 <div class="modal-footer">
     <a class="btn btn-secondary" href="/players/"><i class="fa-solid fa-arrow-left"></i>All Players</a>
-    <DeleteButtonWithCheck EntityRowKey="@player.PlayerEntity.RowKey" EntityLabel="@player.PlayerEntity.Name" EntityType="@typeof(PlayerEntity).ToString()" NavigateToUrl="/players" />
+    <DeleteButtonWithCheck EntityRowKey="@player.PlayerEntity.RowKey" EntityLabel="@player.PlayerEntity.Name" EntityType="alltransactionsforplayer" NavigateToUrl="/players" ButtonLabel="Delete all transactions" />
 </div>
 
 @code {
@@ -54,8 +46,6 @@
     public string PlayerRowKey { get; set; }
 
     private Player player;
-
-    private List<Game> games = new();
 
     private string pageTitle;
 
@@ -66,7 +56,6 @@
 
     private async Task RefreshData()
     {
-        games = await GameService.GetGames();
         player = PlayerService.GetPlayer(PlayerRowKey);
         pageTitle = $"{player.PlayerEntity.Name}";
     }

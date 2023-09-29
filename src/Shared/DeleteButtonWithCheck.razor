@@ -3,7 +3,7 @@
 @inject IGameService GameService
 @inject ITransactionService TransactionService
 
-<button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#confirmationModal"><i class="fa-solid fa-trash"></i> Delete</button>
+<button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#confirmationModal"><i class="fa-solid fa-trash"></i> @ButtonLabel</button>
 
 <!-- Modal -->
 <div class="modal" id="confirmationModal" tabindex="-1" aria-labelledby="confirmationModalLabel" aria-hidden="true">
@@ -14,8 +14,16 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <p>Deleting <b>@EntityLabel</b>.</p>
-        <p>This will permanently delete this item.</p>
+        @if (EntityType.ToLowerInvariant() == "alltransactionsforplayer")
+        {
+          <p>Deleting all transactions for <b>@EntityLabel</b>.</p>
+          <p>This will permanently delete these items.</p>
+        }
+        else
+        {
+          <p>Deleting <b>@EntityLabel</b>.</p>
+          <p>This will permanently delete this item.</p>
+        }
         <p>Please confirm.</p>
       </div>
       <div class="modal-footer">
@@ -31,6 +39,9 @@
 
     [Parameter]
     public string EntityLabel { get; set; }
+
+    [Parameter]
+    public string ButtonLabel { get; set; }
 
     [Parameter]
     public string EntityType { get; set; }
@@ -53,6 +64,11 @@
         if (EntityType == typeof(TransactionEntity).ToString())
         {
             await TransactionService.DeleteTransactionEntity(EntityRowKey);
+        }
+
+        if (EntityType.ToLowerInvariant() == "alltransactionsforplayer")
+        {
+          await TransactionService.DeleteTransactionEntiesForPlayer(EntityRowKey);
         }
 
         Navigation.NavigateTo(NavigateToUrl);

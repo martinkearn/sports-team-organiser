@@ -146,16 +146,15 @@
                 PlayerRowKey = pag.PlayerRowKey,
                 Amount = -player.PlayerEntity.DefaultRate,
                 Date = DateTimeOffset.UtcNow,
-                GameRowKey = pag.GameRowKey,
-                Notes = $"Debited for game {game.GameEntity.Date.Date.ToString("dd MMM yyyy")}"
+                Notes = TransactionService.GetNotesForGame(pag.GameRowKey)
             };
             await TransactionService.UpsertTransactionEntity(transaction);
         }
         else
         {
+            // TO DO - thgis needs to match on trasnatcion noytes containing game
             // Get debit transactions (less than £0) for player and game
             var pagDebitTransactionEntities = player.Transactions
-                .Where(o => o.GameRowKey == pag.GameRowKey)
                 .Where(o => o.Amount < 0);
             foreach (var pagDebitTransactionEntity in pagDebitTransactionEntities)
             {
@@ -216,9 +215,6 @@
                 break;
             case Enums.SortPagsBy.Playing:
                 game.PlayersAtGame = game.PlayersAtGame.OrderByDescending(o => o.PlayerAtGameEntity.Forecast).ToList();
-                break;
-            case Enums.SortPagsBy.GameBalance:
-                game.PlayersAtGame = game.PlayersAtGame.OrderByDescending(o => o.Player.Transactions.Where(t => t.GameRowKey == GameRowKey).Sum(t => t.Amount)).ToList();
                 break;
             case Enums.SortPagsBy.PlayerBalance:
                 game.PlayersAtGame = game.PlayersAtGame.OrderByDescending(o => o.Player.Transactions.Sum(t => t.Amount)).ToList();

@@ -12,6 +12,12 @@
 
 <ul class="nav nav-tabs">
     <li class="nav-item">
+        <a class="nav-link" @onclick="SwitchTabNewPlayers">
+            <span class="d-md-none"><i class="fa-solid fa-people-group"></i></span>
+            <span class="d-none d-md-block">New Players</span>
+        </a>
+    </li>
+    <li class="nav-item">
         <a class="nav-link active" >
             <span class="d-md-none"><i class="fa-solid fa-people-group"></i></span>
             <span class="d-none d-md-block">Players</span>
@@ -21,12 +27,6 @@
         <a class="nav-link" @onclick="SwitchTabTransactions">
             <span class="d-md-none"><i class="fa-solid fa-coins"></i></span>
             <span class="d-none d-md-block">Transactions</span>
-        </a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link" href="/teamsheet/@game.GameEntity.RowKey">
-            <span class="d-md-none"><i class="fa-solid fa-table"></i></span>
-            <span class="d-none d-md-block">Teamsheet</span>
         </a>
     </li>
     <li class="nav-item">
@@ -247,7 +247,8 @@
         pageTitle = $"{game.GameEntity.Date.ToString("dd MMM yyyy HH:mm")} players";
 
     }
-
     private void SwitchTabTransactions() => Navigation.NavigateTo($"/games/{@GameRowKey}/transactions");
+
     private void SwitchTabGame() => Navigation.NavigateTo($"/games/{@GameRowKey}/game");
+    private void SwitchTabNewPlayers() => Navigation.NavigateTo($"/games/{@GameRowKey}/newplayers");
 }

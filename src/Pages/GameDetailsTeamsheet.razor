@@ -82,7 +82,7 @@ else
     async Task RefreshData()
     {
         game = await GameService.GetGame(GameRowKey);
-        pageTitle = $"{game.GameEntity.Date.ToString("dd MMM yyyy HH:mm")} Teamsheet";
+        pageTitle = $"{game.GameEntity.Date.ToString("dd MMM yyyy")} Teamsheet";
     }
 
     private void SwitchTabGame() => Navigation.NavigateTo($"/games/{@GameRowKey}/game");

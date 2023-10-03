@@ -91,7 +91,7 @@
     async Task RefreshData()
     {
         game = await GameService.GetGame(GameRowKey);
-        pageTitle = $"{game.GameEntity.Date.ToString("dd MMM yyyy HH:mm")} Game";
+        pageTitle = $"{game.GameEntity.Date.ToString("dd MMM yyyy")} Game";
     }
 
     private void SwitchTabPlayers() => Navigation.NavigateTo($"/games/{@GameRowKey}/players");

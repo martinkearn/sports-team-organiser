@@ -29,7 +29,6 @@ builder.Services.AddAuthorization(config =>
 
 builder.Services.AddSingleton<IAuthorizationHandler, IsAdminEmailHandler>();
 
-// Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor(options =>
 {
@@ -40,6 +39,8 @@ builder.Services.AddServerSideBlazor(options =>
     options.MaxBufferedUnacknowledgedRenderBatches = 10;
 })
     .AddMicrosoftIdentityConsentHandler();
+
+// Custom services
 builder.Services.AddSingleton<IStorageService, StorageService>();
 builder.Services.AddSingleton<IPlayerService, PlayerService>();
 builder.Services.AddSingleton<IGameService, GameService>();
@@ -50,16 +51,6 @@ builder.Services.AddOptions<StorageConfiguration>()
     {
         configuration.GetSection(nameof(StorageConfiguration)).Bind(settings);
     });
-var configuration = builder.Configuration;
-
-builder.Services.Configure<CookiePolicyOptions>(options =>
-    {
-        // This lambda determines whether user consent for non-essential cookies is needed for a given request.
-        options.CheckConsentNeeded = context => true;
-        options.MinimumSameSitePolicy = SameSiteMode.Unspecified;
-        // Handling SameSite cookie according to https://learn.microsoft.com/aspnet/core/security/samesite?view=aspnetcore-3.1
-        options.HandleSameSiteCookieCompatibility();
-    });
 
 var app = builder.Build();
 
@@ -67,15 +58,15 @@ var app = builder.Build();
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error");
+    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+    app.UseHsts();
 }
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
+app.UseCookiePolicy();
 app.UseAuthorization();
-app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller}/{action}");
 app.MapControllers();
 app.MapBlazorHub();
 app.MapFallbackToPage("/_Host");

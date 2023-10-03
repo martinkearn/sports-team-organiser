@@ -1,0 +1,90 @@
+@page "/games/{GameRowKey}/teamsheet"
+@inject IGameService GameService
+@inject NavigationManager Navigation
+
+<PageTitle>TNF - @pageTitle</PageTitle>
+
+<h1><i class="fa-solid fa-people-group me-2"></i> @pageTitle</h1>
+
+<p>@game.PlayersAtGame.Where(p => p.PlayerAtGameEntity.Forecast == PlayingOptions.Yes.ToString()).Count() yes, @game.PlayersAtGame.Where(p => p.PlayerAtGameEntity.Forecast == PlayingOptions.Maybe.ToString()).Count() maybe, @game.PlayersAtGame.Where(p => p.PlayerAtGameEntity.Played == true).Count() actual</p>
+
+<ul class="nav nav-tabs">
+    <li class="nav-item">
+        <a class="nav-link" @onclick="SwitchTabPlayers">
+            <span class="d-md-none"><i class="fa-solid fa-users-viewfinder"></i></span>
+            <span class="d-none d-md-block">Players</span>
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link active" >
+            <span class="d-md-none"><i class="fa-solid fa-people-group"></i></span>
+            <span class="d-none d-md-block">Teamsheet</span>
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" @onclick="SwitchTabGame">
+            <span class="d-md-none"><i class="fa-solid fa-clipboard-list"></i></span>
+            <span class="d-none d-md-block">Game</span>
+        </a>
+    </li>
+</ul>
+
+@if ((game.TeamA != null) && (game.TeamB != null))
+{
+    <h5>Team A - @game.TeamA.Count()</h5>
+    <p>
+    @foreach (var pag in game.TeamA)
+    {
+        <span>@pag.Player.PlayerEntity.Name <PlayingForecastIcon Forecast="@pag.PlayerAtGameEntity.Forecast" /> <PositionIcon Position="pag.Player.PlayerEntity.Position" /> <RagIcon Pag="@pag" /></span>
+        <br>
+    }
+    </p>
+
+    <h5>Team B - @game.TeamB.Count() (wear bibs)</h5>
+    <p>
+    @foreach (var pag in game.TeamB)
+    {
+        <span>@pag.Player.PlayerEntity.Name <PlayingForecastIcon Forecast="@pag.PlayerAtGameEntity.Forecast" /> <PositionIcon Position="pag.Player.PlayerEntity.Position" /> <RagIcon Pag="@pag" /></span>
+        <br>
+    }
+    </p>
+
+    @if (game.PlayersAtGame.Where(o => string.IsNullOrEmpty(o.PlayerAtGameEntity.Team)).Count() > 0)
+    {
+        <h5>No team assigned</h5>
+        <p>
+        @foreach (var pag in game.PlayersAtGame.Where(o => string.IsNullOrEmpty(o.PlayerAtGameEntity.Team)))
+        {
+            <span>@pag.Player.PlayerEntity.Name <PlayingForecastIcon Forecast="@pag.PlayerAtGameEntity.Forecast" /> <PositionIcon Position="pag.Player.PlayerEntity.Position" /> <RagIcon Pag="@pag" /></span>
+            <br>  
+        }
+        </p>
+    }
+}  
+else
+{
+    <p>No teams yet.</p>
+}
+
+@code {
+    [Parameter]
+    public string GameRowKey { get; set; }
+
+    private Game game;
+
+    private string pageTitle;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await RefreshData();
+    }
+
+    async Task RefreshData()
+    {
+        game = await GameService.GetGame(GameRowKey);
+        pageTitle = $"{game.GameEntity.Date.ToString("dd MMM yyyy")} Teamsheet";
+    }
+
+    private void SwitchTabGame() => Navigation.NavigateTo($"/games/{@GameRowKey}/game");
+    private void SwitchTabPlayers() => Navigation.NavigateTo($"/games/{@GameRowKey}/players");
+}

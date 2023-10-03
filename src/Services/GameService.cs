@@ -47,6 +47,8 @@ namespace STO.Services
             var gameEntities = _storageService.QueryEntities<GameEntity>().Where(g => g.RowKey == gameRowKey).ToList();
             var games = await GetGames(gameEntities);
             var matchingGame = games.FirstOrDefault();
+            matchingGame.TeamA = matchingGame.TeamA.OrderBy(o => o.Player.PlayerEntity.Position).ToList();
+            matchingGame.TeamB = matchingGame.TeamB.OrderBy(o => o.Player.PlayerEntity.Position).ToList();
             return matchingGame;
         }
 

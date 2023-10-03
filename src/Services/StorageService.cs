@@ -31,12 +31,6 @@ namespace STO.Services
 
             // Refresh data from storage
             RefreshEntitiesFromStorage<T>();
-
-            // if (typeof(T) == typeof(PlayerAtGameEntity))
-            // {
-            //     RefreshEntitiesFromStorage<GameEntity>();
-            //     RefreshEntitiesFromStorage<PlayerEntity>();
-            // }
         } 
 
         public async Task<T> UpsertEntity<T>(T entity) where T : class, ITableEntity
@@ -50,12 +44,6 @@ namespace STO.Services
 
             // Refresh data from storage
             RefreshEntitiesFromStorage<T>();
-
-            // if (typeof(T) == typeof(PlayerAtGameEntity))
-            // {
-            //     RefreshEntitiesFromStorage<GameEntity>();
-            //     RefreshEntitiesFromStorage<PlayerEntity>();
-            // }
             
             // Return
             return entity;

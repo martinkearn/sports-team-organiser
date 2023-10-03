@@ -12,21 +12,21 @@
 
 <ul class="nav nav-tabs">
     <li class="nav-item">
-        <a class="nav-link active" >
+        <a class="nav-link" @onclick="SwitchTabPlayers">
+            <span class="d-md-none"><i class="fa-solid fa-users-viewfinder"></i></span>
+            <span class="d-none d-md-block">Players</span>
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" @onclick="SwitchTabTeamsheet">
             <span class="d-md-none"><i class="fa-solid fa-people-group"></i></span>
-            <span class="d-none d-md-block">Game</span>
-        </a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link" @onclick="SwitchTabTransactions">
-            <span class="d-md-none"><i class="fa-solid fa-coins"></i></span>
-            <span class="d-none d-md-block">Transactions</span>
-        </a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link" href="/teamsheet/@game.GameEntity.RowKey">
-            <span class="d-md-none"><i class="fa-solid fa-table"></i></span>
             <span class="d-none d-md-block">Teamsheet</span>
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link active">
+            <span class="d-md-none"><i class="fa-solid fa-clipboard-list"></i></span>
+            <span class="d-none d-md-block">Game</span>
         </a>
     </li>
 </ul>
@@ -52,63 +52,8 @@
     </div>
 </div>
 
-<h4>Players at game</h4>
-<div>
-    <EditForm Model="@newPagEntity" OnValidSubmit="AddPagEntity" class="row row-cols-lg-auto g-3 align-items-center">
-        <DataAnnotationsValidator />
-        <ValidationSummary />
-        <div class="input-group col-12">
-            <InputSelect class="form-select" @bind-Value="newPagEntity.PlayerRowKey">
-                <option value="">Add player to game ...</option>
-                @foreach (var player in players)
-                {
-                    if (game.PlayersAtGame.FirstOrDefault(pag => pag.PlayerAtGameEntity.PlayerRowKey == player.PlayerEntity.RowKey) == default)
-                    {
-                        <option value="@player.PlayerEntity.RowKey">@player.PlayerEntity.Name</option>
-                    }
-                }
-            </InputSelect>
-            <button class="btn btn-outline-secondary" type="submit"><i class="fa-solid fa-plus"></i></button>
-        </div>
-    </EditForm>
-    <p>@game.PlayersAtGame.Count() players.</p>
-</div>
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <th scope="col"><button class="btn btn-link m-0 p-0" @onclick="() => SortPags(Enums.SortPagsBy.Name)">Name</button></th>
-            <th scope="col"><button class="btn btn-link m-0 p-0" @onclick="() => SortPags(Enums.SortPagsBy.Position)">Pos</button></th>
-            <th scope="col" class="d-none d-lg-table-cell"><button class="btn btn-link m-0 p-0" @onclick="() => SortPags(Enums.SortPagsBy.Playing)">Playing</button></th>
-            <th scope="col"><button class="btn btn-link m-0 p-0" @onclick="() => SortPags(Enums.SortPagsBy.Played)">Played</button></th>
-            <th scope="col"><button class="btn btn-link m-0 p-0" @onclick="() => SortPags(Enums.SortPagsBy.Team)">Team</button></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var pag in game.PlayersAtGame)
-        {
-            <tr>
-                <td><a href="/pags/@pag.PlayerAtGameEntity.RowKey">@pag.Player.PlayerEntity.Name</a></td>
-                <td><PositionIcon Position="pag.Player.PlayerEntity.Position" /></td>
-                <td class="d-none d-lg-table-cell">
-                    <InputSelect class="form-select" @bind-Value=pag.PlayerAtGameEntity.Forecast @bind-Value:after="() => EditPagEntity(pag.PlayerAtGameEntity)" >
-                        <option value="Yes">Yes</option>
-                        <option value="Maybe">Maybe</option>
-                    </InputSelect>
-                </td>
-                <td>
-                    <div class="form-check form-switch">
-                        <InputCheckbox class="form-check-input" type="checkbox" role="switch" @bind-Value=pag.PlayerAtGameEntity.Played @bind-Value:after="() => BillRefundPagEntity(pag.PlayerAtGameEntity)"></InputCheckbox>
-                    </div>
-                </td>
-                <td><button class="btn btn-outline-secondary btn-sm" @onclick="() => SwitchPagTeam(pag.PlayerAtGameEntity)">@pag.PlayerAtGameEntity.Team <i class="fa-solid fa-repeat"></i></button></td>
-            </tr>
-        }
-    </tbody>
-</table>
-
 <div class="modal-footer px-0">
-    <button class="btn btn-secondary" @onclick="CalculateTeams"><i class="fa-solid fa-gear"></i> Calculate Teams</button> 
-    <DeleteButtonWithCheck EntityRowKey="@game.GameEntity.RowKey" EntityLabel="@pageTitle" EntityType="@typeof(GameEntity).ToString()" NavigateToUrl="/games" />
+    <DeleteButtonWithCheck EntityRowKey="@game.GameEntity.RowKey" EntityLabel="@pageTitle" EntityType="@typeof(GameEntity).ToString()" NavigateToUrl="/games" ButtonLabel="Delete" />
 </div>
 
 @code {
@@ -117,15 +62,7 @@
 
     private Game game;
 
-    private List<Player> players = new();
-
-    private PlayerAtGameEntity newPagEntity;
-
-    private List<PlayerAtGame> pagsNoTeam;
-
     private string pageTitle;
-
-    private Enums.SortPagsBy currentPagSortBy;
 
     protected override async Task OnInitializedAsync()
     {
@@ -150,136 +87,13 @@
         await GameService.UpsertGameEntity(game.GameEntity);
     }
 
-    private async Task AddPagEntity()
-    {
-        await GameService.UpsertPlayerAtGameEntity(newPagEntity);
-        await RefreshData();
-    }
-
-    private async Task EditPagEntity(PlayerAtGameEntity pag)
-    {
-        await GameService.UpsertPlayerAtGameEntity(pag);
-        await RefreshData();
-    }
-
-    async Task BillRefundPagEntity(PlayerAtGameEntity pag)
-    {
-        // Get player for pag
-        var player = PlayerService.GetPlayer(pag.PlayerRowKey);
-
-        // Add / remove transactions if played / not played
-        if (pag.Played)
-        {
-            var transaction = new TransactionEntity()
-            {
-                PlayerRowKey = pag.PlayerRowKey,
-                Amount = -player.PlayerEntity.DefaultRate,
-                Date = DateTimeOffset.UtcNow,
-                GameRowKey = pag.GameRowKey,
-                Notes = $"Debited for game {game.GameEntity.Date.Date.ToString("dd MMM yyyy")}"
-            };
-            await TransactionService.UpsertTransactionEntity(transaction);
-        }
-        else
-        {
-            // Get debit transactions (less than £0) for player and game
-            var pagDebitTransactionEntities = player.Transactions
-                .Where(o => o.GameRowKey == pag.GameRowKey)
-                .Where(o => o.Amount < 0);
-            foreach (var pagDebitTransactionEntity in pagDebitTransactionEntities)
-            {
-                await TransactionService.DeleteTransactionEntity(pagDebitTransactionEntity.RowKey);
-            }
-        }
-
-        // Upsert pag
-        await GameService.UpsertPlayerAtGameEntity(pag);
-
-        await RefreshData();
-    }
-
-    async Task CalculateTeams()
-    {
-        var playersAtGameWithTeams = await GameService.CalculateTeams(game.PlayersAtGame);
-        game.TeamA = playersAtGameWithTeams
-            .Where(pag => pag.PlayerAtGameEntity.Team == "A")
-            .OrderBy(o => o.Player.PlayerEntity.Name)
-            .ToList();
-        game.TeamB = playersAtGameWithTeams
-            .Where(pag => pag.PlayerAtGameEntity.Team == "B")
-            .OrderBy(o => o.Player.PlayerEntity.Name)
-            .ToList();
-
-        await RefreshData();
-    }
-
-    async Task SwitchPagTeam(PlayerAtGameEntity pag)
-    {
-        if (pag.Team == "A")
-        {
-            pag.Team = "B";
-        }
-        else if (pag.Team == "B")
-        {
-            pag.Team = "";
-        }
-        else
-        {
-            pag.Team = "A";
-        }
-        await GameService.UpsertPlayerAtGameEntity(pag);
-        await RefreshData();
-    }
-
-    private void SortPags(Enums.SortPagsBy by)
-    {
-        switch(by)
-        {
-            case Enums.SortPagsBy.Name:
-                game.PlayersAtGame = (currentPagSortBy == by) ? 
-                    game.PlayersAtGame.OrderByDescending(o => o.Player.PlayerEntity.Name).ToList() :
-                    game.PlayersAtGame.OrderBy(o => o.Player.PlayerEntity.Name).ToList();
-                break;
-            case Enums.SortPagsBy.Position:
-                game.PlayersAtGame = game.PlayersAtGame.OrderBy(o => o.Player.PlayerEntity.Position).ToList();
-                break;
-            case Enums.SortPagsBy.Playing:
-                game.PlayersAtGame = game.PlayersAtGame.OrderByDescending(o => o.PlayerAtGameEntity.Forecast).ToList();
-                break;
-            case Enums.SortPagsBy.GameBalance:
-                game.PlayersAtGame = game.PlayersAtGame.OrderByDescending(o => o.Player.Transactions.Where(t => t.GameRowKey == GameRowKey).Sum(t => t.Amount)).ToList();
-                break;
-            case Enums.SortPagsBy.PlayerBalance:
-                game.PlayersAtGame = game.PlayersAtGame.OrderByDescending(o => o.Player.Transactions.Sum(t => t.Amount)).ToList();
-                break;    
-            case Enums.SortPagsBy.Team:
-                game.PlayersAtGame = game.PlayersAtGame.OrderBy(o => o.PlayerAtGameEntity.Team).ToList();
-                break;
-            case Enums.SortPagsBy.Played:
-                game.PlayersAtGame = game.PlayersAtGame.OrderByDescending(o => o.PlayerAtGameEntity.Played).ToList();
-                break;
-            default:
-                game.PlayersAtGame = game.PlayersAtGame.OrderBy(o => o.Player.PlayerEntity.Name).ToList();
-                break;
-        }
-
-        currentPagSortBy = by;
-    } 
 
     async Task RefreshData()
     {
-        players = PlayerService.GetPlayers();
         game = await GameService.GetGame(GameRowKey);
-        newPagEntity = new PlayerAtGameEntity()
-        {
-            GameRowKey = game.GameEntity.RowKey,
-            Played = false,
-            Forecast = PlayingOptions.Yes.ToString(),
-        };
-        pagsNoTeam = game.PlayersAtGame.Where(o => string.IsNullOrEmpty(o.PlayerAtGameEntity.Team)).ToList();
-        pageTitle = $"{game.GameEntity.Date.ToString("dd MMM yyyy HH:mm")}";
-
+        pageTitle = $"{game.GameEntity.Date.ToString("dd MMM yyyy")} Game";
     }
 
-    private void SwitchTabTransactions() => Navigation.NavigateTo($"/games/{@GameRowKey}/transactions");
+    private void SwitchTabPlayers() => Navigation.NavigateTo($"/games/{@GameRowKey}/players");
+    private void SwitchTabTeamsheet() => Navigation.NavigateTo($"/games/{@GameRowKey}/teamsheet");
 }

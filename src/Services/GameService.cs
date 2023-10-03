@@ -5,10 +5,14 @@ namespace STO.Services
     {
         private readonly IStorageService _storageService;
         private readonly IPlayerService _playerService;
-        public GameService(IStorageService storageService, IPlayerService playerService)
+
+        private readonly ITransactionService _transactionService;
+
+        public GameService(IStorageService storageService, IPlayerService playerService, ITransactionService transactionService)
         {
             _storageService = storageService;
             _playerService = playerService;
+            _transactionService = transactionService;
         }
 
         public async Task DeleteGame(string gameRowkey)
@@ -43,6 +47,8 @@ namespace STO.Services
             var gameEntities = _storageService.QueryEntities<GameEntity>().Where(g => g.RowKey == gameRowKey).ToList();
             var games = await GetGames(gameEntities);
             var matchingGame = games.FirstOrDefault();
+            matchingGame.TeamA = matchingGame.TeamA.OrderBy(o => o.Player.PlayerEntity.Position).ToList();
+            matchingGame.TeamB = matchingGame.TeamB.OrderBy(o => o.Player.PlayerEntity.Position).ToList();
             return matchingGame;
         }
 
@@ -68,9 +74,10 @@ namespace STO.Services
 
         public async Task DeletePlayerAtGameEntity(PlayerAtGameEntity pag)
         {
-            // Delete transactions for PAG less than £0 (debits)
+            // Delete transactions for PAG for game
             var player = _playerService.GetPlayer(pag.PlayerRowKey);
-            var playerGameDebits = player.Transactions.Where(t => t.GameRowKey == pag.GameRowKey).Where(t => t.Amount < 0);
+            var transactionNotes = _transactionService.GetNotesForGame(pag.GameRowKey);
+            var playerGameDebits = player.Transactions.Where(t => t.Notes == transactionNotes);
             foreach (var playerGameDebit in playerGameDebits)
             {
                 await _storageService.DeleteEntity<TransactionEntity>(playerGameDebit.RowKey);
@@ -83,7 +90,10 @@ namespace STO.Services
         public async Task<List<PlayerAtGame>> CalculateTeams(List<PlayerAtGame> pags)
         {
             var newPags = new List<PlayerAtGame>();
-            var yesPags = pags.Where(o => o.PlayerAtGameEntity.Forecast.ToLowerInvariant() == "yes");
+            var rng = new Random();
+            var yesPags = pags
+                .Where(o => o.PlayerAtGameEntity.Forecast.ToLowerInvariant() == "yes")
+                .OrderBy(a => rng.Next()).ToList();
             var nextTeamToGetPag = "A";
 
             foreach (var position in Enum.GetNames(typeof(Enums.PlayerPosition)))
@@ -117,10 +127,6 @@ namespace STO.Services
             foreach (var ge in gameEntities)
             {
                 // Get entities from storage
-                var gamesTransactionEntities = _storageService.QueryEntities<TransactionEntity>()
-                    .Where(t => t.GameRowKey == ge.RowKey)
-                    .OrderByDescending(o => o.Date)
-                    .ToList();
                 var playersAtGameEntities = _storageService.QueryEntities<PlayerAtGameEntity>()
                     .Where(pag => pag.GameRowKey == ge.RowKey);
 
@@ -147,7 +153,6 @@ namespace STO.Services
                 // Construct Game
                 var Game = new Game(ge)
                 {
-                    TransactionsEntities = gamesTransactionEntities,
                     PlayersAtGame = playersAtGame.OrderBy(o => o.Player.PlayerEntity.Name).ToList(),
                     TeamA = teamA,
                     TeamB = teamB

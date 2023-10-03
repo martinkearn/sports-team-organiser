@@ -54,9 +54,6 @@
     <thead>
         <tr>
             <th scope="col">Name</th>
-            <th scope="col">Pos</th>
-            <th scope="col">Playing</th>
-            <th scope="col">Funds</th>
             <th scope="col">Played</th>
             <th scope="col">Team</th>
             <th scope="col">Add Payment</th>
@@ -67,17 +64,7 @@
         @foreach (var pag in game.TeamA)
         {
             <tr>
-                <td><a href="/pags/@pag.PlayerAtGameEntity.RowKey">@pag.Player.PlayerEntity.Name</a></td>
-                <td><PositionIcon Position="pag.Player.PlayerEntity.Position" /></td>
-                <td class="d-none d-lg-table-cell">
-                    <InputSelect class="form-select" @bind-Value=pag.PlayerAtGameEntity.Forecast @bind-Value:after="() => EditPagEntity(pag.PlayerAtGameEntity)" >
-                        <option value="Yes">Yes</option>
-                        <option value="Maybe">Maybe</option>
-                    </InputSelect>
-                </td>
-                <td>
-                    <CurrencyDisplay Amount="@pag.Player.Balance" /> <RagIcon Pag="@pag" />
-                </td>
+                <td><a href="/pags/@pag.PlayerAtGameEntity.RowKey">@pag.Player.PlayerEntity.Name</a> <PlayingForecastIcon Forecast="@pag.PlayerAtGameEntity.Forecast" /> <PositionIcon Position="pag.Player.PlayerEntity.Position" /> <CurrencyDisplay Amount="@pag.Player.Balance" /> <RagIcon Pag="@pag" /></td>
                 <td>
                     <div class="form-check form-switch">
                         <InputCheckbox class="form-check-input" type="checkbox" role="switch" @bind-Value=pag.PlayerAtGameEntity.Played @bind-Value:after="() => BillRefundPagEntity(pag.PlayerAtGameEntity)"></InputCheckbox>
@@ -92,17 +79,7 @@
         @foreach (var pag in game.TeamB)
         {
             <tr>
-                <td><a href="/pags/@pag.PlayerAtGameEntity.RowKey">@pag.Player.PlayerEntity.Name</a></td>
-                <td><PositionIcon Position="pag.Player.PlayerEntity.Position" /></td>
-                <td class="d-none d-lg-table-cell">
-                    <InputSelect class="form-select" @bind-Value=pag.PlayerAtGameEntity.Forecast @bind-Value:after="() => EditPagEntity(pag.PlayerAtGameEntity)" >
-                        <option value="Yes">Yes</option>
-                        <option value="Maybe">Maybe</option>
-                    </InputSelect>
-                </td>
-                <td>
-                    <CurrencyDisplay Amount="@pag.Player.Balance" /> <RagIcon Pag="@pag" />
-                </td>
+                <td><a href="/pags/@pag.PlayerAtGameEntity.RowKey">@pag.Player.PlayerEntity.Name</a> <PlayingForecastIcon Forecast="@pag.PlayerAtGameEntity.Forecast" /> <PositionIcon Position="pag.Player.PlayerEntity.Position" /> <CurrencyDisplay Amount="@pag.Player.Balance" /> <RagIcon Pag="@pag" /></td>
                 <td>
                     <div class="form-check form-switch">
                         <InputCheckbox class="form-check-input" type="checkbox" role="switch" @bind-Value=pag.PlayerAtGameEntity.Played @bind-Value:after="() => BillRefundPagEntity(pag.PlayerAtGameEntity)"></InputCheckbox>
@@ -117,17 +94,7 @@
         @foreach (var pag in game.PlayersAtGame.Where(o => string.IsNullOrEmpty(o.PlayerAtGameEntity.Team)))
         {
             <tr>
-                <td><a href="/pags/@pag.PlayerAtGameEntity.RowKey">@pag.Player.PlayerEntity.Name</a></td>
-                <td><PositionIcon Position="pag.Player.PlayerEntity.Position" /></td>
-                <td class="d-none d-lg-table-cell">
-                    <InputSelect class="form-select" @bind-Value=pag.PlayerAtGameEntity.Forecast @bind-Value:after="() => EditPagEntity(pag.PlayerAtGameEntity)" >
-                        <option value="Yes">Yes</option>
-                        <option value="Maybe">Maybe</option>
-                    </InputSelect>
-                </td>
-                <td>
-                    <CurrencyDisplay Amount="@pag.Player.Balance" /> <RagIcon Pag="@pag" />
-                </td>
+                <td><a href="/pags/@pag.PlayerAtGameEntity.RowKey">@pag.Player.PlayerEntity.Name</a> <PlayingForecastIcon Forecast="@pag.PlayerAtGameEntity.Forecast" /> <PositionIcon Position="pag.Player.PlayerEntity.Position" /> <CurrencyDisplay Amount="@pag.Player.Balance" /> <RagIcon Pag="@pag" /></td>
                 <td>
                     <div class="form-check form-switch">
                         <InputCheckbox class="form-check-input" type="checkbox" role="switch" @bind-Value=pag.PlayerAtGameEntity.Played @bind-Value:after="() => BillRefundPagEntity(pag.PlayerAtGameEntity)"></InputCheckbox>
@@ -157,8 +124,6 @@
     private List<PlayerAtGame> pagsNoTeam;
 
     private string pageTitle;
-
-    private Enums.SortPagsBy currentPagSortBy;
 
     protected override async Task OnInitializedAsync()
     {
@@ -260,38 +225,6 @@
         await GameService.UpsertPlayerAtGameEntity(pag);
         await RefreshData();
     }
-
-    private void SortPags(Enums.SortPagsBy by)
-    {
-        switch(by)
-        {
-            case Enums.SortPagsBy.Name:
-                game.PlayersAtGame = (currentPagSortBy == by) ? 
-                    game.PlayersAtGame.OrderByDescending(o => o.Player.PlayerEntity.Name).ToList() :
-                    game.PlayersAtGame.OrderBy(o => o.Player.PlayerEntity.Name).ToList();
-                break;
-            case Enums.SortPagsBy.Position:
-                game.PlayersAtGame = game.PlayersAtGame.OrderBy(o => o.Player.PlayerEntity.Position).ToList();
-                break;
-            case Enums.SortPagsBy.Playing:
-                game.PlayersAtGame = game.PlayersAtGame.OrderByDescending(o => o.PlayerAtGameEntity.Forecast).ToList();
-                break;
-            case Enums.SortPagsBy.PlayerBalance:
-                game.PlayersAtGame = game.PlayersAtGame.OrderByDescending(o => o.Player.Transactions.Sum(t => t.Amount)).ToList();
-                break;    
-            case Enums.SortPagsBy.Team:
-                game.PlayersAtGame = game.PlayersAtGame.OrderBy(o => o.PlayerAtGameEntity.Team).ToList();
-                break;
-            case Enums.SortPagsBy.Played:
-                game.PlayersAtGame = game.PlayersAtGame.OrderByDescending(o => o.PlayerAtGameEntity.Played).ToList();
-                break;
-            default:
-                game.PlayersAtGame = game.PlayersAtGame.OrderBy(o => o.Player.PlayerEntity.Name).ToList();
-                break;
-        }
-
-        currentPagSortBy = by;
-    } 
 
     async Task RefreshData()
     {

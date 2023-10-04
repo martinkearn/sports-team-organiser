@@ -1,17 +1,17 @@
 global using STO.Services;
 global using STO.Interfaces;
 global using STO.Models;
+global using STO.Policies;
 global using Microsoft.AspNetCore.Http;
-global using Microsoft.AspNetCore.Authentication.OpenIdConnect;
-global using Microsoft.Identity.Web;
-global using Microsoft.Identity.Web.UI;
-using Microsoft.AspNetCore.Authorization;
-using STO.Policies;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Microsoft.Identity.Web;
+using Microsoft.Identity.Web.UI;
 using Microsoft.AspNetCore.Rewrite;
+using Microsoft.AspNetCore.Authorization;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// Add dotnet services to the container.
 builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
     .AddMicrosoftIdentityWebApp(builder.Configuration.GetSection("AzureAdB2C"));
 builder.Services.AddControllersWithViews()
@@ -30,17 +30,10 @@ builder.Services.AddAuthorization(config =>
 builder.Services.AddSingleton<IAuthorizationHandler, IsAdminEmailHandler>();
 
 builder.Services.AddRazorPages();
-builder.Services.AddServerSideBlazor(options =>
-{
-    options.DetailedErrors = true;
-    options.DisconnectedCircuitMaxRetained = 100;
-    options.DisconnectedCircuitRetentionPeriod = TimeSpan.FromMinutes(5);
-    options.JSInteropDefaultCallTimeout = TimeSpan.FromMinutes(1);
-    options.MaxBufferedUnacknowledgedRenderBatches = 10;
-})
+builder.Services.AddServerSideBlazor()
     .AddMicrosoftIdentityConsentHandler();
 
-// Custom services
+// Add custom services to the container
 builder.Services.AddSingleton<IStorageService, StorageService>();
 builder.Services.AddSingleton<IPlayerService, PlayerService>();
 builder.Services.AddSingleton<IGameService, GameService>();
@@ -63,10 +56,13 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
 app.UseStaticFiles();
+
 app.UseRouting();
-app.UseCookiePolicy();
+
 app.UseAuthorization();
+
 app.MapControllers();
 app.MapBlazorHub();
 app.MapFallbackToPage("/_Host");

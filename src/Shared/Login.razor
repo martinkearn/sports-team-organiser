@@ -6,13 +6,9 @@
     <Authorized>
         @if (canEditProfile)
         {
-            <a class="nav-link" href="MicrosoftIdentity/Account/EditProfile">Hello, @context.User.Identity?.Name!</a>
+            <a class="nav-link" href="MicrosoftIdentity/Account/EditProfile">Edit, @context.User.Identity?.Name!</a>
         }
-        else
-        {
-            <text>Hello, @context.User.Identity?.Name!</text>
-        }
-        <a class="nav-link" href="MicrosoftIdentity/Account/SignOut"><i class="fa fa-sign-out me-2" aria-hidden="true"></i> Log out</a>
+        <a class="nav-link" href="MicrosoftIdentity/Account/SignOut"><i class="fa fa-sign-out me-2" aria-hidden="true"></i> Log out @context.User.Identity?.Name</a>
     </Authorized>
     <NotAuthorized>
         <a class="nav-link" href="MicrosoftIdentity/Account/SignIn"><i class="fa fa-sign-in me-2" aria-hidden="true"></i> Log in</a>

@@ -1,0 +1,15 @@
+@page "/admin"
+@inject IStorageService StorageService
+
+<PageTitle>Tuesday.Football</PageTitle>
+
+<h1>Welcome to Tuesday.Football Admin Portal</h1>
+
+<button class="btn btn-primary" @onclick="RefreshData">Refresh Data</button>
+
+@code {
+    void RefreshData()
+    {
+        StorageService.RefreshData();
+    }
+}

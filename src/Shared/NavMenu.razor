@@ -1,6 +1,6 @@
 ﻿<div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
-        <a class="navbar-brand" href="">tuesday.football</a>             
+        <a class="navbar-brand" href="">Tuesday.Football</a>             
         <div id="components-reconnect-modal">
             <i class="fa-solid fa-spinner fa-spin"></i>
         </div>
@@ -15,17 +15,27 @@
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="" Match="NavLinkMatch.All"><i class="fa-solid fa-house me-2"></i>Home</NavLink>
         </div>
+        <AuthorizeView Policy="IsAdminEmail">
+            <Authorized>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="admin"><i class="fa-solid fa-key me-2"></i>Admin Home</NavLink>
+                </div>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="players"><i class="fa-solid fa-user me-2"></i>Players</NavLink>
+                </div>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="games"><i class="fa-solid fa-people-group me-2"></i>Games</NavLink>
+                </div>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="transactions"><i class="fa-solid fa-coins me-2"></i>Transactions</NavLink>
+                </div> 
+            </Authorized>
+        </AuthorizeView>       
         <div class="nav-item px-3">
-            <NavLink class="nav-link" href="players"><i class="fa-solid fa-user me-2"></i>Players</NavLink>
+            <NavLink class="nav-link" href="https://github.com/martinkearn/sports-team-organiser/issues"><i class="fa-solid fa-question me-2"></i>Report an issue</NavLink>
         </div>
         <div class="nav-item px-3">
-            <NavLink class="nav-link" href="games"><i class="fa-solid fa-people-group me-2"></i>Games</NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="transactions"><i class="fa-solid fa-coins me-2"></i>Transactions</NavLink>
-        </div>        
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="https://github.com/martinkearn/sports-team-organiser/issues"><i class="fa-solid fa-question me-2"></i>Log an issue</NavLink>
+            <Login />
         </div>
     </nav>
 </div>

@@ -12,26 +12,15 @@ using Microsoft.AspNetCore.Authorization;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add dotnet services to the container.
-builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
-    .AddMicrosoftIdentityWebApp(builder.Configuration.GetSection("AzureAdB2C"));
-builder.Services.AddControllersWithViews()
-    .AddMicrosoftIdentityUI();
-
-/* builder.Services.AddAuthorization(options =>
-{
-    // By default, all incoming requests will be authorized according to the default policy
-    options.FallbackPolicy = options.DefaultPolicy;
-}); */
+builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme).AddMicrosoftIdentityWebApp(builder.Configuration.GetSection("AzureAdB2C"));
+builder.Services.AddControllersWithViews().AddMicrosoftIdentityUI();
 builder.Services.AddAuthorization(config =>
-{
-    config.AddPolicy("IsAdminEmail", policy => policy.Requirements.Add(new IsAdminEmailRequirement("martinkearn@live.co.uk")));
-});
-
+    {
+        config.AddPolicy("IsAdminEmail", policy => policy.Requirements.Add(new IsAdminEmailRequirement("martinkearn@live.co.uk")));
+    });
 builder.Services.AddSingleton<IAuthorizationHandler, IsAdminEmailHandler>();
-
 builder.Services.AddRazorPages();
-builder.Services.AddServerSideBlazor()
-    .AddMicrosoftIdentityConsentHandler();
+builder.Services.AddServerSideBlazor().AddMicrosoftIdentityConsentHandler();
 
 // Add custom services to the container
 builder.Services.AddSingleton<IStorageService, StorageService>();
@@ -56,13 +45,9 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
 app.UseStaticFiles();
-
 app.UseRouting();
-
 app.UseAuthorization();
-
 app.MapControllers();
 app.MapBlazorHub();
 app.MapFallbackToPage("/_Host");

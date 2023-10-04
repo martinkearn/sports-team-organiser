@@ -1,24 +1,14 @@
 ﻿@page "/"
 @layout AnonymousLayout
-@inject IStorageService StorageService
-@inject IHttpContextAccessor HttpContextAccessor
 
-<PageTitle>tuesday.football</PageTitle>
+<PageTitle>Tuesday.Football</PageTitle>
 
-<h1>Welcome to tuesday.football @username</h1>
+<h1>Welcome to Tuesday.Football</h1>
 
-<button class="btn btn-primary" @onclick="RefreshData">Refresh Data</button>
-
-@code {
-    private string username;
-
-    protected override void OnInitialized()
-    {
-        username = HttpContextAccessor?.HttpContext?.Request.Headers["X-MS-CLIENT-PRINCIPAL-NAME"];
-    }
-
-    void RefreshData()
-    {
-        StorageService.RefreshData();
-    }
-}
+<p>Nothing to see here yet but watch this space.</p>
+<p>New features for players coming soon:</p>
+<ul>
+    <li>State whether you are playing or not</li>
+    <li>See your balance</li>
+    <li>See the team selection</li>
+</ul>

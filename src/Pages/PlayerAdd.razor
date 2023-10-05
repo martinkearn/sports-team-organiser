@@ -4,10 +4,10 @@
 
 <PageTitle>TNF - @pageTitle</PageTitle>
 
+<h1>@pageTitle</h1>
+
 <AuthorizeView Policy="IsAdminEmail">
     <Authorized>
-        <h1>@pageTitle</h1>
-
         <EditForm Model="@newPlayerEntity" OnSubmit="@Add"  Context="NewPlayerEntity">
             <DataAnnotationsValidator />
             <ValidationSummary />

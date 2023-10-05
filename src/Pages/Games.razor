@@ -3,33 +3,40 @@
 
 <PageTitle>TNF - @pageTitle</PageTitle>
 
-<h1><i class="fa-solid fa-people-group me-2"></i> @pageTitle</h1>
+<AuthorizeView Policy="IsAdminEmail">
+    <Authorized>
+        <h1><i class="fa-solid fa-people-group me-2"></i> @pageTitle</h1>
 
-<div>
-    <a class="btn btn-secondary me-3 mb-3" href="/games/add"><i class="fa-solid fa-plus"></i> Add Game</a>
-    <a class="btn btn-secondary me-3 mb-3" href="controllers/routing/latestgame"><i class="fa-solid fa-calendar-day"></i> Latest Game</a>
-</div>
+        <div>
+            <a class="btn btn-secondary me-3 mb-3" href="/games/add"><i class="fa-solid fa-plus"></i> Add Game</a>
+            <a class="btn btn-secondary me-3 mb-3" href="controllers/routing/latestgame"><i class="fa-solid fa-calendar-day"></i> Latest Game</a>
+        </div>
 
 
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <th scope="col">Date</th>
-            <th scope="col">Forecast Players</th>
-            <th scope="col">Actual Players</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var game in games)
-        {
-            <tr>
-                <td><GameTitle GameRowKey="@game.GameEntity.RowKey" Link="true" /></td>
-                <td>@game.PlayersAtGame.Count()</td>
-                <td>@game.PlayersAtGame.Where(pag => pag.PlayerAtGameEntity.Played).Count()</td>
-            </tr>
-        }
-    </tbody>
-</table>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th scope="col">Date</th>
+                    <th scope="col">Forecast Players</th>
+                    <th scope="col">Actual Players</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var game in games)
+                {
+                    <tr>
+                        <td><GameTitle GameRowKey="@game.GameEntity.RowKey" Link="true" /></td>
+                        <td>@game.PlayersAtGame.Count()</td>
+                        <td>@game.PlayersAtGame.Where(pag => pag.PlayerAtGameEntity.Played).Count()</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </Authorized>
+    <NotAuthorized>
+        <h4>Access Denied!</h4>
+    </NotAuthorized>
+</AuthorizeView>
 
 @code {
     private List<Game> games = new();

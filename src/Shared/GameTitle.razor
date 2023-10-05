@@ -4,7 +4,7 @@
 {
     @if (Link)
     {
-        <a href="/games/@game.GameEntity.RowKey/players">@game.GameEntity.Date.Date.ToString("dd MMM")</a>
+        <a href="/games/@game.GameEntity.RowKey">@game.GameEntity.Date.Date.ToString("dd MMM")</a>
     }
     else
     {

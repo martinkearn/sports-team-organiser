@@ -6,51 +6,66 @@
 
 <PageTitle>TNF - @pageTitle</PageTitle>
 
-<h1><i class="fa-solid fa-people-group me-2"></i> @pageTitle</h1>
+<AuthorizeView Policy="IsAdminEmail">
+    <Authorized>
+        <h1><i class="fa-solid fa-people-group me-2"></i> @pageTitle</h1>
 
-<div class="mb-3">
-    <label class="form-label">RowKey</label>
-    <span class="form-control-plaintext">@pag.PlayerAtGameEntity.RowKey</span>
-</div>
+        <div class="mb-3">
+            <label class="form-label">RowKey</label>
+            <span class="form-control-plaintext">@pag.PlayerAtGameEntity.RowKey</span>
+        </div>
 
-<div class="mb-3">
-    <label class="form-label">Player Name</label>
-    <span class="form-control-plaintext"><a href="/players/@pag.Player.PlayerEntity.RowKey/player">@pag.Player.PlayerEntity.Name</a></span>
-</div>
+        <div class="mb-3">
+            <label class="form-label">Player Name</label>
+            <span class="form-control-plaintext"><a href="/players/@pag.Player.PlayerEntity.RowKey/player">@pag.Player.PlayerEntity.Name</a></span>
+        </div>
 
-<div class="mb-3">
-    <label class="form-label">Game</label>
-    <span class="form-control-plaintext"><GameTitle GameRowKey="@pag.GameEntity.RowKey" Link="true" /></span>
-</div>    
+        <div class="mb-3">
+            <label class="form-label">Game</label>
+            <span class="form-control-plaintext"><GameTitle GameRowKey="@pag.GameEntity.RowKey" Link="true" /></span>
+        </div>    
 
-<div class="mb-3">
-    <label class="form-label">Playing Forecast</label>
-    <InputSelect class="form-select" @bind-Value=pag.PlayerAtGameEntity.Forecast @bind-Value:after="() => Edit()" >
-        <option value="Yes">Yes</option>
-        <option value="Maybe">Maybe</option>
-    </InputSelect>
-</div>
+        <div class="mb-3">
+            <label class="form-label">Playing Forecast</label>
+            <InputSelect class="form-select" @bind-Value=pag.PlayerAtGameEntity.Forecast @bind-Value:after="() => Edit()" >
+                <option value="Yes">Yes</option>
+                <option value="Maybe">Maybe</option>
+            </InputSelect>
+        </div>
 
-<div class="mb-3">
-    <label class="form-label">Played</label>
-    <InputSelect class="form-select" @bind-Value=pag.PlayerAtGameEntity.Played @bind-Value:after="() => Edit()" >
-        <option value="true">Yes</option>
-        <option value="false">No</option>
-    </InputSelect>
-</div>
+        <div class="mb-3">
+            <label class="form-label">Played</label>
+            <InputSelect class="form-select" @bind-Value=pag.PlayerAtGameEntity.Played @bind-Value:after="() => Edit()" >
+                <option value="true">Yes</option>
+                <option value="false">No</option>
+            </InputSelect>
+        </div>
 
-<div class="mb-3">
-    <label class="form-label">Team</label>
-    <InputSelect class="form-select" @bind-Value=pag.PlayerAtGameEntity.Team @bind-Value:after="() => Edit()" >
-        <option value="A">Team A</option>
-        <option value="B">Team B</option>
-    </InputSelect>
-</div>
+        <div class="mb-3">
+            <label class="form-label">Team</label>
+            <InputSelect class="form-select" @bind-Value=pag.PlayerAtGameEntity.Team @bind-Value:after="() => Edit()" >
+                <option value="A">Team A</option>
+                <option value="B">Team B</option>
+            </InputSelect>
+        </div>
 
-<div class="modal-footer">
-    <a class="btn btn-secondary" href="/games/@pag.GameEntity.RowKey/players"><i class="fa-solid fa-arrow-left"></i> Back to Game</a>
-    <button class="btn btn-secondary" @onclick="Delete"><i class="fa-solid fa-trash"></i> Delete</button>
-</div>
+        <div class="mb-3">
+            <label class="form-label">Add Payment</label>
+            <br>
+            <button class="btn btn-outline-secondary" @onclick="() => AddTransactionForPlayer(pag.Player.PlayerEntity.RowKey, pag.Player.PlayerEntity.DefaultRate)"><i class="fa-solid fa-plus"></i> £@pag.Player.PlayerEntity.DefaultRate</button>
+            <br>
+            <span>Balance: <CurrencyDisplay Amount="@pag.Player.Balance" /></span>
+        </div>
+
+        <div class="modal-footer">
+            <a class="btn btn-secondary" href="/games/@pag.GameEntity.RowKey"><i class="fa-solid fa-arrow-left"></i> Back to Game</a>
+            <button class="btn btn-secondary" @onclick="Delete"><i class="fa-solid fa-trash"></i> Delete</button>
+        </div>
+    </Authorized>
+    <NotAuthorized>
+        <h4>Access Denied!</h4>
+    </NotAuthorized>
+</AuthorizeView>
 
 @code {
     [Parameter]
@@ -61,6 +76,19 @@
 
     protected override async Task OnInitializedAsync()
     {
+        await RefreshData();
+    }
+
+    private async Task AddTransactionForPlayer(string playerRowKey, double amount)
+    {
+        var newTransactionEntityForPag = new TransactionEntity()
+        {
+            Date = DateTimeOffset.UtcNow,
+            Notes = TransactionService.GetNotesForGame(pag.GameEntity.RowKey),
+            PlayerRowKey = playerRowKey,
+            Amount = amount
+        };
+        await TransactionService.UpsertTransactionEntity(newTransactionEntityForPag);
         await RefreshData();
     }
 

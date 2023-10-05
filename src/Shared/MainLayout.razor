@@ -9,14 +9,7 @@
 
     <main>
         <article class="content px-4">
-            <AuthorizeView Policy="IsAdminEmail">
-                <Authorized>
-                    @Body
-                </Authorized>
-                <NotAuthorized>
-                    <h4>Access Denied!</h4>
-                </NotAuthorized>
-            </AuthorizeView>
+            @Body
         </article>
     </main>
 </div>

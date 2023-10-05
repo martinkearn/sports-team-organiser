@@ -7,45 +7,52 @@
 
 <PageTitle>TNF - @pageTitle</PageTitle>
 
-<h1><i class="fa-solid fa-coins me-2"></i> @pageTitle</h1>
+<AuthorizeView Policy="IsAdminEmail">
+    <Authorized>
+        <h1><i class="fa-solid fa-coins me-2"></i> @pageTitle</h1>
 
-<EditForm Model="@newTransactionEntity" OnValidSubmit="Add">
-    <DataAnnotationsValidator />
-    <ValidationSummary />
-    <div class="mb-3">
-        <label for="addPlayerRowKey" class="form-label">Player</label>
-        <InputSelect class="form-select" @bind-Value="newTransactionEntity.PlayerRowKey">
-            <option value="">Select Player ...</option>
-            @foreach (var player in players)
-            {
-                <option value="@player.PlayerEntity.RowKey">@player.PlayerEntity.Name</option>
-            }
-        </InputSelect>
-    </div>
+        <EditForm Model="@newTransactionEntity" OnValidSubmit="Add" Context="NewTransactionEntity">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+            <div class="mb-3">
+                <label for="addPlayerRowKey" class="form-label">Player</label>
+                <InputSelect class="form-select" @bind-Value="newTransactionEntity.PlayerRowKey">
+                    <option value="">Select Player ...</option>
+                    @foreach (var player in players)
+                    {
+                        <option value="@player.PlayerEntity.RowKey">@player.PlayerEntity.Name</option>
+                    }
+                </InputSelect>
+            </div>
 
-    <div class="mb-3">
-        <label for="addDate" class="form-label">Date</label>
-        <InputDate class="form-control" id="addDate" @bind-Value="newTransactionEntity.Date" />
-    </div>
+            <div class="mb-3">
+                <label for="addDate" class="form-label">Date</label>
+                <InputDate class="form-control" id="addDate" @bind-Value="newTransactionEntity.Date" />
+            </div>
 
-    <div class="mb-3">
-        <label for="addNotes" class="form-label">Notes</label>
-        <InputText class="form-control" id="addNotes" @bind-Value="newTransactionEntity.Notes" />
-    </div>
+            <div class="mb-3">
+                <label for="addNotes" class="form-label">Notes</label>
+                <InputText class="form-control" id="addNotes" @bind-Value="newTransactionEntity.Notes" />
+            </div>
 
-    <div class="mb-3">
-        <label for="addAmount" class="form-label">Amount</label>
-        <div class="input-group">
-            <span class="input-group-text">£</span>
-            <InputNumber type="number" class="form-control" id="addAmount" @bind-Value="newTransactionEntity.Amount" />
-        </div>
-        <div class="form-text">Positive for payments, negative to pay for a played game.</div>
-    </div>
+            <div class="mb-3">
+                <label for="addAmount" class="form-label">Amount</label>
+                <div class="input-group">
+                    <span class="input-group-text">£</span>
+                    <InputNumber type="number" class="form-control" id="addAmount" @bind-Value="newTransactionEntity.Amount" />
+                </div>
+                <div class="form-text">Positive for payments, negative to pay for a played game.</div>
+            </div>
 
-    <div class="modal-footer">
-        <button type="submit" class="btn btn-primary">Add Transaction</button>
-    </div>
-</EditForm>
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-primary">Add Transaction</button>
+            </div>
+        </EditForm>
+    </Authorized>
+    <NotAuthorized>
+        <h4>Access Denied!</h4>
+    </NotAuthorized>
+</AuthorizeView>
 
 @code {
     private string gameRowKey = string.Empty;
@@ -56,7 +63,7 @@
 
     private string pageTitle;
 
-    protected override async Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
         // Get query string params
         var uri = Navigation.ToAbsoluteUri(Navigation.Uri);
@@ -65,7 +72,7 @@
             gameRowKey = token.First();
         }
         
-        await RefreshData();
+        RefreshData();
     }
 
     protected async Task Add()
@@ -74,7 +81,7 @@
         Navigation.NavigateTo("/transactions");
     }
 
-    async Task RefreshData()
+    private void RefreshData()
     {
         newTransactionEntity = new();
 

@@ -33,25 +33,50 @@
             </li>
         </ul>
 
-        <div>
-            <EditForm Model="@newPagEntity" OnValidSubmit="AddPagEntity" class="row row-cols-lg-auto g-3 align-items-center" Context="NewPagEntity">
-                <DataAnnotationsValidator />
-                <ValidationSummary />
-                <div class="input-group col-12">
-                    <InputSelect class="form-select" @bind-Value="newPagEntity.PlayerRowKey">
-                        <option value="">Add player to game ...</option>
-                        @foreach (var player in players)
-                        {
-                            if (game.PlayersAtGame.FirstOrDefault(pag => pag.PlayerAtGameEntity.PlayerRowKey == player.PlayerEntity.RowKey) == default)
+        <div class="row">
+            <div class="col">
+                <EditForm Model="@newPagEntity" OnValidSubmit="AddPagEntity" class="row row-cols-lg-auto g-3 align-items-center" Context="NewPagEntity">
+                    <DataAnnotationsValidator />
+                    <ValidationSummary />
+                    <div class="input-group col-12">
+                        <InputSelect class="form-select" @bind-Value="newPagEntity.PlayerRowKey">
+                            <option value="">Add player to game ...</option>
+                            @foreach (var player in players)
                             {
-                                <option value="@player.PlayerEntity.RowKey">@player.PlayerEntity.Name</option>
+                                if (game.PlayersAtGame.FirstOrDefault(pag => pag.PlayerAtGameEntity.PlayerRowKey == player.PlayerEntity.RowKey) == default)
+                                {
+                                    <option value="@player.PlayerEntity.RowKey">@player.PlayerEntity.Name</option>
+                                }
                             }
-                        }
-                    </InputSelect>
-                    <button class="btn btn-outline-secondary" type="submit"><i class="fa-solid fa-plus"></i></button>
-                </div>
-            </EditForm>
+                        </InputSelect>
+                        <button class="btn btn-outline-secondary" type="submit"><i class="fa-solid fa-plus"></i></button>
+                    </div>
+                </EditForm>
+            </div>
         </div>
+
+        <br>
+
+        <h5>Team A - @game.TeamA.Count()</h5>
+        @foreach (var pag in game.TeamA)
+        {
+            var playedButtonLabel = "Not Played";
+            if (pag.PlayerAtGameEntity.Played)
+            {
+                playedButtonLabel = "Played";
+            }
+            <div class="row pb-2">
+                <div class="col">
+                    @pag.Player.PlayerEntity.Name <PlayingForecastIcon Forecast="@pag.PlayerAtGameEntity.Forecast" /> <PositionIcon Position="pag.Player.PlayerEntity.Position" /> <RagIcon Pag="@pag" />
+                </div>
+                <div class="col text-end">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-toggle="button" @onclick="() => TogglePlayed(pag.PlayerAtGameEntity)">@playedButtonLabel</button>
+                    <button class="btn btn-outline-secondary" @onclick="() => SwitchPagTeam(pag.PlayerAtGameEntity)">@pag.PlayerAtGameEntity.Team <i class="fa-solid fa-repeat"></i></button>
+                    <button class="btn btn-outline-secondary" @onclick="() => AddTransactionForPlayer(pag.Player.PlayerEntity.RowKey, pag.Player.PlayerEntity.DefaultRate)"><i class="fa-solid fa-plus"></i> £@pag.Player.PlayerEntity.DefaultRate</button>
+                </div>
+            </div>
+        }
+
         <table class="table table-striped">
             <thead>
                 <tr>
@@ -62,7 +87,7 @@
                 </tr>
             </thead>
             <tbody>
-                <h5>Team A - @game.TeamA.Count()</h5>
+@*                 <h5>Team A - @game.TeamA.Count()</h5>
                 @foreach (var pag in game.TeamA)
                 {
                     <tr>
@@ -76,7 +101,7 @@
                         <td><button class="btn btn-outline-secondary btn-sm" @onclick="() => AddTransactionForPlayer(pag.Player.PlayerEntity.RowKey, pag.Player.PlayerEntity.DefaultRate)"><i class="fa-solid fa-plus"></i> £@pag.Player.PlayerEntity.DefaultRate</button></td>
                     </tr>
                 }
-                <br>
+                <br> *@
                 <h5>Team B - @game.TeamB.Count() (wear bibs)</h5>
                 @foreach (var pag in game.TeamB)
                 {
@@ -195,6 +220,43 @@
                 await TransactionService.DeleteTransactionEntity(pagDebitTransactionEntity.RowKey);
             }
         }
+
+        // Upsert pag
+        await GameService.UpsertPlayerAtGameEntity(pag);
+
+        await RefreshData();
+    }
+
+    async Task TogglePlayed(PlayerAtGameEntity pag)
+    {
+        // Get player for pag
+        var player = PlayerService.GetPlayer(pag.PlayerRowKey);
+
+        pag.Played = !pag.Played;
+
+@*         // Add / remove transactions if played / not played
+        if (pag.Played)
+        {
+            var transaction = new TransactionEntity()
+            {
+                PlayerRowKey = pag.PlayerRowKey,
+                Amount = -player.PlayerEntity.DefaultRate,
+                Date = DateTimeOffset.UtcNow,
+                Notes = TransactionService.GetNotesForGame(pag.GameRowKey)
+            };
+            await TransactionService.UpsertTransactionEntity(transaction);
+        }
+        else
+        {
+            // TO DO - thgis needs to match on trasnatcion noytes containing game
+            // Get debit transactions (less than £0) for player and game
+            var pagDebitTransactionEntities = player.Transactions
+                .Where(o => o.Amount < 0);
+            foreach (var pagDebitTransactionEntity in pagDebitTransactionEntities)
+            {
+                await TransactionService.DeleteTransactionEntity(pagDebitTransactionEntity.RowKey);
+            }
+        } *@
 
         // Upsert pag
         await GameService.UpsertPlayerAtGameEntity(pag);

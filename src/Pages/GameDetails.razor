@@ -12,7 +12,6 @@
 
 <AuthorizeView Policy="IsAdminEmail">
     <Authorized>
-
         <div class="row">
             <div class="col">
                 <EditForm Model="@newPagEntity" OnValidSubmit="AddPagEntity" class="row row-cols-lg-auto g-3 align-items-center" Context="NewPagEntity">
@@ -34,27 +33,29 @@
                 </EditForm>
             </div>
         </div>
+    </Authorized>
+</AuthorizeView>
 
-        <br>
+<h5>Team A - @game.TeamA.Count()</h5>
+@foreach (var pag in game.TeamA)
+{
+    <PagRow pag="@pag" RefreshMainPage="RefreshData" />
+}
 
-        <h5>Team A - @game.TeamA.Count()</h5>
-        @foreach (var pag in game.TeamA)
-        {
-            <PagRow pag="@pag" RefreshMainPage="RefreshData" />
-        }
+<h5>Team B - @game.TeamB.Count() (wear bibs)</h5>
+@foreach (var pag in game.TeamB)
+{
+    <PagRow pag="@pag" RefreshMainPage="RefreshData" />
+}
 
-        <h5>Team B - @game.TeamB.Count() (wear bibs)</h5>
-        @foreach (var pag in game.TeamB)
-        {
-            <PagRow pag="@pag" RefreshMainPage="RefreshData" />
-        }
+<h5>No team assigned</h5>
+@foreach (var pag in game.PlayersAtGame.Where(o => string.IsNullOrEmpty(o.PlayerAtGameEntity.Team)))
+{
+    <PagRow pag="@pag" RefreshMainPage="RefreshData" />
+}
 
-        <h5>No team assigned</h5>
-        @foreach (var pag in game.PlayersAtGame.Where(o => string.IsNullOrEmpty(o.PlayerAtGameEntity.Team)))
-        {
-            <PagRow pag="@pag" RefreshMainPage="RefreshData" />
-        }
-
+<AuthorizeView Policy="IsAdminEmail">
+    <Authorized>
         <div class="modal-footer px-0">
             <a class="btn btn-secondary" href="/games/"><i class="fa-solid fa-arrow-left"></i>All Games</a>
             <button class="btn btn-secondary" @onclick="CalculateTeams"><i class="fa-solid fa-gear"></i> Calculate Teams</button> 

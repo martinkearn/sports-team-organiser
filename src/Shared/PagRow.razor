@@ -4,14 +4,26 @@
 
 <div class="row pb-2">
     <div class="col">
-        <a class="d-none d-lg-inline" href="/pags/@pag.PlayerAtGameEntity.RowKey">@pag.Player.PlayerEntity.Name</a> <span class="d-inline d-lg-none">@pag.Player.PlayerEntity.Name</span> <PlayingForecastIcon Forecast="@pag.PlayerAtGameEntity.Forecast" /> <PositionIcon Position="pag.Player.PlayerEntity.Position" /> <RagIcon Pag="@pag" />
+        <AuthorizeView Policy="IsAdminEmail">
+            <Authorized>
+                <a class="d-none d-lg-inline" href="/pags/@pag.PlayerAtGameEntity.RowKey">@pag.Player.PlayerEntity.Name</a> <span class="d-inline d-lg-none">@pag.Player.PlayerEntity.Name</span> 
+            </Authorized>
+            <NotAuthorized>
+                <span>@pag.Player.PlayerEntity.Name</span>
+            </NotAuthorized>
+        </AuthorizeView>
+        <PlayingForecastIcon Forecast="@pag.PlayerAtGameEntity.Forecast" /> <PositionIcon Position="pag.Player.PlayerEntity.Position" /> <RagIcon Pag="@pag" />
     </div>
-    <div class="col text-end">
-        <button type="button" class="btn btn-outline-secondary btn-sm @playedButtonCss d-none d-lg-inline" data-bs-toggle="button" @onclick="() => TogglePlayed()">@playedButtonLabel</button>
-        <button class="btn btn-outline-secondary btn-sm d-none d-lg-inline" @onclick="() => SwitchPagTeam()">@pag.PlayerAtGameEntity.Team <i class="fa-solid fa-repeat"></i></button>
-        <button class="btn btn-outline-secondary btn-sm d-none d-lg-inline" @onclick="() => AddTransactionForPlayer(pag.Player.PlayerEntity.DefaultRate)"><i class="fa-solid fa-plus"></i> £@pag.Player.PlayerEntity.DefaultRate</button>
-        <a type="button" class="btn btn-outline-secondary btn-sm d-inline" href="/pags/@pag.PlayerAtGameEntity.RowKey"><i class="fa-solid fa-edit"></i> Edit</a>
-    </div>
+    <AuthorizeView Policy="IsAdminEmail">
+        <Authorized>
+            <div class="col text-end">
+                <button type="button" class="btn btn-outline-secondary btn-sm @playedButtonCss d-none d-lg-inline" data-bs-toggle="button" @onclick="() => TogglePlayed()">@playedButtonLabel</button>
+                <button class="btn btn-outline-secondary btn-sm d-none d-lg-inline" @onclick="() => SwitchPagTeam()">@pag.PlayerAtGameEntity.Team <i class="fa-solid fa-repeat"></i></button>
+                <button class="btn btn-outline-secondary btn-sm d-none d-lg-inline" @onclick="() => AddTransactionForPlayer(pag.Player.PlayerEntity.DefaultRate)"><i class="fa-solid fa-plus"></i> £@pag.Player.PlayerEntity.DefaultRate</button>
+                <a type="button" class="btn btn-outline-secondary btn-sm d-inline" href="/pags/@pag.PlayerAtGameEntity.RowKey"><i class="fa-solid fa-edit"></i> Edit</a>
+            </div>
+        </Authorized>
+    </AuthorizeView>
 </div>
 
 @code {

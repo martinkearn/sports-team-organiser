@@ -4,35 +4,42 @@
 
 <PageTitle>TNF - @pageTitle</PageTitle>
 
-<h1><i class="fa-solid fa-coins me-2"></i> @pageTitle</h1>
+<AuthorizeView Policy="IsAdminEmail">
+    <Authorized>
+        <h1><i class="fa-solid fa-coins me-2"></i> @pageTitle</h1>
 
-<p>Transactions cannot be edited, only deleted</p>
+        <p>Transactions cannot be edited, only deleted</p>
 
-<h5>Row Key</h5>
-<p >@transaction.TransactionEntity.RowKey</p>
+        <h5>Row Key</h5>
+        <p >@transaction.TransactionEntity.RowKey</p>
 
-<h5>Date</h5>
-<p>@transaction.TransactionEntity.Date.ToString("dd MMM yyyy HH:mm")</p>
+        <h5>Date</h5>
+        <p>@transaction.TransactionEntity.Date.ToString("dd MMM yyyy HH:mm")</p>
 
-<h5>Amount</h5>
-<p><CurrencyDisplay Amount="@transaction.TransactionEntity.Amount" ></CurrencyDisplay></p>
+        <h5>Amount</h5>
+        <p><CurrencyDisplay Amount="@transaction.TransactionEntity.Amount" ></CurrencyDisplay></p>
 
-<h5>Notes</h5>
-@if (transaction.TransactionEntity.Notes is not null)
-{
-    <p>@transaction.TransactionEntity.Notes</p>
-}
-else
-{
-    <p>No Notes</p>
-}
+        <h5>Notes</h5>
+        @if (transaction.TransactionEntity.Notes is not null)
+        {
+            <p>@transaction.TransactionEntity.Notes</p>
+        }
+        else
+        {
+            <p>No Notes</p>
+        }
 
-<h5>Player</h5>
-<p><a href="players/@transaction.Player.PlayerEntity.RowKey">@transaction.Player.PlayerEntity.Name</a></p>
+        <h5>Player</h5>
+        <p><a href="players/@transaction.Player.PlayerEntity.RowKey">@transaction.Player.PlayerEntity.Name</a></p>
 
-<div class="modal-footer">
-    <DeleteButtonWithCheck EntityRowKey="@transaction.TransactionEntity.RowKey" EntityLabel="@pageTitle" EntityType="@typeof(TransactionEntity).ToString()" NavigateToUrl="/transactions" ButtonLabel="Delete" />
-</div>
+        <div class="modal-footer">
+            <DeleteButtonWithCheck EntityRowKey="@transaction.TransactionEntity.RowKey" EntityLabel="@pageTitle" EntityType="@typeof(TransactionEntity).ToString()" NavigateToUrl="/transactions" ButtonLabel="Delete" />
+        </div>
+    </Authorized>
+    <NotAuthorized>
+        <h4>Access Denied!</h4>
+    </NotAuthorized>
+</AuthorizeView>
 
 @code {
     [Parameter]

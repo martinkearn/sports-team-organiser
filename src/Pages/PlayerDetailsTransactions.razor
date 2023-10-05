@@ -5,41 +5,48 @@
 
 <PageTitle>TNF - @pageTitle</PageTitle>
 
-<h1><i class="fa-solid fa-user me-2"></i> @pageTitle</h1>
+<AuthorizeView Policy="IsAdminEmail">
+    <Authorized>
+        <h1><i class="fa-solid fa-user me-2"></i> @pageTitle</h1>
 
-<ul class="nav nav-tabs">
-    <li class="nav-item">
-        <a class="nav-link" @onclick="SwitchTabPlayer">Player</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link active">Transactions</a>
-    </li>
-</ul>
+        <ul class="nav nav-tabs">
+            <li class="nav-item">
+                <a class="nav-link" @onclick="SwitchTabPlayer">Player</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link active">Transactions</a>
+            </li>
+        </ul>
 
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <th scope="col">Date</th>
-            <th scope="col">Amount</th>
-            <th scope="col" class="d-none d-lg-table-cell">Notes</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var transactionEntity in player.Transactions)
-        {
-            <tr>
-                <td><a href="/transactions/@transactionEntity.RowKey">@transactionEntity.Date.ToString("dd MMM yyyy HH:mm")</a></td>
-                <td><CurrencyDisplay Amount="@transactionEntity.Amount" /></td>
-                <td class="d-none d-lg-table-cell">@transactionEntity.Notes</td>
-            </tr>
-        }
-    </tbody>
-</table>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th scope="col">Date</th>
+                    <th scope="col">Amount</th>
+                    <th scope="col" class="d-none d-lg-table-cell">Notes</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var transactionEntity in player.Transactions)
+                {
+                    <tr>
+                        <td><a href="/transactions/@transactionEntity.RowKey">@transactionEntity.Date.ToString("dd MMM yyyy HH:mm")</a></td>
+                        <td><CurrencyDisplay Amount="@transactionEntity.Amount" /></td>
+                        <td class="d-none d-lg-table-cell">@transactionEntity.Notes</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
 
-<div class="modal-footer">
-    <a class="btn btn-secondary" href="/players/"><i class="fa-solid fa-arrow-left"></i>All Players</a>
-    <DeleteButtonWithCheck EntityRowKey="@player.PlayerEntity.RowKey" EntityLabel="@player.PlayerEntity.Name" EntityType="alltransactionsforplayer" NavigateToUrl="/players" ButtonLabel="Delete all transactions" />
-</div>
+        <div class="modal-footer">
+            <a class="btn btn-secondary" href="/players/"><i class="fa-solid fa-arrow-left"></i>All Players</a>
+            <DeleteButtonWithCheck EntityRowKey="@player.PlayerEntity.RowKey" EntityLabel="@player.PlayerEntity.Name" EntityType="alltransactionsforplayer" NavigateToUrl="/players" ButtonLabel="Delete all transactions" />
+        </div>
+    </Authorized>
+    <NotAuthorized>
+        <h4>Access Denied!</h4>
+    </NotAuthorized>
+</AuthorizeView>
 
 @code {
     [Parameter]
@@ -49,12 +56,12 @@
 
     private string pageTitle;
 
-    protected override async Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
-        await RefreshData();
+        RefreshData();
     }
 
-    private async Task RefreshData()
+    private void RefreshData()
     {
         player = PlayerService.GetPlayer(PlayerRowKey);
         pageTitle = $"{player.PlayerEntity.Name}";

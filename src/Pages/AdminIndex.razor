@@ -3,9 +3,15 @@
 
 <PageTitle>Tuesday.Football</PageTitle>
 
-<h1>Welcome to Tuesday.Football Admin Portal</h1>
-
-<button class="btn btn-primary" @onclick="RefreshData">Refresh Data</button>
+<AuthorizeView Policy="IsAdminEmail">
+    <Authorized>
+        <h1>Welcome to Tuesday.Football Admin Portal</h1>
+        <button class="btn btn-primary" @onclick="RefreshData">Refresh Data</button>
+    </Authorized>
+    <NotAuthorized>
+        <h4>Access Denied!</h4>
+    </NotAuthorized>
+</AuthorizeView>
 
 @code {
     void RefreshData()

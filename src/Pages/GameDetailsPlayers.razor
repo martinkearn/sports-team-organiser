@@ -6,110 +6,117 @@
 
 <PageTitle>TNF - @pageTitle</PageTitle>
 
-<h1><i class="fa-solid fa-people-group me-2"></i> @pageTitle</h1>
+<AuthorizeView Policy="IsAdminEmail">
+    <Authorized>
+        <h1><i class="fa-solid fa-people-group me-2"></i> @pageTitle</h1>
 
-<p>@game.PlayersAtGame.Where(p => p.PlayerAtGameEntity.Forecast == PlayingOptions.Yes.ToString()).Count() yes, @game.PlayersAtGame.Where(p => p.PlayerAtGameEntity.Forecast == PlayingOptions.Maybe.ToString()).Count() maybe, @game.PlayersAtGame.Where(p => p.PlayerAtGameEntity.Played == true).Count() actual</p>
+        <p>@game.PlayersAtGame.Where(p => p.PlayerAtGameEntity.Forecast == PlayingOptions.Yes.ToString()).Count() yes, @game.PlayersAtGame.Where(p => p.PlayerAtGameEntity.Forecast == PlayingOptions.Maybe.ToString()).Count() maybe, @game.PlayersAtGame.Where(p => p.PlayerAtGameEntity.Played == true).Count() actual</p>
 
-<ul class="nav nav-tabs">
-    <li class="nav-item">
-        <a class="nav-link active" >
-            <span class="d-md-none"><i class="fa-solid fa-users-viewfinder"></i></span>
-            <span class="d-none d-md-block">Players</span>
-        </a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link" @onclick="SwitchTabTeamsheet">
-            <span class="d-md-none"><i class="fa-solid fa-people-group"></i></span>
-            <span class="d-none d-md-block">Teamsheet</span>
-        </a>
-    </li>    
-    <li class="nav-item">
-        <a class="nav-link" @onclick="SwitchTabGame">
-            <span class="d-md-none"><i class="fa-solid fa-clipboard-list"></i></span>
-            <span class="d-none d-md-block">Game</span>
-        </a>
-    </li>
-</ul>
+        <ul class="nav nav-tabs">
+            <li class="nav-item">
+                <a class="nav-link active" >
+                    <span class="d-md-none"><i class="fa-solid fa-users-viewfinder"></i></span>
+                    <span class="d-none d-md-block">Players</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" @onclick="SwitchTabTeamsheet">
+                    <span class="d-md-none"><i class="fa-solid fa-people-group"></i></span>
+                    <span class="d-none d-md-block">Teamsheet</span>
+                </a>
+            </li>    
+            <li class="nav-item">
+                <a class="nav-link" @onclick="SwitchTabGame">
+                    <span class="d-md-none"><i class="fa-solid fa-clipboard-list"></i></span>
+                    <span class="d-none d-md-block">Game</span>
+                </a>
+            </li>
+        </ul>
 
-<div>
-    <EditForm Model="@newPagEntity" OnValidSubmit="AddPagEntity" class="row row-cols-lg-auto g-3 align-items-center">
-        <DataAnnotationsValidator />
-        <ValidationSummary />
-        <div class="input-group col-12">
-            <InputSelect class="form-select" @bind-Value="newPagEntity.PlayerRowKey">
-                <option value="">Add player to game ...</option>
-                @foreach (var player in players)
-                {
-                    if (game.PlayersAtGame.FirstOrDefault(pag => pag.PlayerAtGameEntity.PlayerRowKey == player.PlayerEntity.RowKey) == default)
-                    {
-                        <option value="@player.PlayerEntity.RowKey">@player.PlayerEntity.Name</option>
-                    }
-                }
-            </InputSelect>
-            <button class="btn btn-outline-secondary" type="submit"><i class="fa-solid fa-plus"></i></button>
+        <div>
+            <EditForm Model="@newPagEntity" OnValidSubmit="AddPagEntity" class="row row-cols-lg-auto g-3 align-items-center" Context="NewPagEntity">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+                <div class="input-group col-12">
+                    <InputSelect class="form-select" @bind-Value="newPagEntity.PlayerRowKey">
+                        <option value="">Add player to game ...</option>
+                        @foreach (var player in players)
+                        {
+                            if (game.PlayersAtGame.FirstOrDefault(pag => pag.PlayerAtGameEntity.PlayerRowKey == player.PlayerEntity.RowKey) == default)
+                            {
+                                <option value="@player.PlayerEntity.RowKey">@player.PlayerEntity.Name</option>
+                            }
+                        }
+                    </InputSelect>
+                    <button class="btn btn-outline-secondary" type="submit"><i class="fa-solid fa-plus"></i></button>
+                </div>
+            </EditForm>
         </div>
-    </EditForm>
-</div>
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <th scope="col">Name</th>
-            <th scope="col">Played</th>
-            <th scope="col">Team</th>
-            <th scope="col">Add Payment</th>
-        </tr>
-    </thead>
-    <tbody>
-        <h5>Team A - @game.TeamA.Count()</h5>
-        @foreach (var pag in game.TeamA)
-        {
-            <tr>
-                <td><a href="/pags/@pag.PlayerAtGameEntity.RowKey">@pag.Player.PlayerEntity.Name</a> <PlayingForecastIcon Forecast="@pag.PlayerAtGameEntity.Forecast" /> <PositionIcon Position="pag.Player.PlayerEntity.Position" /> <CurrencyDisplay Amount="@pag.Player.Balance" /> <RagIcon Pag="@pag" /></td>
-                <td>
-                    <div class="form-check form-switch">
-                        <InputCheckbox class="form-check-input" type="checkbox" role="switch" @bind-Value=pag.PlayerAtGameEntity.Played @bind-Value:after="() => BillRefundPagEntity(pag.PlayerAtGameEntity)"></InputCheckbox>
-                    </div>
-                </td>
-                <td><button class="btn btn-outline-secondary btn-sm" @onclick="() => SwitchPagTeam(pag.PlayerAtGameEntity)">@pag.PlayerAtGameEntity.Team <i class="fa-solid fa-repeat"></i></button></td>
-                <td><button class="btn btn-outline-secondary btn-sm" @onclick="() => AddTransactionForPlayer(pag.Player.PlayerEntity.RowKey, pag.Player.PlayerEntity.DefaultRate)"><i class="fa-solid fa-plus"></i> £@pag.Player.PlayerEntity.DefaultRate</button></td>
-            </tr>
-        }
-        <br>
-        <h5>Team B - @game.TeamB.Count() (wear bibs)</h5>
-        @foreach (var pag in game.TeamB)
-        {
-            <tr>
-                <td><a href="/pags/@pag.PlayerAtGameEntity.RowKey">@pag.Player.PlayerEntity.Name</a> <PlayingForecastIcon Forecast="@pag.PlayerAtGameEntity.Forecast" /> <PositionIcon Position="pag.Player.PlayerEntity.Position" /> <CurrencyDisplay Amount="@pag.Player.Balance" /> <RagIcon Pag="@pag" /></td>
-                <td>
-                    <div class="form-check form-switch">
-                        <InputCheckbox class="form-check-input" type="checkbox" role="switch" @bind-Value=pag.PlayerAtGameEntity.Played @bind-Value:after="() => BillRefundPagEntity(pag.PlayerAtGameEntity)"></InputCheckbox>
-                    </div>
-                </td>
-                <td><button class="btn btn-outline-secondary btn-sm" @onclick="() => SwitchPagTeam(pag.PlayerAtGameEntity)">@pag.PlayerAtGameEntity.Team <i class="fa-solid fa-repeat"></i></button></td>
-                <td><button class="btn btn-outline-secondary btn-sm" @onclick="() => AddTransactionForPlayer(pag.Player.PlayerEntity.RowKey, pag.Player.PlayerEntity.DefaultRate)"><i class="fa-solid fa-plus"></i> £@pag.Player.PlayerEntity.DefaultRate</button></td>
-            </tr>
-        }
-        <br>
-        <h5>No team assigned</h5>
-        @foreach (var pag in game.PlayersAtGame.Where(o => string.IsNullOrEmpty(o.PlayerAtGameEntity.Team)))
-        {
-            <tr>
-                <td><a href="/pags/@pag.PlayerAtGameEntity.RowKey">@pag.Player.PlayerEntity.Name</a> <PlayingForecastIcon Forecast="@pag.PlayerAtGameEntity.Forecast" /> <PositionIcon Position="pag.Player.PlayerEntity.Position" /> <CurrencyDisplay Amount="@pag.Player.Balance" /> <RagIcon Pag="@pag" /></td>
-                <td>
-                    <div class="form-check form-switch">
-                        <InputCheckbox class="form-check-input" type="checkbox" role="switch" @bind-Value=pag.PlayerAtGameEntity.Played @bind-Value:after="() => BillRefundPagEntity(pag.PlayerAtGameEntity)"></InputCheckbox>
-                    </div>
-                </td>
-                <td><button class="btn btn-outline-secondary btn-sm" @onclick="() => SwitchPagTeam(pag.PlayerAtGameEntity)">@pag.PlayerAtGameEntity.Team <i class="fa-solid fa-repeat"></i></button></td>
-                <td><button class="btn btn-outline-secondary btn-sm" @onclick="() => AddTransactionForPlayer(pag.Player.PlayerEntity.RowKey, pag.Player.PlayerEntity.DefaultRate)"><i class="fa-solid fa-plus"></i> £@pag.Player.PlayerEntity.DefaultRate</button></td>
-            </tr>
-        }
-    </tbody>
-</table>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th scope="col">Name</th>
+                    <th scope="col">Played</th>
+                    <th scope="col">Team</th>
+                    <th scope="col">Add Payment</th>
+                </tr>
+            </thead>
+            <tbody>
+                <h5>Team A - @game.TeamA.Count()</h5>
+                @foreach (var pag in game.TeamA)
+                {
+                    <tr>
+                        <td><a href="/pags/@pag.PlayerAtGameEntity.RowKey">@pag.Player.PlayerEntity.Name</a> <PlayingForecastIcon Forecast="@pag.PlayerAtGameEntity.Forecast" /> <PositionIcon Position="pag.Player.PlayerEntity.Position" /> <CurrencyDisplay Amount="@pag.Player.Balance" /> <RagIcon Pag="@pag" /></td>
+                        <td>
+                            <div class="form-check form-switch">
+                                <InputCheckbox class="form-check-input" type="checkbox" role="switch" @bind-Value=pag.PlayerAtGameEntity.Played @bind-Value:after="() => BillRefundPagEntity(pag.PlayerAtGameEntity)"></InputCheckbox>
+                            </div>
+                        </td>
+                        <td><button class="btn btn-outline-secondary btn-sm" @onclick="() => SwitchPagTeam(pag.PlayerAtGameEntity)">@pag.PlayerAtGameEntity.Team <i class="fa-solid fa-repeat"></i></button></td>
+                        <td><button class="btn btn-outline-secondary btn-sm" @onclick="() => AddTransactionForPlayer(pag.Player.PlayerEntity.RowKey, pag.Player.PlayerEntity.DefaultRate)"><i class="fa-solid fa-plus"></i> £@pag.Player.PlayerEntity.DefaultRate</button></td>
+                    </tr>
+                }
+                <br>
+                <h5>Team B - @game.TeamB.Count() (wear bibs)</h5>
+                @foreach (var pag in game.TeamB)
+                {
+                    <tr>
+                        <td><a href="/pags/@pag.PlayerAtGameEntity.RowKey">@pag.Player.PlayerEntity.Name</a> <PlayingForecastIcon Forecast="@pag.PlayerAtGameEntity.Forecast" /> <PositionIcon Position="pag.Player.PlayerEntity.Position" /> <CurrencyDisplay Amount="@pag.Player.Balance" /> <RagIcon Pag="@pag" /></td>
+                        <td>
+                            <div class="form-check form-switch">
+                                <InputCheckbox class="form-check-input" type="checkbox" role="switch" @bind-Value=pag.PlayerAtGameEntity.Played @bind-Value:after="() => BillRefundPagEntity(pag.PlayerAtGameEntity)"></InputCheckbox>
+                            </div>
+                        </td>
+                        <td><button class="btn btn-outline-secondary btn-sm" @onclick="() => SwitchPagTeam(pag.PlayerAtGameEntity)">@pag.PlayerAtGameEntity.Team <i class="fa-solid fa-repeat"></i></button></td>
+                        <td><button class="btn btn-outline-secondary btn-sm" @onclick="() => AddTransactionForPlayer(pag.Player.PlayerEntity.RowKey, pag.Player.PlayerEntity.DefaultRate)"><i class="fa-solid fa-plus"></i> £@pag.Player.PlayerEntity.DefaultRate</button></td>
+                    </tr>
+                }
+                <br>
+                <h5>No team assigned</h5>
+                @foreach (var pag in game.PlayersAtGame.Where(o => string.IsNullOrEmpty(o.PlayerAtGameEntity.Team)))
+                {
+                    <tr>
+                        <td><a href="/pags/@pag.PlayerAtGameEntity.RowKey">@pag.Player.PlayerEntity.Name</a> <PlayingForecastIcon Forecast="@pag.PlayerAtGameEntity.Forecast" /> <PositionIcon Position="pag.Player.PlayerEntity.Position" /> <CurrencyDisplay Amount="@pag.Player.Balance" /> <RagIcon Pag="@pag" /></td>
+                        <td>
+                            <div class="form-check form-switch">
+                                <InputCheckbox class="form-check-input" type="checkbox" role="switch" @bind-Value=pag.PlayerAtGameEntity.Played @bind-Value:after="() => BillRefundPagEntity(pag.PlayerAtGameEntity)"></InputCheckbox>
+                            </div>
+                        </td>
+                        <td><button class="btn btn-outline-secondary btn-sm" @onclick="() => SwitchPagTeam(pag.PlayerAtGameEntity)">@pag.PlayerAtGameEntity.Team <i class="fa-solid fa-repeat"></i></button></td>
+                        <td><button class="btn btn-outline-secondary btn-sm" @onclick="() => AddTransactionForPlayer(pag.Player.PlayerEntity.RowKey, pag.Player.PlayerEntity.DefaultRate)"><i class="fa-solid fa-plus"></i> £@pag.Player.PlayerEntity.DefaultRate</button></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
 
-<div class="modal-footer px-0">
-    <button class="btn btn-secondary" @onclick="CalculateTeams"><i class="fa-solid fa-gear"></i> Calculate Teams</button> 
-</div>
+        <div class="modal-footer px-0">
+            <button class="btn btn-secondary" @onclick="CalculateTeams"><i class="fa-solid fa-gear"></i> Calculate Teams</button> 
+        </div>
+    </Authorized>
+    <NotAuthorized>
+        <h4>Access Denied!</h4>
+    </NotAuthorized>
+</AuthorizeView>
 
 @code {
     [Parameter]

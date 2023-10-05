@@ -6,55 +6,62 @@
 
 <PageTitle>TNF - @pageTitle</PageTitle>
 
-<h1><i class="fa-solid fa-people-group me-2"></i> @pageTitle</h1>
+<AuthorizeView Policy="IsAdminEmail">
+    <Authorized>
+        <h1><i class="fa-solid fa-people-group me-2"></i> @pageTitle</h1>
 
-<p>@game.PlayersAtGame.Where(p => p.PlayerAtGameEntity.Forecast == PlayingOptions.Yes.ToString()).Count() yes, @game.PlayersAtGame.Where(p => p.PlayerAtGameEntity.Forecast == PlayingOptions.Maybe.ToString()).Count() maybe, @game.PlayersAtGame.Where(p => p.PlayerAtGameEntity.Played == true).Count() actual</p>
+        <p>@game.PlayersAtGame.Where(p => p.PlayerAtGameEntity.Forecast == PlayingOptions.Yes.ToString()).Count() yes, @game.PlayersAtGame.Where(p => p.PlayerAtGameEntity.Forecast == PlayingOptions.Maybe.ToString()).Count() maybe, @game.PlayersAtGame.Where(p => p.PlayerAtGameEntity.Played == true).Count() actual</p>
 
-<ul class="nav nav-tabs">
-    <li class="nav-item">
-        <a class="nav-link" @onclick="SwitchTabPlayers">
-            <span class="d-md-none"><i class="fa-solid fa-users-viewfinder"></i></span>
-            <span class="d-none d-md-block">Players</span>
-        </a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link" @onclick="SwitchTabTeamsheet">
-            <span class="d-md-none"><i class="fa-solid fa-people-group"></i></span>
-            <span class="d-none d-md-block">Teamsheet</span>
-        </a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link active">
-            <span class="d-md-none"><i class="fa-solid fa-clipboard-list"></i></span>
-            <span class="d-none d-md-block">Game</span>
-        </a>
-    </li>
-</ul>
+        <ul class="nav nav-tabs">
+            <li class="nav-item">
+                <a class="nav-link" @onclick="SwitchTabPlayers">
+                    <span class="d-md-none"><i class="fa-solid fa-users-viewfinder"></i></span>
+                    <span class="d-none d-md-block">Players</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" @onclick="SwitchTabTeamsheet">
+                    <span class="d-md-none"><i class="fa-solid fa-people-group"></i></span>
+                    <span class="d-none d-md-block">Teamsheet</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link active">
+                    <span class="d-md-none"><i class="fa-solid fa-clipboard-list"></i></span>
+                    <span class="d-none d-md-block">Game</span>
+                </a>
+            </li>
+        </ul>
 
-<h4>Game details</h4>
-<p>Date & Time: @game.GameEntity.Date.DayOfWeek @game.GameEntity.Date.ToString("dd MMM yyyy HH:mm")</p>
+        <h4>Game details</h4>
+        <p>Date & Time: @game.GameEntity.Date.DayOfWeek @game.GameEntity.Date.ToString("dd MMM yyyy HH:mm")</p>
 
-<h4>Goals</h4>
-<div class="mb-3">
-    <label class="form-label">Team A</label>
-    <div class="input-group col-12">
-        <InputNumber type="number" min="0" class="form-control" @bind-Value="game.GameEntity.TeamAGoals" @bind-Value:after="() => Edit()"/>
-        <button class="btn btn-outline-secondary" @onclick="() => Goal(Enums.Team.A, -1)"><i class="fa-solid fa-minus"></i></button>
-        <button class="btn btn-outline-secondary" @onclick="() => Goal(Enums.Team.A, 1)"><i class="fa-solid fa-plus"></i></button>
-    </div>
-</div>
-<div class="mb-3">
-    <label class="form-label">Team B</label>
-    <div class="input-group col-12">
-        <InputNumber type="number" min="0" class="form-control" @bind-Value="game.GameEntity.TeamBGoals" @bind-Value:after="() => Edit()"/>
-        <button class="btn btn-outline-secondary" @onclick="() => Goal(Enums.Team.B, -1)"><i class="fa-solid fa-minus"></i></button>
-        <button class="btn btn-outline-secondary" @onclick="() => Goal(Enums.Team.B, 1)"><i class="fa-solid fa-plus"></i></button>
-    </div>
-</div>
+        <h4>Goals</h4>
+        <div class="mb-3">
+            <label class="form-label">Team A</label>
+            <div class="input-group col-12">
+                <InputNumber type="number" min="0" class="form-control" @bind-Value="game.GameEntity.TeamAGoals" @bind-Value:after="() => Edit()"/>
+                <button class="btn btn-outline-secondary" @onclick="() => Goal(Enums.Team.A, -1)"><i class="fa-solid fa-minus"></i></button>
+                <button class="btn btn-outline-secondary" @onclick="() => Goal(Enums.Team.A, 1)"><i class="fa-solid fa-plus"></i></button>
+            </div>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Team B</label>
+            <div class="input-group col-12">
+                <InputNumber type="number" min="0" class="form-control" @bind-Value="game.GameEntity.TeamBGoals" @bind-Value:after="() => Edit()"/>
+                <button class="btn btn-outline-secondary" @onclick="() => Goal(Enums.Team.B, -1)"><i class="fa-solid fa-minus"></i></button>
+                <button class="btn btn-outline-secondary" @onclick="() => Goal(Enums.Team.B, 1)"><i class="fa-solid fa-plus"></i></button>
+            </div>
+        </div>
 
-<div class="modal-footer px-0">
-    <DeleteButtonWithCheck EntityRowKey="@game.GameEntity.RowKey" EntityLabel="@pageTitle" EntityType="@typeof(GameEntity).ToString()" NavigateToUrl="/games" ButtonLabel="Delete" />
-</div>
+        <div class="modal-footer px-0">
+            <DeleteButtonWithCheck EntityRowKey="@game.GameEntity.RowKey" EntityLabel="@pageTitle" EntityType="@typeof(GameEntity).ToString()" NavigateToUrl="/games" ButtonLabel="Delete" />
+        </div>
+    </Authorized>
+    <NotAuthorized>
+        <h4>Access Denied!</h4>
+    </NotAuthorized>
+</AuthorizeView>
 
 @code {
     [Parameter]

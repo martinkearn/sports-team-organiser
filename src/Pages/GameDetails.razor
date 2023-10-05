@@ -1,4 +1,4 @@
-@page "/games/{GameRowKey}/players"
+@page "/games/{GameRowKey}"
 @inject IPlayerService PlayerService
 @inject IGameService GameService
 @inject ITransactionService TransactionService
@@ -11,27 +11,6 @@
         <h1><i class="fa-solid fa-people-group me-2"></i> @pageTitle</h1>
 
         <p>@game.PlayersAtGame.Where(p => p.PlayerAtGameEntity.Forecast == PlayingOptions.Yes.ToString()).Count() yes, @game.PlayersAtGame.Where(p => p.PlayerAtGameEntity.Forecast == PlayingOptions.Maybe.ToString()).Count() maybe, @game.PlayersAtGame.Where(p => p.PlayerAtGameEntity.Played == true).Count() actual</p>
-
-        <ul class="nav nav-tabs">
-            <li class="nav-item">
-                <a class="nav-link active" >
-                    <span class="d-md-none"><i class="fa-solid fa-users-viewfinder"></i></span>
-                    <span class="d-none d-md-block">Players</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" @onclick="SwitchTabTeamsheet">
-                    <span class="d-md-none"><i class="fa-solid fa-people-group"></i></span>
-                    <span class="d-none d-md-block">Teamsheet</span>
-                </a>
-            </li>    
-            <li class="nav-item">
-                <a class="nav-link" @onclick="SwitchTabGame">
-                    <span class="d-md-none"><i class="fa-solid fa-clipboard-list"></i></span>
-                    <span class="d-none d-md-block">Game</span>
-                </a>
-            </li>
-        </ul>
 
         <div class="row">
             <div class="col">
@@ -74,12 +53,13 @@
             }
             <div class="row pb-2">
                 <div class="col">
-                    <a href="/pags/@pag.PlayerAtGameEntity.RowKey">@pag.Player.PlayerEntity.Name</a> <PlayingForecastIcon Forecast="@pag.PlayerAtGameEntity.Forecast" /> <PositionIcon Position="pag.Player.PlayerEntity.Position" /> <RagIcon Pag="@pag" />
+                    @pag.Player.PlayerEntity.Name <PlayingForecastIcon Forecast="@pag.PlayerAtGameEntity.Forecast" /> <PositionIcon Position="pag.Player.PlayerEntity.Position" /> <RagIcon Pag="@pag" />
                 </div>
                 <div class="col text-end">
-                    <button type="button" class="btn btn-outline-secondary @playedButtonCss" data-bs-toggle="button" @onclick="() => TogglePlayed(pag.PlayerAtGameEntity)">@playedButtonLabel</button>
-                    <button class="btn btn-outline-secondary" @onclick="() => SwitchPagTeam(pag.PlayerAtGameEntity)">@pag.PlayerAtGameEntity.Team <i class="fa-solid fa-repeat"></i></button>
-                    <button class="btn btn-outline-secondary" @onclick="() => AddTransactionForPlayer(pag.Player.PlayerEntity.RowKey, pag.Player.PlayerEntity.DefaultRate)"><i class="fa-solid fa-plus"></i> £@pag.Player.PlayerEntity.DefaultRate</button>
+                    <a type="button" class="btn btn-outline-secondary d-inline" href="/pags/@pag.PlayerAtGameEntity.RowKey"><i class="fa-solid fa-edit"></i> Edit</a>
+                    <button type="button" class="btn btn-outline-secondary @playedButtonCss d-none d-lg-inline" data-bs-toggle="button" @onclick="() => TogglePlayed(pag.PlayerAtGameEntity)">@playedButtonLabel</button>
+                    <button class="btn btn-outline-secondary d-none d-lg-inline" @onclick="() => SwitchPagTeam(pag.PlayerAtGameEntity)">@pag.PlayerAtGameEntity.Team <i class="fa-solid fa-repeat"></i></button>
+                    <button class="btn btn-outline-secondary d-none d-lg-inline" @onclick="() => AddTransactionForPlayer(pag.Player.PlayerEntity.RowKey, pag.Player.PlayerEntity.DefaultRate)"><i class="fa-solid fa-plus"></i> £@pag.Player.PlayerEntity.DefaultRate</button>
                 </div>
             </div>
         }
@@ -139,6 +119,7 @@
         }
 
         <div class="modal-footer px-0">
+            <a class="btn btn-secondary" href="/games/"><i class="fa-solid fa-arrow-left"></i>All Games</a>
             <button class="btn btn-secondary" @onclick="CalculateTeams"><i class="fa-solid fa-gear"></i> Calculate Teams</button> 
         </div>
     </Authorized>
@@ -309,7 +290,7 @@
             Forecast = PlayingOptions.Yes.ToString(),
         };
         pagsNoTeam = game.PlayersAtGame.Where(o => string.IsNullOrEmpty(o.PlayerAtGameEntity.Team)).ToList();
-        pageTitle = $"{game.GameEntity.Date.ToString("dd MMM yyyy")} Players";
+        pageTitle = $"{game.GameEntity.Date.ToString("dd MMM yyyy")}";
 
     }
 

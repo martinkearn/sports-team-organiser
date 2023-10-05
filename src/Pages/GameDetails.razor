@@ -53,7 +53,7 @@
             }
             <div class="row pb-2">
                 <div class="col">
-                    @pag.Player.PlayerEntity.Name <PlayingForecastIcon Forecast="@pag.PlayerAtGameEntity.Forecast" /> <PositionIcon Position="pag.Player.PlayerEntity.Position" /> <RagIcon Pag="@pag" />
+                    <a class="d-none d-lg-inline" href="/pags/@pag.PlayerAtGameEntity.RowKey">@pag.Player.PlayerEntity.Name</a> <span class="d-inline d-lg-none">@pag.Player.PlayerEntity.Name</span> <PlayingForecastIcon Forecast="@pag.PlayerAtGameEntity.Forecast" /> <PositionIcon Position="pag.Player.PlayerEntity.Position" /> <RagIcon Pag="@pag" />
                 </div>
                 <div class="col text-end">
                     <button type="button" class="btn btn-outline-secondary btn-sm @playedButtonCss d-none d-lg-inline" data-bs-toggle="button" @onclick="() => TogglePlayed(pag.PlayerAtGameEntity)">@playedButtonLabel</button>
@@ -82,7 +82,7 @@
             }
             <div class="row pb-2">
                 <div class="col">
-                    @pag.Player.PlayerEntity.Name <PlayingForecastIcon Forecast="@pag.PlayerAtGameEntity.Forecast" /> <PositionIcon Position="pag.Player.PlayerEntity.Position" /> <RagIcon Pag="@pag" />
+                    <a class="d-none d-lg-inline" href="/pags/@pag.PlayerAtGameEntity.RowKey">@pag.Player.PlayerEntity.Name</a> <span class="d-inline d-lg-none">@pag.Player.PlayerEntity.Name</span> <PlayingForecastIcon Forecast="@pag.PlayerAtGameEntity.Forecast" /> <PositionIcon Position="pag.Player.PlayerEntity.Position" /> <RagIcon Pag="@pag" />
                 </div>
                 <div class="col text-end">
                     <button type="button" class="btn btn-outline-secondary btn-sm @playedButtonCss d-none d-lg-inline" data-bs-toggle="button" @onclick="() => TogglePlayed(pag.PlayerAtGameEntity)">@playedButtonLabel</button>
@@ -110,7 +110,7 @@
             }
             <div class="row pb-2">
                 <div class="col">
-                    @pag.Player.PlayerEntity.Name <PlayingForecastIcon Forecast="@pag.PlayerAtGameEntity.Forecast" /> <PositionIcon Position="pag.Player.PlayerEntity.Position" /> <RagIcon Pag="@pag" />
+                    <a class="d-none d-lg-inline" href="/pags/@pag.PlayerAtGameEntity.RowKey">@pag.Player.PlayerEntity.Name</a> <span class="d-inline d-lg-none">@pag.Player.PlayerEntity.Name</span> <PlayingForecastIcon Forecast="@pag.PlayerAtGameEntity.Forecast" /> <PositionIcon Position="pag.Player.PlayerEntity.Position" /> <RagIcon Pag="@pag" />
                 </div>
                 <div class="col text-end">
                     <button type="button" class="btn btn-outline-secondary btn-sm @playedButtonCss d-none d-lg-inline" data-bs-toggle="button" @onclick="() => TogglePlayed(pag.PlayerAtGameEntity)">@playedButtonLabel</button>

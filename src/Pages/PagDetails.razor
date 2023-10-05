@@ -49,6 +49,14 @@
             </InputSelect>
         </div>
 
+        <div class="mb-3">
+            <label class="form-label">Add Payment</label>
+            <br>
+            <button class="btn btn-outline-secondary" @onclick="() => AddTransactionForPlayer(pag.Player.PlayerEntity.RowKey, pag.Player.PlayerEntity.DefaultRate)"><i class="fa-solid fa-plus"></i> £@pag.Player.PlayerEntity.DefaultRate</button>
+            <br>
+            <span>Balance: <CurrencyDisplay Amount="@pag.Player.Balance" /></span>
+        </div>
+
         <div class="modal-footer">
             <a class="btn btn-secondary" href="/games/@pag.GameEntity.RowKey"><i class="fa-solid fa-arrow-left"></i> Back to Game</a>
             <button class="btn btn-secondary" @onclick="Delete"><i class="fa-solid fa-trash"></i> Delete</button>
@@ -68,6 +76,19 @@
 
     protected override async Task OnInitializedAsync()
     {
+        await RefreshData();
+    }
+
+    private async Task AddTransactionForPlayer(string playerRowKey, double amount)
+    {
+        var newTransactionEntityForPag = new TransactionEntity()
+        {
+            Date = DateTimeOffset.UtcNow,
+            Notes = TransactionService.GetNotesForGame(pag.GameEntity.RowKey),
+            PlayerRowKey = playerRowKey,
+            Amount = amount
+        };
+        await TransactionService.UpsertTransactionEntity(newTransactionEntityForPag);
         await RefreshData();
     }
 

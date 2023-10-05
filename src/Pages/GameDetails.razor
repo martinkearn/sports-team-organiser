@@ -40,86 +40,19 @@
         <h5>Team A - @game.TeamA.Count()</h5>
         @foreach (var pag in game.TeamA)
         {
-            var playedButtonLabel = "Not Played";
-            var playedButtonCss = "";
-            if (pag.PlayerAtGameEntity.Played)
-            {
-                playedButtonLabel = "Played";
-                playedButtonCss = "active";
-            }
-            else
-            {
-                playedButtonLabel = "Not Played";
-                playedButtonCss = "";
-            }
-            <div class="row pb-2">
-                <div class="col">
-                    <a class="d-none d-lg-inline" href="/pags/@pag.PlayerAtGameEntity.RowKey">@pag.Player.PlayerEntity.Name</a> <span class="d-inline d-lg-none">@pag.Player.PlayerEntity.Name</span> <PlayingForecastIcon Forecast="@pag.PlayerAtGameEntity.Forecast" /> <PositionIcon Position="pag.Player.PlayerEntity.Position" /> <RagIcon Pag="@pag" />
-                </div>
-                <div class="col text-end">
-                    <button type="button" class="btn btn-outline-secondary btn-sm @playedButtonCss d-none d-lg-inline" data-bs-toggle="button" @onclick="() => TogglePlayed(pag.PlayerAtGameEntity)">@playedButtonLabel</button>
-                    <button class="btn btn-outline-secondary btn-sm d-none d-lg-inline" @onclick="() => SwitchPagTeam(pag.PlayerAtGameEntity)">@pag.PlayerAtGameEntity.Team <i class="fa-solid fa-repeat"></i></button>
-                    <button class="btn btn-outline-secondary btn-sm d-none d-lg-inline" @onclick="() => AddTransactionForPlayer(pag.Player.PlayerEntity.RowKey, pag.Player.PlayerEntity.DefaultRate)"><i class="fa-solid fa-plus"></i> £@pag.Player.PlayerEntity.DefaultRate</button>
-                    <a type="button" class="btn btn-outline-secondary btn-sm d-inline" href="/pags/@pag.PlayerAtGameEntity.RowKey"><i class="fa-solid fa-edit"></i> Edit</a>
-                </div>
-            </div>
+            <PagRow pag="@pag" RefreshMainPage="RefreshData" />
         }
 
         <h5>Team B - @game.TeamB.Count() (wear bibs)</h5>
         @foreach (var pag in game.TeamB)
         {
-            // TO DO - This should be a component
-            var playedButtonLabel = "Not Played";
-            var playedButtonCss = "";
-            if (pag.PlayerAtGameEntity.Played)
-            {
-                playedButtonLabel = "Played";
-                playedButtonCss = "active";
-            }
-            else
-            {
-                playedButtonLabel = "Not Played";
-                playedButtonCss = "";
-            }
-            <div class="row pb-2">
-                <div class="col">
-                    <a class="d-none d-lg-inline" href="/pags/@pag.PlayerAtGameEntity.RowKey">@pag.Player.PlayerEntity.Name</a> <span class="d-inline d-lg-none">@pag.Player.PlayerEntity.Name</span> <PlayingForecastIcon Forecast="@pag.PlayerAtGameEntity.Forecast" /> <PositionIcon Position="pag.Player.PlayerEntity.Position" /> <RagIcon Pag="@pag" />
-                </div>
-                <div class="col text-end">
-                    <button type="button" class="btn btn-outline-secondary btn-sm @playedButtonCss d-none d-lg-inline" data-bs-toggle="button" @onclick="() => TogglePlayed(pag.PlayerAtGameEntity)">@playedButtonLabel</button>
-                    <button class="btn btn-outline-secondary btn-sm d-none d-lg-inline" @onclick="() => SwitchPagTeam(pag.PlayerAtGameEntity)">@pag.PlayerAtGameEntity.Team <i class="fa-solid fa-repeat"></i></button>
-                    <button class="btn btn-outline-secondary btn-sm d-none d-lg-inline" @onclick="() => AddTransactionForPlayer(pag.Player.PlayerEntity.RowKey, pag.Player.PlayerEntity.DefaultRate)"><i class="fa-solid fa-plus"></i> £@pag.Player.PlayerEntity.DefaultRate</button>
-                    <a type="button" class="btn btn-outline-secondary btn-sm d-inline" href="/pags/@pag.PlayerAtGameEntity.RowKey"><i class="fa-solid fa-edit"></i> Edit</a>
-                </div>
-            </div>
+            <PagRow pag="@pag" RefreshMainPage="RefreshData" />
         }
 
         <h5>No team assigned</h5>
         @foreach (var pag in game.PlayersAtGame.Where(o => string.IsNullOrEmpty(o.PlayerAtGameEntity.Team)))
         {
-            var playedButtonLabel = "Not Played";
-            var playedButtonCss = "";
-            if (pag.PlayerAtGameEntity.Played)
-            {
-                playedButtonLabel = "Played";
-                playedButtonCss = "active";
-            }
-            else
-            {
-                playedButtonLabel = "Not Played";
-                playedButtonCss = "";
-            }
-            <div class="row pb-2">
-                <div class="col">
-                    <a class="d-none d-lg-inline" href="/pags/@pag.PlayerAtGameEntity.RowKey">@pag.Player.PlayerEntity.Name</a> <span class="d-inline d-lg-none">@pag.Player.PlayerEntity.Name</span> <PlayingForecastIcon Forecast="@pag.PlayerAtGameEntity.Forecast" /> <PositionIcon Position="pag.Player.PlayerEntity.Position" /> <RagIcon Pag="@pag" />
-                </div>
-                <div class="col text-end">
-                    <button type="button" class="btn btn-outline-secondary btn-sm @playedButtonCss d-none d-lg-inline" data-bs-toggle="button" @onclick="() => TogglePlayed(pag.PlayerAtGameEntity)">@playedButtonLabel</button>
-                    <button class="btn btn-outline-secondary btn-sm d-none d-lg-inline" @onclick="() => SwitchPagTeam(pag.PlayerAtGameEntity)">@pag.PlayerAtGameEntity.Team <i class="fa-solid fa-repeat"></i></button>
-                    <button class="btn btn-outline-secondary btn-sm d-none d-lg-inline" @onclick="() => AddTransactionForPlayer(pag.Player.PlayerEntity.RowKey, pag.Player.PlayerEntity.DefaultRate)"><i class="fa-solid fa-plus"></i> £@pag.Player.PlayerEntity.DefaultRate</button>
-                    <a type="button" class="btn btn-outline-secondary btn-sm d-inline" href="/pags/@pag.PlayerAtGameEntity.RowKey"><i class="fa-solid fa-edit"></i> Edit</a>
-                </div>
-            </div>
+            <PagRow pag="@pag" RefreshMainPage="RefreshData" />
         }
 
         <div class="modal-footer px-0">
@@ -139,8 +72,6 @@
 
     private PlayerAtGameEntity newPagEntity;
 
-    private List<PlayerAtGame> pagsNoTeam;
-
     private string pageTitle;
 
     protected override async Task OnInitializedAsync()
@@ -148,104 +79,9 @@
         await RefreshData();
     }
 
-    async Task Edit()
-    {
-        await GameService.UpsertGameEntity(game.GameEntity);
-    }
-
     private async Task AddPagEntity()
     {
         await GameService.UpsertPlayerAtGameEntity(newPagEntity);
-        await RefreshData();
-    }
-
-    private async Task EditPagEntity(PlayerAtGameEntity pag)
-    {
-        await GameService.UpsertPlayerAtGameEntity(pag);
-        await RefreshData();
-    }
-
-    private async Task AddTransactionForPlayer(string playerRowKey, double amount)
-    {
-        var newTransactionEntityForPag = new TransactionEntity()
-        {
-            Date = DateTimeOffset.UtcNow,
-            Notes = TransactionService.GetNotesForGame(game.GameEntity.RowKey),
-            PlayerRowKey = playerRowKey,
-            Amount = amount
-        };
-        await TransactionService.UpsertTransactionEntity(newTransactionEntityForPag);
-        await RefreshData();
-    }
-
-    async Task BillRefundPagEntity(PlayerAtGameEntity pag)
-    {
-        // Get player for pag
-        var player = PlayerService.GetPlayer(pag.PlayerRowKey);
-
-        // Add / remove transactions if played / not played
-        if (pag.Played)
-        {
-            var transaction = new TransactionEntity()
-            {
-                PlayerRowKey = pag.PlayerRowKey,
-                Amount = -player.PlayerEntity.DefaultRate,
-                Date = DateTimeOffset.UtcNow,
-                Notes = TransactionService.GetNotesForGame(pag.GameRowKey)
-            };
-            await TransactionService.UpsertTransactionEntity(transaction);
-        }
-        else
-        {
-            // TO DO - thgis needs to match on trasnatcion noytes containing game
-            // Get debit transactions (less than £0) for player and game
-            var pagDebitTransactionEntities = player.Transactions
-                .Where(o => o.Amount < 0);
-            foreach (var pagDebitTransactionEntity in pagDebitTransactionEntities)
-            {
-                await TransactionService.DeleteTransactionEntity(pagDebitTransactionEntity.RowKey);
-            }
-        }
-
-        // Upsert pag
-        await GameService.UpsertPlayerAtGameEntity(pag);
-
-        await RefreshData();
-    }
-
-    async Task TogglePlayed(PlayerAtGameEntity pag)
-    {
-        // Get player for pag
-        var player = PlayerService.GetPlayer(pag.PlayerRowKey);
-
-        pag.Played = !pag.Played;
-
-        // Add / remove transactions if played / not played
-        if (pag.Played)
-        {
-            var transaction = new TransactionEntity()
-            {
-                PlayerRowKey = pag.PlayerRowKey,
-                Amount = -player.PlayerEntity.DefaultRate,
-                Date = DateTimeOffset.UtcNow,
-                Notes = TransactionService.GetNotesForGame(pag.GameRowKey)
-            };
-            await TransactionService.UpsertTransactionEntity(transaction);
-        }
-        else
-        {
-            // Get debit transactions (less than £0) for player and game
-            var pagDebitTransactionEntities = player.Transactions
-                .Where(o => o.Amount < 0);
-            foreach (var pagDebitTransactionEntity in pagDebitTransactionEntities)
-            {
-                await TransactionService.DeleteTransactionEntity(pagDebitTransactionEntity.RowKey);
-            }
-        }
-
-        // Upsert pag
-        await GameService.UpsertPlayerAtGameEntity(pag);
-
         await RefreshData();
     }
 
@@ -262,24 +98,6 @@
         await RefreshData();
     }
 
-    async Task SwitchPagTeam(PlayerAtGameEntity pag)
-    {
-        if (pag.Team == "A")
-        {
-            pag.Team = "B";
-        }
-        else if (pag.Team == "B")
-        {
-            pag.Team = "";
-        }
-        else
-        {
-            pag.Team = "A";
-        }
-        await GameService.UpsertPlayerAtGameEntity(pag);
-        await RefreshData();
-    }
-
     async Task RefreshData()
     {
         players = PlayerService.GetPlayers();
@@ -290,11 +108,6 @@
             Played = false,
             Forecast = PlayingOptions.Yes.ToString(),
         };
-        pagsNoTeam = game.PlayersAtGame.Where(o => string.IsNullOrEmpty(o.PlayerAtGameEntity.Team)).ToList();
         pageTitle = $"{game.GameEntity.Date.ToString("dd MMM yyyy")}";
-
     }
-
-    private void SwitchTabGame() => Navigation.NavigateTo($"/games/{@GameRowKey}/game");
-    private void SwitchTabTeamsheet() => Navigation.NavigateTo($"/games/{@GameRowKey}/teamsheet");
 }

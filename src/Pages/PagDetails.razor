@@ -100,7 +100,7 @@
     async Task Delete()
     {
         await GameService.DeletePlayerAtGameEntity(pag.PlayerAtGameEntity);
-        Navigation.NavigateTo($"/games/{pag.PlayerAtGameEntity.GameRowKey}/players");
+        Navigation.NavigateTo($"/games/{pag.PlayerAtGameEntity.GameRowKey}");
     }
 
     async Task RefreshData()

@@ -7,7 +7,7 @@
 
 <PageTitle>TNF - @pageTitle</PageTitle>
 
-<h1><i class="fa-solid fa-star me-2"></i> @pageTitle</h1>
+<h1><i class="fa-regular fa-star me-2"></i> @pageTitle</h1>
 
 <p>Ratings are used to help the system work out balanced teams.</p>
 <p>Players will never be shown individual ratings and only the top-rated players will be visisble in terms of leaderboards, never the bottom-rated players.</p>
@@ -41,15 +41,21 @@
             }
             @foreach (var pag in playersAtGame)
             {
-                <option value="@pag.Player.PlayerEntity.RowKey">@pag.Player.PlayerEntity.Name</option>
+                <option value="@pag.Player.PlayerEntity.RowKey">@pag.Player.PlayerEntity.Name - @pag.Player.PlayerEntity.Position</option>
             }
         </InputSelect>
     </div>
 
     <div class="mb-3">
-        <label for="addRating" class="form-label">Rating</label>
-        <InputNumber type="number" class="form-control" id="addRating" @bind-Value="newRatingEntity.Rating" />
-        <div class="form-text">5 high, 1 low.</div>
+        <label for="addRating" class="form-label">Rating (1-5)</label>
+        <InputSelect class="form-select" @bind-Value="newRatingEntity.Rating">
+            <option value="">Select Rating ...</option>
+            <option value="1">1 - One of the poorest in the game</option>
+            <option value="2">2 - Poor</option>
+            <option value="3">3 - OK, but there were better in this position</option>
+            <option value="4">4 - Best in this position</option>
+            <option value="5">5 - Player of the match</option>
+        </InputSelect>
     </div>
 
     <div class="mb-3">
@@ -81,7 +87,7 @@
     protected async Task Add()
     {
         await RatingService.UpsertRatingEntity(newRatingEntity);
-        Navigation.NavigateTo("/");
+        Navigation.NavigateTo("/ratings/addthanks");
     }
 
     private void RefreshPlayers()

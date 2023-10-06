@@ -27,6 +27,7 @@ builder.Services.AddSingleton<IStorageService, StorageService>();
 builder.Services.AddSingleton<IPlayerService, PlayerService>();
 builder.Services.AddSingleton<IGameService, GameService>();
 builder.Services.AddSingleton<ITransactionService, TransactionService>();
+builder.Services.AddSingleton<IRatingService, RatingService>();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddOptions<StorageConfiguration>()
     .Configure<IConfiguration>((settings, configuration) =>

@@ -5,5 +5,6 @@ namespace STO.Models
         public enum SortTransactionsBy { Date, Amount, Player, Game };
         public enum Team { A, B };
         public enum PlayerPosition { Goalie,Defender,PlayMaker,BoxToBox,Midfielder,Forward }
+        public enum SortRatingsBy { Rating, Player, Game };
     }
 }

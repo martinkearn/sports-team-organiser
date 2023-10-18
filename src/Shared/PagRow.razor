@@ -36,6 +36,25 @@
     private string playedButtonLabel = "Not Played";
     private string playedButtonCss = "";
 
+    protected override async Task OnParametersSetAsync()
+    {
+    }
+
+    protected override void OnInitialized()
+    {
+        // Add / remove transactions if played / not played
+        if (pag.PlayerAtGameEntity.Played)
+        {
+            playedButtonLabel = "Played";
+            playedButtonCss = "active";
+        }
+        else
+        {
+            playedButtonLabel = "Not Played";
+            playedButtonCss = "";
+        }
+    }
+
     async Task TogglePlayed()
     {
         await GameService.TogglePlayerAtGamePlayed(pag.PlayerAtGameEntity);

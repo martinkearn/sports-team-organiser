@@ -170,7 +170,11 @@ else
 
     async Task MarkAllPLayed()
     {
-
+        foreach (var pag in game.PlayersAtGame)
+        {
+            await GameService.TogglePlayerAtGamePlayed(pag.PlayerAtGameEntity);
+        }
+        await RefreshData();
     }
 
     async Task RefreshData()

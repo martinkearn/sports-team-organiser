@@ -38,43 +38,7 @@
 
     async Task TogglePlayed()
     {
-        // Get player for pag
-        var player = PlayerService.GetPlayer(pag.PlayerAtGameEntity.PlayerRowKey);
-
-        pag.PlayerAtGameEntity.Played = !pag.PlayerAtGameEntity.Played;
-
-        // Add / remove transactions if played / not played
-        if (pag.PlayerAtGameEntity.Played)
-        {
-            playedButtonLabel = "Played";
-            playedButtonCss = "active";
-
-            var transaction = new TransactionEntity()
-            {
-                PlayerRowKey = pag.PlayerAtGameEntity.PlayerRowKey,
-                Amount = -player.PlayerEntity.DefaultRate,
-                Date = DateTimeOffset.UtcNow,
-                Notes = TransactionService.GetNotesForGame(pag.PlayerAtGameEntity.GameRowKey)
-            };
-            await TransactionService.UpsertTransactionEntity(transaction);
-        }
-        else
-        {
-            playedButtonLabel = "Not Played";
-            playedButtonCss = "";
-
-            // Get debit transactions (less than £0) for player and game
-            var pagDebitTransactionEntities = player.Transactions
-                .Where(o => o.Amount < 0);
-            foreach (var pagDebitTransactionEntity in pagDebitTransactionEntities)
-            {
-                await TransactionService.DeleteTransactionEntity(pagDebitTransactionEntity.RowKey);
-            }
-        }
-
-        // Upsert pag
-        await GameService.UpsertPlayerAtGameEntity(pag.PlayerAtGameEntity);
-
+        await GameService.TogglePlayerAtGamePlayed(pag.PlayerAtGameEntity);
         await RefreshData();
     }
 
@@ -111,6 +75,17 @@
 
     async Task RefreshData()
     {
+        // Add / remove transactions if played / not played
+        if (pag.PlayerAtGameEntity.Played)
+        {
+            playedButtonLabel = "Played";
+            playedButtonCss = "active";
+        }
+        else
+        {
+            playedButtonLabel = "Not Played";
+            playedButtonCss = "";
+        }
         var game = await GameService.GetGame(pag.GameEntity.RowKey);
         pag = game.PlayersAtGame.Single(o => o.Player.PlayerEntity.RowKey == pag.Player.PlayerEntity.RowKey);
         await RefreshMainPage.InvokeAsync();

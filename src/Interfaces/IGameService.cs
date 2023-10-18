@@ -60,5 +60,11 @@ namespace STO.Interfaces
         /// <param name="pag">The PlayerAtGame collection to assign teams to.</param> 
         /// <returns>PlayerAtGame with team details.</returns>   
         public Task<List<PlayerAtGame>> CalculateTeams(List<PlayerAtGame> pags);
+
+        /// <summary>
+        /// Toggles whether a player has played at a game or not and creates/removes trasnactions.
+        /// </summary>
+        /// <param name="pag">The PlayerAtGame to toggle the Played property for.</param>  
+        public Task TogglePlayerAtGamePlayed(PlayerAtGameEntity pag);
     }
 }

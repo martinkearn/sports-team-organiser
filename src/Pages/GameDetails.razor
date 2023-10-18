@@ -115,10 +115,11 @@ else
 </table>
 
 <div class="modal-footer px-0">
-    <a class="btn btn-secondary" href="/games/"><i class="fa-solid fa-arrow-left"></i>All Games</a>
     <button type="button" class="btn btn-outline-secondary" data-bs-toggle="button" @onclick="() => ToggleSimpleView()"><i class="fa-solid fa-sliders"></i> Advanced View</button>
+    <a class="btn btn-secondary" href="/games/"><i class="fa-solid fa-arrow-left"></i>All Games</a>
     <AuthorizeView Policy="IsAdminEmail">
         <Authorized>
+            <button class="btn btn-secondary" @onclick="MarkAllPLayed"><i class="fa-solid fa-list-check"></i> Mark all as played</button> 
             <button class="btn btn-secondary" @onclick="CalculateTeams"><i class="fa-solid fa-gear"></i> Calculate Teams</button> 
         </Authorized>
     </AuthorizeView>
@@ -165,6 +166,11 @@ else
             .ToList();
 
         await RefreshData();
+    }
+
+    async Task MarkAllPLayed()
+    {
+
     }
 
     async Task RefreshData()

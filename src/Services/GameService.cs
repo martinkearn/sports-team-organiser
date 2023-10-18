@@ -121,6 +121,40 @@ namespace STO.Services
             return newPags;
         }    
 
+        public async Task TogglePlayerAtGamePlayed(PlayerAtGameEntity pag)
+        {
+            // Get player for pag
+            var player = _playerService.GetPlayer(pag.PlayerRowKey);
+
+            pag.Played = !pag.Played;
+
+            // Add / remove transactions if played / not played
+            if (pag.Played)
+            {
+                var transaction = new TransactionEntity()
+                {
+                    PlayerRowKey = pag.PlayerRowKey,
+                    Amount = -player.PlayerEntity.DefaultRate,
+                    Date = DateTimeOffset.UtcNow,
+                    Notes = _transactionService.GetNotesForGame(pag.GameRowKey)
+                };
+                await _transactionService.UpsertTransactionEntity(transaction);
+            }
+            else
+            {
+                // Get debit transactions (less than £0) for player and game
+                var pagDebitTransactionEntities = player.Transactions
+                    .Where(o => o.Amount < 0);
+                foreach (var pagDebitTransactionEntity in pagDebitTransactionEntities)
+                {
+                    await _transactionService.DeleteTransactionEntity(pagDebitTransactionEntity.RowKey);
+                }
+            }
+
+            // Upsert pag
+            await UpsertPlayerAtGameEntity(pag);
+        }
+
         private Task<List<Game>> GameEntitiesToGames(List<GameEntity> gameEntities)
         {
             var games = new List<Game>();

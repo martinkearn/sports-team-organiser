@@ -37,22 +37,24 @@
     </Authorized>
 </AuthorizeView>
 
+<p>@FooValue</p>
+
 <h5>Team A - @game.TeamA.Count()</h5>
 @if (isSimpleView)
 {
     @foreach (var pag in game.TeamA)
     {
-        <PagRow pag="@pag" RefreshMainPage="RefreshData" />
+        <PagRow pag="@pag" RefreshMainPage="RefreshGameData" />
     }
 }
 else
 {
     <table class="table table-striped">
         <tbody>
-            @foreach (var pag in game.TeamA)
+            @foreach (var pag in game.TeamB)
             {
                 <tr><td>
-                    <PagRow pag="@pag" RefreshMainPage="RefreshData" />
+                    <PagRow pag="@pag" RefreshMainPage="RefreshGameData" />
                 </td></tr>
             }
         </tbody>
@@ -64,7 +66,7 @@ else
 {
     @foreach (var pag in game.TeamB)
     {
-        <PagRow pag="@pag" RefreshMainPage="RefreshData" />
+        <PagRow pag="@pag" RefreshMainPage="RefreshGameData" />
     }
 }
 else
@@ -74,7 +76,7 @@ else
             @foreach (var pag in game.TeamB)
             {
                 <tr><td>
-                    <PagRow pag="@pag" RefreshMainPage="RefreshData" />
+                    <PagRow pag="@pag" RefreshMainPage="RefreshGameData" />
                 </td></tr>
             }
         </tbody>
@@ -86,7 +88,7 @@ else
 {
     @foreach (var pag in game.PlayersAtGame.Where(o => string.IsNullOrEmpty(o.PlayerAtGameEntity.Team)))
     {
-        <PagRow pag="@pag" RefreshMainPage="RefreshData" />
+        <PagRow pag="@pag" RefreshMainPage="RefreshGameData" />
     }
 }
 else
@@ -96,7 +98,7 @@ else
             @foreach (var pag in game.PlayersAtGame.Where(o => string.IsNullOrEmpty(o.PlayerAtGameEntity.Team)))
             {
                 <tr><td>
-                    <PagRow pag="@pag" RefreshMainPage="RefreshData" />
+                    <PagRow pag="@pag" RefreshMainPage="RefreshGameData" />
                 </td></tr>
             }
         </tbody>
@@ -108,7 +110,7 @@ else
         @foreach (var pag in game.PlayersAtGame.Where(o => string.IsNullOrEmpty(o.PlayerAtGameEntity.Team)))
         {
             <tr><td>
-                <PagRow pag="@pag" RefreshMainPage="RefreshData" />
+                <PagRow pag="@pag" RefreshMainPage="RefreshGameData" />
             </td></tr>
         }
     </tbody>
@@ -139,20 +141,23 @@ else
 
     private bool isSimpleView;
 
+    private string FooValue;
+
     protected override async Task OnInitializedAsync()
     {
-        await RefreshData();
+        await RefreshGameData();
     }
 
     private void ToggleSimpleView()
     {
         isSimpleView = !isSimpleView;
+        this.StateHasChanged();
     }
 
     private async Task AddPagEntity()
     {
         await GameService.UpsertPlayerAtGameEntity(newPagEntity);
-        await RefreshData();
+        await RefreshGameData();
     }
 
     async Task CalculateTeams()
@@ -165,20 +170,21 @@ else
             .Where(pag => pag.PlayerAtGameEntity.Team == "B")
             .ToList();
 
-        await RefreshData();
+        await RefreshGameData();
     }
 
-    async Task MarkAllPLayed()
+    private async Task MarkAllPLayed()
     {
         foreach (var pag in game.PlayersAtGame)
         {
-            await GameService.TogglePlayerAtGamePlayed(pag.PlayerAtGameEntity);
+            await GameService.TogglePlayerAtGamePlayed(pag.PlayerAtGameEntity, true);
         }
-        await RefreshData();
+        await RefreshGameData();
     }
 
-    async Task RefreshData()
+    async Task RefreshGameData()
     {
+        FooValue = DateTime.Now.ToLongTimeString();
         isSimpleView = true;
         players = PlayerService.GetPlayers();
         game = await GameService.GetGame(GameRowKey);
@@ -189,5 +195,6 @@ else
             Forecast = PlayingOptions.Yes.ToString(),
         };
         pageTitle = $"{game.GameEntity.Date.ToString("dd MMM yyyy")}";
+        this.StateHasChanged();
     }
 }

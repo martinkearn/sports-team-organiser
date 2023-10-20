@@ -40,9 +40,14 @@
     {
     }
 
-    protected override void OnInitialized()
+    protected async override Task OnInitializedAsync()
     {
-        // Add / remove transactions if played / not played
+        await RefreshData();
+    }
+
+    async Task TogglePlayed()
+    {
+        await GameService.TogglePlayerAtGamePlayed(pag.PlayerAtGameEntity, default);
         if (pag.PlayerAtGameEntity.Played)
         {
             playedButtonLabel = "Played";
@@ -53,12 +58,7 @@
             playedButtonLabel = "Not Played";
             playedButtonCss = "";
         }
-    }
-
-    async Task TogglePlayed()
-    {
-        await GameService.TogglePlayerAtGamePlayed(pag.PlayerAtGameEntity);
-        await RefreshData();
+        await RefreshMainPage.InvokeAsync();
     }
 
     async Task SwitchPagTeam()
@@ -76,7 +76,7 @@
             pag.PlayerAtGameEntity.Team = "A";
         }
         await GameService.UpsertPlayerAtGameEntity(pag.PlayerAtGameEntity);
-        await RefreshData();
+        await RefreshMainPage.InvokeAsync();
     }
 
     private async Task AddTransactionForPlayer(double amount)
@@ -89,12 +89,11 @@
             Amount = amount
         };
         await TransactionService.UpsertTransactionEntity(newTransactionEntityForPag);
-        await RefreshData();
+        await RefreshMainPage.InvokeAsync();
     }
 
     async Task RefreshData()
     {
-        // Add / remove transactions if played / not played
         if (pag.PlayerAtGameEntity.Played)
         {
             playedButtonLabel = "Played";

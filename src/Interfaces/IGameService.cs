@@ -65,6 +65,6 @@ namespace STO.Interfaces
         /// Toggles whether a player has played at a game or not and creates/removes trasnactions.
         /// </summary>
         /// <param name="pag">The PlayerAtGame to toggle the Played property for.</param>  
-        public Task TogglePlayerAtGamePlayed(PlayerAtGameEntity pag);
+        public Task TogglePlayerAtGamePlayed(PlayerAtGameEntity pag, bool? played);
     }
 }

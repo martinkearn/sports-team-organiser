@@ -1,0 +1,15 @@
+<span>@Val</span><button class="btn btn-outline-secondary" @onclick="() => CallParent()">Call parent</button>
+
+@code
+{
+    [Parameter]
+    public string Val { get; set; }
+
+    [Parameter]
+    public EventCallback ParentPageCallback { get; set; }
+
+    protected async Task CallParent()
+    {
+        await ParentPageCallback.InvokeAsync();
+    }
+}

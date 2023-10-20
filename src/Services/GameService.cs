@@ -1,3 +1,5 @@
+using Azure;
+
 namespace STO.Services
 {
     /// <inheritdoc/>
@@ -121,12 +123,19 @@ namespace STO.Services
             return newPags;
         }    
 
-        public async Task TogglePlayerAtGamePlayed(PlayerAtGameEntity pag)
+        public async Task TogglePlayerAtGamePlayed(PlayerAtGameEntity pag, bool? played)
         {
             // Get player for pag
             var player = _playerService.GetPlayer(pag.PlayerRowKey);
 
-            pag.Played = !pag.Played;
+            if (played != default)
+            {
+                pag.Played = (bool)played;
+            }
+            else
+            {
+                pag.Played = !pag.Played;
+            }
 
             // Add / remove transactions if played / not played
             if (pag.Played)

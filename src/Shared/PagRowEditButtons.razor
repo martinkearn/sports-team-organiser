@@ -4,12 +4,10 @@
 
 <AuthorizeView Policy="IsAdminEmail">
     <Authorized>
-        <div class="text-end">
-            <button type="button" class="btn btn-outline-secondary btn-sm @playedButtonCss d-none d-lg-inline" data-bs-toggle="button" @onclick="() => TogglePlayed()">@playedButtonLabel</button>
-            <button class="btn btn-outline-secondary btn-sm d-none d-lg-inline" @onclick="() => SwitchPagTeam()">@pag.PlayerAtGameEntity.Team <i class="fa-solid fa-repeat"></i></button>
-            <button class="btn btn-outline-secondary btn-sm d-none d-lg-inline" @onclick="() => AddTransactionForPlayer(pag.Player.PlayerEntity.DefaultRate)"><i class="fa-solid fa-plus"></i> £@pag.Player.PlayerEntity.DefaultRate</button>
-            <a type="button" class="btn btn-outline-secondary btn-sm d-inline" href="/pags/@pag.PlayerAtGameEntity.RowKey"><i class="fa-solid fa-edit"></i> Edit</a>
-        </div>
+        <button type="button" class="btn btn-outline-secondary btn-sm @playedButtonCss d-none d-lg-inline" data-bs-toggle="button" @onclick="() => TogglePlayed()">@playedButtonLabel</button>
+        <button class="btn btn-outline-secondary btn-sm d-none d-lg-inline" @onclick="() => SwitchPagTeam()">@pag.PlayerAtGameEntity.Team <i class="fa-solid fa-repeat"></i></button>
+        <button class="btn btn-outline-secondary btn-sm d-none d-lg-inline" @onclick="() => AddTransactionForPlayer(pag.Player.PlayerEntity.DefaultRate)"><i class="fa-solid fa-plus"></i> £@pag.Player.PlayerEntity.DefaultRate</button>
+        <a type="button" class="btn btn-outline-secondary btn-sm d-inline" href="/pags/@pag.PlayerAtGameEntity.RowKey"><i class="fa-solid fa-edit"></i> Edit</a>
     </Authorized>
 </AuthorizeView>
 
@@ -22,10 +20,6 @@
 
     private string playedButtonLabel = "Not Played";
     private string playedButtonCss = "";
-
-    protected override async Task OnParametersSetAsync()
-    {
-    }
 
     protected async override Task OnInitializedAsync()
     {

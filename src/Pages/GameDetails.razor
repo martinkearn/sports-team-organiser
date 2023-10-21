@@ -121,7 +121,6 @@ else
     <a class="btn btn-secondary" href="/games/"><i class="fa-solid fa-arrow-left"></i>All Games</a>
     <AuthorizeView Policy="IsAdminEmail">
         <Authorized>
-            <button class="btn btn-secondary" @onclick="MarkAllPLayed"><i class="fa-solid fa-list-check"></i> Mark all as played</button> 
             <button class="btn btn-secondary" @onclick="CalculateTeams"><i class="fa-solid fa-gear"></i> Calculate Teams</button> 
         </Authorized>
     </AuthorizeView>
@@ -170,15 +169,6 @@ else
             .Where(pag => pag.PlayerAtGameEntity.Team == "B")
             .ToList();
 
-        await RefreshGameData();
-    }
-
-    private async Task MarkAllPLayed()
-    {
-        foreach (var pag in game.PlayersAtGame)
-        {
-            await GameService.TogglePlayerAtGamePlayed(pag.PlayerAtGameEntity, true);
-        }
         await RefreshGameData();
     }
 

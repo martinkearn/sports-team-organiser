@@ -1,0 +1,93 @@
+@inject IPlayerService PlayerService
+@inject IGameService GameService
+@inject ITransactionService TransactionService
+
+<AuthorizeView Policy="IsAdminEmail">
+    <Authorized>
+        <button type="button" class="btn btn-outline-secondary btn-sm @playedButtonCss d-none d-lg-inline" data-bs-toggle="button" @onclick="() => TogglePlayed()">@playedButtonLabel</button>
+        <button class="btn btn-outline-secondary btn-sm d-none d-lg-inline" @onclick="() => SwitchPagTeam()">@pag.PlayerAtGameEntity.Team <i class="fa-solid fa-repeat"></i></button>
+        <button class="btn btn-outline-secondary btn-sm d-none d-lg-inline" @onclick="() => AddTransactionForPlayer(pag.Player.PlayerEntity.DefaultRate)"><i class="fa-solid fa-plus"></i> £@pag.Player.PlayerEntity.DefaultRate</button>
+        <a type="button" class="btn btn-outline-secondary btn-sm d-inline" href="/pags/@pag.PlayerAtGameEntity.RowKey"><i class="fa-solid fa-edit"></i> Edit</a>
+    </Authorized>
+</AuthorizeView>
+
+@code {
+    [Parameter]
+    public PlayerAtGame pag { get; set; }
+
+    [Parameter]
+    public EventCallback RefreshMainPage { get; set; }
+
+    private string playedButtonLabel = "Not Played";
+    private string playedButtonCss = "";
+
+    protected async override Task OnInitializedAsync()
+    {
+        await RefreshData();
+    }
+
+    async Task TogglePlayed()
+    {
+        await GameService.TogglePlayerAtGamePlayed(pag.PlayerAtGameEntity, default);
+        if (pag.PlayerAtGameEntity.Played)
+        {
+            playedButtonLabel = "Played";
+            playedButtonCss = "active";
+        }
+        else
+        {
+            playedButtonLabel = "Not Played";
+            playedButtonCss = "";
+        }
+        await RefreshMainPage.InvokeAsync();
+    }
+
+    async Task SwitchPagTeam()
+    {
+        if (pag.PlayerAtGameEntity.Team == "A")
+        {
+            pag.PlayerAtGameEntity.Team = "B";
+        }
+        else if (pag.PlayerAtGameEntity.Team == "B")
+        {
+            pag.PlayerAtGameEntity.Team = "";
+        }
+        else
+        {
+            pag.PlayerAtGameEntity.Team = "A";
+        }
+        await GameService.UpsertPlayerAtGameEntity(pag.PlayerAtGameEntity);
+        await RefreshMainPage.InvokeAsync();
+    }
+
+    private async Task AddTransactionForPlayer(double amount)
+    {
+        var newTransactionEntityForPag = new TransactionEntity()
+        {
+            Date = DateTimeOffset.UtcNow,
+            Notes = TransactionService.GetNotesForGame(pag.GameEntity.RowKey),
+            PlayerRowKey = pag.Player.PlayerEntity.RowKey,
+            Amount = amount
+        };
+        await TransactionService.UpsertTransactionEntity(newTransactionEntityForPag);
+        await RefreshMainPage.InvokeAsync();
+    }
+
+    async Task RefreshData()
+    {
+        if (pag.PlayerAtGameEntity.Played)
+        {
+            playedButtonLabel = "Played";
+            playedButtonCss = "active";
+        }
+        else
+        {
+            playedButtonLabel = "Not Played";
+            playedButtonCss = "";
+        }
+        var game = await GameService.GetGame(pag.GameEntity.RowKey);
+        pag = game.PlayersAtGame.Single(o => o.Player.PlayerEntity.RowKey == pag.Player.PlayerEntity.RowKey);
+        await RefreshMainPage.InvokeAsync();
+    }
+
+}

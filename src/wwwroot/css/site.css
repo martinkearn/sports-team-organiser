@@ -81,6 +81,10 @@ a, .btn-link {
     margin-bottom: 1rem;
 }
 
+.modal-footer {
+    border: none;
+}
+
 #components-reconnect-modal {
     display: none;
     color: white;

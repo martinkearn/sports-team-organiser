@@ -8,7 +8,7 @@
 
 <h1><i class="fa-solid fa-people-group me-2"></i> @pageTitle</h1>
 
-<p>@game.PlayersAtGame.Where(p => p.PlayerAtGameEntity.Forecast == PlayingOptions.Yes.ToString()).Count() yes, @game.PlayersAtGame.Where(p => p.PlayerAtGameEntity.Forecast == PlayingOptions.Maybe.ToString()).Count() maybe, @game.PlayersAtGame.Where(p => p.PlayerAtGameEntity.Played == true).Count() actual</p>
+<p>@game.PlayersAtGame.Where(p => p.PlayerAtGameEntity.Forecast == PlayingOptions.Yes.ToString()).Count() yes, @game.PlayersAtGame.Where(p => p.PlayerAtGameEntity.Forecast == PlayingOptions.Maybe.ToString()).Count() maybe, @game.PlayersAtGame.Where(p => p.PlayerAtGameEntity.Played == true).Count() actual. Team A @game.TeamA.Count(), Team B, @game.TeamB.Count().</p>
 
 <AuthorizeView Policy="IsAdminEmail">
     <Authorized>
@@ -37,87 +37,47 @@
     </Authorized>
 </AuthorizeView>
 
-<p>@FooValue</p>
-
-<h5>Team A - @game.TeamA.Count()</h5>
-@if (isSimpleView)
-{
-    @foreach (var pag in game.TeamA)
-    {
-        <PagRow pag="@pag" RefreshMainPage="RefreshGameData" />
-    }
-}
-else
-{
-    <table class="table table-striped">
-        <tbody>
-            @foreach (var pag in game.TeamB)
-            {
-                <tr><td>
-                    <PagRow pag="@pag" RefreshMainPage="RefreshGameData" />
-                </td></tr>
-            }
-        </tbody>
-    </table>
-}
-
-<h5>Team B - @game.TeamB.Count() (wear bibs)</h5>
-@if (isSimpleView)
-{
-    @foreach (var pag in game.TeamB)
-    {
-        <PagRow pag="@pag" RefreshMainPage="RefreshGameData" />
-    }
-}
-else
-{
-    <table class="table table-striped">
-        <tbody>
-            @foreach (var pag in game.TeamB)
-            {
-                <tr><td>
-                    <PagRow pag="@pag" RefreshMainPage="RefreshGameData" />
-                </td></tr>
-            }
-        </tbody>
-    </table>
-}
-
-<h5>No team assigned</h5>
-@if (isSimpleView)
-{
-    @foreach (var pag in game.PlayersAtGame.Where(o => string.IsNullOrEmpty(o.PlayerAtGameEntity.Team)))
-    {
-        <PagRow pag="@pag" RefreshMainPage="RefreshGameData" />
-    }
-}
-else
-{
-    <table class="table table-striped">
-        <tbody>
-            @foreach (var pag in game.PlayersAtGame.Where(o => string.IsNullOrEmpty(o.PlayerAtGameEntity.Team)))
-            {
-                <tr><td>
-                    <PagRow pag="@pag" RefreshMainPage="RefreshGameData" />
-                </td></tr>
-            }
-        </tbody>
-    </table>
-}
-
-<table class="table table-striped">
+<table class="table table-sm table-borderless">
+    <thead>
+        <tr>
+            <th scope="col">Team</th>
+            <th scope="col">Player</th>
+        </tr>
+    </thead>
     <tbody>
+        @foreach (var pag in game.TeamA)
+        {
+            <tr>
+                <td>A</td>
+                <td>
+                    <PagRow pag="@pag" RefreshMainPage="RefreshGameData" />
+                </td>
+            </tr>
+        }
+        <tr><td colspan="2"><hr></td></tr>
+        @foreach (var pag in game.TeamB)
+        {
+            <tr>
+                <td>B</td>
+                <td>
+                    <PagRow pag="@pag" RefreshMainPage="RefreshGameData" />
+                </td>
+            </tr>
+        }
+        <tr><td colspan="2"><hr></td></tr>
         @foreach (var pag in game.PlayersAtGame.Where(o => string.IsNullOrEmpty(o.PlayerAtGameEntity.Team)))
         {
-            <tr><td>
-                <PagRow pag="@pag" RefreshMainPage="RefreshGameData" />
-            </td></tr>
+            <tr>
+                <td>None</td>
+                <td>
+                    <PagRow pag="@pag" RefreshMainPage="RefreshGameData" />
+                </td>
+            </tr>
         }
     </tbody>
 </table>
 
 <div class="modal-footer px-0">
-    <button type="button" class="btn btn-outline-secondary" data-bs-toggle="button" @onclick="() => ToggleSimpleView()"><i class="fa-solid fa-sliders"></i> Advanced View</button>
     <a class="btn btn-secondary" href="/games/"><i class="fa-solid fa-arrow-left"></i>All Games</a>
     <AuthorizeView Policy="IsAdminEmail">
         <Authorized>
@@ -138,19 +98,9 @@ else
 
     private string pageTitle;
 
-    private bool isSimpleView;
-
-    private string FooValue;
-
     protected override async Task OnInitializedAsync()
     {
         await RefreshGameData();
-    }
-
-    private void ToggleSimpleView()
-    {
-        isSimpleView = !isSimpleView;
-        this.StateHasChanged();
     }
 
     private async Task AddPagEntity()
@@ -174,8 +124,6 @@ else
 
     async Task RefreshGameData()
     {
-        FooValue = DateTime.Now.ToLongTimeString();
-        isSimpleView = true;
         players = PlayerService.GetPlayers();
         game = await GameService.GetGame(GameRowKey);
         newPagEntity = new PlayerAtGameEntity()

@@ -1,0 +1,18 @@
+<span>
+    @TeamName has @Pags.Count players:
+    @foreach (var pos in Enum.GetValues(typeof(Enums.PlayerPosition)))
+    {
+        if (Pags.Where(o => o.Player.PlayerEntity.Position.ToString() == pos.ToString()).Count() > 0)
+        {
+            @Pags.Where(o => o.Player.PlayerEntity.Position.ToString() == pos.ToString()).Count() <span>@pos.ToString(). </span>
+        }
+    }
+</span>
+
+@code {
+    [Parameter]
+    public List<PlayerAtGame> Pags { get; set; }
+
+    [Parameter]
+    public string TeamName { get; set; }
+}

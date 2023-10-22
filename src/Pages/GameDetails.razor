@@ -74,7 +74,15 @@
                 </AuthorizeView>
             </tr>
         }
-        <tr><td colspan="3"><hr></td></tr>
+        @if (game.TeamA.Count > 0)
+        {
+            <tr>
+                <td colspan="3">
+                    <TeamPlayers Pags="game.TeamA" TeamName="Team A" />
+                    <hr>
+                </td>
+            </tr>
+        }
         @foreach (var pag in game.TeamB)
         {
             <tr>
@@ -99,7 +107,15 @@
                 </AuthorizeView>
             </tr>
         }
-        <tr><td colspan="3"><hr></td></tr>
+        @if (game.TeamB.Count > 0)
+        {
+            <tr>
+                <td colspan="3">
+                    <TeamPlayers Pags="game.TeamB" TeamName="Team B" />
+                    <hr>
+                </td>
+            </tr>
+        }
         @foreach (var pag in game.PlayersAtGame.Where(o => string.IsNullOrEmpty(o.PlayerAtGameEntity.Team)))
         {
             <tr>

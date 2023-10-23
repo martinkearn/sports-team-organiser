@@ -95,7 +95,7 @@
 
     async Task EditPlayed()
     {
-        await GameService.TogglePlayerAtGamePlayed(pag.PlayerAtGameEntity, !pag.PlayerAtGameEntity.Played);
+        await GameService.TogglePlayerAtGamePlayed(pag.PlayerAtGameEntity, pag.PlayerAtGameEntity.Played);
         await RefreshData();
     }
 

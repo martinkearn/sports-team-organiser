@@ -30,7 +30,7 @@
 
         <div class="mb-3">
             <label class="form-label">Played</label>
-            <InputSelect class="form-select" @bind-Value=pag.PlayerAtGameEntity.Played @bind-Value:after="() => Edit()" >
+            <InputSelect class="form-select" @bind-Value=pag.PlayerAtGameEntity.Played @bind-Value:after="() => EditPlayed()" >
                 <option value="true">Yes</option>
                 <option value="false">No</option>
             </InputSelect>
@@ -90,6 +90,13 @@
     async Task Edit()
     {
         await GameService.UpsertPlayerAtGameEntity(pag.PlayerAtGameEntity);
+        await RefreshData();
+    }
+
+    async Task EditPlayed()
+    {
+        await GameService.TogglePlayerAtGamePlayed(pag.PlayerAtGameEntity, !pag.PlayerAtGameEntity.Played);
+        await RefreshData();
     }
 
     async Task Delete()

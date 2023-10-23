@@ -19,11 +19,6 @@
         </ul>
 
         <div class="mb-3">
-            <label class="form-label">RowKey</label>
-            <span class="form-control-plaintext">@player.PlayerEntity.RowKey</span>
-        </div>
-
-        <div class="mb-3">
             <label class="form-label">Name</label>
             <InputText class="form-control" id="addName" @bind-Value="player.PlayerEntity.Name" @bind-Value:after="() => Edit()" />
         </div>

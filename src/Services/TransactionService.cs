@@ -11,12 +11,12 @@ namespace STO.Services
             _playerService = playerService;
         }
 
-        public async Task<List<Transaction>> GetTransactions(List<TransactionEntity> transactionEntities)
+        public List<Transaction> GetTransactions(List<TransactionEntity> transactionEntities)
         {
             return TransactionEntitiesToTransactions(transactionEntities);
         }
 
-        public async Task<List<Transaction>> GetTransactions()
+        public List<Transaction> GetTransactions()
         {
             var TransactionEntities = _storageService.QueryEntities<TransactionEntity>().ToList();
             return TransactionEntitiesToTransactions(TransactionEntities);
@@ -29,7 +29,7 @@ namespace STO.Services
 
         public async Task DeleteTransactionEntiesForPlayer(string playerRowKey)
         {
-            List<Transaction> allTransactions = await GetTransactions();
+            List<Transaction> allTransactions = GetTransactions();
             var playerTransactions = allTransactions.Where(o => o.Player.PlayerEntity.RowKey == playerRowKey).ToList();
             var playerTransactionRowkeys = playerTransactions.Select(e => e.TransactionEntity.RowKey).ToList();
             foreach (var t in playerTransactionRowkeys)
@@ -38,7 +38,7 @@ namespace STO.Services
             }
         }
 
-        public async Task<Transaction> GetTransaction(string rowKey)
+        public Transaction GetTransaction(string rowKey)
         {
             var transactionEntities = _storageService.QueryEntities<TransactionEntity>().Where(o => o.RowKey == rowKey).ToList();
             var transactions = TransactionEntitiesToTransactions(transactionEntities);

@@ -11,11 +11,6 @@
 <AuthorizeView Policy="IsAdminEmail">
     <Authorized>
         <div class="mb-3">
-            <label class="form-label">RowKey</label>
-            <span class="form-control-plaintext">@pag.PlayerAtGameEntity.RowKey</span>
-        </div>
-
-        <div class="mb-3">
             <label class="form-label">Player Name</label>
             <span class="form-control-plaintext"><a href="/players/@pag.Player.PlayerEntity.RowKey/player">@pag.Player.PlayerEntity.Name</a></span>
         </div>
@@ -35,7 +30,7 @@
 
         <div class="mb-3">
             <label class="form-label">Played</label>
-            <InputSelect class="form-select" @bind-Value=pag.PlayerAtGameEntity.Played @bind-Value:after="() => Edit()" >
+            <InputSelect class="form-select" @bind-Value=pag.PlayerAtGameEntity.Played @bind-Value:after="() => EditPlayed()" >
                 <option value="true">Yes</option>
                 <option value="false">No</option>
             </InputSelect>
@@ -95,6 +90,13 @@
     async Task Edit()
     {
         await GameService.UpsertPlayerAtGameEntity(pag.PlayerAtGameEntity);
+        await RefreshData();
+    }
+
+    async Task EditPlayed()
+    {
+        await GameService.TogglePlayerAtGamePlayed(pag.PlayerAtGameEntity, pag.PlayerAtGameEntity.Played);
+        await RefreshData();
     }
 
     async Task Delete()

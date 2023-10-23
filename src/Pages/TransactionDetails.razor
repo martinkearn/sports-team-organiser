@@ -49,14 +49,14 @@
 
     private string pageTitle;
 
-    protected override async Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
-        await RefreshData();
+        RefreshData();
     }
 
-    async Task RefreshData()
+    void RefreshData()
     {
-        transaction = await TransactionService.GetTransaction(TransactionRowKey);
+        transaction = TransactionService.GetTransaction(TransactionRowKey);
         pageTitle = $"{@transaction.Player.PlayerEntity.Name}, {@transaction.TransactionEntity.Date.Date.ToShortDateString()}";
     }
 }

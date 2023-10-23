@@ -11,11 +11,6 @@
 <AuthorizeView Policy="IsAdminEmail">
     <Authorized>
         <div class="mb-3">
-            <label class="form-label">RowKey</label>
-            <span class="form-control-plaintext">@pag.PlayerAtGameEntity.RowKey</span>
-        </div>
-
-        <div class="mb-3">
             <label class="form-label">Player Name</label>
             <span class="form-control-plaintext"><a href="/players/@pag.Player.PlayerEntity.RowKey/player">@pag.Player.PlayerEntity.Name</a></span>
         </div>

@@ -147,6 +147,7 @@
     <a class="btn btn-secondary" href="/games/"><i class="fa-solid fa-arrow-left"></i>All Games</a>
     <AuthorizeView Policy="IsAdminEmail">
         <Authorized>
+            <button class="btn btn-secondary" @onclick="ToggleAllPlayed"><i class="fa-solid fa-clipboard-list"></i> Toggle All Played</button> 
             <button class="btn btn-secondary" @onclick="CalculateTeams"><i class="fa-solid fa-gear"></i> Calculate Teams</button> 
         </Authorized>
     </AuthorizeView>
@@ -185,6 +186,15 @@
             .Where(pag => pag.PlayerAtGameEntity.Team == "B")
             .ToList();
 
+        await RefreshGameData();
+    }
+
+    async Task ToggleAllPlayed()
+    {
+        // Work out played or not played
+        int playedPagsCount = game.PlayersAtGame.Where(o => o.PlayerAtGameEntity.Played).Count();
+        bool played = (playedPagsCount == 0) ? true : false;
+        await GameService.MarkAllPlayed(game.GameEntity.RowKey, played);
         await RefreshGameData();
     }
 

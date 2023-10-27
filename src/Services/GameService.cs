@@ -121,13 +121,28 @@ namespace STO.Services
             newPags.OrderBy(o => o.Player.PlayerEntity.Name);
 
             return newPags;
-        }    
+        }   
 
-        public async Task TogglePlayerAtGamePlayed(PlayerAtGameEntity pag, bool? played)
+        public async Task MarkAllPlayed(string gameRowkey, bool played)
+        {
+            var game = await GetGame(gameRowkey);
+
+            var togglePlayedTasks = new List<Task>();
+            foreach (var pag in game.PlayersAtGame)
+            {
+                togglePlayedTasks.Add(TogglePlayerAtGamePlayed(pag.PlayerAtGameEntity, played));
+            }
+            await Task.WhenAll(togglePlayedTasks);
+        } 
+
+        public async Task TogglePlayerAtGamePlayed(PlayerAtGameEntity pag, bool played)
         {
             // Get player for pag
             var player = _playerService.GetPlayer(pag.PlayerRowKey);
 
+            // If played is set (not default) then set pag.Played to whatever played is. If played is default then toggle pag.Played
+
+            //ISSUE: Default is teh same as true .. need ot make it a nullable variable
             if (played != default)
             {
                 pag.Played = (bool)played;

@@ -62,9 +62,16 @@ namespace STO.Interfaces
         public Task<List<PlayerAtGame>> CalculateTeams(List<PlayerAtGame> pags);
 
         /// <summary>
+        /// Marks all players in a game as having played.
+        /// </summary>
+        /// <param name="gameRowkey">The RowKey for the GameEntities to update PlayerAtGame for.</param>
+        /// <param name="played">Inidicates whether all PlayerAtGame shoudl have played set to true or false.</param>
+        public Task MarkAllPlayed(string gameRowkey, bool played);
+
+        /// <summary>
         /// Toggles whether a player has played at a game or not and creates/removes trasnactions.
         /// </summary>
         /// <param name="pag">The PlayerAtGame to toggle the Played property for.</param>  
-        public Task TogglePlayerAtGamePlayed(PlayerAtGameEntity pag, bool? played);
+        public Task TogglePlayerAtGamePlayed(PlayerAtGameEntity pag, bool played);
     }
 }

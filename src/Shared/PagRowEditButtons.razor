@@ -28,7 +28,7 @@
 
     async Task TogglePlayed()
     {
-        await GameService.TogglePlayerAtGamePlayed(pag.PlayerAtGameEntity, default);
+        await GameService.TogglePlayerAtGamePlayed(pag.PlayerAtGameEntity, null);
         if (pag.PlayerAtGameEntity.Played)
         {
             playedButtonLabel = "Played";

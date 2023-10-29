@@ -4,9 +4,17 @@
 
 <AuthorizeView Policy="IsAdminEmail">
     <Authorized>
-        <button type="button" class="btn btn-outline-secondary btn-sm @playedButtonCss d-none d-lg-inline" data-bs-toggle="button" @onclick="() => TogglePlayed()">@playedButtonLabel</button>
-        <button class="btn btn-outline-secondary btn-sm d-none d-lg-inline" @onclick="() => SwitchPagTeam()">@pag.PlayerAtGameEntity.Team <i class="fa-solid fa-repeat"></i></button>
-        <button class="btn btn-outline-secondary btn-sm d-none d-lg-inline" @onclick="() => AddTransactionForPlayer(pag.Player.PlayerEntity.DefaultRate)"><i class="fa-solid fa-plus"></i> £@pag.Player.PlayerEntity.DefaultRate</button>
+        @if (pag.PlayerAtGameEntity.Played)
+        {
+            <button type="button" class="btn btn-outline-secondary btn-sm active d-none d-md-inline" @onclick="TogglePlayed"> Played</button>
+        }
+        else
+        {
+            <button type="button" class="btn btn-outline-secondary btn-sm d-none d-md-inline" @onclick="TogglePlayed"> Not Played</button>
+        }
+        <span></span>
+        <button type="button" class="btn btn-outline-secondary btn-sm d-none d-md-inline" @onclick="SwitchPagTeam">@pag.PlayerAtGameEntity.Team <i class="fa-solid fa-repeat"></i></button>
+        <button type="button" class="btn btn-outline-secondary btn-sm d-none d-lg-inline" @onclick="() => AddTransactionForPlayer(pag.Player.PlayerEntity.DefaultRate)"><i class="fa-solid fa-plus"></i> £@pag.Player.PlayerEntity.DefaultRate</button>
         <a type="button" class="btn btn-outline-secondary btn-sm d-inline" href="/pags/@pag.PlayerAtGameEntity.RowKey"><i class="fa-solid fa-edit"></i> Edit</a>
     </Authorized>
 </AuthorizeView>
@@ -18,8 +26,6 @@
     [Parameter]
     public EventCallback RefreshMainPage { get; set; }
 
-    private string playedButtonLabel = "Not Played";
-    private string playedButtonCss = "";
 
     protected async override Task OnInitializedAsync()
     {
@@ -28,17 +34,7 @@
 
     async Task TogglePlayed()
     {
-        await GameService.TogglePlayerAtGamePlayed(pag.PlayerAtGameEntity, default);
-        if (pag.PlayerAtGameEntity.Played)
-        {
-            playedButtonLabel = "Played";
-            playedButtonCss = "active";
-        }
-        else
-        {
-            playedButtonLabel = "Not Played";
-            playedButtonCss = "";
-        }
+        await GameService.TogglePlayerAtGamePlayed(pag.PlayerAtGameEntity, null);
         await RefreshMainPage.InvokeAsync();
     }
 
@@ -75,16 +71,6 @@
 
     async Task RefreshData()
     {
-        if (pag.PlayerAtGameEntity.Played)
-        {
-            playedButtonLabel = "Played";
-            playedButtonCss = "active";
-        }
-        else
-        {
-            playedButtonLabel = "Not Played";
-            playedButtonCss = "";
-        }
         var game = await GameService.GetGame(pag.GameEntity.RowKey);
         pag = game.PlayersAtGame.Single(o => o.Player.PlayerEntity.RowKey == pag.Player.PlayerEntity.RowKey);
         await RefreshMainPage.InvokeAsync();

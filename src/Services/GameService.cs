@@ -121,19 +121,33 @@ namespace STO.Services
             newPags.OrderBy(o => o.Player.PlayerEntity.Name);
 
             return newPags;
-        }    
+        }   
+
+        public async Task MarkAllPlayed(string gameRowkey, bool played)
+        {
+            var game = await GetGame(gameRowkey);
+
+            var togglePlayedTasks = new List<Task>();
+            foreach (var pag in game.PlayersAtGame)
+            {
+                togglePlayedTasks.Add(TogglePlayerAtGamePlayed(pag.PlayerAtGameEntity, played));
+            }
+            await Task.WhenAll(togglePlayedTasks);
+        } 
 
         public async Task TogglePlayerAtGamePlayed(PlayerAtGameEntity pag, bool? played)
         {
             // Get player for pag
             var player = _playerService.GetPlayer(pag.PlayerRowKey);
 
-            if (played != default)
+            if (played != null)
             {
+                // Set the pag value to what played is
                 pag.Played = (bool)played;
             }
             else
             {
+                // Just toggle te pag value
                 pag.Played = !pag.Played;
             }
 

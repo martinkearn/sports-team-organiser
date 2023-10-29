@@ -147,7 +147,7 @@
     <a class="btn btn-secondary" href="/games/"><i class="fa-solid fa-arrow-left"></i>All Games</a>
     <AuthorizeView Policy="IsAdminEmail">
         <Authorized>
-            <button class="btn btn-secondary" @onclick="ToggleAllPlayed"><i class="fa-solid fa-clipboard-list"></i> Toggle All Played</button> 
+            <button class="btn btn-secondary" @onclick="ToggleAllPlayed"><i class="fa-solid fa-clipboard-list"></i> @MarkAllPlayedLabel</button> 
             <button class="btn btn-secondary" @onclick="CalculateTeams"><i class="fa-solid fa-gear"></i> Calculate Teams</button> 
         </Authorized>
     </AuthorizeView>
@@ -164,6 +164,8 @@
     private PlayerAtGameEntity newPagEntity;
 
     private string pageTitle;
+
+    private string MarkAllPlayedLabel;
 
     protected override async Task OnInitializedAsync()
     {
@@ -191,12 +193,17 @@
 
     async Task ToggleAllPlayed()
     {
-        // Work out played or not played
-        int playedPagsCount = game.PlayersAtGame.Where(o => o.PlayerAtGameEntity.Played).Count();
-        bool played = (playedPagsCount == 0) ? true : false;
+        var played = MarkAsPLayedOrNotPLayed();
         await GameService.MarkAllPlayed(game.GameEntity.RowKey, played);
         await RefreshGameData();
     }
+
+    private bool MarkAsPLayedOrNotPLayed()
+    {
+        int playedPagsCount = game.PlayersAtGame.Where(o => o.PlayerAtGameEntity.Played).Count();
+        bool played = (playedPagsCount == 0) ? true : false;
+        return played;
+    } 
 
     async Task RefreshGameData()
     {
@@ -209,6 +216,11 @@
             Forecast = PlayingOptions.Yes.ToString(),
         };
         pageTitle = $"{game.GameEntity.Date.ToString("dd MMM yyyy")}";
+        
+        // Set played button label
+        var played = MarkAsPLayedOrNotPLayed();
+        MarkAllPlayedLabel = (played) ? "Mark all as played": "Mark all as not played";
+        
         this.StateHasChanged();
     }
 }

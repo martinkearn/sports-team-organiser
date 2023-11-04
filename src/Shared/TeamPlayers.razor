@@ -1,5 +1,5 @@
 <span>
-    @TeamName has @Pags.Count players:
+    @TeamName has @Pags.Count players and a rating of @Pags.Sum(o => o.Player.PlayerEntity.AdminRating):
     @foreach (var pos in Enum.GetValues(typeof(Enums.PlayerPosition)))
     {
         if (Pags.Where(o => o.Player.PlayerEntity.Position.ToString() == pos.ToString()).Count() > 0)

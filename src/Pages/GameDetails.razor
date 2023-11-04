@@ -64,6 +64,11 @@
                         </NotAuthorized>
                     </AuthorizeView>
                     <PlayingForecastIcon Forecast="@pag.PlayerAtGameEntity.Forecast" /> <PositionIcon Position="pag.Player.PlayerEntity.Position" /> <RagIcon Pag="@pag" />
+                    <AuthorizeView Policy="IsAdminEmail">
+                        <Authorized>
+                            <span>@pag.Player.PlayerEntity.AdminRating</span>
+                        </Authorized>
+                    </AuthorizeView>
                 </td>
                 <AuthorizeView Policy="IsAdminEmail">
                     <Authorized>
@@ -97,6 +102,11 @@
                         </NotAuthorized>
                     </AuthorizeView>
                     <PlayingForecastIcon Forecast="@pag.PlayerAtGameEntity.Forecast" /> <PositionIcon Position="pag.Player.PlayerEntity.Position" /> <RagIcon Pag="@pag" />
+                    <AuthorizeView Policy="IsAdminEmail">
+                        <Authorized>
+                            <span>@pag.Player.PlayerEntity.AdminRating</span>
+                        </Authorized>
+                    </AuthorizeView>
                 </td>
                 <AuthorizeView Policy="IsAdminEmail">
                     <Authorized>
@@ -130,6 +140,11 @@
                         </NotAuthorized>
                     </AuthorizeView>
                     <PlayingForecastIcon Forecast="@pag.PlayerAtGameEntity.Forecast" /> <PositionIcon Position="pag.Player.PlayerEntity.Position" /> <RagIcon Pag="@pag" />
+                    <AuthorizeView Policy="IsAdminEmail">
+                        <Authorized>
+                            <span>@pag.Player.PlayerEntity.AdminRating</span>
+                        </Authorized>
+                    </AuthorizeView>
                 </td>
                 <AuthorizeView Policy="IsAdminEmail">
                     <Authorized>

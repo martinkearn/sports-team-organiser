@@ -10,7 +10,7 @@
 
 <p>@game.PlayersAtGame.Where(p => p.PlayerAtGameEntity.Forecast == PlayingOptions.Yes.ToString()).Count() yes, @game.PlayersAtGame.Where(p => p.PlayerAtGameEntity.Forecast == PlayingOptions.Maybe.ToString()).Count() maybe, @game.PlayersAtGame.Where(p => p.PlayerAtGameEntity.Played == true).Count() actual. Team A has @game.TeamA.Count(), Team B has @game.TeamB.Count().</p>
 
-<span class="fa-stack">
+@* <span class="fa-stack">
     <i class="fa-regular fa-circle fa-stack-2x"></i>
     <i class="fa-solid fa-5 fa-stack-1x"></i>
 </span>
@@ -18,7 +18,9 @@
 <span class="fa-stack">
     <i class="fa-solid fa-star fa-stack-2x"></i>
     <i class="fa-solid fa-5 fa-stack-1x fa-inverse"></i>
-</span>
+</span> *@
+
+
 
 
 <AuthorizeView Policy="IsAdminEmail">
@@ -77,7 +79,7 @@
                     <PlayingForecastIcon Forecast="@pag.PlayerAtGameEntity.Forecast" /> <PositionIcon Position="pag.Player.PlayerEntity.Position" /> <RagIcon Pag="@pag" />
                     <AuthorizeView Policy="IsAdminEmail">
                         <Authorized>
-                            <span>@pag.Player.PlayerEntity.AdminRating</span>
+                            <RatingNumberIcon Rating=@pag.Player.PlayerEntity.AdminRating />
                         </Authorized>
                     </AuthorizeView>
                 </td>
@@ -115,7 +117,7 @@
                     <PlayingForecastIcon Forecast="@pag.PlayerAtGameEntity.Forecast" /> <PositionIcon Position="pag.Player.PlayerEntity.Position" /> <RagIcon Pag="@pag" />
                     <AuthorizeView Policy="IsAdminEmail">
                         <Authorized>
-                            <span>@pag.Player.PlayerEntity.AdminRating</span>
+                            <RatingNumberIcon Rating=@pag.Player.PlayerEntity.AdminRating />
                         </Authorized>
                     </AuthorizeView>
                 </td>
@@ -153,7 +155,7 @@
                     <PlayingForecastIcon Forecast="@pag.PlayerAtGameEntity.Forecast" /> <PositionIcon Position="pag.Player.PlayerEntity.Position" /> <RagIcon Pag="@pag" />
                     <AuthorizeView Policy="IsAdminEmail">
                         <Authorized>
-                            <span>@pag.Player.PlayerEntity.AdminRating</span>
+                            <RatingNumberIcon Rating=@pag.Player.PlayerEntity.AdminRating />
                         </Authorized>
                     </AuthorizeView>
                 </td>

@@ -19,6 +19,7 @@
                     <th scope="col">Name</th>
                     <th scope="col" class="d-none d-lg-table-cell">Position</th>
                     <th scope="col" class="d-none d-lg-table-cell">Rate</th>
+                    <th scope="col" class="d-none d-lg-table-cell">Admin Rating</th>
                     <th scope="col">Balance</th>
                 </tr>
             </thead>
@@ -29,6 +30,7 @@
                         <td><a href="/players/@player.PlayerEntity.RowKey/player">@player.PlayerEntity.Name</a></td>
                         <td class="d-none d-lg-table-cell">@player.PlayerEntity.Position</td>
                         <td class="d-none d-lg-table-cell"><CurrencyDisplay Amount="@player.PlayerEntity.DefaultRate" BlackText="true" /></td>
+                        <td class="d-none d-lg-table-cell">@player.PlayerEntity.AdminRating</td>
                         <td><CurrencyDisplay Amount="@player.Balance" /></td>
                     </tr>
                 }

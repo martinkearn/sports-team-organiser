@@ -10,6 +10,7 @@ namespace STO.Models
         public string Tags { get; set; }
         public Enums.PlayerPosition Position { get; set; }
         public double DefaultRate { get; set; } = default!;
+        public int AdminRating { get; set; } = default!;
         public string PartitionKey { get; set; } = default!;
         public string RowKey { get; set; } = default!;
         public DateTimeOffset? Timestamp { get; set; } = DateTimeOffset.UtcNow!;

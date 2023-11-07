@@ -95,7 +95,7 @@ namespace STO.Services
             var rng = new Random();
             var yesPags = pags
                 .Where(o => o.PlayerAtGameEntity.Forecast.ToLowerInvariant() == "yes")
-                .OrderBy(a => rng.Next()).ToList();
+                .OrderBy(o => o.Player.PlayerEntity.AdminRating).ToList();
             var nextTeamToGetPag = "A";
 
             foreach (var position in Enum.GetNames(typeof(Enums.PlayerPosition)))

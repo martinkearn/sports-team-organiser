@@ -2,14 +2,14 @@
     @{
         double teamAverageAdminRating = (double)Pags.Sum(o => o.Player.PlayerEntity.AdminRating) / Pags.Count;
     }
-    @TeamName has @Pags.Count players and a rating of @teamAverageAdminRating.ToString("#.#")/5:
-    @foreach (var pos in Enum.GetValues(typeof(Enums.PlayerPosition)))
+    @TeamName has @Pags.Count players and a rating of @teamAverageAdminRating.ToString("#.#")
+@*     @foreach (var pos in Enum.GetValues(typeof(Enums.PlayerPosition)))
     {
         if (Pags.Where(o => o.Player.PlayerEntity.Position.ToString() == pos.ToString()).Count() > 0)
         {
             <PositionIcon Position=(Enums.PlayerPosition)pos /><span> x @Pags.Where(o => o.Player.PlayerEntity.Position.ToString() == pos.ToString()).Count() </span>
         }
-    }
+    } *@
 </span>
 
 @code {

@@ -2,6 +2,7 @@
 {
     <i class="@css red-text"></i>
 }
+
 @code {
     [Parameter]
     public string Forecast { get; set; }
@@ -23,6 +24,30 @@
         if (Forecast.ToLowerInvariant() == "maybe")
         {
             css = "fa-solid fa-question";
+        }        
+        if (Forecast.ToLowerInvariant() == "no")
+        {
+            css = "fa-solid fa-xmark";
+        }
+        if (Forecast.ToLowerInvariant() == "reserve1")
+        {
+            css = "fa-solid fa-1";
+        }        
+        if (Forecast.ToLowerInvariant() == "reserve2")
+        {
+            css = "fa-solid fa-2";
+        }        
+        if (Forecast.ToLowerInvariant() == "reserve3")
+        {
+            css = "fa-solid fa-3";
+        }        
+        if (Forecast.ToLowerInvariant() == "reserve4")
+        {
+            css = "fa-solid fa-4";
+        }        
+        if (Forecast.ToLowerInvariant() == "reserve5")
+        {
+            css = "fa-solid fa-5";
         }
     }
 

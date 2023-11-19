@@ -25,6 +25,12 @@
             <InputSelect class="form-select" @bind-Value=pag.PlayerAtGameEntity.Forecast @bind-Value:after="() => Edit()" >
                 <option value="Yes">Yes</option>
                 <option value="Maybe">Maybe</option>
+                <option value="Reserve1">Reserve1</option>
+                <option value="Reserve2">Reserve2</option>
+                <option value="Reserve3">Reserve3</option>
+                <option value="Reserve4">Reserve4</option>
+                <option value="Reserve5">Reserve5</option>
+                <option value="No">No</option>
             </InputSelect>
         </div>
 
@@ -41,6 +47,7 @@
             <InputSelect class="form-select" @bind-Value=pag.PlayerAtGameEntity.Team @bind-Value:after="() => Edit()" >
                 <option value="A">Team A</option>
                 <option value="B">Team B</option>
+                <option value="">No Team</option>
             </InputSelect>
         </div>
 

@@ -157,9 +157,9 @@
                     <PlayingForecastIcon Forecast="@pag.PlayerAtGameEntity.Forecast" /> <PositionIcon Position="pag.Player.PlayerEntity.Position" /> <RagIcon Pag="@pag" />
                     <AuthorizeView Policy="IsAdminEmail">
                         <Authorized>
-                                                    @if (!simpleView)
+                            @if (!simpleView)
                             {
-                            <RatingNumberIcon Rating=@pag.Player.PlayerEntity.AdminRating />
+                                <RatingNumberIcon Rating=@pag.Player.PlayerEntity.AdminRating />
                             }
                         </Authorized>
                     </AuthorizeView>
@@ -167,9 +167,9 @@
                 <AuthorizeView Policy="IsAdminEmail">
                     <Authorized>
                         <td class="text-end">
-                                                    @if (!simpleView)
+                            @if (!simpleView)
                             {
-                            <PagRowEditButtons pag="@pag" RefreshMainPage="RefreshGameData" />
+                                <PagRowEditButtons pag="@pag" RefreshMainPage="RefreshGameData" />
                             }
                         </td>
                     </Authorized>

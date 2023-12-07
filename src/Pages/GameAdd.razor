@@ -27,6 +27,16 @@
                     </div>
                 </div>
             </div>
+
+            <div class="mb-3">
+                <label for="addTitle" class="form-label">Title</label>
+                <InputText class="form-control" id="addTitle" @bind-Value="newGameEntity.Title" />
+            </div>
+
+            <div class="mb-3">
+                <label for="addNotes" class="form-label">Notes</label>
+                <InputText class="form-control" id="addNotes" @bind-Value="newGameEntity.Notes" />
+            </div>
             
             <div class="modal-footer">
                 <button type="submit" class="btn btn-primary">Add Game</button>

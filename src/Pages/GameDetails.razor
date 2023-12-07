@@ -8,7 +8,8 @@
 
 <h1><i class="fa-solid fa-people-group me-2"></i> @pageTitle</h1>
 
-<p>@game.PlayersAtGame.Where(p => p.PlayerAtGameEntity.Forecast == PlayingOptions.Yes.ToString()).Count() yes, @game.PlayersAtGame.Where(p => p.PlayerAtGameEntity.Forecast == PlayingOptions.Maybe.ToString()).Count() maybe, @game.PlayersAtGame.Where(p => p.PlayerAtGameEntity.Played == true).Count() actual. Team A has @game.TeamA.Count(), Team B has @game.TeamB.Count().</p>
+<p>@game.PlayersAtGame.Where(p => p.PlayerAtGameEntity.Forecast == PlayingOptions.Yes.ToString()).Count() yes, @game.PlayersAtGame.Where(p => p.PlayerAtGameEntity.Forecast == PlayingOptions.Maybe.ToString()).Count() maybe. @game.GameEntity.Date.TimeOfDay.Hours:@game.GameEntity.Date.TimeOfDay.Minutes kick off.</p>
+<p>@game.GameEntity.Notes</p>
 
 <AuthorizeView Policy="IsAdminEmail">
     <Authorized>
@@ -183,6 +184,7 @@
     <a class="btn btn-secondary" href="/games/"><i class="fa-solid fa-arrow-left"></i>All Games</a>
     <AuthorizeView Policy="IsAdminEmail">
         <Authorized>
+            <a class="btn btn-secondary" href="/games/@GameRowKey/edit"><i class="fa-solid fa-edit"></i>Edit</a>
             <button class="btn btn-secondary" @onclick="ToggleSimpleView"><i class=@simpleViewCss></i> @simpleViewLabel</button> 
             <button class="btn btn-secondary" @onclick="ToggleAllPlayed"><i class="fa-solid fa-clipboard-list"></i> @markAllPlayedLabel</button> 
             <button class="btn btn-secondary" @onclick="CalculateTeams"><i class="fa-solid fa-gear"></i> Calculate Teams</button> 
@@ -279,7 +281,8 @@
             Played = false,
             Forecast = PlayingOptions.Yes.ToString(),
         };
-        pageTitle = $"{game.GameEntity.Date.ToString("dd MMM yyyy")}";
+        var gameDateLabel = game.GameEntity.Date.ToString("dd MMM");
+        pageTitle = string.IsNullOrEmpty(game.GameEntity.Title) ? gameDateLabel : $"{gameDateLabel} {game.GameEntity.Title}";
         simpleView = false;
         
         // Set played button label

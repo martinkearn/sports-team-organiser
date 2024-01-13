@@ -8,6 +8,7 @@ using Microsoft.Identity.Web;
 using Microsoft.Identity.Web.UI;
 using Microsoft.AspNetCore.Rewrite;
 using Microsoft.AspNetCore.Authorization;
+using STO;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,6 +22,7 @@ builder.Services.AddAuthorization(config =>
 builder.Services.AddSingleton<IAuthorizationHandler, IsAdminEmailHandler>();
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor().AddMicrosoftIdentityConsentHandler();
+builder.Services.AddRazorComponents().AddInteractiveServerComponents();
 
 // Add custom services to the container
 builder.Services.AddSingleton<IStorageService, StorageService>();
@@ -52,6 +54,7 @@ app.UseAuthorization();
 app.MapControllers();
 app.MapBlazorHub();
 app.MapFallbackToPage("/_Host");
+app.MapRazorComponents<App>().AddInteractiveServerRenderMode();
 
 // Redirect default built-in signed out page to root
 app.UseRewriter(new RewriteOptions().Add(

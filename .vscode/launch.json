@@ -15,7 +15,7 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
-            "program": "${workspaceFolder}/src/bin/Debug/net7.0/STO.dll",
+            "program": "${workspaceFolder}/src/bin/Debug/net8.0/STO.dll",
             "args": [],
             "cwd": "${workspaceFolder}/src",
             "stopAtEntry": false,

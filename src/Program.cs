@@ -2,7 +2,6 @@ global using STO.Services;
 global using STO.Interfaces;
 global using STO.Models;
 global using STO.Policies;
-global using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.Identity.Web;
 using Microsoft.Identity.Web.UI;
@@ -31,7 +30,6 @@ builder.Services.AddSingleton<IPlayerService, PlayerService>();
 builder.Services.AddSingleton<IGameService, GameService>();
 builder.Services.AddSingleton<ITransactionService, TransactionService>();
 builder.Services.AddSingleton<IRatingService, RatingService>();
-builder.Services.AddHttpContextAccessor();
 builder.Services.AddOptions<StorageConfiguration>()
     .Configure<IConfiguration>((settings, configuration) =>
     {
@@ -43,20 +41,16 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
-    app.UseExceptionHandler("/Error");
+    app.UseExceptionHandler("/Error", createScopeForErrors: true);
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-app.UseRouting();
-app.UseAuthorization();
-app.MapControllers();
-app.MapRazorComponents<App>()
-    .AddInteractiveServerRenderMode();
-app.UseAntiforgery();
 app.MapRazorComponents<App>().AddInteractiveServerRenderMode();
+app.UseAuthorization();
+app.UseAntiforgery();
 
 // Redirect default built-in signed out page to root
 app.UseRewriter(new RewriteOptions().Add(

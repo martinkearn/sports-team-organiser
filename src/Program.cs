@@ -13,16 +13,19 @@ using STO.Components;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add dotnet services to the container.
-builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme).AddMicrosoftIdentityWebApp(builder.Configuration.GetSection("AzureAdB2C"));
-builder.Services.AddControllersWithViews().AddMicrosoftIdentityUI();
+builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
+    .AddMicrosoftIdentityWebApp(builder.Configuration.GetSection("AzureAdB2C"));
+builder.Services.AddControllersWithViews()
+    .AddMicrosoftIdentityUI();
 builder.Services.AddAuthorization(config =>
     {
         config.AddPolicy("IsAdminEmail", policy => policy.Requirements.Add(new IsAdminEmailRequirement("martinkearn@live.co.uk")));
     });
 builder.Services.AddSingleton<IAuthorizationHandler, IsAdminEmailHandler>();
-builder.Services.AddRazorPages();
 builder.Services.AddRazorComponents()
-    .AddInteractiveServerComponents();
+    .AddInteractiveServerComponents()
+    .AddMicrosoftIdentityConsentHandler();
+builder.Services.AddCascadingAuthenticationState();
 
 // Add custom services to the container
 builder.Services.AddSingleton<IStorageService, StorageService>();
@@ -48,9 +51,12 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-app.MapRazorComponents<App>().AddInteractiveServerRenderMode();
+app.MapRazorComponents<App>()
+    .AddInteractiveServerRenderMode();
+app.UseRouting();
 app.UseAuthorization();
 app.UseAntiforgery();
+app.MapControllers();
 
 // Redirect default built-in signed out page to root
 app.UseRewriter(new RewriteOptions().Add(

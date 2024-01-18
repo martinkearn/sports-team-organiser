@@ -59,13 +59,13 @@ app.UseAntiforgery();
 app.MapControllers();
 
 // Redirect default built-in signed out page to root
-app.UseRewriter(new RewriteOptions().Add(
+/* app.UseRewriter(new RewriteOptions().Add(
     context =>
     {
         if (context.HttpContext.Request.Path == "/MicrosoftIdentity/Account/SignedOut")
         {
             context.HttpContext.Response.Redirect("/");
         }
-    }));
+    })); */
 
 app.Run();

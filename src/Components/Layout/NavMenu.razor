@@ -1,16 +1,13 @@
-﻿<div class="top-row ps-3 navbar navbar-dark">
+﻿
+<div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
-        <a class="navbar-brand" href="">Tuesday.Football</a>             
-        <div id="components-reconnect-modal">
-            <i class="fa-solid fa-spinner fa-spin"></i>
-        </div>
-        <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
-            <span class="navbar-toggler-icon"></span>
-        </button>
+        <a class="navbar-brand" href="">Tuesday.Football</a>
     </div>
 </div>
 
-<div class="@NavMenuCssClass nav-scrollable" @onclick="ToggleNavMenu">
+<input type="checkbox" title="Navigation menu" class="navbar-toggler" />
+
+<div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
     <nav class="flex-column">
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="" Match="NavLinkMatch.All"><i class="fa-solid fa-house me-2"></i>Home</NavLink>
@@ -19,22 +16,22 @@
             <NavLink class="nav-link" href="games"><i class="fa-solid fa-people-group me-2"></i>Games</NavLink>
         </div>
         <CascadingAuthenticationState>
-        <AuthorizeView Policy="IsAdminEmail">
-            <Authorized>
-                <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="admin"><i class="fa-solid fa-key me-2"></i>Admin Home</NavLink>
-                </div>
-                <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="players"><i class="fa-solid fa-user me-2"></i>Players</NavLink>
-                </div>
-                <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="transactions"><i class="fa-solid fa-coins me-2"></i>Transactions</NavLink>
-                </div> 
-                <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="ratings"><i class="fa-regular fa-star me-2"></i>Ratings</NavLink>
-                </div>
-            </Authorized>
-        </AuthorizeView>    
+            <AuthorizeView Policy="IsAdminEmail">
+                <Authorized>
+                    <div class="nav-item px-3">
+                        <NavLink class="nav-link" href="admin"><i class="fa-solid fa-key me-2"></i>Admin Home</NavLink>
+                    </div>
+                    <div class="nav-item px-3">
+                        <NavLink class="nav-link" href="players"><i class="fa-solid fa-user me-2"></i>Players</NavLink>
+                    </div>
+                    <div class="nav-item px-3">
+                        <NavLink class="nav-link" href="transactions"><i class="fa-solid fa-coins me-2"></i>Transactions</NavLink>
+                    </div> 
+                    <div class="nav-item px-3">
+                        <NavLink class="nav-link" href="ratings"><i class="fa-regular fa-star me-2"></i>Ratings</NavLink>
+                    </div>
+                </Authorized>
+            </AuthorizeView>    
         </CascadingAuthenticationState>   
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="https://github.com/martinkearn/sports-team-organiser/issues"><i class="fa-solid fa-question me-2"></i>Report an issue</NavLink>
@@ -45,14 +42,3 @@
         </div>
     </nav>
 </div>
-
-@code {
-    private bool collapseNavMenu = true;
-
-    private string NavMenuCssClass => collapseNavMenu ? "collapse" : null;
-
-    private void ToggleNavMenu()
-    {
-        collapseNavMenu = !collapseNavMenu;
-    }
-}

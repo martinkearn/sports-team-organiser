@@ -9,6 +9,7 @@ using Microsoft.Identity.Web.UI;
 using Microsoft.AspNetCore.Rewrite;
 using Microsoft.AspNetCore.Authorization;
 using STO;
+using STO.Components;
 
 var builder = WebApplication.CreateBuilder(args);
 

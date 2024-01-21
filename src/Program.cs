@@ -2,13 +2,12 @@ global using STO.Services;
 global using STO.Interfaces;
 global using STO.Models;
 global using STO.Policies;
+global using STO.Components;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.Identity.Web;
 using Microsoft.Identity.Web.UI;
-using Microsoft.AspNetCore.Rewrite;
 using Microsoft.AspNetCore.Authorization;
-using STO;
-using STO.Components;
+using Microsoft.AspNetCore.Rewrite;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -59,13 +58,13 @@ app.UseAntiforgery();
 app.MapControllers();
 
 // Redirect default built-in signed out page to root
-/* app.UseRewriter(new RewriteOptions().Add(
+app.UseRewriter(new RewriteOptions().Add(
     context =>
     {
-        if (context.HttpContext.Request.Path == "/MicrosoftIdentity/Account/SignedOut")
+        if (context.HttpContext.Request.Path.StartsWithSegments("/MicrosoftIdentity/Account/SignOut"))
         {
             context.HttpContext.Response.Redirect("/");
         }
-    })); */
+    }));
 
 app.Run();

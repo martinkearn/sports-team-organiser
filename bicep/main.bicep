@@ -59,7 +59,7 @@ resource webApp 'Microsoft.Web/sites@2022-03-01' = {
   properties: {
     serverFarmId: webAppServicePlan.id
     siteConfig: {
-      linuxFxVersion: 'DOTNETCORE|7.0'
+      linuxFxVersion: 'DOTNETCORE|8.0'
       alwaysOn: true
       appSettings: [
         {

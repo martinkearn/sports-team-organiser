@@ -59,7 +59,7 @@ resource webApp 'Microsoft.Web/sites@2022-03-01' = {
   properties: {
     serverFarmId: webAppServicePlan.id
     siteConfig: {
-      linuxFxVersion: 'DOTNETCORE|7.0'
+      linuxFxVersion: 'DOTNETCORE|8.0'
       alwaysOn: true
       appSettings: [
         {
@@ -75,32 +75,32 @@ resource webApp 'Microsoft.Web/sites@2022-03-01' = {
           value: 'DefaultEndpointsProtocol=https;AccountName=${storageAccountName};EndpointSuffix=${environment().suffixes.storage};AccountKey=${listKeys(storageAccount.id, '2019-06-01').keys[0].value}'
         }
         {
+          name: 'AzureAdB2C__Instance'
+          value: 'https://tuesdayfootball.b2clogin.com/'
+        }
+        {
           name: 'AzureAdB2C__ClientId'
           value: 'e0c23c36-7084-4597-86e7-494611963e50'
+        }
+        {
+          name: 'AzureAdB2C__CallbackPath'
+          value: '/signin-oidc'
         }
         {
           name: 'AzureAdB2C__Domain'
           value: 'tuesdayfootball.onmicrosoft.com'
         }
         {
-          name: 'AzureAdB2C__EditProfilePolicyId'
-          value: ''
-        }
-        {
-          name: 'AzureAdB2C__Instance'
-          value: 'https://tuesdayfootball.b2clogin.com/'
+          name: 'AzureAdB2C__SignUpSignInPolicyId'
+          value: 'b2c_1_susi'
         }
         {
           name: 'AzureAdB2C__ResetPasswordPolicyId'
           value: ''
         }
         {
-          name: 'AzureAdB2C__SignedOutCallbackPath'
-          value: '/signout/B2C_1_susi'
-        }
-        {
-          name: 'AzureAdB2C__SignUpSignInPolicyId'
-          value: 'b2c_1_susi'
+          name: 'AzureAdB2C__EditProfilePolicyId'
+          value: ''
         }
       ]
     }

@@ -1,0 +1,13 @@
+﻿@page "/counter"
+@rendermode InteractiveAuto
+
+<button class="btn btn-primary" @onclick="IncrementCount">@currentCount</button>
+
+@code {
+    private int currentCount = 0;
+
+    private void IncrementCount()
+    {
+        currentCount++;
+    }
+}

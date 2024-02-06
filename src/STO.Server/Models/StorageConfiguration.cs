@@ -1,4 +1,4 @@
-namespace STO.Models
+namespace STO.Server.Models
 {
     /// <summary>
     /// Used to strongly type the "StorageConfiguration" appsettings section

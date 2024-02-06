@@ -1,4 +1,5 @@
 global using STO.Server;
+global using STO.Server.Models;
 global using STO.Server.Services;
 global using STO.Server.Interfaces;
 global using STO.Server.Policies;

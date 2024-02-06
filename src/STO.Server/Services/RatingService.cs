@@ -1,5 +1,5 @@
 
-namespace STO.Services
+namespace STO.Server.Services
 {
     /// <inheritdoc/>
     public class RatingService : IRatingService

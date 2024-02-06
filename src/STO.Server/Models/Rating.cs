@@ -1,4 +1,4 @@
-namespace STO.Models
+namespace STO.Server.Models
 {
     public class Rating
     {

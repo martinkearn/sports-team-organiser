@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 using Azure;
 using Azure.Data.Tables;
 
-namespace STO.Models
+namespace STO.Server.Models
 {
     public class RatingEntity : ITableEntity
     {

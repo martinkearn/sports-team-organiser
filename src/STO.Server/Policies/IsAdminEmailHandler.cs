@@ -1,7 +1,7 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 
-namespace STO.Policies
+namespace STO.Server.Policies
 {
     public class IsAdminEmailHandler : AuthorizationHandler<IsAdminEmailRequirement>
     {

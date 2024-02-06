@@ -1,4 +1,4 @@
-namespace STO.Models
+namespace STO.Server.Models
 {
     public class Enums {
         public enum SortPagsBy { Name, Position, Team, GameBalance, PlayerBalance, Playing, Played };

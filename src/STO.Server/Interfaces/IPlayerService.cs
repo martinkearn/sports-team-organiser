@@ -1,4 +1,4 @@
-namespace STO.Interfaces
+namespace STO.Server.Interfaces
 {
     /// <summary>
     /// Service for working with Players and their balance.

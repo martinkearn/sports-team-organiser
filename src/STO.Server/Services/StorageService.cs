@@ -1,7 +1,7 @@
 using Azure.Data.Tables;
 using Microsoft.Extensions.Options;
 
-namespace STO.Services
+namespace STO.Server.Services
 {
     /// <inheritdoc/>
     public class StorageService : IStorageService

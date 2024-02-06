@@ -1,6 +1,6 @@
 using Azure.Data.Tables;
 
-namespace STO.Interfaces
+namespace STO.Server.Interfaces
 {
     /// <summary>
     /// Service for working with Azure Storage.

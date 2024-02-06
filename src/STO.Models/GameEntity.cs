@@ -2,15 +2,21 @@ using System.ComponentModel.DataAnnotations;
 using Azure;
 using Azure.Data.Tables;
 
-namespace STO.Server.Models
+namespace STO.Models
 {
-    public class PlayerEntity : ITableEntity
+    public class GameEntity : ITableEntity
     {
-        public string Name { get; set; }
-        public string Tags { get; set; }
-        public Enums.PlayerPosition Position { get; set; }
-        public double DefaultRate { get; set; } = default!;
-        public int AdminRating { get; set; } = default!;
+        [Required]
+        public DateTimeOffset Date { get; set; } = DateTimeOffset.UtcNow!;
+
+        public int TeamAGoals { get; set; }
+
+        public int TeamBGoals { get; set; }
+
+        public string Title { get; set; }
+
+        public string Notes { get; set; }
+
         public string PartitionKey { get; set; } = default!;
         public string RowKey { get; set; } = default!;
         public DateTimeOffset? Timestamp { get; set; } = DateTimeOffset.UtcNow!;

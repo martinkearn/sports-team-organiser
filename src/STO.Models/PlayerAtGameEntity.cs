@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 using Azure;
 using Azure.Data.Tables;
 
-namespace STO.Server.Models
+namespace STO.Models
 {
     public class PlayerAtGameEntity : ITableEntity
     {

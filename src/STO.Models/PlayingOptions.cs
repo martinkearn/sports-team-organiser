@@ -1,4 +1,4 @@
-namespace STO.Server.Models
+namespace STO.Models
 {
     public enum PlayingOptions
     {

@@ -14,8 +14,8 @@ jobs:
     with:
       rg: 'TNF-Dev'
       uniquelabel: 'tnfdev'
-      csprojpath: './src/Server/STO.csproj'
-      dotnetoutputpath: './src/Server/output'
+      csprojpath: './src/Server/STO.Server.csproj'
+      dotnetoutputpath: './src/STO.Server/output'
     secrets:
       azure-credentials: ${{ secrets.AZURE_CREDENTIALS_DEV }}
       azure-subscription: ${{ secrets.AZURE_SUBSCRIPTION }}

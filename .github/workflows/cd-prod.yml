@@ -14,8 +14,8 @@ jobs:
     with:
       rg: 'TNF-Prod'
       uniquelabel: 'tnfprod'
-      csprojpath: './src/Server/STO.csproj'
-      dotnetoutputpath: './src/Server/output'
+      csprojpath: './src/Server/STO.Server.csproj'
+      dotnetoutputpath: './src/STO.Server/output'
     secrets:
       azure-credentials: ${{ secrets.AZURE_CREDENTIALS }}
       azure-subscription: ${{ secrets.AZURE_SUBSCRIPTION }}

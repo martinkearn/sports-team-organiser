@@ -8,9 +8,9 @@
         <h1>Welcome to Tuesday.Football Admin Portal</h1>
         <button class="btn btn-primary" @onclick="RefreshData">Refresh Data</button>
 
-        <BootstrapBreakpoints />
+        <BootstrapBreakpoints  @rendermode="RenderMode.InteractiveAuto" />
 
-        <Counter/>
+        <Counter @rendermode="RenderMode.InteractiveAuto"/>
     </Authorized>
     <NotAuthorized>
         <h4>Access Denied!</h4>

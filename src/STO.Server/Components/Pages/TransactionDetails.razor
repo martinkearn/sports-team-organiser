@@ -17,7 +17,7 @@
         <p>@transaction.TransactionEntity.Date.ToString("dd MMM yyyy HH:mm")</p>
 
         <h5>Amount</h5>
-        <p><CurrencyDisplay Amount="@transaction.TransactionEntity.Amount" ></CurrencyDisplay></p>
+        <p><CurrencyDisplay @rendermode="RenderMode.InteractiveAuto" Amount="@transaction.TransactionEntity.Amount" ></CurrencyDisplay></p>
 
         <h5>Notes</h5>
         @if (transaction.TransactionEntity.Notes is not null)
@@ -33,7 +33,7 @@
         <p><a href="players/@transaction.Player.PlayerEntity.RowKey">@transaction.Player.PlayerEntity.Name</a></p>
 
         <div class="modal-footer">
-            <DeleteButtonWithCheck DeleteWhatLabel="@pageTitle" ButtonLabel="Delete" ParentPageCallback="DeleteTransaction" />
+            <DeleteButtonWithCheck @rendermode="RenderMode.InteractiveAuto" DeleteWhatLabel="@pageTitle" ButtonLabel="Delete" ParentPageCallback="DeleteTransaction" />
         </div>
     </Authorized>
     <NotAuthorized>

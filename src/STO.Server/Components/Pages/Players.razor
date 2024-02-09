@@ -30,9 +30,9 @@
                     <tr>
                         <td><a href="/players/@player.PlayerEntity.RowKey/player">@player.PlayerEntity.Name</a></td>
                         <td class="d-none d-lg-table-cell">@player.PlayerEntity.Position</td>
-                        <td class="d-none d-lg-table-cell"><CurrencyDisplay Amount="@player.PlayerEntity.DefaultRate" BlackText="true" /></td>
+                        <td class="d-none d-lg-table-cell"><CurrencyDisplay @rendermode="RenderMode.InteractiveAuto" Amount="@player.PlayerEntity.DefaultRate" BlackText="true" /></td>
                         <td class="d-none d-lg-table-cell">@player.PlayerEntity.AdminRating</td>
-                        <td><CurrencyDisplay Amount="@player.Balance" /></td>
+                        <td><CurrencyDisplay @rendermode="RenderMode.InteractiveAuto" Amount="@player.Balance" /></td>
                     </tr>
                 }
             </tbody>

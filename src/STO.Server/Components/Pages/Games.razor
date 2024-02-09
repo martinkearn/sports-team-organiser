@@ -18,7 +18,7 @@
         @foreach (var game in games)
         {
             <tr>
-                <td><GameTitle Game="@game" Link="true" /></td>
+                <td><GameTitle @rendermode="RenderMode.InteractiveAuto" Game="@game" Link="true" /></td>
                 <td>@game.PlayersAtGame.Count()</td>
                 <td>@game.PlayersAtGame.Where(pag => pag.PlayerAtGameEntity.Played).Count()</td>
             </tr>

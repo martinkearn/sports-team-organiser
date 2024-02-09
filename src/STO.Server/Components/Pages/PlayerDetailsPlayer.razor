@@ -51,13 +51,13 @@
         <div class="mb-3">
             <label class="form-label">Balance</label>
             <span class="form-control-plaintext">
-                <CurrencyDisplay Amount="@player.Balance"/>
+                <CurrencyDisplay @rendermode="RenderMode.InteractiveAuto" Amount="@player.Balance"/>
             </span>
         </div>
 
         <div class="modal-footer">
             <a class="btn btn-secondary" href="/players/"><i class="fa-solid fa-arrow-left"></i>All Players</a>
-            <DeleteButtonWithCheck DeleteWhatLabel="@player.PlayerEntity.Name" ButtonLabel="Delete" ParentPageCallback="DeletePlayer" />
+            <DeleteButtonWithCheck @rendermode="RenderMode.InteractiveAuto" DeleteWhatLabel="@player.PlayerEntity.Name" ButtonLabel="Delete" ParentPageCallback="DeletePlayer" />
         </div>
     </Authorized>
     <NotAuthorized>

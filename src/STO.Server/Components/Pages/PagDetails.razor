@@ -17,7 +17,7 @@
 
         <div class="mb-3">
             <label class="form-label">Game</label>
-            <span class="form-control-plaintext"><GameTitle Game="@game" Link="true" /></span>
+            <span class="form-control-plaintext"><GameTitle @rendermode="RenderMode.InteractiveAuto" Game="@game" Link="true" /></span>
         </div>    
 
         <div class="mb-3">
@@ -56,7 +56,7 @@
             <br>
             <button class="btn btn-outline-secondary" @onclick="() => AddTransactionForPlayer(pag.Player.PlayerEntity.RowKey, pag.Player.PlayerEntity.DefaultRate)"><i class="fa-solid fa-plus"></i> £@pag.Player.PlayerEntity.DefaultRate</button>
             <br>
-            <span>Balance: <CurrencyDisplay Amount="@pag.Player.Balance" /></span>
+            <span>Balance: <CurrencyDisplay @rendermode="RenderMode.InteractiveAuto" Amount="@pag.Player.Balance" /></span>
         </div>
 
         <div class="modal-footer">

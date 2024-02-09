@@ -7,7 +7,7 @@
 
 <PageTitle>TNF - @pageTitle</PageTitle>
 
-<h1><i class="fa-solid fa-people-group me-2"></i> <GameTitle Game="@game" Link="false" /></h1>
+<h1><i class="fa-solid fa-people-group me-2"></i> <GameTitle @rendermode="RenderMode.InteractiveAuto" Game="@game" Link="false" /></h1>
 
 <p>@game.PlayersAtGame.Where(p => p.PlayerAtGameEntity.Forecast == PlayingOptions.Yes.ToString()).Count() yes, @game.PlayersAtGame.Where(p => p.PlayerAtGameEntity.Forecast == PlayingOptions.Maybe.ToString()).Count() maybe. @game.GameEntity.Date.TimeOfDay.Hours:@game.GameEntity.Date.TimeOfDay.Minutes kick off.</p>
 <p>@game.GameEntity.Notes</p>
@@ -68,12 +68,12 @@
                             <span>@pag.Player.PlayerEntity.Name</span>
                         </NotAuthorized>
                     </AuthorizeView>
-                    <PlayingForecastIcon Forecast="@pag.PlayerAtGameEntity.Forecast" /> <PositionIcon Position="pag.Player.PlayerEntity.Position" /> <RagIcon Pag="@pag" />
+                    <PlayingForecastIcon @rendermode="RenderMode.InteractiveAuto" Forecast="@pag.PlayerAtGameEntity.Forecast" /> <PositionIcon Position="pag.Player.PlayerEntity.Position" /> <RagIcon Pag="@pag" />
                     <AuthorizeView Policy="IsAdminEmail">
                         <Authorized>
                             @if (!simpleView)
                             {
-                                <RatingNumberIcon Rating=@pag.Player.PlayerEntity.AdminRating />
+                                <RatingNumberIcon @rendermode="RenderMode.InteractiveAuto" Rating=@pag.Player.PlayerEntity.AdminRating />
                             }
                         </Authorized>
                     </AuthorizeView>
@@ -83,7 +83,7 @@
                         <td class="text-end">
                             @if (!simpleView)
                             {
-                                <PagRowEditButtons pag="@pag" RefreshMainPage="RefreshGameData" />
+                                <PagRowEditButtons @rendermode="RenderMode.InteractiveAuto" pag="@pag" RefreshMainPage="RefreshGameData" />
                             }
                         </td>
                     </Authorized>
@@ -112,12 +112,12 @@
                             <span>@pag.Player.PlayerEntity.Name</span>
                         </NotAuthorized>
                     </AuthorizeView>
-                    <PlayingForecastIcon Forecast="@pag.PlayerAtGameEntity.Forecast" /> <PositionIcon Position="pag.Player.PlayerEntity.Position" /> <RagIcon Pag="@pag" />
+                    <PlayingForecastIcon @rendermode="RenderMode.InteractiveAuto" Forecast="@pag.PlayerAtGameEntity.Forecast" /> <PositionIcon Position="pag.Player.PlayerEntity.Position" /> <RagIcon Pag="@pag" />
                     <AuthorizeView Policy="IsAdminEmail">
                         <Authorized>
-                                                    @if (!simpleView)
+                            @if (!simpleView)
                             {
-                            <RatingNumberIcon Rating=@pag.Player.PlayerEntity.AdminRating />
+                                <RatingNumberIcon @rendermode="RenderMode.InteractiveAuto" Rating=@pag.Player.PlayerEntity.AdminRating />
                             }
                         </Authorized>
                     </AuthorizeView>
@@ -127,7 +127,7 @@
                         <td class="text-end">
                             @if (!simpleView)
                             {
-                                <PagRowEditButtons pag="@pag" RefreshMainPage="RefreshGameData" />
+                                <PagRowEditButtons @rendermode="RenderMode.InteractiveAuto" pag="@pag" RefreshMainPage="RefreshGameData" />
                             }
                         </td>
                     </Authorized>
@@ -156,12 +156,12 @@
                             <span>@pag.Player.PlayerEntity.Name</span>
                         </NotAuthorized>
                     </AuthorizeView>
-                    <PlayingForecastIcon Forecast="@pag.PlayerAtGameEntity.Forecast" /> <PositionIcon Position="pag.Player.PlayerEntity.Position" /> <RagIcon Pag="@pag" />
+                    <PlayingForecastIcon @rendermode="RenderMode.InteractiveAuto" Forecast="@pag.PlayerAtGameEntity.Forecast" /> <PositionIcon Position="pag.Player.PlayerEntity.Position" /> <RagIcon Pag="@pag" />
                     <AuthorizeView Policy="IsAdminEmail">
                         <Authorized>
                             @if (!simpleView)
                             {
-                                <RatingNumberIcon Rating=@pag.Player.PlayerEntity.AdminRating />
+                                <RatingNumberIcon @rendermode="RenderMode.InteractiveAuto" Rating=@pag.Player.PlayerEntity.AdminRating />
                             }
                         </Authorized>
                     </AuthorizeView>
@@ -171,7 +171,7 @@
                         <td class="text-end">
                             @if (!simpleView)
                             {
-                                <PagRowEditButtons pag="@pag" RefreshMainPage="RefreshGameData" />
+                                <PagRowEditButtons @rendermode="RenderMode.InteractiveAuto" pag="@pag" RefreshMainPage="RefreshGameData" />
                             }
                         </td>
                     </Authorized>

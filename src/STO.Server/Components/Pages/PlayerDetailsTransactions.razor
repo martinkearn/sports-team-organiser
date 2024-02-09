@@ -32,7 +32,7 @@
                 {
                     <tr>
                         <td><a href="/transactions/@transactionEntity.RowKey">@transactionEntity.Date.ToString("dd MMM yyyy HH:mm")</a></td>
-                        <td><CurrencyDisplay Amount="@transactionEntity.Amount" /></td>
+                        <td><CurrencyDisplay @rendermode="RenderMode.InteractiveAuto" Amount="@transactionEntity.Amount" /></td>
                         <td class="d-none d-lg-table-cell">@transactionEntity.Notes</td>
                     </tr>
                 }
@@ -41,7 +41,7 @@
 
         <div class="modal-footer">
             <a class="btn btn-secondary" href="/players/"><i class="fa-solid fa-arrow-left"></i>All Players</a>
-            <DeleteButtonWithCheck DeleteWhatLabel="@deleteAllLabel" ButtonLabel="Delete all transactions" ParentPageCallback="DeleteTransactionsForPlayer" />
+            <DeleteButtonWithCheck @rendermode="RenderMode.InteractiveAuto" DeleteWhatLabel="@deleteAllLabel" ButtonLabel="Delete all transactions" ParentPageCallback="DeleteTransactionsForPlayer" />
         </div>
     </Authorized>
     <NotAuthorized>

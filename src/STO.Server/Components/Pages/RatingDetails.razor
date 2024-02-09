@@ -33,7 +33,7 @@
         }
 
         <div class="modal-footer">
-            <DeleteButtonWithCheck DeleteWhatLabel="@pageTitle" ButtonLabel="Delete" ParentPageCallback="DeleteRating" />  
+            <DeleteButtonWithCheck @rendermode="RenderMode.InteractiveAuto" DeleteWhatLabel="@pageTitle" ButtonLabel="Delete" ParentPageCallback="DeleteRating" />  
         </div>
     </Authorized>
     <NotAuthorized>

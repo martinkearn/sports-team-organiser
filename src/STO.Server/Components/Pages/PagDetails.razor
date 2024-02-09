@@ -17,7 +17,7 @@
 
         <div class="mb-3">
             <label class="form-label">Game</label>
-            <span class="form-control-plaintext"><GameTitle GameRowKey="@pag.GameEntity.RowKey" Link="true" /></span>
+            <span class="form-control-plaintext"><GameTitle Game="@game" Link="true" /></span>
         </div>    
 
         <div class="mb-3">
@@ -76,6 +76,8 @@
     private PlayerAtGame pag;
     private string pageTitle;
 
+    private Game game;
+
     protected override async Task OnInitializedAsync()
     {
         await RefreshData();
@@ -115,6 +117,7 @@
     async Task RefreshData()
     {
         pag = await GameService.GetPlayerAtGame(PagRowKey);
+        game = await GameService.GetGame(pag.GameEntity.RowKey);
         pageTitle = $"{@pag.Player.PlayerEntity.Name} at {@pag.GameEntity.Date.Date.ToString("dd MMM")}";
     }
 

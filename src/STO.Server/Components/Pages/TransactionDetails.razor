@@ -33,7 +33,7 @@
         <p><a href="players/@transaction.Player.PlayerEntity.RowKey">@transaction.Player.PlayerEntity.Name</a></p>
 
         <div class="modal-footer">
-            <DeleteButtonWithCheck EntityRowKey="@transaction.TransactionEntity.RowKey" EntityLabel="@pageTitle" EntityType="@typeof(TransactionEntity).ToString()" NavigateToUrl="/transactions" ButtonLabel="Delete" />
+            <DeleteButtonWithCheck DeleteWhatLabel="@pageTitle" ButtonLabel="Delete" ParentPageCallback="DeleteTransaction" />
         </div>
     </Authorized>
     <NotAuthorized>
@@ -54,9 +54,16 @@
         RefreshData();
     }
 
+    private async Task DeleteTransaction()
+    {
+        await TransactionService.DeleteTransactionEntity(TransactionRowKey);
+        Navigation.NavigateTo("/transactions");
+    }
+
+
     void RefreshData()
     {
         transaction = TransactionService.GetTransaction(TransactionRowKey);
-        pageTitle = $"{@transaction.Player.PlayerEntity.Name}, {@transaction.TransactionEntity.Date.Date.ToShortDateString()}";
+        pageTitle = $"Transaction for {@transaction.Player.PlayerEntity.Name}, {@transaction.TransactionEntity.Date.Date.ToShortDateString()}";
     }
 }

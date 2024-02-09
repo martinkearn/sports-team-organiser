@@ -57,7 +57,7 @@
 
         <div class="modal-footer">
             <a class="btn btn-secondary" href="/players/"><i class="fa-solid fa-arrow-left"></i>All Players</a>
-            <DeleteButtonWithCheck EntityRowKey="@player.PlayerEntity.RowKey" EntityLabel="@player.PlayerEntity.Name" EntityType="@typeof(PlayerEntity).ToString()" NavigateToUrl="/players" ButtonLabel="Delete" />
+            <DeleteButtonWithCheck DeleteWhatLabel="@player.PlayerEntity.Name" ButtonLabel="Delete" ParentPageCallback="DeletePlayer" />
         </div>
     </Authorized>
     <NotAuthorized>
@@ -90,6 +90,12 @@
         games = await GameService.GetGames();
         player = PlayerService.GetPlayer(PlayerRowKey);
         pageTitle = $"{player.PlayerEntity.Name}";
+    }
+
+    private async Task DeletePlayer()
+    {
+        await PlayerService.DeletePlayer(PlayerRowKey);
+        Navigation.NavigateTo("/players");
     }
 
     private void SwitchTabTransactions() => Navigation.NavigateTo($"/players/{@PlayerRowKey}/transactions");

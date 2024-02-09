@@ -17,7 +17,7 @@
         <p><a href="players/@rating.Player.PlayerEntity.RowKey/player">@rating.Player.PlayerEntity.Name</a></p>
 
         <h5>Game</h5>
-        <p><GameTitle GameRowKey="@rating.Game.GameEntity.RowKey" Link="true" /></p>
+        <p><GameTitle Game="@rating.Game" Link="true" /></p>
 
         <h5>Rating</h5>
         <p>@rating.RatingEntity.Rating</p>
@@ -33,7 +33,7 @@
         }
 
         <div class="modal-footer">
-            <DeleteButtonWithCheck EntityRowKey="@rating.RatingEntity.RowKey" EntityLabel="@pageTitle" EntityType="@typeof(RatingEntity).ToString()" NavigateToUrl="/ratings" ButtonLabel="Delete" />
+            <DeleteButtonWithCheck DeleteWhatLabel="@pageTitle" ButtonLabel="Delete" ParentPageCallback="DeleteRating" />  
         </div>
     </Authorized>
     <NotAuthorized>
@@ -54,9 +54,15 @@
         await RefreshData();
     }
 
+    private async Task DeleteRating()
+    {
+        await RatingService.DeleteRatingEntity(RatingRowKey);
+        Navigation.NavigateTo("/ratings");
+    }
+
     async Task RefreshData()
     {
         rating = await RatingService.GetRating(RatingRowKey);
-        pageTitle = $"{@rating.Player.PlayerEntity.Name}, {@rating.Game.GameEntity.Date.Date.ToString("dd MMM")}";
+        pageTitle = $"Rating for {@rating.Player.PlayerEntity.Name}, {@rating.Game.GameEntity.Date.Date.ToString("dd MMM")}";
     }
 }

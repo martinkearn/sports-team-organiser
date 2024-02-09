@@ -28,7 +28,7 @@
                     <tr>
                         <td><a href="/ratings/@rating.RatingEntity.RowKey">@rating.RatingEntity.Timestamp.Value.ToString("dd MMM yyyy HH:mm")</a></td>
                         <td><a href="/players/@rating.Player.PlayerEntity.RowKey/player">@rating.Player.PlayerEntity.Name</a></td>
-                        <td><GameTitle GameRowKey="@rating.Game.GameEntity.RowKey" Link="true" /></td>
+                        <td><GameTitle Game="@rating.Game" Link="true" /></td>
                         <td>@rating.RatingEntity.Rating</td>
                         <td class="d-none d-lg-table-cell">@rating.RatingEntity.Notes</td>
                     </tr>

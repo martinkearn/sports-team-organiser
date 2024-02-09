@@ -1,0 +1,85 @@
+<a href="/players/@pag?.Player.PlayerEntity.RowKey/player">
+@if (!string.IsNullOrEmpty(css))
+{
+    <i class="@css"></i>  
+}
+else
+{
+    @if(Rag is not null)
+    {
+        @Rag.ToString()
+    }
+}
+</a>
+
+@code {
+    [Parameter]
+    public PlayerAtGame? pag { get; set; }
+
+    [Parameter]
+    public string? Rag { get; set; }
+
+    private string? css;
+
+    protected override void OnParametersSet()
+    {
+        SetCss();
+    }
+
+    protected override void OnInitialized()
+    {
+        SetCss();
+    }
+
+    private void SetCss()
+    {
+        if (pag is not null)
+        {
+            // Work out pag RAG status
+            Rag = "red";
+            if (!pag.PlayerAtGameEntity.Played)
+            {
+                // Not played, so pre-game rag
+                if (pag.Player.Balance < 0)
+                {
+                    Rag = "red";
+                }
+                else if ((pag.Player.Balance >= 0) && (pag.Player.Balance < pag.Player.PlayerEntity.DefaultRate))
+                {
+                    Rag = "amber";
+                }
+                else if (pag.Player.Balance >= pag.Player.PlayerEntity.DefaultRate)
+                {
+                    Rag = "green";
+                }
+            }
+            else
+            {
+                // Has played so post game rag
+                if (pag.Player.Balance >= 0)
+                {
+                    Rag = "green";
+                }
+                else if ((pag.Player.Balance == 0) && (pag.Player.Balance > 0))
+                {
+                    Rag = "amber";
+                }
+            }
+
+            switch (Rag)
+            {
+                case "green":
+                    css = "fa-solid fa-circle-check text-success";
+                    break;   
+                case "amber":
+                    css = "fa-solid fa-circle-question text-warning";
+                    break;  
+                case "red":
+                    css = "fa-solid fa-circle-exclamation text-danger";
+                    break; 
+                default:
+                    break;
+            }
+        }
+    }
+}

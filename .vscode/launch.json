@@ -8,16 +8,16 @@
             "name": "C#: STO Debug",
             "type": "dotnet",
             "request": "launch",
-            "projectPath": "${workspaceFolder}/serc/STO.csproj"
+            "projectPath": "${workspaceFolder}/src/STO.Server/STO.Server.csproj"
         },
         {
             "name": ".NET Core Launch (web)",
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
-            "program": "${workspaceFolder}/src/bin/Debug/net8.0/STO.dll",
+            "program": "${workspaceFolder}/src/STO.Server/bin/Debug/net8.0/STO.Server.dll",
             "args": [],
-            "cwd": "${workspaceFolder}/src",
+            "cwd": "${workspaceFolder}/src/STO.Server",
             "stopAtEntry": false,
             "serverReadyAction": {
                 "action": "openExternally",

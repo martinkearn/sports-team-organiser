@@ -7,7 +7,7 @@
 
 <PageTitle>TNF - @pageTitle</PageTitle>
 
-<h1><i class="fa-solid fa-people-group me-2"></i> <GameTitle GameRowKey="@game.GameEntity.RowKey" Link="false" /></h1>
+<h1><i class="fa-solid fa-people-group me-2"></i> <GameTitle Game="@game" Link="false" /></h1>
 
 <p>@game.PlayersAtGame.Where(p => p.PlayerAtGameEntity.Forecast == PlayingOptions.Yes.ToString()).Count() yes, @game.PlayersAtGame.Where(p => p.PlayerAtGameEntity.Forecast == PlayingOptions.Maybe.ToString()).Count() maybe. @game.GameEntity.Date.TimeOfDay.Hours:@game.GameEntity.Date.TimeOfDay.Minutes kick off.</p>
 <p>@game.GameEntity.Notes</p>

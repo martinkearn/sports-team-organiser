@@ -1,0 +1,25 @@
+@if (Game != default)
+{
+    var gameDateLabel = Game.GameEntity.Date.ToString("dd MMM");
+    var gameLabel = string.IsNullOrEmpty(Game.GameEntity.Title) ? gameDateLabel : $"{gameDateLabel} {Game.GameEntity.Title}";
+    @if (Link)
+    {
+        <a href="/games/@Game.GameEntity.RowKey">@gameLabel</a>
+    }
+    else
+    {
+        @gameLabel
+    }
+}
+else
+{
+    <span>No game</span>
+}
+
+@code {
+    [Parameter]
+    public bool Link { get; set; }
+
+    [Parameter]
+    public Game? Game { get; set; }
+}

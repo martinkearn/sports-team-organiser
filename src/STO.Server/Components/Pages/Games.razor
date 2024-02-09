@@ -17,7 +17,7 @@
         @foreach (var game in games)
         {
             <tr>
-                <td><GameTitle GameRowKey="@game.GameEntity.RowKey" Link="true" /></td>
+                <td><GameTitle Game="@game" Link="true" /></td>
                 <td>@game.PlayersAtGame.Count()</td>
                 <td>@game.PlayersAtGame.Where(pag => pag.PlayerAtGameEntity.Played).Count()</td>
             </tr>

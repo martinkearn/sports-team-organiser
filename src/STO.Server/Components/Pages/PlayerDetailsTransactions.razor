@@ -66,8 +66,8 @@
 
     private void RefreshData()
     {
-        deleteAllLabel = $"All transactions for {player.PlayerEntity.Name}";
         player = PlayerService.GetPlayer(PlayerRowKey);
+        deleteAllLabel = $"All transactions for {player.PlayerEntity.Name}";
         pageTitle = $"{player.PlayerEntity.Name}";
     }
 

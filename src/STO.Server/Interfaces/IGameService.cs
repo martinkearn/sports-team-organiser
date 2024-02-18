@@ -25,6 +25,12 @@ namespace STO.Server.Interfaces
         public Task<Game> GetGame(string gameRowKey);
 
         /// <summary>
+        /// Gets the next Game.
+        /// </summary>
+        /// <returns>Game.</returns>
+        public Task<Game> GetNextGame();
+
+        /// <summary>
         /// Deletes the GameEntity and PlayerAtGameEntity associated with a Game.
         /// </summary>
         /// <param name="gameRowkey">The RowKey for the GameEntities to delete.</param>

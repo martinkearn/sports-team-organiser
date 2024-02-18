@@ -54,6 +54,14 @@ namespace STO.Server.Services
             return matchingGame;
         }
 
+        public async Task<Game> GetNextGame()
+        {
+            var gameEntities = _storageService.QueryEntities<GameEntity>().Where(g => g.Date.Date > DateTime.UtcNow.Date).ToList();
+            var games = await GetGames(gameEntities);
+            var nextGame = games.FirstOrDefault();
+            return nextGame;
+        }
+
         public async Task UpsertGameEntity(GameEntity gameEntity)
         {
             await _storageService.UpsertEntity<GameEntity>(gameEntity);

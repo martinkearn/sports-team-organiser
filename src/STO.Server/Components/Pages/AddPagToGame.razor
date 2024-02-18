@@ -23,6 +23,15 @@
         </InputSelect>
     </div>
 
+    @if (nextGame is not null)
+    {
+        <p>Next game is <GameTitle Game="@nextGame" /></p>
+    }
+    else
+    {
+        <p>No future games avaliable.</p>
+    }
+
     <div class="mb-3">
         <label for="addGameRowKey" class="form-label">Game</label>
         <InputSelect class="form-select" @bind-Value="newPagEntity.GameRowKey">
@@ -45,6 +54,8 @@
 
     private PlayerAtGameEntity newPagEntity;
 
+    private Game nextGame;
+
     protected override async Task OnInitializedAsync()
     {
         await RefreshData();
@@ -61,6 +72,7 @@
     {
         games = await GameService.GetGames();
         players = PlayerService.GetPlayers();
+        nextGame = await GameService.GetNextGame();
 
         newPagEntity = new PlayerAtGameEntity()
         {

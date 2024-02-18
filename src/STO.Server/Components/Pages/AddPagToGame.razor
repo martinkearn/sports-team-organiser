@@ -38,7 +38,14 @@
             <option value="">Select Game ...</option>
             @foreach (var game in games)
             {
-                <option value="@game.GameEntity.RowKey"><GameTitle Game="@game" Link="false" /></option>
+                if (game.GameEntity.RowKey == nextGame.GameEntity.RowKey)
+                {
+                    <option value="@game.GameEntity.RowKey" selected><GameTitle Game="@game" Link="false" /></option>
+                }
+                else
+                {
+                    <option value="@game.GameEntity.RowKey"><GameTitle Game="@game" Link="false" /></option>
+                }
             }
         </InputSelect>
     </div>

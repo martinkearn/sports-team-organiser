@@ -79,7 +79,18 @@ namespace STO.Server.Services
 
         public async Task UpsertPlayerAtGameEntity(PlayerAtGameEntity pag)
         {
-            await _storageService.UpsertEntity<PlayerAtGameEntity>(pag);
+            var game = await GetGame(pag.GameRowKey);
+            var existingPag = game.PlayersAtGame.FirstOrDefault(p => p.Player.PlayerEntity.RowKey == pag.PlayerRowKey);
+            if (existingPag == default)
+            {
+                await _storageService.UpsertEntity<PlayerAtGameEntity>(pag);
+            }
+            else
+            {
+                pag.RowKey = existingPag.PlayerAtGameEntity.RowKey;
+                pag.PartitionKey = existingPag.PlayerAtGameEntity.PartitionKey;
+                await _storageService.UpsertEntity<PlayerAtGameEntity>(pag);
+            } 
         }
 
         public async Task DeletePlayerAtGameEntity(PlayerAtGameEntity pag)
@@ -226,5 +237,6 @@ namespace STO.Server.Services
             }
             return Task.FromResult(games);
         }
+
     }
 }

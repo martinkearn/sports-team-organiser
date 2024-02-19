@@ -1,9 +1,4 @@
-<span>
-    @{
-        double teamAverageAdminRating = Pags?.Sum(o => o.Player.PlayerEntity.AdminRating) / Pags?.Count ?? 0;
-    }
-    @TeamName has @Pags?.Count players and a rating of @teamAverageAdminRating.ToString("#.#")
-</span>
+<span>@TeamName has @Pags?.Count players and a rating of @Pags?.Select(o => o.Player.PlayerEntity.AdminRating).DefaultIfEmpty(0).Average().ToString("#.##")</span>
 
 @code {
     [Parameter]

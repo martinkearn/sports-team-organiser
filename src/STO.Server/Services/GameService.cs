@@ -87,10 +87,10 @@ namespace STO.Server.Services
             }
             else
             {
-                // Pag already exists
-                CopyValues<PlayerAtGameEntity>(existingPag.PlayerAtGameEntity, pag);
+                pag.RowKey = existingPag.PlayerAtGameEntity.RowKey;
+                pag.PartitionKey = existingPag.PlayerAtGameEntity.PartitionKey;
                 await _storageService.UpsertEntity<PlayerAtGameEntity>(pag);
-            }
+            } 
         }
 
         public async Task DeletePlayerAtGameEntity(PlayerAtGameEntity pag)
@@ -236,18 +236,6 @@ namespace STO.Server.Services
                 games.Add(Game);
             }
             return Task.FromResult(games);
-        }
-
-        private void CopyValues<T>(T target, T source)
-        {
-            Type t = typeof(T);
-            var properties = t.GetProperties().Where(prop => prop.CanRead && prop.CanWrite);
-            foreach (var prop in properties)
-            {
-                var value = prop.GetValue(source, null);
-                if (value != null)
-                    prop.SetValue(target, value, null);
-            }
         }
 
     }

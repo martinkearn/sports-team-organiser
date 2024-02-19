@@ -79,7 +79,18 @@ namespace STO.Server.Services
 
         public async Task UpsertPlayerAtGameEntity(PlayerAtGameEntity pag)
         {
-            await _storageService.UpsertEntity<PlayerAtGameEntity>(pag);
+            var game = await GetGame(pag.GameRowKey);
+            var existingPag = game.PlayersAtGame.FirstOrDefault(p => p.Player.PlayerEntity.RowKey == pag.PlayerRowKey);
+            if (existingPag == default)
+            {
+                await _storageService.UpsertEntity<PlayerAtGameEntity>(pag);
+            }
+            else
+            {
+                // Pag already exists
+                CopyValues<PlayerAtGameEntity>(existingPag.PlayerAtGameEntity, pag);
+                await _storageService.UpsertEntity<PlayerAtGameEntity>(pag);
+            }
         }
 
         public async Task DeletePlayerAtGameEntity(PlayerAtGameEntity pag)
@@ -226,5 +237,18 @@ namespace STO.Server.Services
             }
             return Task.FromResult(games);
         }
+
+        private void CopyValues<T>(T target, T source)
+        {
+            Type t = typeof(T);
+            var properties = t.GetProperties().Where(prop => prop.CanRead && prop.CanWrite);
+            foreach (var prop in properties)
+            {
+                var value = prop.GetValue(source, null);
+                if (value != null)
+                    prop.SetValue(target, value, null);
+            }
+        }
+
     }
 }

@@ -46,6 +46,7 @@
 
 <div class="modal-footer px-0">
     <a class="btn btn-secondary" href="/games/@GameRowKey"><i class="fa-solid fa-arrow-left"></i>Back to Game</a>
+    <DeleteButtonWithCheck @rendermode="RenderMode.InteractiveAuto" DeleteWhatLabel="@pageTitle" ButtonLabel="Delete" ParentPageCallback="DeleteGame" />
 </div>
 
 @code {
@@ -70,6 +71,12 @@
         var dt = new DateTime(game.GameEntity.Date.Year, game.GameEntity.Date.Month, game.GameEntity.Date.Day, hour, minute, 0, DateTimeKind.Utc);
         game.GameEntity.Date = dt;
         await GameService.UpsertGameEntity(game.GameEntity);
+    }
+
+    private async Task DeleteGame()
+    {
+        await GameService.DeleteGame(GameRowKey);
+        Navigation.NavigateTo("/games");
     }
 
     async Task RefreshGameData()

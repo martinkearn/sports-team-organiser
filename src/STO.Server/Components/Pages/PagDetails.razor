@@ -61,7 +61,7 @@
 
         <div class="modal-footer">
             <a class="btn btn-secondary" href="/games/@pag.GameEntity.RowKey"><i class="fa-solid fa-arrow-left"></i> Back to Game</a>
-            <button class="btn btn-secondary" @onclick="Delete"><i class="fa-solid fa-trash"></i> Delete</button>
+            <DeleteButtonWithCheck @rendermode="RenderMode.InteractiveAuto" DeleteWhatLabel="@pageTitle" ButtonLabel="Delete" ParentPageCallback="DeletePag" />
         </div>
     </Authorized>
     <NotAuthorized>
@@ -108,7 +108,7 @@
         await RefreshData();
     }
 
-    async Task Delete()
+    async Task DeletePag()
     {
         await GameService.DeletePlayerAtGameEntity(pag.PlayerAtGameEntity);
         Navigation.NavigateTo($"/games/{pag.PlayerAtGameEntity.GameRowKey}");

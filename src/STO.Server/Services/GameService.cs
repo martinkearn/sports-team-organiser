@@ -95,16 +95,6 @@ namespace STO.Server.Services
 
         public async Task DeletePlayerAtGameEntity(PlayerAtGameEntity pag)
         {
-            // Delete transactions for PAG for game
-            var player = _playerService.GetPlayer(pag.PlayerRowKey);
-            var transactionNotes = _transactionService.GetNotesForGame(pag.GameRowKey);
-            var playerGameDebits = player.Transactions.Where(t => t.Notes == transactionNotes);
-            foreach (var playerGameDebit in playerGameDebits)
-            {
-                await _storageService.DeleteEntity<TransactionEntity>(playerGameDebit.RowKey);
-            }
-
-            // Delete PAG itself
             await _storageService.DeleteEntity<PlayerAtGameEntity>(pag.RowKey);
         }   
 

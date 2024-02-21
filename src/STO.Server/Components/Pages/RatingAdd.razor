@@ -23,7 +23,7 @@
             <option value="">Select Game ...</option>
             @foreach (var game in games)
             {
-                <option value="@game.GameEntity.RowKey"><GameTitle GameRowKey="@game.GameEntity.RowKey" Link="false" /></option>
+                <option value="@game.GameEntity.RowKey"><GameTitle Game="@game" Link="false" /></option>
             }
         </InputSelect>
     </div>

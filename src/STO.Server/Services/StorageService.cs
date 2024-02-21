@@ -13,6 +13,7 @@ namespace STO.Server.Services
         private List<GameEntity> _gameEntities;
         private List<TransactionEntity> _transactionEntities;
         private List<PlayerAtGameEntity> _playerAtGameEntities;
+        private List<RatingEntity> _ratingEntities;
 
         public StorageService(IOptions<StorageConfiguration> storageConfigurationOptions)
         { 
@@ -68,6 +69,10 @@ namespace STO.Server.Services
             {
                 return (List<T>)Convert.ChangeType(_playerAtGameEntities, typeof(List<T>));
             }
+            else if (ty == typeof(RatingEntity))
+            {
+                return (List<T>)Convert.ChangeType(_ratingEntities, typeof(List<T>));
+            }
             else
             {
                 return _tableClient.Query<T>($"PartitionKey eq '{typeof(T).ToString()}'").ToList();
@@ -80,6 +85,7 @@ namespace STO.Server.Services
             RefreshEntitiesFromStorage<GameEntity>();
             RefreshEntitiesFromStorage<TransactionEntity>();
             RefreshEntitiesFromStorage<PlayerAtGameEntity>();
+            RefreshEntitiesFromStorage<RatingEntity>();
         }
 
         private void RefreshEntitiesFromStorage<T>() where T : class, ITableEntity
@@ -106,6 +112,11 @@ namespace STO.Server.Services
             if (ty == typeof(PlayerAtGameEntity))
             {
                 _playerAtGameEntities = (List<PlayerAtGameEntity>)Convert.ChangeType(entities, typeof(List<PlayerAtGameEntity>));
+            }
+
+            if (ty == typeof(RatingEntity))
+            {
+                _ratingEntities = (List<RatingEntity>)Convert.ChangeType(entities, typeof(List<RatingEntity>));
             }
         }     
     }

@@ -1,4 +1,5 @@
 @page "/admin"
+@using Azure.Data.Tables
 @inject IStorageService StorageService
 
 <PageTitle>Tuesday.Football</PageTitle>
@@ -6,7 +7,29 @@
 <AuthorizeView Policy="IsAdminEmail">
     <Authorized>
         <h1>Welcome to Tuesday.Football Admin Portal</h1>
+
+        <h2>Data</h2>
         <button class="btn btn-primary" @onclick="RefreshData">Refresh Data</button>
+        @foreach (var p in allPlayers)
+        {
+            <p><a href="/players/@p.RowKey/player">Player, @p.RowKey, @p.Name</a></p>
+        }        
+        @foreach (var g in allGames)
+        {
+            <p><a href="/games/@g.RowKey">Game, @g.RowKey, @g.Date</a></p>
+        }        
+        @foreach (var t in allTransactions)
+        {
+            <p><a href="/transactions/@t.RowKey">Transaction, @t.RowKey, @t.Date, @t.Amount</a></p>
+        }        
+        @foreach (var pag in allPlayerAtGame)
+        {
+            <p><a href="/pags/@pag.RowKey">PlayerAtGame, @pag.RowKey, @pag.PlayerRowKey, @pag.GameRowKey</a></p>
+        }
+        @foreach (var r in allRatings)
+        {
+            <p><a href="/ratings/@r.RowKey">Rating, @r.RowKey, @r.PlayerRowKey, @r.GameRowKey, @r.Rating</a></p>
+        }
 
         <BootstrapBreakpoints  @rendermode="RenderMode.InteractiveAuto" />
 
@@ -18,8 +41,24 @@
 </AuthorizeView>
 
 @code {
-    void RefreshData()
+    private List<PlayerEntity> allPlayers;
+    private List<GameEntity> allGames;
+    private List<TransactionEntity> allTransactions;
+    private List<PlayerAtGameEntity> allPlayerAtGame;
+    private List<RatingEntity> allRatings;
+
+    protected override void OnInitialized()
+    {
+        RefreshData();
+    }
+
+    private void RefreshData()
     {
         StorageService.RefreshData();
+        allPlayers = StorageService.QueryEntities<PlayerEntity>();
+        allGames = StorageService.QueryEntities<GameEntity>();
+        allTransactions = StorageService.QueryEntities<TransactionEntity>();
+        allPlayerAtGame = StorageService.QueryEntities<PlayerAtGameEntity>();
+        allRatings = StorageService.QueryEntities<RatingEntity>();
     }
 }

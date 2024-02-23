@@ -36,8 +36,11 @@ builder.Services.AddRazorPages();
 
 //Provided by template
 // Add services to the container.
+// Timeout settings from: https://stackoverflow.com/questions/77425476/how-to-prevent-a-blazor-server-webapp-from-needing-refresh-after-device-standby
 builder.Services.AddRazorComponents()
-    .AddInteractiveServerComponents()
+    .AddInteractiveServerComponents(options => {
+        options.DisconnectedCircuitRetentionPeriod = TimeSpan.FromMinutes(30);
+    })
     .AddInteractiveWebAssemblyComponents();
 
 // Add custom auth policy

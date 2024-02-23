@@ -20,7 +20,9 @@
                 "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
             },
             "env": {
-                "ASPNETCORE_ENVIRONMENT": "Development"
+                "ASPNETCORE_ENVIRONMENT": "Development",
+                "StorageConfiguration:ConnectionString": "DefaultEndpointsProtocol=https;AccountName=storagetnfdev;AccountKey=+Fi43nFozQCNwcjeTrG3Cn0ecTBf/st8TiQQ+mIlw9o5706JY8MMkm+sQ/O6liC7K2JrO+aXpV9a+AStuU9z+Q==;EndpointSuffix=core.windows.net",
+                "StorageConfiguration:DataTable": "data",
             },
             "sourceFileMap": {
                 "/Views": "${workspaceFolder}/Views"

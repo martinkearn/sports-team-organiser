@@ -1,6 +1,7 @@
 global using STO.Server;
 global using STO.Server.Policies;
 global using STO.Server.Components;
+global using STO.Server.Services;
 global using STO.Models;
 global using STO.Models.Interfaces;
 global using STO.Services;
@@ -11,6 +12,8 @@ using Microsoft.Identity.Web;
 using Microsoft.Identity.Web.UI;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Rewrite;
+using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Server.Circuits;
 
 //Provided by template
 var builder = WebApplication.CreateBuilder(args);
@@ -55,6 +58,11 @@ builder.Services.AddOptions<StorageConfiguration>()
     {
         configuration.GetSection(nameof(StorageConfiguration)).Bind(settings);
     });
+
+// Blazor circuitpersisster from https://github.com/SteveSandersonMS/CircuitPersisterExample
+builder.Services.AddScoped<PersistingCircuitHandler>();
+builder.Services.AddSingleton<CircuitStateStore>();
+builder.Services.AddScoped<CircuitHandler>(s => s.GetRequiredService<PersistingCircuitHandler>());
 
 //Provided by template
 var app = builder.Build();

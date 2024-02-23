@@ -1,17 +1,13 @@
 @page "/games/{GameRowKey}"
-@* @inject IPlayerService PlayerService
+@inject IPlayerService PlayerService
 @inject IGameService GameService
 @inject ITransactionService TransactionService
-@inject NavigationManager Navigation *@
+@inject NavigationManager Navigation
 @rendermode InteractiveAuto
 
-@* <PageTitle>TNF - @pageTitle</PageTitle> *@
+<PageTitle>TNF - @pageTitle</PageTitle>
 
-@* <GameDetailsClient GameRowKey="@GameRowKey" /> *@
-
-<hr>
-
-@* <h1><i class="fa-solid fa-people-group me-2"></i> <GameTitle @rendermode="RenderMode.InteractiveAuto" Game="@game" Link="false" /></h1>
+<h1><i class="fa-solid fa-people-group me-2"></i> <GameTitle @rendermode="RenderMode.InteractiveAuto" Game="@game" Link="false" /></h1>
 
 <p>@game.PlayersAtGame.Where(p => p.PlayerAtGameEntity.Forecast == PlayingOptions.Yes.ToString()).Count() yes, @game.PlayersAtGame.Where(p => p.PlayerAtGameEntity.Forecast == PlayingOptions.Maybe.ToString()).Count() maybe. @game.GameEntity.Date.TimeOfDay.Hours:@game.GameEntity.Date.TimeOfDay.Minutes kick off.</p>
 <p>@game.GameEntity.Notes</p>
@@ -196,7 +192,7 @@
             <button class="btn btn-secondary" @onclick="CalculateTeams"><i class="fa-solid fa-gear"></i> Calculate Teams</button> 
         </Authorized>
     </AuthorizeView>
-</div> *@
+</div>
 
 @code {
     [Parameter]
@@ -204,7 +200,7 @@
 
     private Game game;
 
-@*     private List<Player> players = new();
+    private List<Player> players = new();
 
     private PlayerAtGameEntity newPagEntity;
 
@@ -216,20 +212,20 @@
 
     private bool simpleView = false;
 
-    private string simpleViewCss = "fa-solid fa-eye-slash"; *@
+    private string simpleViewCss = "fa-solid fa-eye-slash";
 
     protected override async Task OnInitializedAsync()
     {
         await RefreshGameData();
     }
 
-@*     private async Task AddPagEntity()
+    private async Task AddPagEntity()
     {
         await GameService.UpsertPlayerAtGameEntity(newPagEntity);
         await RefreshGameData();
-    } *@
+    }
 
-@*     async Task CalculateTeams()
+    async Task CalculateTeams()
     {
         var playersAtGameWithTeams = await GameService.CalculateTeams(game.PlayersAtGame);
         game.TeamA = playersAtGameWithTeams
@@ -240,29 +236,29 @@
             .ToList();
 
         await RefreshGameData();
-    } *@
+    }
 
-@*     async Task ToggleAllPlayed()
+    async Task ToggleAllPlayed()
     {
         var played = MarkAsPLayedOrNotPLayed();
         await GameService.MarkAllPlayed(game.GameEntity.RowKey, played);
         await RefreshGameData();
-    } *@
+    }
 
-@*     void ToggleSimpleView()
+    void ToggleSimpleView()
     {
         simpleView = !simpleView;
         SetSimpleViewLabel();
-    } *@
+    }
 
-@*     private bool MarkAsPLayedOrNotPLayed()
+    private bool MarkAsPLayedOrNotPLayed()
     {
         int playedPagsCount = game.PlayersAtGame.Where(o => o.PlayerAtGameEntity.Played).Count();
         bool played = (playedPagsCount == 0) ? true : false;
         return played;
-    }  *@
+    } 
 
-@*     private void SetSimpleViewLabel()
+    private void SetSimpleViewLabel()
     {
         // Set simple view label
         if (simpleView)
@@ -275,11 +271,11 @@
             simpleViewLabel = "Enable Simple View";
             simpleViewCss = "fa-solid fa-eye-slash";
         }
-    } *@
+    }
 
     async Task RefreshGameData()
     {
-@*         players = PlayerService.GetPlayers();
+        players = PlayerService.GetPlayers();
         game = await GameService.GetGame(GameRowKey);
         newPagEntity = new PlayerAtGameEntity()
         {
@@ -297,6 +293,6 @@
         //Set simple view label
         SetSimpleViewLabel();
         
-        this.StateHasChanged(); *@
+        this.StateHasChanged();
     }
 }

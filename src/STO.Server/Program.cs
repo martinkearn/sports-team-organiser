@@ -1,15 +1,19 @@
 global using STO.Server;
-global using STO.Server.Models;
-global using STO.Server.Services;
-global using STO.Server.Interfaces;
 global using STO.Server.Policies;
 global using STO.Server.Components;
+global using STO.Server.Services;
 global using STO.Models;
+global using STO.Models.Interfaces;
+global using STO.Services;
+global using STO.Client;
+global using STO.Client.Components;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.Identity.Web;
 using Microsoft.Identity.Web.UI;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Rewrite;
+using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Server.Circuits;
 
 //Provided by template
 var builder = WebApplication.CreateBuilder(args);
@@ -32,8 +36,12 @@ builder.Services.AddRazorPages();
 
 //Provided by template
 // Add services to the container.
+// Timeout settings from: https://stackoverflow.com/questions/77425476/how-to-prevent-a-blazor-server-webapp-from-needing-refresh-after-device-standby
 builder.Services.AddRazorComponents()
-    .AddInteractiveServerComponents();
+    .AddInteractiveServerComponents(options => {
+        options.DisconnectedCircuitRetentionPeriod = TimeSpan.FromMinutes(30);
+    })
+    .AddInteractiveWebAssemblyComponents();
 
 // Add custom auth policy
 builder.Services.AddAuthorization(config =>
@@ -53,6 +61,11 @@ builder.Services.AddOptions<StorageConfiguration>()
     {
         configuration.GetSection(nameof(StorageConfiguration)).Bind(settings);
     });
+
+// Blazor circuitpersisster from https://github.com/SteveSandersonMS/CircuitPersisterExample
+builder.Services.AddScoped<PersistingCircuitHandler>();
+builder.Services.AddSingleton<CircuitStateStore>();
+builder.Services.AddScoped<CircuitHandler>(s => s.GetRequiredService<PersistingCircuitHandler>());
 
 //Provided by template
 var app = builder.Build();
@@ -78,7 +91,8 @@ app.MapControllers();
 
 //Provided by template
 app.MapRazorComponents<App>()
-    .AddInteractiveServerRenderMode();
+    .AddInteractiveServerRenderMode()
+    .AddInteractiveWebAssemblyRenderMode();
 
 //Provided by template
 app.Run();

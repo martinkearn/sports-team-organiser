@@ -8,6 +8,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "STO.Client", "STO.Client\ST
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "STO.Models", "STO.Models\STO.Models.csproj", "{1F782A5C-B3A2-4168-B8ED-8B383315E9AA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "STO.Services", "STO.Services\STO.Services.csproj", "{9D3AFC94-BA4D-4528-96F3-286D1B448C11}"
+EndProject
 Global
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -60,5 +62,17 @@ Global
 		{1F782A5C-B3A2-4168-B8ED-8B383315E9AA}.Release|x64.Build.0 = Release|Any CPU
 		{1F782A5C-B3A2-4168-B8ED-8B383315E9AA}.Release|x86.ActiveCfg = Release|Any CPU
 		{1F782A5C-B3A2-4168-B8ED-8B383315E9AA}.Release|x86.Build.0 = Release|Any CPU
+		{9D3AFC94-BA4D-4528-96F3-286D1B448C11}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9D3AFC94-BA4D-4528-96F3-286D1B448C11}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9D3AFC94-BA4D-4528-96F3-286D1B448C11}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{9D3AFC94-BA4D-4528-96F3-286D1B448C11}.Debug|x64.Build.0 = Debug|Any CPU
+		{9D3AFC94-BA4D-4528-96F3-286D1B448C11}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{9D3AFC94-BA4D-4528-96F3-286D1B448C11}.Debug|x86.Build.0 = Debug|Any CPU
+		{9D3AFC94-BA4D-4528-96F3-286D1B448C11}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9D3AFC94-BA4D-4528-96F3-286D1B448C11}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9D3AFC94-BA4D-4528-96F3-286D1B448C11}.Release|x64.ActiveCfg = Release|Any CPU
+		{9D3AFC94-BA4D-4528-96F3-286D1B448C11}.Release|x64.Build.0 = Release|Any CPU
+		{9D3AFC94-BA4D-4528-96F3-286D1B448C11}.Release|x86.ActiveCfg = Release|Any CPU
+		{9D3AFC94-BA4D-4528-96F3-286D1B448C11}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

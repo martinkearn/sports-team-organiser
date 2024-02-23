@@ -1,7 +1,9 @@
 using Azure.Data.Tables;
 using Microsoft.Extensions.Options;
+using STO.Models;
+using STO.Models.Interfaces;
 
-namespace STO.Server.Services
+namespace STO.Services
 {
     /// <inheritdoc/>
     public class StorageService : IStorageService

@@ -1,4 +1,4 @@
-namespace STO.Server.Interfaces
+namespace STO.Models.Interfaces
 {
     /// <summary>
     /// Service for working with Ratings.

@@ -1,4 +1,7 @@
-namespace STO.Server.Services
+using STO.Models;
+using STO.Models.Interfaces;
+
+namespace STO.Services
 {
     /// <inheritdoc/>
     public class TransactionService : ITransactionService

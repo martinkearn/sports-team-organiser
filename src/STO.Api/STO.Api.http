@@ -1,0 +1,6 @@
+@STO.Api_HostAddress = http://localhost:5228
+
+GET {{STO.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

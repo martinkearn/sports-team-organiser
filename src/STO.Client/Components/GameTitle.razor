@@ -4,7 +4,8 @@
     var gameLabel = string.IsNullOrEmpty(Game.GameEntity.Title) ? gameDateLabel : $"{gameDateLabel} {Game.GameEntity.Title}";
     @if (Link)
     {
-        <a href="/games/@Game.GameEntity.RowKey">@gameLabel</a>
+        @* <a href="/games/@Game.GameEntity.RowKey">@gameLabel</a> *@
+        <a href="/client/games/@Game.GameEntity.RowKey">@gameLabel</a>
     }
     else
     {

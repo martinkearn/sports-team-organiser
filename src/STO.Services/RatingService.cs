@@ -1,5 +1,7 @@
+using STO.Models;
+using STO.Models.Interfaces;
 
-namespace STO.Server.Services
+namespace STO.Services
 {
     /// <inheritdoc/>
     public class RatingService : IRatingService

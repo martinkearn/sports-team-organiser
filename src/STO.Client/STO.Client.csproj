@@ -10,6 +10,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\STO.Models\STO.Models.csproj" />
+    <ProjectReference Include="..\STO.Services\STO.Services.csproj" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.0" />
   </ItemGroup>
 

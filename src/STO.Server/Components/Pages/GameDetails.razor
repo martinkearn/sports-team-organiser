@@ -7,7 +7,11 @@
 
 <PageTitle>TNF - @pageTitle</PageTitle>
 
-<h1><i class="fa-solid fa-people-group me-2"></i> <GameTitle @rendermode="RenderMode.InteractiveAuto" Game="@game" Link="false" /></h1>
+<GameDetailsClient @rendermode="InteractiveAuto" Game="@game" />
+
+<hr>
+
+@* <h1><i class="fa-solid fa-people-group me-2"></i> <GameTitle @rendermode="RenderMode.InteractiveAuto" Game="@game" Link="false" /></h1>
 
 <p>@game.PlayersAtGame.Where(p => p.PlayerAtGameEntity.Forecast == PlayingOptions.Yes.ToString()).Count() yes, @game.PlayersAtGame.Where(p => p.PlayerAtGameEntity.Forecast == PlayingOptions.Maybe.ToString()).Count() maybe. @game.GameEntity.Date.TimeOfDay.Hours:@game.GameEntity.Date.TimeOfDay.Minutes kick off.</p>
 <p>@game.GameEntity.Notes</p>
@@ -38,6 +42,7 @@
         <br>
     </Authorized>
 </AuthorizeView>
+
 
 <table class="table table-sm table-borderless">
     <thead>
@@ -191,7 +196,7 @@
             <button class="btn btn-secondary" @onclick="CalculateTeams"><i class="fa-solid fa-gear"></i> Calculate Teams</button> 
         </Authorized>
     </AuthorizeView>
-</div>
+</div> *@
 
 @code {
     [Parameter]

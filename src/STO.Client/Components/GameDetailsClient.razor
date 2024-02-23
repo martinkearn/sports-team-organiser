@@ -1,0 +1,62 @@
+@inject IGameService GameService
+@inject IPlayerService PlayerService
+
+<PageTitle>TNF - Games Details (client)</PageTitle>
+
+<AuthorizeView Policy="IsAdminEmail">
+    <Authorized>
+        <div class="row">
+            <div class="col">
+                <EditForm Model="@newPagEntity" OnValidSubmit="AddPagEntity" class="row row-cols-lg-auto g-3 align-items-center" Context="NewPagEntity">
+                    <DataAnnotationsValidator />
+                    <ValidationSummary />
+                    <div class="input-group col-12">
+                        <InputSelect class="form-select" @bind-Value="newPagEntity.PlayerRowKey">
+                            <option value="">Add player to game ...</option>
+                            @foreach (var player in players)
+                            {
+                                if (game.PlayersAtGame.FirstOrDefault(pag => pag.PlayerAtGameEntity.PlayerRowKey == player.PlayerEntity.RowKey) == default)
+                                {
+                                    <option value="@player.PlayerEntity.RowKey">@player.PlayerEntity.Name</option>
+                                }
+                            }
+                        </InputSelect>
+                        <button class="btn btn-outline-secondary" type="submit"><i class="fa-solid fa-plus"></i></button>
+                    </div>
+                </EditForm>
+            </div>
+        </div>
+        <br>
+    </Authorized>
+</AuthorizeView>
+
+@code {
+    [Parameter]
+    public Game game { get; set; }
+
+    private PlayerAtGameEntity newPagEntity;   
+    
+    private List<Player> players = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await RefreshGameData();
+    }
+
+    private async Task AddPagEntity()
+    {
+        await GameService.UpsertPlayerAtGameEntity(newPagEntity);
+        await RefreshGameData();
+    }
+
+    async Task RefreshGameData()
+    {
+        players = PlayerService.GetPlayers();
+        newPagEntity = new PlayerAtGameEntity()
+        {
+            GameRowKey = game.GameEntity.RowKey,
+            Played = false,
+            Forecast = PlayingOptions.Yes.ToString(),
+        };
+    }
+}

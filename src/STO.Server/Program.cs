@@ -4,6 +4,8 @@ global using STO.Server.Components;
 global using STO.Models;
 global using STO.Models.Interfaces;
 global using STO.Services;
+global using STO.Client;
+global using STO.Client.Components;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.Identity.Web;
 using Microsoft.Identity.Web.UI;
@@ -32,7 +34,8 @@ builder.Services.AddRazorPages();
 //Provided by template
 // Add services to the container.
 builder.Services.AddRazorComponents()
-    .AddInteractiveServerComponents();
+    .AddInteractiveServerComponents()
+    .AddInteractiveWebAssemblyComponents();
 
 // Add custom auth policy
 builder.Services.AddAuthorization(config =>
@@ -77,7 +80,8 @@ app.MapControllers();
 
 //Provided by template
 app.MapRazorComponents<App>()
-    .AddInteractiveServerRenderMode();
+    .AddInteractiveServerRenderMode()
+    .AddInteractiveWebAssemblyRenderMode();
 
 //Provided by template
 app.Run();

@@ -1,5 +1,7 @@
+@page "/clientgames/{GameRowKey}"
 @inject IGameService GameService
 @inject IPlayerService PlayerService
+@rendermode InteractiveAuto
 
 <h1><i class="fa-solid fa-people-group me-2"></i> <GameTitle @rendermode="RenderMode.InteractiveAuto" Game="@game" Link="false" /></h1>
 

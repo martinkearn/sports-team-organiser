@@ -17,6 +17,12 @@ on:
         dotnetoutputpath:
           type: string
           required: true
+        apicsprojpath:
+            type: string
+            required: true
+        apidotnetoutputpath:
+            type: string
+            required: true
       secrets:
         azure-credentials:
           required: true

@@ -16,6 +16,8 @@ jobs:
       uniquelabel: 'tnfprod'
       csprojpath: './src/STO.Server/STO.Server.csproj'
       dotnetoutputpath: './src/STO.Server/output'
+      apicsprojpath: './src/STO.Api/STO.Api.csproj'
+      apidotnetoutputpath: './src/STO.Api/output'
     secrets:
       azure-credentials: ${{ secrets.AZURE_CREDENTIALS }}
       azure-subscription: ${{ secrets.AZURE_SUBSCRIPTION }}

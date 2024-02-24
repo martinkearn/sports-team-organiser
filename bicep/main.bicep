@@ -111,7 +111,7 @@ output webAppName string  = webApp.name
 
 //API WEB APP
 resource apiWebApp 'Microsoft.Web/sites@2022-03-01' = {
-  name: 'apiWebapp-${uniqueName}'
+  name: 'apiwebapp-${uniqueName}'
   location: location
   kind: 'app,linux'
   properties: {

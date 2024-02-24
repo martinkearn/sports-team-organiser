@@ -1,6 +1,6 @@
 global using STO.Models;
 global using STO.Models.Interfaces;
-global using STO.Api.Services;
+global using STO.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 

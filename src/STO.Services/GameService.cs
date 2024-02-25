@@ -7,12 +7,12 @@ namespace STO.Services
     /// <inheritdoc/>
     public class GameService : IGameService
     {
-        private readonly IStorageService _storageService;
+        private readonly IApiStorageService _storageService;
         private readonly IPlayerService _playerService;
 
         private readonly ITransactionService _transactionService;
 
-        public GameService(IStorageService storageService, IPlayerService playerService, ITransactionService transactionService)
+        public GameService(IApiStorageService storageService, IPlayerService playerService, ITransactionService transactionService)
         {
             _storageService = storageService;
             _playerService = playerService;
@@ -40,15 +40,15 @@ namespace STO.Services
 
         public async Task<List<Game>> GetGames()
         {
-            var gameEntities = _storageService.QueryEntities<GameEntity>()
-                .OrderByDescending(g => g.Date)
-                .ToList();
+            var gameEntities = await _storageService.QueryEntities<GameEntity>();
+            gameEntities = [.. gameEntities.OrderByDescending(g => g.Date)];
             return await GameEntitiesToGames(gameEntities);
         }
 
         public async Task<Game> GetGame(string gameRowKey)
         {
-            var gameEntities = _storageService.QueryEntities<GameEntity>().Where(g => g.RowKey == gameRowKey).ToList();
+            var gameEntities = await _storageService.QueryEntities<GameEntity>();
+            gameEntities = gameEntities.Where(g => g.RowKey == gameRowKey).ToList();
             var games = await GetGames(gameEntities);
             var matchingGame = games.FirstOrDefault();
             matchingGame.TeamA = matchingGame.TeamA.OrderBy(o => o.Player.PlayerEntity.Position).ToList();
@@ -58,7 +58,8 @@ namespace STO.Services
 
         public async Task<Game> GetNextGame()
         {
-            var gameEntities = _storageService.QueryEntities<GameEntity>().Where(g => g.Date.Date > DateTime.UtcNow.Date).ToList();
+            var gameEntities = await _storageService.QueryEntities<GameEntity>();
+            gameEntities = gameEntities.Where(g => g.Date.Date > DateTime.UtcNow.Date).ToList();
             var games = await GetGames(gameEntities);
             var nextGame = games.FirstOrDefault();
             return nextGame;
@@ -71,7 +72,8 @@ namespace STO.Services
 
         public async Task<PlayerAtGame> GetPlayerAtGame(string pagRowKey)
         {
-            var pagEntity = _storageService.QueryEntities<PlayerAtGameEntity>().FirstOrDefault(o => o.RowKey == pagRowKey);
+            var pagEntitys = await _storageService.QueryEntities<PlayerAtGameEntity>();
+            var pagEntity = pagEntitys.FirstOrDefault(o => o.RowKey == pagRowKey);
             var game = await GetGame(pagEntity.GameRowKey);
             var pag = new PlayerAtGame(pagEntity);
             pag.Player = _playerService.GetPlayer(pagEntity.PlayerRowKey);
@@ -189,18 +191,18 @@ namespace STO.Services
             await UpsertPlayerAtGameEntity(pag);
         }
 
-        private Task<List<Game>> GameEntitiesToGames(List<GameEntity> gameEntities)
+        private async Task<List<Game>> GameEntitiesToGames(List<GameEntity> gameEntities)
         {
             var games = new List<Game>();
             foreach (var ge in gameEntities)
             {
                 // Get entities from storage
-                var playersAtGameEntities = _storageService.QueryEntities<PlayerAtGameEntity>()
-                    .Where(pag => pag.GameRowKey == ge.RowKey);
+                var playersAtGameEntities = await _storageService.QueryEntities<PlayerAtGameEntity>();
+                var pags = playersAtGameEntities.Where(pag => pag.GameRowKey == ge.RowKey);
 
                 // Calculate PlayerAtGame
                 var playersAtGame = new List<PlayerAtGame>();
-                foreach (var playersAtGameEntity in playersAtGameEntities)
+                foreach (var playersAtGameEntity in pags)
                 {
                     var pag = new PlayerAtGame(playersAtGameEntity);
                     pag.Player = _playerService.GetPlayer(playersAtGameEntity.PlayerRowKey);
@@ -227,7 +229,7 @@ namespace STO.Services
                 };
                 games.Add(Game);
             }
-            return Task.FromResult(games);
+            return games;
         }
 
     }

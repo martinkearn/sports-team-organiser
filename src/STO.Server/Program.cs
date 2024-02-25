@@ -6,7 +6,6 @@ global using STO.Models;
 global using STO.Models.Interfaces;
 global using STO.Services;
 global using STO.Client;
-global using STO.Client.Components;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.Identity.Web;
 using Microsoft.Identity.Web.UI;
@@ -50,8 +49,12 @@ builder.Services.AddAuthorization(config =>
     });
 builder.Services.AddSingleton<IAuthorizationHandler, IsAdminEmailHandler>();
 
+// Httpclient
+builder.Services.AddHttpClient();
+
 // Add custom services to the container
 builder.Services.AddSingleton<IStorageService, StorageService>();
+builder.Services.AddSingleton<IApiStorageService, ApiStorageService>();
 builder.Services.AddSingleton<IPlayerService, PlayerService>();
 builder.Services.AddSingleton<IGameService, GameService>();
 builder.Services.AddSingleton<ITransactionService, TransactionService>();

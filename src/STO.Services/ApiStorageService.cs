@@ -22,6 +22,8 @@ namespace STO.Services
 
         private bool _gotData;
 
+        private JsonSerializerOptions _jsonSerializerOptions;
+
         private readonly HttpClient _httpClient;
 
         public ApiStorageService(IOptions<StorageConfiguration> storageConfigurationOptions, IHttpClientFactory httpClientFactory)
@@ -34,6 +36,11 @@ namespace STO.Services
             _tableClient.CreateIfNotExists();
 
             _gotData = false;
+
+            _jsonSerializerOptions = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true,
+            };
         }
 
         public async Task DeleteEntity<T>(string rowKey) where T : class, ITableEntity
@@ -123,15 +130,7 @@ namespace STO.Services
                 if (httpResponseMessage.IsSuccessStatusCode)
                 {
                     using var content = await httpResponseMessage.Content.ReadAsStreamAsync();
-
-                    var options = new JsonSerializerOptions
-                    {
-                        PropertyNameCaseInsensitive = true,
-                    };
-                    
-                    var streamAsPoco = await JsonSerializer.DeserializeAsync<IEnumerable<GameEntity>>(content,options);
-
-                    _gameEntities = streamAsPoco.ToList();
+                    _gameEntities = (await JsonSerializer.DeserializeAsync<IEnumerable<GameEntity>>(content, _jsonSerializerOptions)).ToList();
                 }
             }
 

@@ -25,7 +25,7 @@ namespace STO.Services
             _tableClient.CreateIfNotExists();
 
             // Load initial data
-            RefreshData();
+            await RefreshData();
         }
 
         public async Task DeleteEntity<T>(string rowKey) where T : class, ITableEntity
@@ -33,7 +33,7 @@ namespace STO.Services
             await _tableClient.DeleteEntityAsync(typeof(T).ToString(), rowKey);
 
             // Refresh data from storage
-            RefreshEntitiesFromStorage<T>();
+            await RefreshEntitiesFromStorage<T>();
         } 
 
         public async Task<T> UpsertEntity<T>(T entity) where T : class, ITableEntity
@@ -46,13 +46,13 @@ namespace STO.Services
             await _tableClient.UpsertEntityAsync<T>(entity, TableUpdateMode.Replace);
 
             // Refresh data from storage
-            RefreshEntitiesFromStorage<T>();
+            await RefreshEntitiesFromStorage<T>();
             
             // Return
             return entity;
         } 
 
-        public List<T> QueryEntities<T>() where T : class, ITableEntity
+        public async Task<List<T>> QueryEntities<T>() where T : class, ITableEntity
         {
             var ty = typeof(T);
             if (ty == typeof(PlayerEntity))
@@ -77,22 +77,33 @@ namespace STO.Services
             }
             else
             {
-                return _tableClient.Query<T>($"PartitionKey eq '{typeof(T).ToString()}'").ToList();
+                var entitiesPages = _tableClient.QueryAsync<T>(x => x.PartitionKey == $"{typeof(T)}", maxPerPage: 1000);
+                var entities = new List<T>();
+                await foreach (var entity in entitiesPages)
+                {
+                    entities.Add(entity);
+                }
+                return entities;
             }
         }   
 
-        public void RefreshData()
+        public async Task RefreshData()
         {
-            RefreshEntitiesFromStorage<PlayerEntity>();
-            RefreshEntitiesFromStorage<GameEntity>();
-            RefreshEntitiesFromStorage<TransactionEntity>();
-            RefreshEntitiesFromStorage<PlayerAtGameEntity>();
-            RefreshEntitiesFromStorage<RatingEntity>();
+            await RefreshEntitiesFromStorage<PlayerEntity>();
+            await RefreshEntitiesFromStorage<GameEntity>();
+            await RefreshEntitiesFromStorage<TransactionEntity>();
+            await RefreshEntitiesFromStorage<PlayerAtGameEntity>();
+            await RefreshEntitiesFromStorage<RatingEntity>();
         }
 
-        private void RefreshEntitiesFromStorage<T>() where T : class, ITableEntity
+        private async Task RefreshEntitiesFromStorage<T>() where T : class, ITableEntity
         {
-            var entities = _tableClient.Query<T>($"PartitionKey eq '{typeof(T).ToString()}'").ToList();
+            var entitiesPages = _tableClient.QueryAsync<T>(x => x.PartitionKey == $"{typeof(T)}", maxPerPage: 1000);
+            var entities = new List<T>();
+            await foreach (var entity in entitiesPages)
+            {
+                entities.Add(entity);
+            }
 
             var ty = typeof(T);
 

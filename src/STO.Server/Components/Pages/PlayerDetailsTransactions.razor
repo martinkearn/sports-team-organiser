@@ -59,14 +59,14 @@
 
     private string deleteAllLabel;
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        RefreshData();
+        await RefreshData();
     }
 
-    private void RefreshData()
+    private async Task RefreshData()
     {
-        player = PlayerService.GetPlayer(PlayerRowKey);
+        player = await PlayerService.GetPlayer(PlayerRowKey);
         deleteAllLabel = $"All transactions for {player.PlayerEntity.Name}";
         pageTitle = $"{player.PlayerEntity.Name}";
     }

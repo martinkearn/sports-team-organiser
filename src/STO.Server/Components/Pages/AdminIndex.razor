@@ -41,24 +41,24 @@
 </AuthorizeView>
 
 @code {
-    private List<PlayerEntity> allPlayers;
-    private List<GameEntity> allGames;
-    private List<TransactionEntity> allTransactions;
-    private List<PlayerAtGameEntity> allPlayerAtGame;
-    private List<RatingEntity> allRatings;
+    private List<PlayerEntity> allPlayers = new();
+    private List<GameEntity> allGames = new();
+    private List<TransactionEntity> allTransactions = new();
+    private List<PlayerAtGameEntity> allPlayerAtGame = new();
+    private List<RatingEntity> allRatings = new();
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        RefreshData();
+        await RefreshData();
     }
 
-    private void RefreshData()
+    private async Task RefreshData()
     {
-        StorageService.RefreshData();
-        allPlayers = StorageService.QueryEntities<PlayerEntity>();
-        allGames = StorageService.QueryEntities<GameEntity>();
-        allTransactions = StorageService.QueryEntities<TransactionEntity>();
-        allPlayerAtGame = StorageService.QueryEntities<PlayerAtGameEntity>();
-        allRatings = StorageService.QueryEntities<RatingEntity>();
+        await StorageService.RefreshData();
+        allPlayers = await StorageService.QueryEntities<PlayerEntity>();
+        allGames = await StorageService.QueryEntities<GameEntity>();
+        allTransactions = await StorageService.QueryEntities<TransactionEntity>();
+        allPlayerAtGame = await StorageService.QueryEntities<PlayerAtGameEntity>();
+        allRatings = await StorageService.QueryEntities<RatingEntity>();
     }
 }

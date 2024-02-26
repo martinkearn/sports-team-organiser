@@ -88,7 +88,7 @@
     private async Task RefreshData()
     {
         games = await GameService.GetGames();
-        player = PlayerService.GetPlayer(PlayerRowKey);
+        player = await PlayerService.GetPlayer(PlayerRowKey);
         pageTitle = $"{player.PlayerEntity.Name}";
     }
 

@@ -88,7 +88,7 @@
         var newTransactionEntityForPag = new TransactionEntity()
         {
             Date = DateTimeOffset.UtcNow,
-            Notes = TransactionService.GetNotesForGame(pag.GameEntity.RowKey),
+            Notes = await TransactionService.GetNotesForGame(pag.GameEntity.RowKey),
             PlayerRowKey = playerRowKey,
             Amount = amount
         };

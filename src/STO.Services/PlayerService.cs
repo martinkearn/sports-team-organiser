@@ -4,38 +4,37 @@ using STO.Models.Interfaces;
 namespace STO.Services
 {
     /// <inheritdoc/>
-    public class PlayerService : IPlayerService
+    public class PlayerService(IStorageService storageService) : IPlayerService
     {
-        private readonly IStorageService _storageService;
-        public PlayerService(IStorageService storageService)
+        private readonly IStorageService _storageService = storageService;
+
+        public async Task<List<Player>> GetPlayers(List<PlayerEntity> playerEntities)
         {
-            _storageService = storageService;
+            return await PlayerEntitiesToPlayers(playerEntities);
         }
 
-        public List<Player> GetPlayers(List<PlayerEntity> playerEntities)
+        public async Task<List<Player>> GetPlayers()
         {
-            return PlayerEntitiesToPlayers(playerEntities);
-        }
-
-        public List<Player> GetPlayers()
-        {
-            var playerEntities = _storageService.QueryEntities<PlayerEntity>()
+            var playerEntitiesResult = await _storageService.QueryEntities<PlayerEntity>();
+            var playerEntities = playerEntitiesResult
                 .OrderBy(p => p.Name)
                 .ToList();
-            return PlayerEntitiesToPlayers(playerEntities);
+            return await PlayerEntitiesToPlayers(playerEntities);
         }
 
         public async Task DeletePlayer(string playerRowkey)
         {
             // Delete TransactionEntity
-            var transactions = _storageService.QueryEntities<TransactionEntity>().Where(t => t.PlayerRowKey == playerRowkey);
+            var transactionsResult = await _storageService.QueryEntities<TransactionEntity>();
+            var transactions = transactionsResult.Where(t => t.PlayerRowKey == playerRowkey);
             foreach (var transaction in transactions)
             {
                 await _storageService.DeleteEntity<TransactionEntity>(transaction.RowKey);
             }
 
             // Delete PlayerAtGameEntity
-            var pags = _storageService.QueryEntities<PlayerAtGameEntity>().Where(pag => pag.PlayerRowKey == playerRowkey);
+            var pagsResult = await _storageService.QueryEntities<PlayerAtGameEntity>();
+            var pags = pagsResult.Where(pag => pag.PlayerRowKey == playerRowkey);
             foreach (var pag in pags)
             {
                 await _storageService.DeleteEntity<PlayerAtGameEntity>(pag.RowKey);
@@ -45,24 +44,27 @@ namespace STO.Services
             await _storageService.DeleteEntity<PlayerEntity>(playerRowkey);
         }
 
-        public Player GetPlayer(string rowKey)
+        public async Task<Player> GetPlayer(string rowKey)
         {
-            var playerEntities = _storageService.QueryEntities<PlayerEntity>().Where(p => p.RowKey == rowKey).ToList();
-            var matchingPlayer = PlayerEntitiesToPlayers(playerEntities).FirstOrDefault();
+            var playerEntitiesResult = await _storageService.QueryEntities<PlayerEntity>();
+            var playerEntities = playerEntitiesResult.Where(p => p.RowKey == rowKey).ToList();
+            var matchingPlayerResult = await PlayerEntitiesToPlayers(playerEntities);
+            var matchingPlayer = matchingPlayerResult.FirstOrDefault();
             return matchingPlayer;
         }
 
         public async Task UpsertPlayerEntity(PlayerEntity playerEntity)
         {
-            await _storageService.UpsertEntity<PlayerEntity>(playerEntity);
+            _ = await _storageService.UpsertEntity<PlayerEntity>(playerEntity);
         }
 
-        private List<Player> PlayerEntitiesToPlayers(List<PlayerEntity> playerEntities)
+        private async Task<List<Player>> PlayerEntitiesToPlayers(List<PlayerEntity> playerEntities)
         {
             var players = new List<Player>();
             foreach (var pe in playerEntities)
             {
-                var playersTransactions = _storageService.QueryEntities<TransactionEntity>()
+                var playersTransactionsResult = await _storageService.QueryEntities<TransactionEntity>();
+                var playersTransactions = playersTransactionsResult
                     .Where(o => o.PlayerRowKey == pe.RowKey)
                     .OrderByDescending(o => o.Date)
                     .ToList();

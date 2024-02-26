@@ -10,19 +10,19 @@ namespace STO.Models.Interfaces
         /// </summary>
         /// <param name="playerEntities">The list of PlayerEntities to convert.</param>
         /// <returns>List of Players.</returns>
-        public List<Player> GetPlayers(List<PlayerEntity> playerEntities);
+        public Task<List<Player>> GetPlayers(List<PlayerEntity> playerEntities);
 
         /// <summary>
         /// Converts all PlayerEntities to a full list of Players.
         /// </summary>
         /// <returns>List of Players.</returns>
-        public List<Player> GetPlayers();
+        public Task<List<Player>> GetPlayers();
 
         /// <summary>
         /// Gets a single player by row key.
         /// </summary>
         /// <returns>A Player.</returns>
-        public Player GetPlayer(string rowKey);
+        public Task<Player> GetPlayer(string rowKey);
 
         /// <summary>
         /// Deletes the PlayerEntity, TransactionEntity and PlayerAtGameEntity associated with a Player.

@@ -10,12 +10,12 @@ namespace STO.Services
     {
         private readonly StorageConfiguration _options;
         private readonly TableClient _tableClient;
-
         private List<PlayerEntity> _playerEntities;
         private List<GameEntity> _gameEntities;
         private List<TransactionEntity> _transactionEntities;
         private List<PlayerAtGameEntity> _playerAtGameEntities;
         private List<RatingEntity> _ratingEntities;
+        private bool _doneInitialLoad;
 
         public StorageService(IOptions<StorageConfiguration> storageConfigurationOptions)
         { 
@@ -23,13 +23,13 @@ namespace STO.Services
 
             _tableClient = new TableClient(_options.ConnectionString, _options.DataTable);
             _tableClient.CreateIfNotExists();
-
-            // Load initial data
-            await RefreshData();
         }
 
         public async Task DeleteEntity<T>(string rowKey) where T : class, ITableEntity
         {
+            //Get data if we have not done so yet
+            if (!_doneInitialLoad) await RefreshData();
+
             await _tableClient.DeleteEntityAsync(typeof(T).ToString(), rowKey);
 
             // Refresh data from storage
@@ -38,6 +38,9 @@ namespace STO.Services
 
         public async Task<T> UpsertEntity<T>(T entity) where T : class, ITableEntity
         {
+            //Get data if we have not done so yet
+            if (!_doneInitialLoad) await RefreshData();
+
             // Complete required values
             if (entity.RowKey == default) entity.RowKey = Guid.NewGuid().ToString();
             if (entity.PartitionKey == default) entity.PartitionKey = typeof(T).ToString();
@@ -54,6 +57,9 @@ namespace STO.Services
 
         public async Task<List<T>> QueryEntities<T>() where T : class, ITableEntity
         {
+            //Get data if we have not done so yet
+            if (!_doneInitialLoad) await RefreshData();
+
             var ty = typeof(T);
             if (ty == typeof(PlayerEntity))
             {
@@ -94,6 +100,7 @@ namespace STO.Services
             await RefreshEntitiesFromStorage<TransactionEntity>();
             await RefreshEntitiesFromStorage<PlayerAtGameEntity>();
             await RefreshEntitiesFromStorage<RatingEntity>();
+            _doneInitialLoad = true;
         }
 
         private async Task RefreshEntitiesFromStorage<T>() where T : class, ITableEntity

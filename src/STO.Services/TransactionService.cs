@@ -4,25 +4,20 @@ using STO.Models.Interfaces;
 namespace STO.Services
 {
     /// <inheritdoc/>
-    public class TransactionService : ITransactionService
+    public class TransactionService(IStorageService storageService, IPlayerService playerService) : ITransactionService
     {
-        private readonly IStorageService _storageService;
-        private readonly IPlayerService _playerService;
-        public TransactionService(IStorageService storageService, IPlayerService playerService)
+        private readonly IStorageService _storageService = storageService;
+        private readonly IPlayerService _playerService = playerService;
+
+        public async Task<List<Transaction>> GetTransactions(List<TransactionEntity> transactionEntities)
         {
-            _storageService = storageService;
-            _playerService = playerService;
+            return await TransactionEntitiesToTransactions(transactionEntities);
         }
 
-        public List<Transaction> GetTransactions(List<TransactionEntity> transactionEntities)
+        public async Task<List<Transaction>> GetTransactions()
         {
-            return TransactionEntitiesToTransactions(transactionEntities);
-        }
-
-        public List<Transaction> GetTransactions()
-        {
-            var TransactionEntities = _storageService.QueryEntities<TransactionEntity>().ToList();
-            return TransactionEntitiesToTransactions(TransactionEntities);
+            var TransactionEntitiesResult = await _storageService.QueryEntities<TransactionEntity>();
+            return await TransactionEntitiesToTransactions(TransactionEntitiesResult);
         }
 
         public async Task DeleteTransactionEntity(string rowKey)
@@ -32,7 +27,7 @@ namespace STO.Services
 
         public async Task DeleteTransactionEntiesForPlayer(string playerRowKey)
         {
-            List<Transaction> allTransactions = GetTransactions();
+            List<Transaction> allTransactions = await GetTransactions();
             var playerTransactions = allTransactions.Where(o => o.Player.PlayerEntity.RowKey == playerRowKey).ToList();
             var playerTransactionRowkeys = playerTransactions.Select(e => e.TransactionEntity.RowKey).ToList();
             foreach (var t in playerTransactionRowkeys)
@@ -41,11 +36,12 @@ namespace STO.Services
             }
         }
 
-        public Transaction GetTransaction(string rowKey)
+        public async Task<Transaction> GetTransaction(string rowKey)
         {
-            var transactionEntities = _storageService.QueryEntities<TransactionEntity>().Where(o => o.RowKey == rowKey).ToList();
-            var transactions = TransactionEntitiesToTransactions(transactionEntities);
-            var matchingTransaction = transactions.FirstOrDefault();
+            var transactionEntitiesResult = await _storageService.QueryEntities<TransactionEntity>();
+            var transactionEntities = transactionEntitiesResult.Where(o => o.RowKey == rowKey).ToList();
+            var transactionsResult = await TransactionEntitiesToTransactions(transactionEntities);
+            var matchingTransaction = transactionsResult.FirstOrDefault();
             return matchingTransaction;
         }
 
@@ -54,19 +50,20 @@ namespace STO.Services
             await _storageService.UpsertEntity<TransactionEntity>(transactionEntity);
         }
 
-        public string GetNotesForGame(string gameRowKey)
+        public async Task<string> GetNotesForGame(string gameRowKey)
         {
-            var gameEntity = _storageService.QueryEntities<GameEntity>().Where(o => o.RowKey == gameRowKey).FirstOrDefault();
+            var gameEntityResult = await _storageService.QueryEntities<GameEntity>();
+            var gameEntity = gameEntityResult.Where(o => o.RowKey == gameRowKey).FirstOrDefault();
             var notes = $"For game {gameEntity.Date.Date.ToString("dd MMM yyyy")}";
             return notes;
         }
 
-        private List<Transaction> TransactionEntitiesToTransactions(List<TransactionEntity> transactionEntities)
+        private async Task<List<Transaction>> TransactionEntitiesToTransactions(List<TransactionEntity> transactionEntities)
         {
             var transactions = new List<Transaction>();
             foreach (var te in transactionEntities)
             {
-                var transactionPlayer = _playerService.GetPlayer(te.PlayerRowKey);
+                var transactionPlayer = await _playerService.GetPlayer(te.PlayerRowKey);
 
                 var Transaction = new Transaction(te)
                 {
@@ -74,7 +71,7 @@ namespace STO.Services
                 };
                 transactions.Add(Transaction);
             }
-            return transactions.OrderByDescending(o => o.TransactionEntity.Date).ToList();
+            return [.. transactions.OrderByDescending(o => o.TransactionEntity.Date)];
         }
     }
 }

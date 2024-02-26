@@ -275,7 +275,7 @@
 
     async Task RefreshGameData()
     {
-        players = PlayerService.GetPlayers();
+        players = await PlayerService.GetPlayers();
         game = await GameService.GetGame(GameRowKey);
         newPagEntity = new PlayerAtGameEntity()
         {

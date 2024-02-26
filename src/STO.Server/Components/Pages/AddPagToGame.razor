@@ -78,7 +78,7 @@
     async Task RefreshData()
     {
         games = await GameService.GetGames();
-        players = PlayerService.GetPlayers();
+        players = await PlayerService.GetPlayers();
         nextGame = await GameService.GetNextGame();
 
         newPagEntity = new PlayerAtGameEntity()

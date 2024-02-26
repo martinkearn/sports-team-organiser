@@ -18,8 +18,8 @@ namespace STO.Services
 
         public async Task<List<Rating>> GetRatings()
         {
-            var entities = _storageService.QueryEntities<RatingEntity>().ToList();
-            var ratings = await RatingEntitiesToRatings(entities);
+            var entitiesResult = await _storageService.QueryEntities<RatingEntity>();
+            var ratings = await RatingEntitiesToRatings(entitiesResult);
             return ratings;
         }
 
@@ -52,7 +52,7 @@ namespace STO.Services
             var ratings = new List<Rating>();
             foreach (var re in ratingEntities)
             {
-                var player = _playerService.GetPlayer(re.PlayerRowKey);
+                var player = await _playerService.GetPlayer(re.PlayerRowKey);
                 var game = await _gameService.GetGame(re.GameRowKey);
 
                 var rating = new Rating(re)

@@ -66,9 +66,9 @@
 
     private string pageTitle;
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        RefreshData();
+        await RefreshData();
     }
 
     private void SortTransactions(Enums.SortTransactionsBy by)
@@ -104,9 +104,9 @@
         pageOfTransactions = transactions.Skip((page-1)*transactionsPerPage).Take(transactionsPerPage).ToList();
     }
 
-    void RefreshData()
+    private async Task RefreshData()
     {
-        transactions = TransactionService.GetTransactions();
+        transactions = await TransactionService.GetTransactions();
         pageTitle = "Transactions";
 
         // Setup paging

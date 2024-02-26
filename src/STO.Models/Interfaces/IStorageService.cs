@@ -25,11 +25,11 @@ namespace STO.Models.Interfaces
         /// Queries entities of type T.
         /// </summary>
         /// <returns>A list of entities of type T which match the query.</returns>
-        public List<T> QueryEntities<T>() where T : class, ITableEntity;
+        public Task<List<T>> QueryEntities<T>() where T : class, ITableEntity;
 
         /// <summary>
         /// Refreshes cached data from storage.
         /// </summary>
-        public void RefreshData();
+        public Task RefreshData();
     }
 }

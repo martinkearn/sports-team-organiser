@@ -18,8 +18,6 @@ namespace STO.Services
         private List<TransactionEntity> _transactionEntities;
         private List<PlayerAtGameEntity> _playerAtGameEntities;
         private List<RatingEntity> _ratingEntities;
-        private readonly TableClient _tableClient;
-
         private bool _gotData;
 
         private JsonSerializerOptions _jsonSerializerOptions;
@@ -29,9 +27,6 @@ namespace STO.Services
         public ApiStorageService(IOptions<StorageConfiguration> storageConfigurationOptions, IHttpClientFactory httpClientFactory)
         { 
             _options = storageConfigurationOptions.Value;
-
-            _tableClient = new TableClient(_options.ConnectionString, _options.DataTable);
-            _tableClient.CreateIfNotExists();
 
             _httpClient = httpClientFactory.CreateClient();
 
@@ -47,7 +42,9 @@ namespace STO.Services
         {
             if(!_gotData) await RefreshData();
 
-            await _tableClient.DeleteEntityAsync(typeof(T).ToString(), rowKey);
+            // Delete Entity
+            var apiPath = GetApiPath<T>();
+            await ApiDelete(apiPath, rowKey);
 
             // Refresh data from storage
             await RefreshEntitiesFromStorage<T>();
@@ -168,6 +165,13 @@ namespace STO.Services
             using HttpResponseMessage response = await _httpClient.PostAsJsonAsync(
                 $"{_options.ApiHost}/{path}", 
                 entity);
+
+            response.EnsureSuccessStatusCode();
+        }
+
+        private async Task ApiDelete(string path, string rowKey)   
+        {
+            using HttpResponseMessage response = await _httpClient.DeleteAsync($"{_options.ApiHost}/{path}?rowkey={rowKey}");
 
             response.EnsureSuccessStatusCode();
         }

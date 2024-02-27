@@ -9,11 +9,9 @@ using STO.Models.Interfaces;
 namespace STO.Services
 {
     /// <inheritdoc/>
-    public class ApiStorageService : IApiStorageService
+    public class ApiStorageService : IStorageService
     {
         private readonly StorageConfiguration _options;
-        private readonly TableClient _tableClient;
-
         private List<PlayerEntity> _playerEntities;
         private List<GameEntity> _gameEntities;
         private List<TransactionEntity> _transactionEntities;
@@ -31,9 +29,6 @@ namespace STO.Services
             _options = storageConfigurationOptions.Value;
 
             _httpClient = httpClientFactory.CreateClient();
-
-            _tableClient = new TableClient(_options.ConnectionString, _options.DataTable);
-            _tableClient.CreateIfNotExists();
 
             _gotData = false;
 

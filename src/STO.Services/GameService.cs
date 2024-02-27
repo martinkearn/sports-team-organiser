@@ -7,12 +7,12 @@ namespace STO.Services
     /// <inheritdoc/>
     public class GameService : IGameService
     {
-        private readonly IApiStorageService _storageService;
+        private readonly IStorageService _storageService;
         private readonly IPlayerService _playerService;
 
         private readonly ITransactionService _transactionService;
 
-        public GameService(IApiStorageService storageService, IPlayerService playerService, ITransactionService transactionService)
+        public GameService(IStorageService storageService, IPlayerService playerService, ITransactionService transactionService)
         {
             _storageService = storageService;
             _playerService = playerService;
@@ -204,7 +204,7 @@ namespace STO.Services
 
                 // Calculate PlayerAtGame
                 var playersAtGame = new List<PlayerAtGame>();
-                foreach (var playersAtGameEntity in pags)
+                foreach (var playersAtGameEntity in playersAtGameEntities)
                 {
                     var pag = new PlayerAtGame(playersAtGameEntity)
                     {

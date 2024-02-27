@@ -53,8 +53,7 @@ builder.Services.AddSingleton<IAuthorizationHandler, IsAdminEmailHandler>();
 builder.Services.AddHttpClient();
 
 // Add custom services to the container
-builder.Services.AddSingleton<IStorageService, StorageService>();
-builder.Services.AddSingleton<IApiStorageService, ApiStorageService>();
+builder.Services.AddSingleton<IStorageService, ApiStorageService>();
 builder.Services.AddSingleton<IPlayerService, PlayerService>();
 builder.Services.AddSingleton<IGameService, GameService>();
 builder.Services.AddSingleton<ITransactionService, TransactionService>();

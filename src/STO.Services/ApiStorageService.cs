@@ -17,6 +17,7 @@ namespace STO.Services
         private List<TransactionEntity> _transactionEntities;
         private List<PlayerAtGameEntity> _playerAtGameEntities;
         private List<RatingEntity> _ratingEntities;
+        private readonly TableClient _tableClient;
 
         private bool _gotData;
 
@@ -27,6 +28,9 @@ namespace STO.Services
         public ApiStorageService(IOptions<StorageConfiguration> storageConfigurationOptions, IHttpClientFactory httpClientFactory)
         { 
             _options = storageConfigurationOptions.Value;
+
+            _tableClient = new TableClient(_options.ConnectionString, _options.DataTable);
+            _tableClient.CreateIfNotExists();
 
             _httpClient = httpClientFactory.CreateClient();
 

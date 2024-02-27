@@ -51,6 +51,36 @@ resource webAppServicePlan 'Microsoft.Web/serverfarms@2022-03-01' = {
   properties: { reserved: true }
 }
 
+//API WEB APP
+resource apiWebApp 'Microsoft.Web/sites@2022-03-01' = {
+  name: 'apiwebapp-${uniqueName}'
+  location: location
+  kind: 'app,linux'
+  properties: {
+    serverFarmId: webAppServicePlan.id
+    siteConfig: {
+      linuxFxVersion: 'DOTNETCORE|8.0'
+      alwaysOn: true
+      appSettings: [
+        {
+          name: 'APPINSIGHTS_INSTRUMENTATIONKEY'
+          value: applicationInsights.properties.InstrumentationKey
+        }
+        {
+          name: 'StorageConfiguration__DataTable'
+          value: storageAccountTableServiceDataTable.name
+        }
+        {
+          name: 'StorageConfiguration__ConnectionString'
+          value: 'DefaultEndpointsProtocol=https;AccountName=${storageAccountName};EndpointSuffix=${environment().suffixes.storage};AccountKey=${listKeys(storageAccount.id, '2019-06-01').keys[0].value}'
+        }
+      ]
+    }
+    httpsOnly: true
+  }
+}
+output apiWebAppName string  = apiWebApp.name
+
 //WEB APP
 resource webApp 'Microsoft.Web/sites@2022-03-01' = {
   name: 'webapp-${uniqueName}'
@@ -73,6 +103,10 @@ resource webApp 'Microsoft.Web/sites@2022-03-01' = {
         {
           name: 'StorageConfiguration__ConnectionString'
           value: 'DefaultEndpointsProtocol=https;AccountName=${storageAccountName};EndpointSuffix=${environment().suffixes.storage};AccountKey=${listKeys(storageAccount.id, '2019-06-01').keys[0].value}'
+        }
+        {
+          name: 'StorageConfiguration__ApiHost'
+          value: 'https://${apiWebAppName.properties.defaultHostName}'
         }
         {
           name: 'AzureAdB2C__Instance'
@@ -109,32 +143,4 @@ resource webApp 'Microsoft.Web/sites@2022-03-01' = {
 }
 output webAppName string  = webApp.name
 
-//API WEB APP
-resource apiWebApp 'Microsoft.Web/sites@2022-03-01' = {
-  name: 'apiwebapp-${uniqueName}'
-  location: location
-  kind: 'app,linux'
-  properties: {
-    serverFarmId: webAppServicePlan.id
-    siteConfig: {
-      linuxFxVersion: 'DOTNETCORE|8.0'
-      alwaysOn: true
-      appSettings: [
-        {
-          name: 'APPINSIGHTS_INSTRUMENTATIONKEY'
-          value: applicationInsights.properties.InstrumentationKey
-        }
-        {
-          name: 'StorageConfiguration__DataTable'
-          value: storageAccountTableServiceDataTable.name
-        }
-        {
-          name: 'StorageConfiguration__ConnectionString'
-          value: 'DefaultEndpointsProtocol=https;AccountName=${storageAccountName};EndpointSuffix=${environment().suffixes.storage};AccountKey=${listKeys(storageAccount.id, '2019-06-01').keys[0].value}'
-        }
-      ]
-    }
-    httpsOnly: true
-  }
-}
-output apiWebAppName string  = apiWebApp.name
+

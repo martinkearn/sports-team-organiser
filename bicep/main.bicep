@@ -106,7 +106,7 @@ resource webApp 'Microsoft.Web/sites@2022-03-01' = {
         }
         {
           name: 'StorageConfiguration__ApiHost'
-          value: 'https://${apiWebAppName.properties.defaultHostName}'
+          value: 'https://${apiWebApp.properties.defaultHostName}'
         }
         {
           name: 'AzureAdB2C__Instance'

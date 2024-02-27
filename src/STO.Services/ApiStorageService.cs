@@ -97,49 +97,51 @@ namespace STO.Services
             }
             else
             {
-                return _tableClient.Query<T>($"PartitionKey eq '{typeof(T).ToString()}'").ToList();
+                return null;
             }
         }   
 
         public async Task RefreshData()
         {
-            await RefreshEntitiesFromStorage<PlayerEntity>();
-            await RefreshEntitiesFromStorage<GameEntity>();
-            await RefreshEntitiesFromStorage<TransactionEntity>();
-            await RefreshEntitiesFromStorage<PlayerAtGameEntity>();
-            await RefreshEntitiesFromStorage<RatingEntity>();
+            var playerTask = RefreshEntitiesFromStorage<PlayerEntity>();
+            var gameTask =  RefreshEntitiesFromStorage<GameEntity>();
+            var transactionTask =  RefreshEntitiesFromStorage<TransactionEntity>();
+            var playerAtGameTask =  RefreshEntitiesFromStorage<PlayerAtGameEntity>();
+            var ratingTask =  RefreshEntitiesFromStorage<RatingEntity>();
+
+            await Task.WhenAll(playerTask, gameTask, transactionTask, playerAtGameTask, ratingTask);
+            
             _gotData = true;
         }
 
         private async Task RefreshEntitiesFromStorage<T>() where T : class, ITableEntity
         {
-            var entities = _tableClient.Query<T>($"PartitionKey eq '{typeof(T)}'").ToList();
-
             var ty = typeof(T);
+            var apiPath = ty.ToString().Replace("STO.Models.", String.Empty);
 
             if (ty == typeof(PlayerEntity))
             {
-                _playerEntities = (List<PlayerEntity>)Convert.ChangeType(entities, typeof(List<PlayerEntity>));
+                _playerEntities = await ApiGet<PlayerEntity>(apiPath);
             }
 
             if (ty == typeof(GameEntity))
             {
-                _gameEntities = await ApiGet<GameEntity>("GameEntity");
+                _gameEntities = await ApiGet<GameEntity>(apiPath);
             }
 
             if (ty == typeof(TransactionEntity))
             {
-                _transactionEntities = (List<TransactionEntity>)Convert.ChangeType(entities, typeof(List<TransactionEntity>));
+                _transactionEntities = await ApiGet<TransactionEntity>(apiPath);
             }
                         
             if (ty == typeof(PlayerAtGameEntity))
             {
-                _playerAtGameEntities = (List<PlayerAtGameEntity>)Convert.ChangeType(entities, typeof(List<PlayerAtGameEntity>));
+                _playerAtGameEntities = await ApiGet<PlayerAtGameEntity>(apiPath);
             }
 
             if (ty == typeof(RatingEntity))
             {
-                _ratingEntities = (List<RatingEntity>)Convert.ChangeType(entities, typeof(List<RatingEntity>));
+                _ratingEntities = await ApiGet<RatingEntity>(apiPath);
             }
         } 
 

@@ -3,6 +3,7 @@ using Azure.Data.Tables;
 using Microsoft.Extensions.Options;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http.Json;
 using STO.Models;
 using STO.Models.Interfaces;
 
@@ -61,7 +62,8 @@ namespace STO.Services
             if (entity.PartitionKey == default) entity.PartitionKey = typeof(T).ToString();
 
             // Upsert entity
-            await _tableClient.UpsertEntityAsync<T>(entity, TableUpdateMode.Replace);
+            var apiPath = GetApiPath<T>();
+            await ApiPost<T>(apiPath, entity);
 
             // Refresh data from storage
             await RefreshEntitiesFromStorage<T>();
@@ -117,7 +119,7 @@ namespace STO.Services
         private async Task RefreshEntitiesFromStorage<T>() where T : class, ITableEntity
         {
             var ty = typeof(T);
-            var apiPath = ty.ToString().Replace("STO.Models.", String.Empty);
+            var apiPath = GetApiPath<T>();
 
             if (ty == typeof(PlayerEntity))
             {
@@ -159,6 +161,22 @@ namespace STO.Services
             }
 
             return response;
-        }    
+        } 
+
+        private async Task ApiPost<T>(string path, T entity) where T : class, ITableEntity   
+        {
+            using HttpResponseMessage response = await _httpClient.PostAsJsonAsync(
+                $"{_options.ApiHost}/{path}", 
+                entity);
+
+            response.EnsureSuccessStatusCode();
+        }
+
+        private string GetApiPath<T>()
+        {
+            var ty = typeof(T);
+            var apiPath = ty.ToString().Replace("STO.Models.", String.Empty);
+            return apiPath;
+        }
     }
 }

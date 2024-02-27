@@ -20,9 +20,10 @@ public class GameEntityController : ControllerBase
     }
 
     [HttpGet(Name = "GetGameEntitys")]
-    public IEnumerable<GameEntity> Get()
+    public async Task<IEnumerable<GameEntity>> Get()
     {
-        var gameEntities = _storageService.QueryEntities<GameEntity>()
+        var gameEntitiesResult = await _storageService.QueryEntities<GameEntity>();
+        var gameEntities = gameEntitiesResult
             .OrderByDescending(g => g.Date)
             .ToList();
 
@@ -30,9 +31,9 @@ public class GameEntityController : ControllerBase
     }
 
     [HttpDelete(Name = "DeleteGameEntity")]
-    public void Delete(string rowkey)
+    public async Task Delete(string rowkey)
     {
-        _storageService.DeleteEntity<GameEntity>(rowkey);
+        await _storageService.DeleteEntity<GameEntity>(rowkey);
     }
 
     [HttpPost(Name = "UpsertGameEntity")]

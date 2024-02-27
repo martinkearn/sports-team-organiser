@@ -20,17 +20,18 @@ public class TransactionEntityController : ControllerBase
     }
 
     [HttpGet(Name = "GetTransactionEntitys")]
-    public IEnumerable<TransactionEntity> Get()
+    public async Task<IEnumerable<TransactionEntity>> Get()
     {
-        var transactionEntities = _storageService.QueryEntities<TransactionEntity>().ToList();
+        var transactionEntitiesResult = await _storageService.QueryEntities<TransactionEntity>();
+        var transactionEntities = transactionEntitiesResult.ToList();
 
         return transactionEntities;
     }
 
     [HttpDelete(Name = "DeleteTransactionEntity")]
-    public void Delete(string rowkey)
+    public async Task Delete(string rowkey)
     {
-        _storageService.DeleteEntity<TransactionEntity>(rowkey);
+        await _storageService.DeleteEntity<TransactionEntity>(rowkey);
     }
 
     [HttpPost(Name = "UpsertTransactionEntity")]

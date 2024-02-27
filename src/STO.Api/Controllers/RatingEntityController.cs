@@ -20,17 +20,18 @@ public class RatingEntityController : ControllerBase
     }
 
     [HttpGet(Name = "GetRatingEntitys")]
-    public IEnumerable<RatingEntity> Get()
+    public async Task<IEnumerable<RatingEntity>> Get()
     {
-        var ratingEntities = _storageService.QueryEntities<RatingEntity>().ToList();
+        var ratingEntitiesResult = await _storageService.QueryEntities<RatingEntity>();
+        var ratingEntities = ratingEntitiesResult.ToList();
 
         return ratingEntities;
     }
 
     [HttpDelete(Name = "DeleteRatingEntity")]
-    public void Delete(string rowkey)
+    public async Task Delete(string rowkey)
     {
-        _storageService.DeleteEntity<RatingEntity>(rowkey);
+        await _storageService.DeleteEntity<RatingEntity>(rowkey);
     }
 
     [HttpPost(Name = "UpsertRatingEntity")]

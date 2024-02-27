@@ -124,13 +124,7 @@ namespace STO.Services
 
             if (ty == typeof(GameEntity))
             {
-                var httpResponseMessage = await _httpClient.GetAsync($"{_options.ApiHost}/GameEntity");
-
-                if (httpResponseMessage.IsSuccessStatusCode)
-                {
-                    using var content = await httpResponseMessage.Content.ReadAsStreamAsync();
-                    _gameEntities = (await JsonSerializer.DeserializeAsync<IEnumerable<GameEntity>>(content, _jsonSerializerOptions)).ToList();
-                }
+                _gameEntities = await ApiGet<GameEntity>("GameEntity");
             }
 
             if (ty == typeof(TransactionEntity))
@@ -147,6 +141,22 @@ namespace STO.Services
             {
                 _ratingEntities = (List<RatingEntity>)Convert.ChangeType(entities, typeof(List<RatingEntity>));
             }
-        }     
+        } 
+
+        private async Task<List<T>> ApiGet<T>(string path) where T : class, ITableEntity
+        {
+            var httpResponseMessage = await _httpClient.GetAsync($"{_options.ApiHost}/{path}");
+
+            List<T> response = new();
+
+            if (httpResponseMessage.IsSuccessStatusCode)
+            {
+                using var content = await httpResponseMessage.Content.ReadAsStreamAsync();
+                var result = await JsonSerializer.DeserializeAsync<IEnumerable<T>>(content, _jsonSerializerOptions);
+                response = result.ToList();
+            }
+
+            return response;
+        }    
     }
 }

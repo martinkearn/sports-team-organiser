@@ -23,10 +23,7 @@ public class PlayerAtGameEntityController : ControllerBase
     public async Task<IEnumerable<PlayerAtGameEntity>> Get()
     {
         var playerEntitiesResult = await _storageService.QueryEntities<PlayerAtGameEntity>();
-        var playerEntities = playerEntitiesResult
-            .OrderBy(p => p.Name)
-            .ToList();
-
+        var playerEntities = playerEntitiesResult.ToList();
         return playerEntities;
     }
 

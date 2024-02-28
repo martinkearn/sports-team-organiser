@@ -26,6 +26,13 @@ namespace STO.Models.Interfaces
         public Task<List<Rating>> GetRatingsForPlayer(string playerRowKey);
 
         /// <summary>
+        /// Gets all Ratings for a game.
+        /// </summary>
+        /// <param name="gameRowKey">The RowKey for the GameEntity to get ratings for.</param>
+        /// <returns>List of Ratings for the given Game.</returns>
+        public Task<List<Rating>> GetRatingsForGame(string gameRowKey);
+
+        /// <summary>
         /// Deletes a RatingEntity.
         /// </summary>
         /// <param name="rowKey">The RowKey for the RatingEntity to delete.</param>

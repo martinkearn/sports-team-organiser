@@ -37,6 +37,13 @@ namespace STO.Services
             return ratingsForPlayer;
         }
 
+        public async Task<List<Rating>> GetRatingsForGame(string gameRowKey)
+        {
+            var ratings = await GetRatings();
+            var ratingsForGame = ratings.Where(o => o.Game.GameEntity.RowKey == gameRowKey).ToList();
+            return ratingsForGame;
+        }
+
         public async Task DeleteRatingEntity(string rowKey)
         {
             await _storageService.DeleteEntity<RatingEntity>(rowKey);

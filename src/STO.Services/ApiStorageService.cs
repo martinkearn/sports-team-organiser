@@ -102,6 +102,10 @@ namespace STO.Services
 
         public async Task RefreshData()
         {
+            // Ask API to refresh data
+            await ApiPut("health");
+            
+            // Refresh caches
             var playerTask = RefreshEntitiesFromStorage<PlayerEntity>();
             var gameTask =  RefreshEntitiesFromStorage<GameEntity>();
             var transactionTask =  RefreshEntitiesFromStorage<TransactionEntity>();
@@ -172,6 +176,13 @@ namespace STO.Services
         private async Task ApiDelete(string path, string rowKey)   
         {
             using HttpResponseMessage response = await _httpClient.DeleteAsync($"{_options.ApiHost}/{path}?rowkey={rowKey}");
+
+            response.EnsureSuccessStatusCode();
+        }
+
+        private async Task ApiPut(string path)   
+        {
+            using HttpResponseMessage response = await _httpClient.PutAsync($"{_options.ApiHost}/{path}", null);
 
             response.EnsureSuccessStatusCode();
         }

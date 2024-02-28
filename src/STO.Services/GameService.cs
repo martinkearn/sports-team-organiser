@@ -19,9 +19,17 @@ namespace STO.Services
             _transactionService = transactionService;
         }
 
-        public async Task DeleteGame(string gameRowkey)
+        public async Task DeleteGame(string gameRowKey)
         {
-            var game = await GetGame(gameRowkey);
+            var game = await GetGame(gameRowKey);
+
+            // Delete Ratings - Cannot use RatingService due to circular dependecy so must use StorageService directly
+            var allRatingEntities = await _storageService.QueryEntities<RatingEntity>();
+            var ratingsForGame = allRatingEntities.Where(o => o.GameRowKey == gameRowKey).ToList();
+            foreach (var rating in ratingsForGame)
+            {
+                await _storageService.DeleteEntity<RatingEntity>(rating.RowKey);
+            }
 
             // Delete PAGs
             foreach(var pag in game.PlayersAtGame)
@@ -30,7 +38,7 @@ namespace STO.Services
             }
 
             // Delete game
-            await _storageService.DeleteEntity<GameEntity>(gameRowkey);
+            await _storageService.DeleteEntity<GameEntity>(gameRowKey);
         }
 
         public async Task<List<Game>> GetGames(List<GameEntity> gameEntities)

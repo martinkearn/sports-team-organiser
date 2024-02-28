@@ -24,6 +24,14 @@ namespace STO.Services
 
         public async Task DeletePlayer(string playerRowkey)
         {
+            // Delete Ratings - Cannot use RatingService due to circular dependecy so must use StorageService directly
+            var allRatingEntities = await _storageService.QueryEntities<RatingEntity>();
+            var ratingsForPlayer = allRatingEntities.Where(o => o.PlayerRowKey == playerRowkey).ToList();
+            foreach (var rating in ratingsForPlayer)
+            {
+                await _storageService.DeleteEntity<RatingEntity>(rating.RowKey);
+            }
+
             // Delete TransactionEntity
             var transactionsResult = await _storageService.QueryEntities<TransactionEntity>();
             var transactions = transactionsResult.Where(t => t.PlayerRowKey == playerRowkey);

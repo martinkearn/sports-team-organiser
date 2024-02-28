@@ -17,6 +17,12 @@ on:
         dotnetoutputpath:
           type: string
           required: true
+        apicsprojpath:
+            type: string
+            required: true
+        apidotnetoutputpath:
+            type: string
+            required: true
       secrets:
         azure-credentials:
           required: true
@@ -77,3 +83,24 @@ jobs:
       with: 
         app-name: ${{ env.WebAppName }}
         package: '${{ inputs.dotnetoutputpath }}'
+
+# API code
+    - name: bicep-output-apiwebappname
+      uses: azure/CLI@v1
+      with:
+        inlineScript: |
+          #!/bin/bash
+          outputValue=$( az deployment group show -g ${{ inputs.rg }} --name main --query properties.outputs.apiWebAppName.value -o tsv)
+          echo "ApiWebAppName=$outputValue" >> $GITHUB_ENV   
+
+    - name: dotnet-build-publish-apiwebapp
+      run: |
+        dotnet restore ${{ inputs.apicsprojpath }}
+        dotnet build ${{ inputs.apicsprojpath }} --configuration Release
+        dotnet publish ${{ inputs.apicsprojpath }} -c Release -o ${{ inputs.apidotnetoutputpath }}
+
+    - name: azure-deploy-webapp
+      uses: azure/webapps-deploy@v2
+      with: 
+        app-name: ${{ env.ApiWebAppName }}
+        package: '${{ inputs.apidotnetoutputpath }}'

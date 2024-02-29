@@ -69,27 +69,26 @@ jobs:
         failOnStdErr: false
         parameters: 'uniqueName=${{ inputs.uniquelabel }}'
 
-# Wasm Web App code
-    - name: bicep-output-wasmWebappname
+# Web App code
+    - name: bicep-output-webappname
       uses: azure/CLI@v1
       with:
-          inlineScript: |
-            #!/bin/bash
-            outputValue=$( az deployment group show -g ${{ inputs.rg }} --name main --query properties.outputs.wasmWebAppName.value -o tsv)
-            echo "WasmWebAppName=$outputValue" >> $GITHUB_ENV   
+        inlineScript: |
+          #!/bin/bash
+          outputValue=$( az deployment group show -g ${{ inputs.rg }} --name main --query properties.outputs.webAppName.value -o tsv)
+          echo "WebAppName=$outputValue" >> $GITHUB_ENV   
 
-    - name: dotnet-build-publish-wasmwebapp
+    - name: dotnet-build-publish-webapp
       run: |
-        dotnet restore ${{ inputs.wasmcsprojpath }}
-        dotnet build ${{ inputs.wasmcsprojpath }} --configuration Release
-        dotnet publish ${{ inputs.wasmcsprojpath }} -c Release -o ${{ inputs.wasmdotnetoutputpath }}
+        dotnet restore ${{ inputs.csprojpath }}
+        dotnet build ${{ inputs.csprojpath }} --configuration Release
+        dotnet publish ${{ inputs.csprojpath }} -c Release -o ${{ inputs.dotnetoutputpath }}
 
-    - name: uplpoad-build-artifact-wasm
-      uses: actions/upload-artifact@v4
-      with:
-        name: ${{ env.WasmWebAppName }}
-        path: ${{ inputs.wasmdotnetoutputpath }}
-        if-no-files-found: error
+    - name: azure-deploy-webapp
+      uses: azure/webapps-deploy@v2
+      with: 
+        app-name: ${{ env.WebAppName }}
+        package: '${{ inputs.dotnetoutputpath }}'
 
 # API code
     - name: bicep-output-apiwebappname
@@ -111,26 +110,3 @@ jobs:
       with: 
         app-name: ${{ env.ApiWebAppName }}
         package: '${{ inputs.apidotnetoutputpath }}'
-        
-  Deploy-Code:
-    needs: [Deploy-Infrastructure]
-    runs-on: ubuntu-latest
-    steps:
-    - name: Download a Build Artifact (Website)
-      uses: actions/download-artifact@v4
-      with:
-        # Destination path
-        path: ${{ inputs.wasmdotnetoutputpath }}
-    - name: azure-login
-      uses: azure/login@v1
-      with:
-        creds: ${{ secrets.azure-credentials }}
-    - name: Deploy web app
-      id: deploywebapp
-      uses: azure/webapps-deploy@v2
-      with:
-        app-name: wasmwebapp-tnfdev
-        package: ${{ inputs.wasmdotnetoutputpath }}
-
-    - name: az cli logout
-      run: az logout

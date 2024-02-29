@@ -91,13 +91,13 @@ jobs:
         package: '${{ inputs.dotnetoutputpath }}'
 
 # Wasm Web App code
-    - name: bicep-output-wasmwebappname
+    - name: bicep-output-wasmWebappname
       uses: azure/CLI@v1
       with:
-        inlineScript: |
-          #!/bin/bash
-          outputValue=$( az deployment group show -g ${{ inputs.rg }} --name main --query properties.outputs.wasmWebAppName.value -o tsv)
-          echo "WasmWebAppName=$outputValue" >> $GITHUB_ENV   
+          inlineScript: |
+            #!/bin/bash
+            outputValue=$( az deployment group show -g ${{ inputs.rg }} --name main --query properties.outputs.wasmWebAppName.value -o tsv)
+            echo "WasmWebAppName=$outputValue" >> $GITHUB_ENV   
 
     - name: dotnet-build-publish-wasmwebapp
       run: |
@@ -108,7 +108,7 @@ jobs:
     - name: azure-deploy-wasmwebapp
       uses: azure/webapps-deploy@v2
       with: 
-        app-name: ${{ env.WasmWebAppName }}
+        app-name: ${{ env.wasmWebAppName }}
         package: '${{ inputs.wasmdotnetoutputpath }}'
 
 # API code

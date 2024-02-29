@@ -52,7 +52,7 @@ jobs:
     - name: setup-dotnet
       uses: actions/setup-dotnet@v3
       with:
-        dotnet-version: '7.0'
+        dotnet-version: '8.0.x'
 
 # Bicep
     - name: bicep-install

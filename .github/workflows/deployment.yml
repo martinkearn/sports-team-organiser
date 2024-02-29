@@ -108,7 +108,7 @@ jobs:
     - name: azure-deploy-wasmwebapp
       uses: azure/webapps-deploy@v2
       with: 
-        app-name: ${{ env.wasmWebAppName }}
+        app-name: ${{ env.WasmWebAppName }}
         package: '${{ inputs.wasmdotnetoutputpath }}'
 
 # API code

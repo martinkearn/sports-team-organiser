@@ -23,10 +23,10 @@ on:
         apidotnetoutputpath:
             type: string
             required: true
-        wasmapicsprojpath:
+        wasmcsprojpath:
             type: string
             required: true
-        wasmapidotnetoutputpath:
+        wasmdotnetoutputpath:
             type: string
             required: true
       secrets:

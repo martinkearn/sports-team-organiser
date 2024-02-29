@@ -99,7 +99,7 @@ jobs:
           outputValue=$( az deployment group show -g ${{ inputs.rg }} --name main --query properties.outputs.wasmWebAppName.value -o tsv)
           echo "WasmWebAppName=$outputValue" >> $GITHUB_ENV   
 
-    - name: dotnet-build-publish-webapp
+    - name: dotnet-build-publish-wasmwebapp
       run: |
         dotnet restore ${{ inputs.wasmcsprojpath }}
         dotnet build ${{ inputs.wasmcsprojpath }} --configuration Release

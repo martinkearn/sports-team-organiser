@@ -150,7 +150,7 @@ jobs:
       id: deploywebapp
       uses: azure/webapps-deploy@v2
       with:
-        app-name: ${{ env.ApiWebAppName }}
+        app-name: ${{ env.WasmWebAppName }}
         slot-name: production
         package: ${{ inputs.wasmdotnetoutputpath }}
 

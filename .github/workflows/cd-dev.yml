@@ -18,6 +18,8 @@ jobs:
       dotnetoutputpath: './src/STO.Server/output'
       apicsprojpath: './src/STO.Api/STO.Api.csproj'
       apidotnetoutputpath: './src/STO.Api/output'
+      wasmapicsprojpath: './src/STO.Wasm/STO.Wasm.csproj'
+      wasmapidotnetoutputpath: './src/STO.Wasm/output'
     secrets:
       azure-credentials: ${{ secrets.AZURE_CREDENTIALS_DEV }}
       azure-subscription: ${{ secrets.AZURE_SUBSCRIPTION }}

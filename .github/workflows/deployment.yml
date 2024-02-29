@@ -23,6 +23,12 @@ on:
         apidotnetoutputpath:
             type: string
             required: true
+        wasmapicsprojpath:
+            type: string
+            required: true
+        wasmapidotnetoutputpath:
+            type: string
+            required: true
       secrets:
         azure-credentials:
           required: true
@@ -83,6 +89,27 @@ jobs:
       with: 
         app-name: ${{ env.WebAppName }}
         package: '${{ inputs.dotnetoutputpath }}'
+
+# Wasm Web App code
+    - name: bicep-output-webappname
+      uses: azure/CLI@v1
+      with:
+        inlineScript: |
+          #!/bin/bash
+          outputValue=$( az deployment group show -g ${{ inputs.rg }} --name main --query properties.outputs.wasmWebAppName.value -o tsv)
+          echo "WasmWebAppName=$outputValue" >> $GITHUB_ENV   
+
+    - name: dotnet-build-publish-webapp
+      run: |
+        dotnet restore ${{ inputs.wasmcsprojpath }}
+        dotnet build ${{ inputs.wasmcsprojpath }} --configuration Release
+        dotnet publish ${{ inputs.wasmcsprojpath }} -c Release -o ${{ inputs.wasmdotnetoutputpath }}
+
+    - name: azure-deploy-webapp
+      uses: azure/webapps-deploy@v2
+      with: 
+        app-name: ${{ env.WasmWebAppName }}
+        package: '${{ inputs.wasmdotnetoutputpath }}'
 
 # API code
     - name: bicep-output-apiwebappname

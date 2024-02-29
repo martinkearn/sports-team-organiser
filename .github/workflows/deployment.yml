@@ -69,27 +69,6 @@ jobs:
         failOnStdErr: false
         parameters: 'uniqueName=${{ inputs.uniquelabel }}'
 
-# Web App code
-    - name: bicep-output-webappname
-      uses: azure/CLI@v1
-      with:
-        inlineScript: |
-          #!/bin/bash
-          outputValue=$( az deployment group show -g ${{ inputs.rg }} --name main --query properties.outputs.webAppName.value -o tsv)
-          echo "WebAppName=$outputValue" >> $GITHUB_ENV   
-
-    - name: dotnet-build-publish-webapp
-      run: |
-        dotnet restore ${{ inputs.csprojpath }}
-        dotnet build ${{ inputs.csprojpath }} --configuration Release
-        dotnet publish ${{ inputs.csprojpath }} -c Release -o ${{ inputs.dotnetoutputpath }}
-
-    - name: azure-deploy-webapp
-      uses: azure/webapps-deploy@v2
-      with: 
-        app-name: ${{ env.WebAppName }}
-        package: '${{ inputs.dotnetoutputpath }}'
-
 # Wasm Web App code
     - name: bicep-output-wasmWebappname
       uses: azure/CLI@v1
@@ -105,7 +84,7 @@ jobs:
         dotnet build ${{ inputs.wasmcsprojpath }} --configuration Release
         dotnet publish ${{ inputs.wasmcsprojpath }} -c Release -o ${{ inputs.wasmdotnetoutputpath }}
 
-    - name: uplpoad-build-aretifact-wasm
+    - name: uplpoad-build-artifact-wasm
       uses: actions/upload-artifact@v4
       with:
         name: ${{ env.WasmWebAppName }}
@@ -150,8 +129,7 @@ jobs:
       id: deploywebapp
       uses: azure/webapps-deploy@v2
       with:
-        app-name: ${{ env.WasmWebAppName }}
-        slot-name: production
+        app-name: wasmwebapp-tnfdev
         package: ${{ inputs.wasmdotnetoutputpath }}
 
     - name: az cli logout

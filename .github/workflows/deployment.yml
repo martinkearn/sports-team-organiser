@@ -134,6 +134,7 @@ jobs:
         package: '${{ inputs.apidotnetoutputpath }}'
         
   Deploy-Code:
+    needs: [Deploy-Infrastructure]
     runs-on: ubuntu-latest
     steps:
     - name: Download a Build Artifact (Website)

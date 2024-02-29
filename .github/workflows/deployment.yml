@@ -91,7 +91,7 @@ jobs:
         package: '${{ inputs.dotnetoutputpath }}'
 
 # Wasm Web App code
-    - name: bicep-output-webappname
+    - name: bicep-output-wasmwebappname
       uses: azure/CLI@v1
       with:
         inlineScript: |
@@ -105,7 +105,7 @@ jobs:
         dotnet build ${{ inputs.wasmcsprojpath }} --configuration Release
         dotnet publish ${{ inputs.wasmcsprojpath }} -c Release -o ${{ inputs.wasmdotnetoutputpath }}
 
-    - name: azure-deploy-webapp
+    - name: azure-deploy-wasmwebapp
       uses: azure/webapps-deploy@v2
       with: 
         app-name: ${{ env.WasmWebAppName }}
@@ -126,7 +126,7 @@ jobs:
         dotnet build ${{ inputs.apicsprojpath }} --configuration Release
         dotnet publish ${{ inputs.apicsprojpath }} -c Release -o ${{ inputs.apidotnetoutputpath }}
 
-    - name: azure-deploy-webapp
+    - name: azure-deploy-apiwebapp
       uses: azure/webapps-deploy@v2
       with: 
         app-name: ${{ env.ApiWebAppName }}

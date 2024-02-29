@@ -105,11 +105,12 @@ jobs:
         dotnet build ${{ inputs.wasmcsprojpath }} --configuration Release
         dotnet publish ${{ inputs.wasmcsprojpath }} -c Release -o ${{ inputs.wasmdotnetoutputpath }}
 
-    - name: azure-deploy-wasmwebapp
-      uses: azure/webapps-deploy@v2
-      with: 
-        app-name: ${{ env.WasmWebAppName }}
-        package: '${{ inputs.wasmdotnetoutputpath }}'
+    - name: uplpoad-build-aretifact-wasm
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ env.WasmWebAppName }}
+        path: ${{ inputs.wasmdotnetoutputpath }}
+        if-no-files-found: error
 
 # API code
     - name: bicep-output-apiwebappname
@@ -131,3 +132,28 @@ jobs:
       with: 
         app-name: ${{ env.ApiWebAppName }}
         package: '${{ inputs.apidotnetoutputpath }}'
+        
+  Deploy-Code:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Download a Build Artifact (Website)
+      uses: actions/download-artifact@v4
+      with:
+        # Artifact name
+        name: ${{ inputs.wasmdotnetoutputpath }}
+        # Destination path
+        path: ${{ inputs.wasmdotnetoutputpath }}
+    - name: azure-login
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.azure-credentials }}
+    - name: Deploy web app
+      id: deploywebapp
+      uses: azure/webapps-deploy@v2
+      with:
+        app-name: ${{ env.ApiWebAppName }}
+        slot-name: production
+        package: ${{ inputs.wasmdotnetoutputpath }}
+
+    - name: az cli logout
+      run: az logout

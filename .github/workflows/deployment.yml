@@ -78,13 +78,13 @@ jobs:
           outputValue=$( az deployment group show -g ${{ inputs.rg }} --name main --query properties.outputs.BlazorServerName.value -o tsv)
           echo "BlazorServerName=$outputValue" >> $GITHUB_ENV   
 
-    - name: blazorservername-dotnet-build-publish
+    - name: blazorserver-dotnet-build-publish
       run: |
         dotnet restore ${{ inputs.blazorservercsprojpath }}
         dotnet build ${{ inputs.blazorservercsprojpath }} --configuration Release
         dotnet publish ${{ inputs.blazorservercsprojpath }} -c Release -o ${{ inputs.blazorserverdotnetoutputpath }}
 
-    - name: blazorservername-azure-deploy
+    - name: blazorserver-azure-deploy
       uses: azure/webapps-deploy@v2
       with: 
         app-name: ${{ env.BlazorServerName }}

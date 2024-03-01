@@ -70,17 +70,6 @@ jobs:
         parameters: 'uniqueName=${{ inputs.uniquelabel }}'
 
 # API code
-    - name: api-bicep-output-name
-      uses: azure/CLI@v1
-      with:
-        inlineScript: |
-          #!/bin/bash
-          outputValue=$( az deployment group show -g ${{ inputs.rg }} --name main --query properties.outputs.ApiName.value -o tsv)
-          echo "ApiName=$outputValue" >> $GITHUB_ENV   
-
-    - name: api-display-name
-      run: echo "$ApiName"
-
     - name: api-dotnet-build-publish
       run: |
         dotnet restore ${{ inputs.apicsprojpath }}
@@ -90,18 +79,10 @@ jobs:
     - name: api-azure-deploy
       uses: azure/webapps-deploy@v2
       with: 
-        app-name: 'api-tnfdev'
+        app-name: 'api-${{ inputs.uniquelabel }}'
         package: '${{ inputs.apidotnetoutputpath }}'
 
 # Blazor Server code
-    - name: blazorserver-bicep-output-name
-      uses: azure/CLI@v1
-      with:
-        inlineScript: |
-          #!/bin/bash
-          outputValue=$( az deployment group show -g ${{ inputs.rg }} --name main --query properties.outputs.blazorServerName.value -o tsv)
-          echo "BlazorServerName=$outputValue" >> $GITHUB_ENV   
-
     - name: blazorserver-dotnet-build-publish
       run: |
         dotnet restore ${{ inputs.blazorservercsprojpath }}
@@ -111,18 +92,10 @@ jobs:
     - name: blazorserver-azure-deploy
       uses: azure/webapps-deploy@v2
       with: 
-        app-name: 'blazorserver-tnfdev'
+        app-name: 'blazorserver-${{ inputs.uniquelabel }}'
         package: '${{ inputs.blazorserverdotnetoutputpath }}'
 
 # Blazor Wasm code
-    - name: blazorwasm-bicep-output-name
-      uses: azure/CLI@v1
-      with:
-        inlineScript: |
-          #!/bin/bash
-          outputValue=$( az deployment group show -g ${{ inputs.rg }} --name main --query properties.outputs.BlazorWasmName.value -o tsv)
-          echo "BlazorWasmName=$outputValue" >> $GITHUB_ENV   
-
     - name: blazorwasm-dotnet-build-publish
       run: |
         dotnet restore ${{ inputs.blazorwasmcsprojpath }}
@@ -132,5 +105,5 @@ jobs:
     - name: blazorwasm-azure-deploy
       uses: azure/webapps-deploy@v2
       with: 
-        app-name: 'blazorwasm-tnfdev'
+        app-name: 'blazorwasm-${{ inputs.uniquelabel }}'
         package: '${{ inputs.blazorwasmdotnetoutputpath }}'

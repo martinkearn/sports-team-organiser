@@ -78,7 +78,7 @@ resource api 'Microsoft.Web/sites@2022-09-01' = {
     }
   }
 }
-output ApiName string  = api.name
+output ApiName string = api.name
 
 //BLAZOR SERVER WEB APP
 resource blazorServer 'Microsoft.Web/sites@2022-09-01' = {
@@ -139,7 +139,7 @@ resource blazorServer 'Microsoft.Web/sites@2022-09-01' = {
     }
   }
 }
-output blazorServerName string  = blazorServer.name
+output blazorServerName string = blazorServer.name
 
 //BLAZOR WASM WEB APP
 resource blazorWasm 'Microsoft.Web/sites@2022-09-01' = {
@@ -192,4 +192,4 @@ resource blazorWasm 'Microsoft.Web/sites@2022-09-01' = {
     }
   }
 }
-output blazorWasmName string  = blazorWasm.name
+output blazorWasmName string = blazorWasm.name

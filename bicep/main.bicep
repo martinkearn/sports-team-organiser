@@ -41,21 +41,21 @@ resource applicationInsights 'Microsoft.Insights/components@2020-02-02' = {
 }
 
 //APP SERVICE PLAN for WEB APP
-resource webAppServicePlan 'Microsoft.Web/serverfarms@2022-03-01' = {
+resource webAppServicePlan 'Microsoft.Web/serverfarms@2022-09-01' = {
   name: 'webapp-service-${uniqueName}'
   location: location
   sku: {
     name: 'B2'
   }
-  kind: 'linux'
+  kind: 'app'
   properties: { reserved: true }
 }
 
 //API WEB APP
-resource apiWebApp 'Microsoft.Web/sites@2022-03-01' = {
+resource apiWebApp 'Microsoft.Web/sites@2022-09-01' = {
   name: 'apiwebapp-${uniqueName}'
   location: location
-  kind: 'app,linux'
+  kind: 'app'
   properties: {
     serverFarmId: webAppServicePlan.id
     siteConfig: {
@@ -82,10 +82,10 @@ resource apiWebApp 'Microsoft.Web/sites@2022-03-01' = {
 output apiWebAppName string  = apiWebApp.name
 
 //WEB APP
-resource webApp 'Microsoft.Web/sites@2022-03-01' = {
+resource webApp 'Microsoft.Web/sites@2022-09-01' = {
   name: 'webapp-${uniqueName}'
   location: location
-  kind: 'app,linux'
+  kind: 'app'
   properties: {
     serverFarmId: webAppServicePlan.id
     siteConfig: {

@@ -69,27 +69,6 @@ jobs:
         failOnStdErr: false
         parameters: 'uniqueName=${{ inputs.uniquelabel }}'
 
-# Blazor Server code
-    - name: blazorserver-bicep-output-name
-      uses: azure/CLI@v1
-      with:
-        inlineScript: |
-          #!/bin/bash
-          outputValue=$( az deployment group show -g ${{ inputs.rg }} --name main --query properties.outputs.blazorServerName.value -o tsv)
-          echo "BlazorServerName=$outputValue" >> $GITHUB_ENV   
-
-    - name: blazorserver-dotnet-build-publish
-      run: |
-        dotnet restore ${{ inputs.blazorservercsprojpath }}
-        dotnet build ${{ inputs.blazorservercsprojpath }} --configuration Release
-        dotnet publish ${{ inputs.blazorservercsprojpath }} -c Release -o ${{ inputs.blazorserverdotnetoutputpath }}
-
-    - name: blazorserver-azure-deploy
-      uses: azure/webapps-deploy@v2
-      with: 
-        app-name: ${{ env.BlazorServerName }}
-        package: '${{ inputs.blazorserverdotnetoutputpath }}'
-
 # API code
     - name: api-bicep-output-name
       uses: azure/CLI@v1
@@ -110,6 +89,27 @@ jobs:
       with: 
         app-name: ${{ env.ApiName }}
         package: '${{ inputs.apidotnetoutputpath }}'
+
+# Blazor Server code
+    - name: blazorserver-bicep-output-name
+      uses: azure/CLI@v1
+      with:
+        inlineScript: |
+          #!/bin/bash
+          outputValue=$( az deployment group show -g ${{ inputs.rg }} --name main --query properties.outputs.blazorServerName.value -o tsv)
+          echo "BlazorServerName=$outputValue" >> $GITHUB_ENV   
+
+    - name: blazorserver-dotnet-build-publish
+      run: |
+        dotnet restore ${{ inputs.blazorservercsprojpath }}
+        dotnet build ${{ inputs.blazorservercsprojpath }} --configuration Release
+        dotnet publish ${{ inputs.blazorservercsprojpath }} -c Release -o ${{ inputs.blazorserverdotnetoutputpath }}
+
+    - name: blazorserver-azure-deploy
+      uses: azure/webapps-deploy@v2
+      with: 
+        app-name: ${{ env.BlazorServerName }}
+        package: '${{ inputs.blazorserverdotnetoutputpath }}'
 
 # Blazor Wasm code
     - name: blazorwasm-bicep-output-name

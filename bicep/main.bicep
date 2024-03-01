@@ -81,7 +81,7 @@ resource api 'Microsoft.Web/sites@2022-09-01' = {
 output ApiName string  = api.name
 
 //BLAZOR SERVER WEB APP
-resource BlazorServer 'Microsoft.Web/sites@2022-09-01' = {
+resource blazorServer 'Microsoft.Web/sites@2022-09-01' = {
   name: 'blazorserver-${uniqueName}'
   location: location
   properties: {
@@ -139,10 +139,10 @@ resource BlazorServer 'Microsoft.Web/sites@2022-09-01' = {
     }
   }
 }
-output BlazorServerName string  = BlazorServer.name
+output blazorServerName string  = blazorServer.name
 
 //BLAZOR WASM WEB APP
-resource BlazorWasm 'Microsoft.Web/sites@2022-09-01' = {
+resource blazorWasm 'Microsoft.Web/sites@2022-09-01' = {
   name: 'blazorwasm-${uniqueName}'
   location: location
   properties: {
@@ -192,4 +192,4 @@ resource BlazorWasm 'Microsoft.Web/sites@2022-09-01' = {
     }
   }
 }
-output BlazorWasmName string  = BlazorWasm.name
+output blazorWasmName string  = blazorWasm.name

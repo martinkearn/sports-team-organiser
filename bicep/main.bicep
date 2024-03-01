@@ -78,7 +78,7 @@ resource api 'Microsoft.Web/sites@2022-09-01' = {
     }
   }
 }
-output apiName string  = api.name
+output ApiName string  = api.name
 
 //WEB APP
 resource BlazorServer 'Microsoft.Web/sites@2022-09-01' = {
@@ -105,7 +105,7 @@ resource BlazorServer 'Microsoft.Web/sites@2022-09-01' = {
         }
         {
           name: 'StorageConfiguration__ApiHost'
-          value: 'https://${apiWebApp.properties.defaultHostName}'
+          value: 'https://${api.properties.defaultHostName}'
         }
         {
           name: 'AzureAdB2C__Instance'
@@ -158,7 +158,7 @@ resource BlazorWasm 'Microsoft.Web/sites@2022-09-01' = {
         }
         {
           name: 'StorageConfiguration__ApiHost'
-          value: 'https://${apiWebApp.properties.defaultHostName}'
+          value: 'https://${api.properties.defaultHostName}'
         }
         {
           name: 'AzureAdB2C__Instance'

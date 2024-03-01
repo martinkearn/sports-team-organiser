@@ -75,7 +75,7 @@ jobs:
       with:
         inlineScript: |
           #!/bin/bash
-          outputValue=$( az deployment group show -g ${{ inputs.rg }} --name main --query properties.outputs.BlazorServerName.value -o tsv)
+          outputValue=$( az deployment group show -g ${{ inputs.rg }} --name main --query properties.outputs.blazorServerName.value -o tsv)
           echo "BlazorServerName=$outputValue" >> $GITHUB_ENV   
 
     - name: blazorserver-dotnet-build-publish

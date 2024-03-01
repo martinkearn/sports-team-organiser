@@ -78,6 +78,9 @@ jobs:
           outputValue=$( az deployment group show -g ${{ inputs.rg }} --name main --query properties.outputs.ApiName.value -o tsv)
           echo "ApiName=$outputValue" >> $GITHUB_ENV   
 
+    - name: api-display-name
+      run: echo "$ApiName"
+
     - name: api-dotnet-build-publish
       run: |
         dotnet restore ${{ inputs.apicsprojpath }}
@@ -87,7 +90,7 @@ jobs:
     - name: api-azure-deploy
       uses: azure/webapps-deploy@v2
       with: 
-        app-name: api
+        app-name: '${{ env.ApiName }}'
         package: '${{ inputs.apidotnetoutputpath }}'
 
 # Blazor Server code

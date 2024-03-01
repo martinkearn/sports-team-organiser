@@ -41,23 +41,23 @@ resource applicationInsights 'Microsoft.Insights/components@2020-02-02' = {
 }
 
 //APP SERVICE PLAN for WEB APP
-resource webAppServicePlan 'Microsoft.Web/serverfarms@2022-09-01' = {
-  name: 'webapp-service-${uniqueName}'
+resource appServicePlan 'Microsoft.Web/serverfarms@2022-09-01' = {
+  name: 'app-serviceplan-${uniqueName}'
   location: location
   sku: {
     name: 'B2'
   }
-  kind: 'app'
+  kind: 'linux'
   properties: { reserved: true }
 }
 
 //API WEB APP
-resource apiWebApp 'Microsoft.Web/sites@2022-09-01' = {
-  name: 'apiwebapp-${uniqueName}'
+resource api 'Microsoft.Web/sites@2022-09-01' = {
+  name: 'api-${uniqueName}'
   location: location
-  kind: 'app'
   properties: {
-    serverFarmId: webAppServicePlan.id
+    serverFarmId: appServicePlan.id
+    httpsOnly: true
     siteConfig: {
       linuxFxVersion: 'DOTNETCORE|8.0'
       alwaysOn: true
@@ -76,18 +76,17 @@ resource apiWebApp 'Microsoft.Web/sites@2022-09-01' = {
         }
       ]
     }
-    httpsOnly: true
   }
 }
-output apiWebAppName string  = apiWebApp.name
+output apiName string  = api.name
 
 //WEB APP
-resource webApp 'Microsoft.Web/sites@2022-09-01' = {
-  name: 'webapp-${uniqueName}'
+resource BlazorServer 'Microsoft.Web/sites@2022-09-01' = {
+  name: 'blazorserver-${uniqueName}'
   location: location
-  kind: 'app'
   properties: {
-    serverFarmId: webAppServicePlan.id
+    serverFarmId: appServicePlan.id
+    httpsOnly: true
     siteConfig: {
       linuxFxVersion: 'DOTNETCORE|8.0'
       alwaysOn: true
@@ -138,18 +137,17 @@ resource webApp 'Microsoft.Web/sites@2022-09-01' = {
         }
       ]
     }
-    httpsOnly: true
   }
 }
-output webAppName string  = webApp.name
+output BlazorServerName string  = BlazorServer.name
 
 //WASM WEB APP
-resource wasmWebApp 'Microsoft.Web/sites@2022-09-01' = {
-  name: 'wasmwebapp-${uniqueName}'
+resource BlazorWasm 'Microsoft.Web/sites@2022-09-01' = {
+  name: 'blazorwasm-${uniqueName}'
   location: location
-  kind: 'app'
   properties: {
-    serverFarmId: webAppServicePlan.id
+    serverFarmId: appServicePlan.id
+    httpsOnly: true
     siteConfig: {
       linuxFxVersion: 'DOTNETCORE|8.0'
       alwaysOn: true
@@ -192,7 +190,6 @@ resource wasmWebApp 'Microsoft.Web/sites@2022-09-01' = {
         }
       ]
     }
-    httpsOnly: true
   }
 }
-output wasmWebAppName string  = wasmWebApp.name
+output BlazorWasmName string  = BlazorWasm.name

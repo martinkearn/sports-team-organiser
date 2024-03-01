@@ -96,7 +96,7 @@ jobs:
       with:
         inlineScript: |
           #!/bin/bash
-          outputValue=$( az deployment group show -g ${{ inputs.rg }} --name main --query properties.outputs.apiName.value -o tsv)
+          outputValue=$( az deployment group show -g ${{ inputs.rg }} --name main --query properties.outputs.ApiName.value -o tsv)
           echo "ApiName=$outputValue" >> $GITHUB_ENV   
 
     - name: dotnet-build-publish-api
@@ -117,7 +117,7 @@ jobs:
       with:
         inlineScript: |
           #!/bin/bash
-          outputValue=$( az deployment group show -g ${{ inputs.rg }} --name main --query properties.outputs.blazorWasmName.value -o tsv)
+          outputValue=$( az deployment group show -g ${{ inputs.rg }} --name main --query properties.outputs.BlazorWasmName.value -o tsv)
           echo "BlazorWasmName=$outputValue" >> $GITHUB_ENV   
 
     - name: dotnet-build-publish-api

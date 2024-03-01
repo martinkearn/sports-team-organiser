@@ -70,7 +70,7 @@ jobs:
         parameters: 'uniqueName=${{ inputs.uniquelabel }}'
 
 # Blazor Server code
-    - name: bicep-output-blazorservername
+    - name: blazorserver-bicep-output-name
       uses: azure/CLI@v1
       with:
         inlineScript: |
@@ -78,20 +78,20 @@ jobs:
           outputValue=$( az deployment group show -g ${{ inputs.rg }} --name main --query properties.outputs.BlazorServerName.value -o tsv)
           echo "BlazorServerName=$outputValue" >> $GITHUB_ENV   
 
-    - name: dotnet-build-publish-blazorserver
+    - name: blazorservername-dotnet-build-publish
       run: |
         dotnet restore ${{ inputs.blazorservercsprojpath }}
         dotnet build ${{ inputs.blazorservercsprojpath }} --configuration Release
         dotnet publish ${{ inputs.blazorservercsprojpath }} -c Release -o ${{ inputs.blazorserverdotnetoutputpath }}
 
-    - name: azure-deploy-webapp
+    - name: blazorservername-azure-deploy
       uses: azure/webapps-deploy@v2
       with: 
         app-name: ${{ env.BlazorServerName }}
         package: '${{ inputs.blazorserverdotnetoutputpath }}'
 
 # API code
-    - name: bicep-output-apiname
+    - name: api-bicep-output-name
       uses: azure/CLI@v1
       with:
         inlineScript: |
@@ -99,20 +99,20 @@ jobs:
           outputValue=$( az deployment group show -g ${{ inputs.rg }} --name main --query properties.outputs.ApiName.value -o tsv)
           echo "ApiName=$outputValue" >> $GITHUB_ENV   
 
-    - name: dotnet-build-publish-api
+    - name: api-dotnet-build-publish
       run: |
         dotnet restore ${{ inputs.apicsprojpath }}
         dotnet build ${{ inputs.apicsprojpath }} --configuration Release
         dotnet publish ${{ inputs.apicsprojpath }} -c Release -o ${{ inputs.apidotnetoutputpath }}
 
-    - name: azure-deploy-api
+    - name: api-azure-deploy
       uses: azure/webapps-deploy@v2
       with: 
         app-name: ${{ env.ApiName }}
         package: '${{ inputs.apidotnetoutputpath }}'
 
 # Blazor Wasm code
-    - name: bicep-output-blazorwasmname
+    - name: blazorwasm-bicep-output-name
       uses: azure/CLI@v1
       with:
         inlineScript: |
@@ -120,13 +120,13 @@ jobs:
           outputValue=$( az deployment group show -g ${{ inputs.rg }} --name main --query properties.outputs.BlazorWasmName.value -o tsv)
           echo "BlazorWasmName=$outputValue" >> $GITHUB_ENV   
 
-    - name: dotnet-build-publish-api
+    - name: blazorwasm-dotnet-build-publish
       run: |
         dotnet restore ${{ inputs.blazorwasmcsprojpath }}
         dotnet build ${{ inputs.blazorwasmcsprojpath }} --configuration Release
         dotnet publish ${{ inputs.blazorwasmcsprojpath }} -c Release -o ${{ inputs.blazorwasmdotnetoutputpath }}
 
-    - name: azure-deploy-api
+    - name: blazorwasm-azure-deploy
       uses: azure/webapps-deploy@v2
       with: 
         app-name: ${{ env.BlazorWasmName }}

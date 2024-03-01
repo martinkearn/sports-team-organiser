@@ -87,7 +87,7 @@ jobs:
     - name: api-azure-deploy
       uses: azure/webapps-deploy@v2
       with: 
-        app-name: ${{ env.ApiName }}
+        app-name: api
         package: '${{ inputs.apidotnetoutputpath }}'
 
 # Blazor Server code
@@ -108,7 +108,7 @@ jobs:
     - name: blazorserver-azure-deploy
       uses: azure/webapps-deploy@v2
       with: 
-        app-name: ${{ env.BlazorServerName }}
+        app-name: blazorserver
         package: '${{ inputs.blazorserverdotnetoutputpath }}'
 
 # Blazor Wasm code
@@ -129,5 +129,5 @@ jobs:
     - name: blazorwasm-azure-deploy
       uses: azure/webapps-deploy@v2
       with: 
-        app-name: ${{ env.BlazorWasmName }}
+        app-name: blazorwasm
         package: '${{ inputs.blazorwasmdotnetoutputpath }}'

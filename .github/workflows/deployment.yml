@@ -94,16 +94,3 @@ jobs:
       with: 
         app-name: 'blazorserver-${{ inputs.uniquelabel }}'
         package: '${{ inputs.blazorserverdotnetoutputpath }}'
-
-# Blazor Wasm code
-    - name: blazorwasm-dotnet-build-publish
-      run: |
-        dotnet restore ${{ inputs.blazorwasmcsprojpath }}
-        dotnet build ${{ inputs.blazorwasmcsprojpath }} --configuration Release
-        dotnet publish ${{ inputs.blazorwasmcsprojpath }} -c Release -o ${{ inputs.blazorwasmdotnetoutputpath }}
-
-    - name: blazorwasm-azure-deploy
-      uses: azure/webapps-deploy@v2
-      with: 
-        app-name: 'blazorwasm-${{ inputs.uniquelabel }}'
-        package: '${{ inputs.blazorwasmdotnetoutputpath }}'

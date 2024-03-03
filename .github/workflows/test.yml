@@ -5,7 +5,7 @@ on:
     push:
     
 jobs:
-    Deploy-Infrastructure:
+    Deploy-Apps:
   # Setup
       runs-on: ubuntu-latest
       steps:
@@ -23,7 +23,7 @@ jobs:
         with:
           dotnet-version: '8.0.x'
 
-  # Blazor Wasm code
+  # Deploy Blazor Wasm code
       - name: blazorwasm-dotnet-build-publish
         run: |
           dotnet restore './src/STO.Wasm/STO.Wasm.csproj'
@@ -33,6 +33,6 @@ jobs:
       - name: blazorwasm-azure-deploy
         uses: azure/webapps-deploy@v2
         with: 
-          app-name: 'blazorwasm-tnfdev'
+          app-name: 'blazorwasm-test-windows'
           publish-profile: ${{ secrets.AZURE_BLAZOREWASM_PUBLISHINGPROFILE  }}
           package: './src/STO.Wasm/output'

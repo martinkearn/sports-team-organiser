@@ -72,7 +72,6 @@ resource api 'Microsoft.Web/sites@2022-09-01' = {
     serverFarmId: windowsAppServicePlan.id
     httpsOnly: true
     siteConfig: {
-      linuxFxVersion: 'DOTNETCORE|8.0'
       alwaysOn: true
       appSettings: [
         {
@@ -162,7 +161,6 @@ resource blazorWasm 'Microsoft.Web/sites@2022-09-01' = {
     serverFarmId: windowsAppServicePlan.id
     httpsOnly: true
     siteConfig: {
-      linuxFxVersion: 'DOTNETCORE|8.0'
       alwaysOn: true
       appSettings: [
         {

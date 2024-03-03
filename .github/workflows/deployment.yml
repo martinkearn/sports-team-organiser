@@ -11,18 +11,24 @@ on:
         uniquelabel:
           type: string
           required: true
-        csprojpath:
+        blazorservercsprojpath:
           type: string
           required: true
-        dotnetoutputpath:
+        blazorserverdotnetoutputpath:
           type: string
           required: true
         apicsprojpath:
-            type: string
-            required: true
+          type: string
+          required: true
         apidotnetoutputpath:
-            type: string
-            required: true
+          type: string
+          required: true
+        blazorwasmcsprojpath:
+          type: string
+          required: true
+        blazorwasmdotnetoutputpath:
+          type: string
+          required: true
       secrets:
         azure-credentials:
           required: true
@@ -30,7 +36,7 @@ on:
           required: true
    
 jobs:
-  Deploy-Infrastructure:
+  Deploy-Infrastructure-Apps:
 # Setup
     runs-on: ubuntu-latest
     steps:
@@ -44,9 +50,9 @@ jobs:
         creds: ${{ secrets.azure-credentials }}
         
     - name: setup-dotnet
-      uses: actions/setup-dotnet@v3
+      uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: '7.0'
+        dotnet-version: '8.0.x'
 
 # Bicep
     - name: bicep-install
@@ -63,44 +69,41 @@ jobs:
         failOnStdErr: false
         parameters: 'uniqueName=${{ inputs.uniquelabel }}'
 
-# Web App code
-    - name: bicep-output-webappname
-      uses: azure/CLI@v1
-      with:
-        inlineScript: |
-          #!/bin/bash
-          outputValue=$( az deployment group show -g ${{ inputs.rg }} --name main --query properties.outputs.webAppName.value -o tsv)
-          echo "WebAppName=$outputValue" >> $GITHUB_ENV   
-
-    - name: dotnet-build-publish-webapp
-      run: |
-        dotnet restore ${{ inputs.csprojpath }}
-        dotnet build ${{ inputs.csprojpath }} --configuration Release
-        dotnet publish ${{ inputs.csprojpath }} -c Release -o ${{ inputs.dotnetoutputpath }}
-
-    - name: azure-deploy-webapp
-      uses: azure/webapps-deploy@v2
-      with: 
-        app-name: ${{ env.WebAppName }}
-        package: '${{ inputs.dotnetoutputpath }}'
-
 # API code
-    - name: bicep-output-apiwebappname
-      uses: azure/CLI@v1
-      with:
-        inlineScript: |
-          #!/bin/bash
-          outputValue=$( az deployment group show -g ${{ inputs.rg }} --name main --query properties.outputs.apiWebAppName.value -o tsv)
-          echo "ApiWebAppName=$outputValue" >> $GITHUB_ENV   
-
-    - name: dotnet-build-publish-apiwebapp
+    - name: api-dotnet-build-publish
       run: |
         dotnet restore ${{ inputs.apicsprojpath }}
         dotnet build ${{ inputs.apicsprojpath }} --configuration Release
         dotnet publish ${{ inputs.apicsprojpath }} -c Release -o ${{ inputs.apidotnetoutputpath }}
 
-    - name: azure-deploy-webapp
+    - name: api-azure-deploy
       uses: azure/webapps-deploy@v2
       with: 
-        app-name: ${{ env.ApiWebAppName }}
+        app-name: 'api-${{ inputs.uniquelabel }}'
         package: '${{ inputs.apidotnetoutputpath }}'
+
+# Blazor Server code
+    - name: blazorserver-dotnet-build-publish
+      run: |
+        dotnet restore ${{ inputs.blazorservercsprojpath }}
+        dotnet build ${{ inputs.blazorservercsprojpath }} --configuration Release
+        dotnet publish ${{ inputs.blazorservercsprojpath }} -c Release -o ${{ inputs.blazorserverdotnetoutputpath }}
+
+    - name: blazorserver-azure-deploy
+      uses: azure/webapps-deploy@v2
+      with: 
+        app-name: 'blazorserver-${{ inputs.uniquelabel }}'
+        package: '${{ inputs.blazorserverdotnetoutputpath }}'
+
+# Blazor Wasm code
+    - name: blazorwasm-dotnet-build-publish
+      run: |
+        dotnet restore ${{ inputs.blazorwasmcsprojpath }}
+        dotnet build ${{ inputs.blazorwasmcsprojpath }} --configuration Release
+        dotnet publish ${{ inputs.blazorwasmcsprojpath }} -c Release -o ${{ inputs.blazorwasmdotnetoutputpath }}
+
+    - name: blazorwasm-azure-deploy
+      uses: azure/webapps-deploy@v2
+      with: 
+        app-name: 'blazorwasm-${{ inputs.uniquelabel }}'
+        package: '${{ inputs.blazorwasmdotnetoutputpath }}'

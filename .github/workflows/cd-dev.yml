@@ -14,10 +14,12 @@ jobs:
     with:
       rg: 'TNF-Dev'
       uniquelabel: 'tnfdev'
-      csprojpath: './src/STO.Server/STO.Server.csproj'
-      dotnetoutputpath: './src/STO.Server/output'
+      blazorservercsprojpath: './src/STO.Server/STO.Server.csproj'
+      blazorserverdotnetoutputpath: './src/STO.Server/output'
       apicsprojpath: './src/STO.Api/STO.Api.csproj'
       apidotnetoutputpath: './src/STO.Api/output'
+      blazorwasmcsprojpath: './src/STO.Wasm/STO.Wasm.csproj'
+      blazorwasmdotnetoutputpath: './src/STO.Wasm/output'
     secrets:
       azure-credentials: ${{ secrets.AZURE_CREDENTIALS_DEV }}
       azure-subscription: ${{ secrets.AZURE_SUBSCRIPTION }}

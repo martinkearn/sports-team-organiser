@@ -1,3 +1,6 @@
+global using STO.Models;
+global using STO.Models.Interfaces;
+global using STO.Services;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 
@@ -11,12 +14,24 @@ public class Program
         builder.RootComponents.Add<App>("#app");
         builder.RootComponents.Add<HeadOutlet>("head::after");
 
-        builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
+        // Httpclient
+        builder.Services.AddHttpClient();
 
         builder.Services.AddMsalAuthentication(options =>
         {
             builder.Configuration.Bind("AzureAdB2C", options.ProviderOptions.Authentication);
         });
+
+        builder.Services.AddOptions<StorageConfiguration>()
+            .Configure<IConfiguration>((settings, configuration) =>
+            {
+                configuration.GetSection(nameof(StorageConfiguration)).Bind(settings);
+            });
+        builder.Services.AddSingleton<IStorageService, ApiStorageService>();
+        builder.Services.AddSingleton<IPlayerService, PlayerService>();
+        builder.Services.AddSingleton<IGameService, GameService>();
+        builder.Services.AddSingleton<ITransactionService, TransactionService>();
+        builder.Services.AddSingleton<IRatingService, RatingService>();
 
         await builder.Build().RunAsync();
     }

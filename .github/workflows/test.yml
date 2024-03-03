@@ -27,11 +27,12 @@ jobs:
       - name: blazorwasm-dotnet-build-publish
         run: |
           dotnet restore './src/STO.Wasm/STO.Wasm.csproj'
-          dotnet build './src/STO.Wasm/STO.Wasm.csproj'
+          dotnet build './src/STO.Wasm/STO.Wasm.csproj' --configuration Release
           dotnet publish './src/STO.Wasm/STO.Wasm.csproj' -c Release -o './src/STO.Wasm/output'
 
       - name: blazorwasm-azure-deploy
         uses: azure/webapps-deploy@v2
         with: 
           app-name: 'blazorwasm-tnfdev'
+          publish-profile: ${{ secrets.AZURE_BLAZOREWASM_PUBLISHINGPROFILE  }}
           package: './src/STO.Wasm/output'

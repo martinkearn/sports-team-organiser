@@ -23,6 +23,12 @@ on:
         apidotnetoutputpath:
           type: string
           required: true
+        blazorwasmcsprojpath:
+          type: string
+          required: true
+        blazorwasmdotnetoutputpath:
+          type: string
+          required: true
       secrets:
         azure-credentials:
           required: true
@@ -30,7 +36,7 @@ on:
           required: true
    
 jobs:
-  Deploy-Infrastructure:
+  Deploy-Infrastructure-Apps:
 # Setup
     runs-on: ubuntu-latest
     steps:
@@ -44,7 +50,7 @@ jobs:
         creds: ${{ secrets.azure-credentials }}
         
     - name: setup-dotnet
-      uses: actions/setup-dotnet@v3
+      uses: actions/setup-dotnet@v4
       with:
         dotnet-version: '8.0.x'
 
@@ -88,3 +94,16 @@ jobs:
       with: 
         app-name: 'blazorserver-${{ inputs.uniquelabel }}'
         package: '${{ inputs.blazorserverdotnetoutputpath }}'
+
+# Blazor Wasm code
+    - name: blazorwasm-dotnet-build-publish
+      run: |
+        dotnet restore ${{ inputs.blazorwasmcsprojpath }}
+        dotnet build ${{ inputs.blazorwasmcsprojpath }} --configuration Release
+        dotnet publish ${{ inputs.blazorwasmcsprojpath }} -c Release -o ${{ inputs.blazorwasmdotnetoutputpath }}
+
+    - name: blazorwasm-azure-deploy
+      uses: azure/webapps-deploy@v2
+      with: 
+        app-name: 'blazorwasm-${{ inputs.uniquelabel }}'
+        package: '${{ inputs.blazorwasmdotnetoutputpath }}'

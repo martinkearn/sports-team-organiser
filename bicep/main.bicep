@@ -52,14 +52,13 @@ resource linuxAppServicePlan 'Microsoft.Web/serverfarms@2022-09-01' = {
 }
 
 //WINDOWS APP SERVICE PLAN
-resource windowsAppServicePlan 'Microsoft.Web/serverfarms@2022-09-01' = {
+resource windowsAppServicePlan 'Microsoft.Web/serverfarms@2023-01-01' = {
   name: 'app-serviceplan-windows-${uniqueName}'
+  kind: 'app'
   location: location
   sku: {
     name: 'B1'
   }
-  kind: 'app'
-  properties: { reserved: true }
 }
 
 //API WEB APP

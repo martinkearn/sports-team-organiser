@@ -44,7 +44,7 @@ jobs:
         creds: ${{ secrets.azure-credentials }}
         
     - name: setup-dotnet
-      uses: actions/setup-dotnet@v3
+      uses: actions/setup-dotnet@v4
       with:
         dotnet-version: '8.0.x'
 
@@ -62,6 +62,10 @@ jobs:
         template: ./bicep/main.bicep
         failOnStdErr: false
         parameters: 'uniqueName=${{ inputs.uniquelabel }}'
+
+  Deploy-Apps:
+    runs-on: ubuntu-latest
+    steps:
 
 # API code
     - name: api-dotnet-build-publish
@@ -88,3 +92,16 @@ jobs:
       with: 
         app-name: 'blazorserver-${{ inputs.uniquelabel }}'
         package: '${{ inputs.blazorserverdotnetoutputpath }}'
+
+# Blazor Wasm code
+    - name: blazorwasm-dotnet-build-publish
+      run: |
+        dotnet restore ${{ inputs.blazorwasmcsprojpath }}
+        dotnet build ${{ inputs.blazorwasmcsprojpath }} --configuration Release
+        dotnet publish ${{ inputs.blazorwasmcsprojpath }} -c Release -o ${{ inputs.blazorwasmdotnetoutputpath }}
+
+    - name: blazorwasm-azure-deploy
+      uses: azure/webapps-deploy@v2
+      with: 
+        app-name: 'blazorwasm-${{ inputs.uniquelabel }}'
+        package: '${{ inputs.blazorwasmdotnetoutputpath }}'

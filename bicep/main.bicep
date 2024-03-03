@@ -40,14 +40,24 @@ resource applicationInsights 'Microsoft.Insights/components@2020-02-02' = {
   kind: 'web'
 }
 
-//APP SERVICE PLAN for WEB APP
-resource appServicePlan 'Microsoft.Web/serverfarms@2022-09-01' = {
-  name: 'app-serviceplan-${uniqueName}'
+//LINUX APP SERVICE PLAN
+resource linuxAppServicePlan 'Microsoft.Web/serverfarms@2022-09-01' = {
+  name: 'app-serviceplan-linux-${uniqueName}'
   location: location
   sku: {
-    name: 'B2'
+    name: 'B1'
   }
   kind: 'linux'
+  properties: { reserved: true }
+}
+
+//WINDOWS APP SERVICE PLAN
+resource windowsAppServicePlan 'Microsoft.Web/serverfarms@2022-09-01' = {
+  name: 'app-serviceplan-windows-${uniqueName}'
+  location: location
+  sku: {
+    name: 'B1'
+  }
   properties: { reserved: true }
 }
 
@@ -56,7 +66,7 @@ resource api 'Microsoft.Web/sites@2022-09-01' = {
   name: 'api-${uniqueName}'
   location: location
   properties: {
-    serverFarmId: appServicePlan.id
+    serverFarmId: linuxAppServicePlan.id
     httpsOnly: true
     siteConfig: {
       linuxFxVersion: 'DOTNETCORE|8.0'
@@ -85,7 +95,7 @@ resource blazorServer 'Microsoft.Web/sites@2022-09-01' = {
   name: 'blazorserver-${uniqueName}'
   location: location
   properties: {
-    serverFarmId: appServicePlan.id
+    serverFarmId: linuxAppServicePlan.id
     httpsOnly: true
     siteConfig: {
       linuxFxVersion: 'DOTNETCORE|8.0'
@@ -140,3 +150,56 @@ resource blazorServer 'Microsoft.Web/sites@2022-09-01' = {
   }
 }
 output blazorServerName string = blazorServer.name
+
+//BLAZOR WASM WEB APP
+resource blazorWasm 'Microsoft.Web/sites@2022-09-01' = {
+  name: 'blazorwasm-${uniqueName}'
+  location: location
+  properties: {
+    serverFarmId: windowsAppServicePlan.id
+    httpsOnly: true
+    siteConfig: {
+      linuxFxVersion: 'DOTNETCORE|8.0'
+      alwaysOn: true
+      appSettings: [
+        {
+          name: 'APPINSIGHTS_INSTRUMENTATIONKEY'
+          value: applicationInsights.properties.InstrumentationKey
+        }
+        {
+          name: 'StorageConfiguration__ApiHost'
+          value: 'https://${api.properties.defaultHostName}'
+        }
+        {
+          name: 'AzureAdB2C__Instance'
+          value: 'https://tuesdayfootball.b2clogin.com/'
+        }
+        {
+          name: 'AzureAdB2C__ClientId'
+          value: 'e0c23c36-7084-4597-86e7-494611963e50'
+        }
+        {
+          name: 'AzureAdB2C__CallbackPath'
+          value: '/signin-oidc'
+        }
+        {
+          name: 'AzureAdB2C__Domain'
+          value: 'tuesdayfootball.onmicrosoft.com'
+        }
+        {
+          name: 'AzureAdB2C__SignUpSignInPolicyId'
+          value: 'b2c_1_susi'
+        }
+        {
+          name: 'AzureAdB2C__ResetPasswordPolicyId'
+          value: ''
+        }
+        {
+          name: 'AzureAdB2C__EditProfilePolicyId'
+          value: ''
+        }
+      ]
+    }
+  }
+}
+output blazorWasmName string = blazorWasm.name

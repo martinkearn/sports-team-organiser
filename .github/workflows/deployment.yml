@@ -23,6 +23,12 @@ on:
         apidotnetoutputpath:
           type: string
           required: true
+        blazorwasmcsprojpath:
+          type: string
+          required: true
+        blazorwasmdotnetoutputpath:
+          type: string
+          required: true
       secrets:
         azure-credentials:
           required: true

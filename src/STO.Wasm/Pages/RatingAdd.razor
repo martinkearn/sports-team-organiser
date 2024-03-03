@@ -1,0 +1,106 @@
+@page "/ratings/add"
+@inject IRatingService RatingService
+@inject IPlayerService PlayerService
+@inject IGameService GameService
+@inject NavigationManager Navigation
+
+<PageTitle>TNF - @pageTitle</PageTitle>
+
+<h1><i class="fa-regular fa-star me-2"></i> @pageTitle</h1>
+
+<p>Ratings are used to help the system work out balanced teams.</p>
+<p>Players will never be shown individual ratings and only the top-rated players will be visisble in terms of leaderboards, never the bottom-rated players.</p>
+<p>Submit a rating based only on a player's performance during a specfic game in comparison to other players in the same position at the same game.</p>
+<p>Try not to allow biases towards a player come into your rating; think only about a specific game and the impact the player had on the game in their position.</p>
+
+<EditForm Model="@newRatingEntity" OnValidSubmit="Add" Context="NewRatingEntity">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+    <div class="mb-3">
+        <label for="addGameRowKey" class="form-label">Game</label>
+        <InputSelect class="form-select" @bind-Value="newRatingEntity.GameRowKey">
+            <option value="">Select Game ...</option>
+            @foreach (var game in games)
+            {
+                <option value="@game.GameEntity.RowKey"><GameTitle Game="@game" Link="false" /></option>
+            }
+        </InputSelect>
+    </div>
+
+    <div class="mb-3">
+        <label for="addPlayerRowKey" class="form-label">Player</label>
+        <InputSelect class="form-select" @bind-Value="newRatingEntity.PlayerRowKey">
+            <option value="">Select Player ...</option>
+            @{
+                if (newRatingEntity.GameRowKey != default)
+                {
+                    var game = games.Single<Game>(o => o.GameEntity.RowKey == newRatingEntity.GameRowKey);
+                    playersAtGame = game.PlayersAtGame;
+                }
+            }
+            @foreach (var pag in playersAtGame)
+            {
+                <option value="@pag.Player.PlayerEntity.RowKey">@pag.Player.PlayerEntity.Name - @pag.Player.PlayerEntity.Position</option>
+            }
+        </InputSelect>
+    </div>
+
+    <div class="mb-3">
+        <label for="addRating" class="form-label">Rating (1-5)</label>
+        <InputSelect class="form-select" @bind-Value="newRatingEntity.Rating">
+            <option value="">Select Rating ...</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+        </InputSelect>
+    </div>
+
+    <div class="mb-3">
+        <label for="addNotes" class="form-label">Notes</label>
+        <InputText class="form-control" id="addNotes" @bind-Value="newRatingEntity.Notes" />
+    </div>
+
+    <div class="modal-footer">
+        <button type="submit" class="btn btn-primary">Add Transaction</button>
+    </div>
+</EditForm>
+
+@code {
+
+    private List<Game> games = new();
+
+    private List<PlayerAtGame> playersAtGame = new();
+
+    private RatingEntity newRatingEntity = new();
+
+
+    private string pageTitle;
+
+    protected override async Task OnInitializedAsync()
+    {   
+        await RefreshData();
+    }
+
+    protected async Task Add()
+    {
+        await RatingService.UpsertRatingEntity(newRatingEntity);
+        Navigation.NavigateTo("/ratings/addthanks");
+    }
+
+    private void RefreshPlayers()
+    {
+        if (newRatingEntity.GameRowKey != default)
+        {
+            var game = games.Single<Game>(o => o.GameEntity.RowKey == newRatingEntity.GameRowKey);
+            playersAtGame = game.PlayersAtGame;
+        }
+    }
+
+    private async Task RefreshData()
+    {
+        games = await GameService.GetGames();
+        pageTitle = "Add Rating";
+    }
+}

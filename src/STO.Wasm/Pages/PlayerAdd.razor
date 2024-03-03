@@ -1,0 +1,75 @@
+@page "/players/add"
+@inject IPlayerService PlayerService
+@inject NavigationManager Navigation
+
+<PageTitle>TNF - @pageTitle</PageTitle>
+
+<h1>@pageTitle</h1>
+
+<AuthorizeView Policy="IsAdminEmail">
+    <Authorized>
+        <EditForm Model="@newPlayerEntity" OnSubmit="@Add"  Context="NewPlayerEntity">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+            <div class="mb-3">
+                <label for="addName" class="form-label">Name</label>
+                <InputText class="form-control" id="addName" @bind-Value="newPlayerEntity.Name" />
+            </div>
+
+            <div class="mb-3">
+                <label for="addTags" class="form-label">Position</label>
+                <InputSelect class="form-select" @bind-Value="newPlayerEntity.Position">
+                    @foreach (string option in Enum.GetNames(typeof(Enums.PlayerPosition)))
+                    {
+                        <option value="@option">@option</option>
+                    }
+                </InputSelect>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Admin Rating</label>
+                <InputNumber class="form-control" id="addAdminRating" @bind-Value="newPlayerEntity.AdminRating" />
+            </div>
+
+            <div class="mb-3">
+                <label for="addDefaultRate" class="form-label">Default Rate</label>
+                <div class="input-group">
+                    <span class="input-group-text">£</span>
+                    <InputNumber type="number" min="0" class="form-control" id="addDefaultRate" @bind-Value="newPlayerEntity.DefaultRate" />
+                </div>
+                <div class="form-text">Default rate per game. Usually £3 or £4.</div>
+            </div>
+            
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-primary">Add Player</button>
+            </div>
+        </EditForm>
+    </Authorized>
+    <NotAuthorized>
+        <h4>Access Denied!</h4>
+    </NotAuthorized>
+</AuthorizeView>
+
+@code {
+    private PlayerEntity newPlayerEntity = new();
+
+    private string pageTitle;
+
+    protected override void OnInitialized()
+    {
+        RefreshData();
+    }
+
+    protected async Task Add()
+    {
+        await PlayerService.UpsertPlayerEntity(newPlayerEntity);
+        Navigation.NavigateTo("/players");
+    }
+
+    private void RefreshData()
+    {
+        newPlayerEntity = new();
+        newPlayerEntity.DefaultRate = 4;
+        pageTitle = "Add Player";
+    }
+}

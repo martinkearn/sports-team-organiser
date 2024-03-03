@@ -1,0 +1,64 @@
+@page "/admin"
+@using Azure.Data.Tables
+@inject IStorageService StorageService
+
+<PageTitle>Tuesday.Football</PageTitle>
+
+<AuthorizeView Policy="IsAdminEmail">
+    <Authorized>
+        <h1>Welcome to Tuesday.Football Admin Portal</h1>
+
+        <h2>Data</h2>
+        <button class="btn btn-primary" @onclick="RefreshData">Refresh Data</button>
+        @foreach (var p in allPlayers)
+        {
+            <p><a href="/players/@p.RowKey/player">Player, @p.RowKey, @p.Name</a></p>
+        }        
+        @foreach (var g in allGames)
+        {
+            <p><a href="/games/@g.RowKey">Game, @g.RowKey, @g.Date</a></p>
+        }        
+        @foreach (var t in allTransactions)
+        {
+            <p><a href="/transactions/@t.RowKey">Transaction, @t.RowKey, @t.Date, @t.Amount</a></p>
+        }        
+        @foreach (var pag in allPlayerAtGame)
+        {
+            <p><a href="/pags/@pag.RowKey">PlayerAtGame, @pag.RowKey, @pag.PlayerRowKey, @pag.GameRowKey</a></p>
+        }
+        @foreach (var r in allRatings)
+        {
+            <p><a href="/ratings/@r.RowKey">Rating, @r.RowKey, @r.PlayerRowKey, @r.GameRowKey, @r.Rating</a></p>
+        }
+
+        <BootstrapBreakpoints  />
+
+        <Counter />
+    </Authorized>
+    <NotAuthorized>
+        <h4>Access Denied!</h4>
+    </NotAuthorized>
+</AuthorizeView>
+
+@code {
+    private List<PlayerEntity> allPlayers = new();
+    private List<GameEntity> allGames = new();
+    private List<TransactionEntity> allTransactions = new();
+    private List<PlayerAtGameEntity> allPlayerAtGame = new();
+    private List<RatingEntity> allRatings = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await RefreshData();
+    }
+
+    private async Task RefreshData()
+    {
+        await StorageService.RefreshData();
+        allPlayers = await StorageService.QueryEntities<PlayerEntity>();
+        allGames = await StorageService.QueryEntities<GameEntity>();
+        allTransactions = await StorageService.QueryEntities<TransactionEntity>();
+        allPlayerAtGame = await StorageService.QueryEntities<PlayerAtGameEntity>();
+        allRatings = await StorageService.QueryEntities<RatingEntity>();
+    }
+}

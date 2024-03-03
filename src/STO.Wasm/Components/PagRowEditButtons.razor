@@ -2,22 +2,26 @@
 @inject IGameService GameService
 @inject ITransactionService TransactionService
 
-<AuthorizeView Policy="IsAdminEmail">
-    <Authorized>
-        @if (pag.PlayerAtGameEntity.Played)
-        {
-            <button type="button" class="btn btn-outline-secondary btn-sm active d-none d-md-inline" @onclick="TogglePlayed"> Played</button>
-        }
-        else
-        {
-            <button type="button" class="btn btn-outline-secondary btn-sm d-none d-md-inline" @onclick="TogglePlayed"> Not Played</button>
-        }
-        <span></span>
-        <button type="button" class="btn btn-outline-secondary btn-sm d-none d-md-inline" @onclick="SwitchPagTeam">@pag.PlayerAtGameEntity.Team <i class="fa-solid fa-repeat"></i></button>
-        <button type="button" class="btn btn-outline-secondary btn-sm d-none d-lg-inline" @onclick="() => AddTransactionForPlayer(pag.Player.PlayerEntity.DefaultRate)"><i class="fa-solid fa-plus"></i> £@pag.Player.PlayerEntity.DefaultRate</button>
-        <a type="button" class="btn btn-outline-secondary btn-sm d-inline" href="/pags/@pag.PlayerAtGameEntity.RowKey"><i class="fa-solid fa-edit"></i> Edit</a>
-    </Authorized>
-</AuthorizeView>
+
+@if (pag.PlayerAtGameEntity.Played)
+{
+    <button type="button" class="btn btn-outline-secondary btn-sm active d-none d-md-inline" @onclick="TogglePlayed">
+    Played</button>
+}
+else
+{
+    <button type="button" class="btn btn-outline-secondary btn-sm d-none d-md-inline" @onclick="TogglePlayed"> Not
+    Played</button>
+}
+<span></span>
+<button type="button" class="btn btn-outline-secondary btn-sm d-none d-md-inline"
+    @onclick="SwitchPagTeam">@pag.PlayerAtGameEntity.Team <i class="fa-solid fa-repeat"></i></button>
+<button type="button" class="btn btn-outline-secondary btn-sm d-none d-lg-inline"
+    @onclick="() => AddTransactionForPlayer(pag.Player.PlayerEntity.DefaultRate)"><i class="fa-solid fa-plus"></i>
+    £@pag.Player.PlayerEntity.DefaultRate</button>
+<a type="button" class="btn btn-outline-secondary btn-sm d-inline" href="/pags/@pag.PlayerAtGameEntity.RowKey"><i
+        class="fa-solid fa-edit"></i> Edit</a>
+
 
 @code {
     [Parameter]
@@ -59,12 +63,12 @@
     private async Task AddTransactionForPlayer(double amount)
     {
         var newTransactionEntityForPag = new TransactionEntity()
-        {
-            Date = DateTimeOffset.UtcNow,
-            Notes = await TransactionService.GetNotesForGame(pag.GameEntity.RowKey),
-            PlayerRowKey = pag.Player.PlayerEntity.RowKey,
-            Amount = amount
-        };
+            {
+                Date = DateTimeOffset.UtcNow,
+                Notes = await TransactionService.GetNotesForGame(pag.GameEntity.RowKey),
+                PlayerRowKey = pag.Player.PlayerEntity.RowKey,
+                Amount = amount
+            };
         await TransactionService.UpsertTransactionEntity(newTransactionEntityForPag);
         await RefreshMainPage.InvokeAsync();
     }

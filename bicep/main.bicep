@@ -56,6 +56,11 @@ resource windowsAppServicePlan 'Microsoft.Web/serverfarms@2023-01-01' = {
   name: 'app-serviceplan-windows-${uniqueName}'
   kind: 'app'
   location: location
+  properties: {
+    siteMode: 'Basic'
+    kind: 'app'
+    reserved: false
+  }
   sku: {
     name: 'B1'
   }

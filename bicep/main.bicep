@@ -58,6 +58,7 @@ resource windowsAppServicePlan 'Microsoft.Web/serverfarms@2022-09-01' = {
   sku: {
     name: 'B1'
   }
+  kind: 'app'
   properties: { reserved: true }
 }
 
@@ -66,7 +67,7 @@ resource api 'Microsoft.Web/sites@2022-09-01' = {
   name: 'api-${uniqueName}'
   location: location
   properties: {
-    serverFarmId: linuxAppServicePlan.id
+    serverFarmId: windowsAppServicePlan.id
     httpsOnly: true
     siteConfig: {
       linuxFxVersion: 'DOTNETCORE|8.0'

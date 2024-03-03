@@ -57,8 +57,6 @@ resource windowsAppServicePlan 'Microsoft.Web/serverfarms@2023-01-01' = {
   kind: 'app'
   location: location
   properties: {
-    siteMode: 'Basic'
-    kind: 'app'
     reserved: false
   }
   sku: {

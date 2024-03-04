@@ -1,0 +1,9 @@
+<span>@TeamName has @Pags?.Count players and a rating of @Pags?.Select(o => o.Player.PlayerEntity.AdminRating).DefaultIfEmpty(0).Average().ToString("#.##")</span>
+
+@code {
+    [Parameter]
+    public List<PlayerAtGame>? Pags { get; set; }
+
+    [Parameter]
+    public string? TeamName { get; set; }
+}

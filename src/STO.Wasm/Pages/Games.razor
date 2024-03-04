@@ -1,0 +1,48 @@
+@page "/games"
+@inject IGameService GameService
+
+<PageTitle>TNF - @pageTitle</PageTitle>
+
+<h1><i class="fa-solid fa-people-group me-2"></i> @pageTitle</h1>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th scope="col">Date</th>
+            <th scope="col">Forecast Players</th>
+            <th scope="col">Actual Players</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var game in games)
+        {
+            <tr>
+                <td><GameTitle Game="@game" Link="true" /></td>
+                <td>@game.PlayersAtGame.Count()</td>
+                <td>@game.PlayersAtGame.Where(pag => pag.PlayerAtGameEntity.Played).Count()</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div class="modal-footer px-0">
+    <a class="btn btn-secondary" href="/quickaddpag"><i class="fa-solid fa-plus"></i> Add Player to Game</a>
+    <a class="btn btn-primary" href="/games/add"><i class="fa-solid fa-plus"></i> Add Game</a>
+</div>
+
+@code {
+    private List<Game> games = new();
+
+    private string pageTitle;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await RefreshData();
+    }
+
+    private async Task RefreshData()
+    {
+        games = await GameService.GetGames();
+        pageTitle = "Games";
+    }
+}

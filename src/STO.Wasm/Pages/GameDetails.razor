@@ -18,8 +18,7 @@
 
 <div class="row">
     <div class="col">
-        <EditForm Model="@newPagEntity" OnValidSubmit="AddPagEntity" class="row row-cols-lg-auto g-3 align-items-center"
-            Context="NewPagEntity">
+        <EditForm Model="@newPagEntity" OnValidSubmit="AddPagEntity" class="row row-cols-lg-auto g-3 align-items-center" Context="NewPagEntity">
             <DataAnnotationsValidator />
             <ValidationSummary />
             <div class="input-group col-12">
@@ -60,11 +59,8 @@
             <tr>
                 <td>A</td>
                 <td>
-
-                    <a class="d-none d-lg-inline"
-                        href="/pags/@pag.PlayerAtGameEntity.RowKey">@pag.Player.PlayerEntity.Name</a> <span
-                        class="d-inline d-lg-none">@pag.Player.PlayerEntity.Name</span>
-
+                    <a class="d-none d-lg-inline" href="/pags/@pag.PlayerAtGameEntity.RowKey">@pag.Player.PlayerEntity.Name</a>
+                    <span class="d-inline d-lg-none">@pag.Player.PlayerEntity.Name</span>
                     <PlayingForecastIcon Forecast="@pag.PlayerAtGameEntity.Forecast" />
                     <PositionIcon Position="pag.Player.PlayerEntity.Position" />
                     <RagIcon Pag="@pag" />
@@ -99,11 +95,8 @@
             <tr>
                 <td>B</td>
                 <td>
-
-                    <a class="d-none d-lg-inline"
-                        href="/pags/@pag.PlayerAtGameEntity.RowKey">@pag.Player.PlayerEntity.Name</a> <span
-                        class="d-inline d-lg-none">@pag.Player.PlayerEntity.Name</span>
-
+                    <a class="d-none d-lg-inline" href="/pags/@pag.PlayerAtGameEntity.RowKey">@pag.Player.PlayerEntity.Name</a> 
+                    <span class="d-inline d-lg-none">@pag.Player.PlayerEntity.Name</span>
                     <PlayingForecastIcon Forecast="@pag.PlayerAtGameEntity.Forecast" />
                     <PositionIcon Position="pag.Player.PlayerEntity.Position" />
                     <RagIcon Pag="@pag" />
@@ -138,11 +131,8 @@
             <tr>
                 <td>None</td>
                 <td>
-
-                    <a class="d-none d-lg-inline"
-                        href="/pags/@pag.PlayerAtGameEntity.RowKey">@pag.Player.PlayerEntity.Name</a> <span
-                        class="d-inline d-lg-none">@pag.Player.PlayerEntity.Name</span>
-
+                    <a class="d-none d-lg-inline" href="/pags/@pag.PlayerAtGameEntity.RowKey">@pag.Player.PlayerEntity.Name</a>
+                    <span class="d-inline d-lg-none">@pag.Player.PlayerEntity.Name</span>
                     <PlayingForecastIcon Forecast="@pag.PlayerAtGameEntity.Forecast" />
                     <PositionIcon Position="pag.Player.PlayerEntity.Position" />
                     <RagIcon Pag="@pag" />
@@ -168,14 +158,10 @@
 
 <div class="modal-footer px-0">
     <a class="btn btn-secondary" href="/games/"><i class="fa-solid fa-arrow-left"></i>All Games</a>
-
     <a class="btn btn-secondary" href="/games/@GameRowKey/edit"><i class="fa-solid fa-edit"></i>Edit</a>
     <button class="btn btn-secondary" @onclick="ToggleSimpleView"><i class=@simpleViewCss></i> @simpleViewLabel</button>
-    <button class="btn btn-secondary" @onclick="ToggleAllPlayed"><i class="fa-solid fa-clipboard-list"></i>
-        @markAllPlayedLabel</button>
-    <button class="btn btn-secondary" @onclick="CalculateTeams"><i class="fa-solid fa-gear"></i> Calculate
-        Teams</button>
-
+    <button class="btn btn-secondary" @onclick="ToggleAllPlayed"><i class="fa-solid fa-clipboard-list"></i> @markAllPlayedLabel</button>
+    <button class="btn btn-secondary" @onclick="CalculateTeams"><i class="fa-solid fa-gear"></i> Calculate Teams</button>
 </div>
 
 @code {

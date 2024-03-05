@@ -1,5 +1,19 @@
 ﻿@page "/"
+@using Microsoft.Extensions.Configuration
+@inject IConfiguration Configuration
 
 <PageTitle>Tuesday.Football</PageTitle>
 
 <h1>Welcome to Tuesday.Football</h1>
+
+<p>StorageConfiguration:ApiHost:@apiHost</p>
+
+@code {
+    private string apiHost;
+
+    protected override async Task OnInitializedAsync()
+    {
+        apiHost = Configuration["StorageConfiguration:ApiHost"];
+    }
+
+}

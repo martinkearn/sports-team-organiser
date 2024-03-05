@@ -33,6 +33,8 @@ public class Program
         builder.Services.AddSingleton<ITransactionService, TransactionService>();
         builder.Services.AddSingleton<IRatingService, RatingService>();
 
+        Console.WriteLine($"Client Hosting Environment: {builder.HostEnvironment.Environment}");
+
         await builder.Build().RunAsync();
     }
 }

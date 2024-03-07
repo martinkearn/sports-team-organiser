@@ -8,16 +8,29 @@
 
 <h1>Welcome to Tuesday.Football</h1>
 
-<p>StorageConfiguration:ApiHost:@apiHost</p>
+<p>StorageConfiguration:ApiHost: @apiHost</p>
+
+<p>SettingsFile: @settingsFile</p>
 
 <p>Environment: @Env.Environment</p>
 
+<AuthorizeView >
+    <Authorized>
+        <p>Authenticated</p>
+    </Authorized>
+    <NotAuthorized>
+        <p>Not Authenticated</p>
+    </NotAuthorized>
+</AuthorizeView>
+
 @code {
     private string apiHost;
+    private string settingsFile;
 
     protected override async Task OnInitializedAsync()
     {
         apiHost = Configuration["StorageConfiguration:ApiHost"];
+        settingsFile = Configuration["SettingsFile"];
     }
 
 }

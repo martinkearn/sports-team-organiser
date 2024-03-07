@@ -17,9 +17,13 @@ public class Program
         // Httpclient
         builder.Services.AddHttpClient();
 
+        // Refer to https://learn.microsoft.com/en-us/aspnet/core/blazor/security/webassembly/standalone-with-azure-active-directory-b2c?view=aspnetcore-8.0
         builder.Services.AddMsalAuthentication(options =>
         {
             builder.Configuration.Bind("AzureAdB2C", options.ProviderOptions.Authentication);
+            options.ProviderOptions.DefaultAccessTokenScopes.Add("openid");
+            options.ProviderOptions.DefaultAccessTokenScopes.Add("offline_access");
+            options.ProviderOptions.LoginMode = "redirect";
         });
 
         builder.Services.AddOptions<StorageConfiguration>()
@@ -32,6 +36,8 @@ public class Program
         builder.Services.AddSingleton<IGameService, GameService>();
         builder.Services.AddSingleton<ITransactionService, TransactionService>();
         builder.Services.AddSingleton<IRatingService, RatingService>();
+
+        builder.Services.AddCascadingAuthenticationState();
 
         Console.WriteLine($"Client Hosting Environment: {builder.HostEnvironment.Environment}");
 

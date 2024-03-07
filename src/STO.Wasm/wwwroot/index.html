@@ -37,12 +37,19 @@
     <script src="_content/Microsoft.Authentication.WebAssembly.Msal/AuthenticationService.js"></script>
     <script src="_framework/blazor.webassembly.js" autostart="false"></script>
     <script>
-        if (window.location.hostname.includes("localhost")) 
+        if (window.location.hostname.includes("localhost"))
         {
           Blazor.start({
-            environment: "Development"
+            environment: "Localhost"
           });
-        } else {
+        }
+        else if (window.location.hostname.includes("blazorwasm-tnfdev.azurewebsites.net"))
+        {
+          Blazor.start({
+            environment: "Staging"
+          });
+        }
+        else {
           Blazor.start();
         }
     </script>

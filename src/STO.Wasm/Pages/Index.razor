@@ -1,5 +1,23 @@
 ﻿@page "/"
+@using Microsoft.Extensions.Configuration
+@inject IConfiguration Configuration
+@using Microsoft.AspNetCore.Components.WebAssembly.Hosting
+@inject IWebAssemblyHostEnvironment Env
 
 <PageTitle>Tuesday.Football</PageTitle>
 
 <h1>Welcome to Tuesday.Football</h1>
+
+<p>StorageConfiguration:ApiHost:@apiHost</p>
+
+<p>Environment: @Env.Environment</p>
+
+@code {
+    private string apiHost;
+
+    protected override async Task OnInitializedAsync()
+    {
+        apiHost = Configuration["StorageConfiguration:ApiHost"];
+    }
+
+}

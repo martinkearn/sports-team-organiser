@@ -1,36 +1,27 @@
 ﻿@page "/"
 @using Microsoft.Extensions.Configuration
 @inject IConfiguration Configuration
-@using Microsoft.AspNetCore.Components.WebAssembly.Hosting
 @inject IWebAssemblyHostEnvironment Env
 
 <PageTitle>Tuesday.Football</PageTitle>
 
 <h1>Welcome to Tuesday.Football</h1>
 
-<p>StorageConfiguration:ApiHost: @apiHost</p>
+<p>SettingsFile: <b>@Configuration["SettingsFile"]</b></p>
 
-<p>SettingsFile: @settingsFile</p>
+<p>StorageConfiguration:ApiHost: <b>@Configuration["StorageConfiguration:ApiHost"]</b></p>
 
-<p>Environment: @Env.Environment</p>
+<p>AzureAdB2C:ClientId: <b>@Configuration["AzureAdB2C:ClientId"]</b></p>
 
-<AuthorizeView >
-    <Authorized>
-        <p>Authenticated</p>
-    </Authorized>
-    <NotAuthorized>
-        <p>Not Authenticated</p>
-    </NotAuthorized>
-</AuthorizeView>
+<p>AzureAdB2C:Authority: <b>@Configuration["AzureAdB2C:Authority"]</b></p>
+
+<p>Environment: <b>@Env.Environment</b></p>
+
+<p>Authnetication state: <b><AuthorizeView ><Authorized>Authenticated as @context.User.Identity?.Name</Authorized><NotAuthorized>Not Authenticated</NotAuthorized></AuthorizeView></b></p>
 
 @code {
-    private string apiHost;
-    private string settingsFile;
-
     protected override async Task OnInitializedAsync()
     {
-        apiHost = Configuration["StorageConfiguration:ApiHost"];
-        settingsFile = Configuration["SettingsFile"];
-    }
 
+    }
 }

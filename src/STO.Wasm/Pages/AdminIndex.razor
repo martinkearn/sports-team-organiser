@@ -1,0 +1,94 @@
+@page "/admin"
+@using Microsoft.Extensions.Configuration
+@inject IConfiguration Configuration
+@inject IWebAssemblyHostEnvironment Env
+@using System.Security.Claims
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@using Azure.Data.Tables
+@inject IStorageService StorageService
+
+<PageTitle>Tuesday.Football</PageTitle>
+
+        <h1>Welcome to Tuesday.Football Admin Portal</h1>
+
+        <h2>Config</h2>
+        <p>SettingsFile: <b>@Configuration["SettingsFile"]</b></p>
+
+        <p>StorageConfiguration:ApiHost: <b>@Configuration["StorageConfiguration:ApiHost"]</b></p>
+
+        <p>AzureAdB2C:ClientId: <b>@Configuration["AzureAdB2C:ClientId"]</b></p>
+
+        <p>AzureAdB2C:Authority: <b>@Configuration["AzureAdB2C:Authority"]</b></p>
+
+        <p>Environment: <b>@Env.Environment</b></p>
+
+        <p>Authnetication state: <b><AuthorizeView ><Authorized>Authenticated as @context.User.Identity?.Name</Authorized><NotAuthorized>Not Authenticated</NotAuthorized></AuthorizeView></b></p>
+
+        <p>IsAdminEmail?: <b><AuthorizeView Policy="IsAdminEmail"><Authorized>Yes</Authorized></AuthorizeView></b></p>
+
+        <p>Claims</p>
+        @if (claims.Count() > 0)
+        {
+            <ul>
+                @foreach (var claim in claims)
+                {
+                    <li>@claim.Type: @claim.Value</li>
+                }
+            </ul>
+        }
+
+        <h2>Data</h2>
+        <button class="btn btn-primary" @onclick="RefreshData">Refresh Data</button>
+        @foreach (var p in allPlayers)
+        {
+            <p><a href="/players/@p.RowKey/player">Player, @p.RowKey, @p.Name</a></p>
+        }        
+        @foreach (var g in allGames)
+        {
+            <p><a href="/games/@g.RowKey">Game, @g.RowKey, @g.Date</a></p>
+        }        
+        @foreach (var t in allTransactions)
+        {
+            <p><a href="/transactions/@t.RowKey">Transaction, @t.RowKey, @t.Date, @t.Amount</a></p>
+        }        
+        @foreach (var pag in allPlayerAtGame)
+        {
+            <p><a href="/pags/@pag.RowKey">PlayerAtGame, @pag.RowKey, @pag.PlayerRowKey, @pag.GameRowKey</a></p>
+        }
+        @foreach (var r in allRatings)
+        {
+            <p><a href="/ratings/@r.RowKey">Rating, @r.RowKey, @r.PlayerRowKey, @r.GameRowKey, @r.Rating</a></p>
+        }
+
+        <BootstrapBreakpoints />
+
+@code {
+    private List<PlayerEntity> allPlayers = new();
+    private List<GameEntity> allGames = new();
+    private List<TransactionEntity> allTransactions = new();
+    private List<PlayerAtGameEntity> allPlayerAtGame = new();
+    private List<RatingEntity> allRatings = new();
+    private IEnumerable<Claim> claims = Enumerable.Empty<Claim>();       
+
+    protected override async Task OnInitializedAsync()
+    {
+        await RefreshData();
+    }
+
+    private async Task RefreshData()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        if (user.Identity is not null && user.Identity.IsAuthenticated)
+        {
+            claims = user.Claims;
+        }
+
+        await StorageService.RefreshData();
+        allPlayers = await StorageService.QueryEntities<PlayerEntity>();
+        allGames = await StorageService.QueryEntities<GameEntity>();
+        allTransactions = await StorageService.QueryEntities<TransactionEntity>();
+        allPlayerAtGame = await StorageService.QueryEntities<PlayerAtGameEntity>();
+        allRatings = await StorageService.QueryEntities<RatingEntity>();
+    }
+}

@@ -21,7 +21,7 @@
 
 <p>Authnetication state: <b><AuthorizeView ><Authorized>Authenticated as @context.User.Identity?.Name</Authorized><NotAuthorized>Not Authenticated</NotAuthorized></AuthorizeView></b></p>
 
-<p>Is Admin?: <b><AuthorizeView Policy="IsAdminEmail"><Authorized>Yes</Authorized></AuthorizeView></b></p>
+<p>IsAdmin?: <b><AuthorizeView Policy="IsAdmin"><Authorized>Yes</Authorized></AuthorizeView></b></p>
 
 <p>Claims</p>
 @if (claims.Count() > 0)

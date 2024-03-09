@@ -1,10 +1,12 @@
 global using STO.Models;
 global using STO.Models.Interfaces;
 global using STO.Services;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
-using STO.Wasm.Policies;
 
 namespace STO.Wasm;
 
@@ -29,11 +31,27 @@ public class Program
         });
 
         // Add custom auth policy
-        builder.Services.AddAuthorizationCore(config =>
+        _ = builder.Services.AddAuthorizationCore(config =>
             {
-                config.AddPolicy("IsAdminEmail", policy => policy.Requirements.Add(new IsAdminEmailRequirement("martinkearn@live.co.uk")));
+                config.AddPolicy("IsAdmin", policy =>
+                    policy.RequireAssertion(context =>
+                    {
+                        if (!context.User.Identity.IsAuthenticated)
+                        {
+                            return false;
+                        }
+
+                        var email = context?.User.FindFirst(c => c.Type == ClaimTypes.Email)?.Value;
+                        var authName = context?.User?.Identity?.Name;
+                        if (authName == "Martin Kearn")
+                        {
+                            return true;
+                        }
+
+                        return false;
+                    })
+                );
             });
-        builder.Services.AddSingleton<IAuthorizationHandler, IsAdminEmailHandler>();
 
         // Add custom app settings
         builder.Services.AddOptions<StorageConfiguration>()

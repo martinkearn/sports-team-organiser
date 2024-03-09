@@ -1,23 +1,52 @@
 ﻿@page "/"
 @using Microsoft.Extensions.Configuration
 @inject IConfiguration Configuration
-@using Microsoft.AspNetCore.Components.WebAssembly.Hosting
 @inject IWebAssemblyHostEnvironment Env
+@using System.Security.Claims
+@inject AuthenticationStateProvider AuthenticationStateProvider
 
 <PageTitle>Tuesday.Football</PageTitle>
 
 <h1>Welcome to Tuesday.Football</h1>
 
-<p>StorageConfiguration:ApiHost:@apiHost</p>
+<p>SettingsFile: <b>@Configuration["SettingsFile"]</b></p>
 
-<p>Environment: @Env.Environment</p>
+<p>StorageConfiguration:ApiHost: <b>@Configuration["StorageConfiguration:ApiHost"]</b></p>
+
+<p>AzureAdB2C:ClientId: <b>@Configuration["AzureAdB2C:ClientId"]</b></p>
+
+<p>AzureAdB2C:Authority: <b>@Configuration["AzureAdB2C:Authority"]</b></p>
+
+<p>Environment: <b>@Env.Environment</b></p>
+
+<p>Authnetication state: <b><AuthorizeView ><Authorized>Authenticated as @context.User.Identity?.Name</Authorized><NotAuthorized>Not Authenticated</NotAuthorized></AuthorizeView></b></p>
+
+<p>IsAdmin?: <b><AuthorizeView Policy="IsAdmin"><Authorized>Yes</Authorized></AuthorizeView></b></p>
+
+<p>Claims</p>
+@if (claims.Count() > 0)
+{
+    <ul>
+        @foreach (var claim in claims)
+        {
+            <li>@claim.Type: @claim.Value</li>
+        }
+    </ul>
+}
 
 @code {
-    private string apiHost;
+    private string? surname;
+    private IEnumerable<Claim> claims = Enumerable.Empty<Claim>();
 
     protected override async Task OnInitializedAsync()
     {
-        apiHost = Configuration["StorageConfiguration:ApiHost"];
-    }
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
 
+        if (user.Identity is not null && user.Identity.IsAuthenticated)
+        {
+            claims = user.Claims;
+            surname = user.FindFirst(c => c.Type == ClaimTypes.Surname)?.Value;
+        }
+    }
 }

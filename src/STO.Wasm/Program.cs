@@ -1,8 +1,10 @@
 global using STO.Models;
 global using STO.Models.Interfaces;
 global using STO.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+using STO.Wasm.Policies;
 
 namespace STO.Wasm;
 
@@ -26,11 +28,21 @@ public class Program
             options.ProviderOptions.LoginMode = "redirect";
         });
 
+        // Add custom auth policy
+        builder.Services.AddAuthorizationCore(config =>
+            {
+                config.AddPolicy("IsAdminEmail", policy => policy.Requirements.Add(new IsAdminEmailRequirement("martinkearn@live.co.uk")));
+            });
+        builder.Services.AddSingleton<IAuthorizationHandler, IsAdminEmailHandler>();
+
+        // Add custom app settings
         builder.Services.AddOptions<StorageConfiguration>()
             .Configure<IConfiguration>((settings, configuration) =>
             {
                 configuration.GetSection(nameof(StorageConfiguration)).Bind(settings);
             });
+
+        // Add custom services
         builder.Services.AddSingleton<IStorageService, ApiStorageService>();
         builder.Services.AddSingleton<IPlayerService, PlayerService>();
         builder.Services.AddSingleton<IGameService, GameService>();

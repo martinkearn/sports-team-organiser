@@ -2,6 +2,8 @@
 @using Microsoft.Extensions.Configuration
 @inject IConfiguration Configuration
 @inject IWebAssemblyHostEnvironment Env
+@using System.Security.Claims
+@inject AuthenticationStateProvider AuthenticationStateProvider
 
 <PageTitle>Tuesday.Football</PageTitle>
 
@@ -19,9 +21,32 @@
 
 <p>Authnetication state: <b><AuthorizeView ><Authorized>Authenticated as @context.User.Identity?.Name</Authorized><NotAuthorized>Not Authenticated</NotAuthorized></AuthorizeView></b></p>
 
+<p>Is Admin?: <b><AuthorizeView Policy="IsAdminEmail"><Authorized>Yes</Authorized></AuthorizeView></b></p>
+
+<p>Claims</p>
+@if (claims.Count() > 0)
+{
+    <ul>
+        @foreach (var claim in claims)
+        {
+            <li>@claim.Type: @claim.Value</li>
+        }
+    </ul>
+}
+
 @code {
+    private string? surname;
+    private IEnumerable<Claim> claims = Enumerable.Empty<Claim>();
+
     protected override async Task OnInitializedAsync()
     {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
 
+        if (user.Identity is not null && user.Identity.IsAuthenticated)
+        {
+            claims = user.Claims;
+            surname = user.FindFirst(c => c.Type == ClaimTypes.Surname)?.Value;
+        }
     }
 }

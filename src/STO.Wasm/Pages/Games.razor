@@ -1,5 +1,4 @@
 @page "/games"
-@attribute [StreamRendering(enabled: true)]
 @inject IGameService GameService
 
 <PageTitle>TNF - @pageTitle</PageTitle>
@@ -28,11 +27,7 @@
 
 <div class="modal-footer px-0">
     <a class="btn btn-secondary" href="/quickaddpag"><i class="fa-solid fa-plus"></i> Add Player to Game</a>
-    <AuthorizeView Policy="IsAdminEmail">
-        <Authorized>
-            <a class="btn btn-primary" href="/games/add"><i class="fa-solid fa-plus"></i> Add Game</a>
-        </Authorized>
-    </AuthorizeView>
+    <a class="btn btn-primary" href="/games/add"><i class="fa-solid fa-plus"></i> Add Game</a>
 </div>
 
 

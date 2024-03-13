@@ -33,7 +33,7 @@ public class Program
         // Add custom auth policy
         _ = builder.Services.AddAuthorizationCore(config =>
             {
-                config.AddPolicy("IsAdmin", policy =>
+                config.AddPolicy("IsAdminEmail", policy =>
                     policy.RequireAssertion(context =>
                     {
                         if (!context.User.Identity.IsAuthenticated)

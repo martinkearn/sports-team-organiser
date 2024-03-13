@@ -1,52 +1,17 @@
 ﻿@page "/"
-@using Microsoft.Extensions.Configuration
-@inject IConfiguration Configuration
-@inject IWebAssemblyHostEnvironment Env
-@using System.Security.Claims
-@inject AuthenticationStateProvider AuthenticationStateProvider
 
 <PageTitle>Tuesday.Football</PageTitle>
 
 <h1>Welcome to Tuesday.Football</h1>
 
-<p>SettingsFile: <b>@Configuration["SettingsFile"]</b></p>
+<p>Nothing to see here yet but watch this space.</p>
+<p>New features for players coming soon:</p>
+<ul>
+    <li>State whether you are playing or not</li>
+    <li>See your balance</li>
+    <li>See the team selection</li>
+</ul>
 
-<p>StorageConfiguration:ApiHost: <b>@Configuration["StorageConfiguration:ApiHost"]</b></p>
+<a class="btn btn-primary" href="/quickaddpag"><i class="fa-solid fa-user"></i> Add Player to Game</a>
 
-<p>AzureAdB2C:ClientId: <b>@Configuration["AzureAdB2C:ClientId"]</b></p>
-
-<p>AzureAdB2C:Authority: <b>@Configuration["AzureAdB2C:Authority"]</b></p>
-
-<p>Environment: <b>@Env.Environment</b></p>
-
-<p>Authnetication state: <b><AuthorizeView ><Authorized>Authenticated as @context.User.Identity?.Name</Authorized><NotAuthorized>Not Authenticated</NotAuthorized></AuthorizeView></b></p>
-
-<p>IsAdmin?: <b><AuthorizeView Policy="IsAdmin"><Authorized>Yes</Authorized></AuthorizeView></b></p>
-
-<p>Claims</p>
-@if (claims.Count() > 0)
-{
-    <ul>
-        @foreach (var claim in claims)
-        {
-            <li>@claim.Type: @claim.Value</li>
-        }
-    </ul>
-}
-
-@code {
-    private string? surname;
-    private IEnumerable<Claim> claims = Enumerable.Empty<Claim>();
-
-    protected override async Task OnInitializedAsync()
-    {
-        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-        var user = authState.User;
-
-        if (user.Identity is not null && user.Identity.IsAuthenticated)
-        {
-            claims = user.Claims;
-            surname = user.FindFirst(c => c.Type == ClaimTypes.Surname)?.Value;
-        }
-    }
-}
+<a class="btn btn-primary" href="/ratings/add"><i class="fa-regular fa-star"></i> Add a Rating</a>

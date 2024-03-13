@@ -59,13 +59,13 @@
         </div>
 
         <div class="modal-footer">
-            <a class="btn btn-secondary" href="/players/"><i class="fa-solid fa-arrow-left"></i>All Players</a>
+            <a class="btn btn-primary" href="/players/"><i class="fa-solid fa-arrow-left"></i> All Players</a>
             <AuthorizeView Policy="IsAdminEmail">
                 <Authorized>
                     <DeleteButtonWithCheck DeleteWhatLabel="@player.PlayerEntity.Name" ButtonLabel="Delete" ParentPageCallback="DeletePlayer" />
                 </Authorized>
                 <NotAuthorized>
-                    <a class="btn btn-secondary disabled"><i class="fa-solid fa-trash"></i> Delete</a>
+                    <a class="btn btn-primary disabled"><i class="fa-solid fa-trash"></i> Delete</a>
                 </NotAuthorized>
         </AuthorizeView>
         </div>

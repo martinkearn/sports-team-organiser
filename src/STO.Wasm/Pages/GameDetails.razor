@@ -156,13 +156,13 @@
 </table>
 
 <div class="modal-footer px-0">
-    <a class="btn btn-secondary" href="/games/"><i class="fa-solid fa-arrow-left"></i>All Games</a>
-    <a class="btn btn-secondary" href="/games/@GameRowKey/edit"><i class="fa-solid fa-edit"></i>Edit</a>
+    <a class="btn btn-primary" href="/games/"><i class="fa-solid fa-arrow-left"></i>All Games</a>
+    <a class="btn btn-primary" href="/games/@GameRowKey/edit"><i class="fa-solid fa-edit"></i>Edit</a>
     <AuthorizeView Policy="IsAdminEmail">
         <Authorized>
-            <button class="btn btn-secondary" @onclick="ToggleSimpleView"><i class=@simpleViewCss></i> @simpleViewLabel</button> 
-            <button class="btn btn-secondary" @onclick="ToggleAllPlayed"><i class="fa-solid fa-clipboard-list"></i> @markAllPlayedLabel</button> 
-            <button class="btn btn-secondary" @onclick="CalculateTeams"><i class="fa-solid fa-gear"></i> Calculate Teams</button> 
+            <button class="btn btn-primary" @onclick="ToggleSimpleView"><i class=@simpleViewCss></i> @simpleViewLabel</button> 
+            <button class="btn btn-primary" @onclick="ToggleAllPlayed"><i class="fa-solid fa-clipboard-list"></i> @markAllPlayedLabel</button> 
+            <button class="btn btn-primary" @onclick="CalculateTeams"><i class="fa-solid fa-gear"></i> Calculate Teams</button> 
         </Authorized>
     </AuthorizeView>
 </div>

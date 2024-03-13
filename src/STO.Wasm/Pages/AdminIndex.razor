@@ -9,6 +9,8 @@
 
 <PageTitle>Tuesday.Football</PageTitle>
 
+<AuthorizeView Policy="IsAdminEmail">
+    <Authorized>
         <h1>Welcome to Tuesday.Football Admin Portal</h1>
 
         <h2>Config</h2>
@@ -22,9 +24,9 @@
 
         <p>Environment: <b>@Env.Environment</b></p>
 
-        <p>Authnetication state: <b><AuthorizeView ><Authorized>Authenticated as @context.User.Identity?.Name</Authorized><NotAuthorized>Not Authenticated</NotAuthorized></AuthorizeView></b></p>
+        <p>Authnetication state: <b>@context.User.Identity?.Name</b></p>
 
-        <p>IsAdminEmail?: <b><AuthorizeView Policy="IsAdminEmail"><Authorized>Yes</Authorized></AuthorizeView></b></p>
+        <p>IsAdminEmail?: <b>Yes</b></p>
 
         <p>Claims</p>
         @if (claims.Count() > 0)
@@ -61,6 +63,11 @@
         }
 
         <BootstrapBreakpoints />
+    </Authorized>
+    <NotAuthorized>
+        <h4>Access Denied!</h4>
+    </NotAuthorized>
+</AuthorizeView>
 
 @code {
     private List<PlayerEntity> allPlayers = new();

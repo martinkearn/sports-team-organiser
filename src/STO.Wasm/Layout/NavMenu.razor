@@ -1,6 +1,6 @@
 ﻿<div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
-        <a class="navbar-brand" href="">STO.Wasm</a>
+        <a class="navbar-brand" href="">Tuesday.Football</a>
         <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -11,12 +11,12 @@
     <nav class="flex-column">
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Home
+                <i class="fa-solid fa-house me-2"></i>Home
             </NavLink>
         </div>
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="games">
-                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Games
+                <i class="fa-solid fa-people-group me-2"></i>Games
             </NavLink>
         </div>
         <AuthorizeView Policy="IsAdminEmail">
@@ -35,6 +35,12 @@
                 </div>
             </Authorized>
         </AuthorizeView> 
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="https://github.com/martinkearn/sports-team-organiser/issues"><i class="fa-solid fa-question me-2"></i>Report an issue</NavLink>
+        </div>
+        <div class="nav-item px-3">
+            <LoginDisplay />
+        </div>
     </nav>
 </div>
 

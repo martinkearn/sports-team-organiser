@@ -6,15 +6,10 @@
 
 <PageTitle>TNF - @pageTitle</PageTitle>
 
-<h1><i class="fa-solid fa-people-group me-2"></i>
-    <GameTitle Game="@game" Link="false" />
-</h1>
+<h1><i class="fa-solid fa-people-group me-2"></i> <GameTitle @rendermode="RenderMode.InteractiveAuto" Game="@game" Link="false" /></h1>
 
-<p>@game.PlayersAtGame.Where(p => p.PlayerAtGameEntity.Forecast == PlayingOptions.Yes.ToString()).Count() yes,
-    @game.PlayersAtGame.Where(p => p.PlayerAtGameEntity.Forecast == PlayingOptions.Maybe.ToString()).Count() maybe.
-    @game.GameEntity.Date.TimeOfDay.Hours:@game.GameEntity.Date.TimeOfDay.Minutes kick off.</p>
+<p>@game.PlayersAtGame.Where(p => p.PlayerAtGameEntity.Forecast == PlayingOptions.Yes.ToString()).Count() yes, @game.PlayersAtGame.Where(p => p.PlayerAtGameEntity.Forecast == PlayingOptions.Maybe.ToString()).Count() maybe. @game.GameEntity.Date.TimeOfDay.Hours:@game.GameEntity.Date.TimeOfDay.Minutes kick off.</p>
 <p>@game.GameEntity.Notes</p>
-
 
 <div class="row">
     <div class="col">
@@ -26,8 +21,7 @@
                     <option value="">Add player to game ...</option>
                     @foreach (var player in players)
                     {
-                        if (game.PlayersAtGame.FirstOrDefault(pag => pag.PlayerAtGameEntity.PlayerRowKey ==
-                        player.PlayerEntity.RowKey) == default)
+                        if (game.PlayersAtGame.FirstOrDefault(pag => pag.PlayerAtGameEntity.PlayerRowKey == player.PlayerEntity.RowKey) == default)
                         {
                             <option value="@player.PlayerEntity.RowKey">@player.PlayerEntity.Name</option>
                         }
@@ -40,17 +34,19 @@
 </div>
 <br>
 
-
-
 <table class="table table-sm table-borderless">
     <thead>
         <tr>
             <th scope="col">Team</th>
             <th scope="col">Player</th>
-            @if (!simpleView)
-            {
-                <th scope="col" class="text-end">Edit</th>
-            }
+            <AuthorizeView Policy="IsAdminEmail">
+                <Authorized>
+                    @if (!simpleView)
+                    {
+                        <th scope="col" class="text-end">Edit</th>
+                    }
+                </Authorized>
+            </AuthorizeView>
         </tr>
     </thead>
     <tbody>
@@ -59,26 +55,27 @@
             <tr>
                 <td>A</td>
                 <td>
-                    <a class="d-none d-lg-inline" href="/pags/@pag.PlayerAtGameEntity.RowKey">@pag.Player.PlayerEntity.Name</a>
-                    <span class="d-inline d-lg-none">@pag.Player.PlayerEntity.Name</span>
-                    <PlayingForecastIcon Forecast="@pag.PlayerAtGameEntity.Forecast" />
-                    <PositionIcon Position="pag.Player.PlayerEntity.Position" />
-                    <RagIcon Pag="@pag" />
-
-                    @if (!simpleView)
-                    {
-                        <RatingNumberIcon Rating=@pag.Player.PlayerEntity.AdminRating />
-                    }
-
+                    <a class="d-none d-lg-inline" href="/pags/@pag.PlayerAtGameEntity.RowKey">@pag.Player.PlayerEntity.Name</a> <span class="d-inline d-lg-none">@pag.Player.PlayerEntity.Name</span> 
+                    <PlayingForecastIcon Forecast="@pag.PlayerAtGameEntity.Forecast" /> <PositionIcon Position="pag.Player.PlayerEntity.Position" /> <RagIcon Pag="@pag" />
+                    <AuthorizeView Policy="IsAdminEmail">
+                        <Authorized>
+                            @if (!simpleView)
+                            {
+                                <RatingNumberIcon Rating=@pag.Player.PlayerEntity.AdminRating />
+                            }
+                        </Authorized>
+                    </AuthorizeView>
                 </td>
-
-                <td class="text-end">
-                    @if (!simpleView)
-                    {
-                        <PagRowEditButtons pag="@pag" RefreshMainPage="RefreshGameData" />
-                    }
-                </td>
-
+                <AuthorizeView Policy="IsAdminEmail">
+                    <Authorized>
+                        <td class="text-end">
+                            @if (!simpleView)
+                            {
+                                <PagRowEditButtons pag="@pag" RefreshMainPage="RefreshGameData" />
+                            }
+                        </td>
+                    </Authorized>
+                </AuthorizeView>
             </tr>
         }
         @if (game.TeamA.Count > 0)
@@ -95,26 +92,27 @@
             <tr>
                 <td>B</td>
                 <td>
-                    <a class="d-none d-lg-inline" href="/pags/@pag.PlayerAtGameEntity.RowKey">@pag.Player.PlayerEntity.Name</a> 
-                    <span class="d-inline d-lg-none">@pag.Player.PlayerEntity.Name</span>
-                    <PlayingForecastIcon Forecast="@pag.PlayerAtGameEntity.Forecast" />
-                    <PositionIcon Position="pag.Player.PlayerEntity.Position" />
-                    <RagIcon Pag="@pag" />
-
-                    @if (!simpleView)
-                    {
-                        <RatingNumberIcon Rating=@pag.Player.PlayerEntity.AdminRating />
-                    }
-
+                    <a class="d-none d-lg-inline" href="/pags/@pag.PlayerAtGameEntity.RowKey">@pag.Player.PlayerEntity.Name</a> <span class="d-inline d-lg-none">@pag.Player.PlayerEntity.Name</span> 
+                    <PlayingForecastIcon Forecast="@pag.PlayerAtGameEntity.Forecast" /> <PositionIcon Position="pag.Player.PlayerEntity.Position" /> <RagIcon Pag="@pag" />
+                    <AuthorizeView Policy="IsAdminEmail">
+                        <Authorized>
+                            @if (!simpleView)
+                            {
+                                <RatingNumberIcon Rating=@pag.Player.PlayerEntity.AdminRating />
+                            }
+                        </Authorized>
+                    </AuthorizeView>
                 </td>
-
-                <td class="text-end">
-                    @if (!simpleView)
-                    {
-                        <PagRowEditButtons pag="@pag" RefreshMainPage="RefreshGameData" />
-                    }
-                </td>
-
+                <AuthorizeView Policy="IsAdminEmail">
+                    <Authorized>
+                        <td class="text-end">
+                            @if (!simpleView)
+                            {
+                                <PagRowEditButtons pag="@pag" RefreshMainPage="RefreshGameData" />
+                            }
+                        </td>
+                    </Authorized>
+                </AuthorizeView>
             </tr>
         }
         @if (game.TeamB.Count > 0)
@@ -131,26 +129,27 @@
             <tr>
                 <td>None</td>
                 <td>
-                    <a class="d-none d-lg-inline" href="/pags/@pag.PlayerAtGameEntity.RowKey">@pag.Player.PlayerEntity.Name</a>
-                    <span class="d-inline d-lg-none">@pag.Player.PlayerEntity.Name</span>
-                    <PlayingForecastIcon Forecast="@pag.PlayerAtGameEntity.Forecast" />
-                    <PositionIcon Position="pag.Player.PlayerEntity.Position" />
-                    <RagIcon Pag="@pag" />
-
-                    @if (!simpleView)
-                    {
-                        <RatingNumberIcon Rating=@pag.Player.PlayerEntity.AdminRating />
-                    }
-
+                    <span>@pag.Player.PlayerEntity.Name</span>
+                    <PlayingForecastIcon Forecast="@pag.PlayerAtGameEntity.Forecast" /> <PositionIcon Position="pag.Player.PlayerEntity.Position" /> <RagIcon Pag="@pag" />
+                    <AuthorizeView Policy="IsAdminEmail">
+                        <Authorized>
+                            @if (!simpleView)
+                            {
+                                <RatingNumberIcon Rating=@pag.Player.PlayerEntity.AdminRating />
+                            }
+                        </Authorized>
+                    </AuthorizeView>
                 </td>
-
-                <td class="text-end">
-                    @if (!simpleView)
-                    {
-                        <PagRowEditButtons pag="@pag" RefreshMainPage="RefreshGameData" />
-                    }
-                </td>
-
+                <AuthorizeView Policy="IsAdminEmail">
+                    <Authorized>
+                        <td class="text-end">
+                            @if (!simpleView)
+                            {
+                                <PagRowEditButtons pag="@pag" RefreshMainPage="RefreshGameData" />
+                            }
+                        </td>
+                    </Authorized>
+                </AuthorizeView>
             </tr>
         }
     </tbody>
@@ -158,10 +157,14 @@
 
 <div class="modal-footer px-0">
     <a class="btn btn-secondary" href="/games/"><i class="fa-solid fa-arrow-left"></i>All Games</a>
-    <a class="btn btn-secondary" href="/games/@GameRowKey/edit"><i class="fa-solid fa-edit"></i>Edit</a>
-    <button class="btn btn-secondary" @onclick="ToggleSimpleView"><i class=@simpleViewCss></i> @simpleViewLabel</button>
-    <button class="btn btn-secondary" @onclick="ToggleAllPlayed"><i class="fa-solid fa-clipboard-list"></i> @markAllPlayedLabel</button>
-    <button class="btn btn-secondary" @onclick="CalculateTeams"><i class="fa-solid fa-gear"></i> Calculate Teams</button>
+    <AuthorizeView Policy="IsAdminEmail">
+        <Authorized>
+            <a class="btn btn-secondary" href="/games/@GameRowKey/edit"><i class="fa-solid fa-edit"></i>Edit</a>
+            <button class="btn btn-secondary" @onclick="ToggleSimpleView"><i class=@simpleViewCss></i> @simpleViewLabel</button> 
+            <button class="btn btn-secondary" @onclick="ToggleAllPlayed"><i class="fa-solid fa-clipboard-list"></i> @markAllPlayedLabel</button> 
+            <button class="btn btn-secondary" @onclick="CalculateTeams"><i class="fa-solid fa-gear"></i> Calculate Teams</button> 
+        </Authorized>
+    </AuthorizeView>
 </div>
 
 @code {
@@ -199,11 +202,11 @@
     {
         var playersAtGameWithTeams = await GameService.CalculateTeams(game.PlayersAtGame);
         game.TeamA = playersAtGameWithTeams
-        .Where(pag => pag.PlayerAtGameEntity.Team == "A")
-        .ToList();
+            .Where(pag => pag.PlayerAtGameEntity.Team == "A")
+            .ToList();
         game.TeamB = playersAtGameWithTeams
-        .Where(pag => pag.PlayerAtGameEntity.Team == "B")
-        .ToList();
+            .Where(pag => pag.PlayerAtGameEntity.Team == "B")
+            .ToList();
 
         await RefreshGameData();
     }
@@ -226,7 +229,7 @@
         int playedPagsCount = game.PlayersAtGame.Where(o => o.PlayerAtGameEntity.Played).Count();
         bool played = (playedPagsCount == 0) ? true : false;
         return played;
-    }
+    } 
 
     private void SetSimpleViewLabel()
     {
@@ -248,21 +251,21 @@
         players = await PlayerService.GetPlayers();
         game = await GameService.GetGame(GameRowKey);
         newPagEntity = new PlayerAtGameEntity()
-            {
-                GameRowKey = game.GameEntity.RowKey,
-                Played = false,
-                Forecast = PlayingOptions.Yes.ToString(),
-            };
+        {
+            GameRowKey = game.GameEntity.RowKey,
+            Played = false,
+            Forecast = PlayingOptions.Yes.ToString(),
+        };
         pageTitle = game.GameEntity.Date.ToString("dd MMM");
         simpleView = false;
-
+        
         // Set played button label
         var played = MarkAsPLayedOrNotPLayed();
-        markAllPlayedLabel = (played) ? "Mark all as played" : "Mark all as not played";
+        markAllPlayedLabel = (played) ? "Mark all as played": "Mark all as not played";
 
         //Set simple view label
         SetSimpleViewLabel();
-
+        
         this.StateHasChanged();
     }
 }

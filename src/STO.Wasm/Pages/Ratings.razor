@@ -1,0 +1,120 @@
+@page "/ratings"
+@inject IRatingService RatingService
+
+<PageTitle>TNF - @pageTitle</PageTitle>
+
+<h1><i class="fa-regular fa-star me-2"></i> @pageTitle</h1>
+
+<AuthorizeView Policy="IsAdminEmail">
+    <Authorized>
+        
+        <div>
+            <a class="btn btn-secondary me-3 mb-3" href="/ratings/add"><i class="fa-solid fa-plus"></i> Add Rating</a>
+        </div>
+
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th scope="col">Timestamp</th>
+                    <th scope="col"><button class="btn btn-link m-0 p-0" @onclick="() => Sort(Enums.SortRatingsBy.Player)">Player</button></th>
+                    <th scope="col"><button class="btn btn-link m-0 p-0" @onclick="() => Sort(Enums.SortRatingsBy.Game)">Game</button></th>
+                    <th scope="col"><button class="btn btn-link m-0 p-0" @onclick="() => Sort(Enums.SortRatingsBy.Rating)">Rating</button></th>
+                    <th scope="col" class="d-none d-lg-table-cell">Notes</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var rating in pageOfRatings)
+                {
+                    <tr>
+                        <td><a href="/ratings/@rating.RatingEntity.RowKey">@rating.RatingEntity.Timestamp.Value.ToString("dd MMM yyyy HH:mm")</a></td>
+                        <td><a href="/players/@rating.Player.PlayerEntity.RowKey/player">@rating.Player.PlayerEntity.Name</a></td>
+                        <td><GameTitle Game="@rating.Game" Link="true" /></td>
+                        <td>@rating.RatingEntity.Rating</td>
+                        <td class="d-none d-lg-table-cell">@rating.RatingEntity.Notes</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        <nav aria-label="Page navigation">
+        <ul class="pagination">
+            @for (int p = 1; p <= pages; p++) {
+                var thisPage = p;
+                var css = (currentPageNumber == p) ? "page-item active" : "page-item";
+                <li class="@css"><a class="page-link" @onclick="@(e => ChangePage(thisPage))">@p</a></li>
+            }
+        </ul>
+        </nav>
+
+        <p>@ratings.Count ratings. @ratingsPerPage per page.</p>
+    </Authorized>
+    <NotAuthorized>
+        <h4>Access Denied!</h4>
+    </NotAuthorized>
+</AuthorizeView>
+
+@code {
+    private List<Rating> ratings = new();
+
+    private List<Rating> pageOfRatings = new();
+
+    private int ratingsPerPage = 40;
+
+    private int currentPageNumber = 1;  
+
+    private int pages;
+
+    private Enums.SortRatingsBy currentSortBy;
+
+    private string pageTitle;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await RefreshData();
+    }
+
+    private void Sort(Enums.SortRatingsBy by)
+    {
+        switch(by)
+        {
+            case Enums.SortRatingsBy.Game:
+                ratings = (currentSortBy == by) ? 
+                    ratings.OrderByDescending(o => o.Game.GameEntity.Date).ToList() :
+                    ratings.OrderBy(o => o.Game.GameEntity.Date).ToList();
+                break;
+            case Enums.SortRatingsBy.Rating:
+                ratings = (currentSortBy == by) ? 
+                    ratings.OrderByDescending(o => o.RatingEntity.Rating).ToList() :
+                    ratings.OrderBy(o => o.RatingEntity.Rating).ToList();
+                break;
+            case Enums.SortRatingsBy.Player:
+                ratings = (currentSortBy == by) ? 
+                    ratings.OrderByDescending(o => o.Player.PlayerEntity.Name).ToList() :
+                    ratings.OrderBy(o => o.Player.PlayerEntity.Name).ToList();
+                break;
+            default:
+                ratings = ratings.OrderBy(o => o.RatingEntity.Timestamp).ToList();
+                break;
+        }
+
+        currentSortBy = by;
+    }  
+
+    private void ChangePage(int page)
+    {
+        currentPageNumber = page;
+        pageOfRatings = ratings.Skip((page-1)*ratingsPerPage).Take(ratingsPerPage).ToList();
+    }
+
+    async Task RefreshData()
+    {
+        ratings = await RatingService.GetRatings();
+        pageTitle = "Ratings";
+
+        // Setup paging
+        pageOfRatings = ratings.Take(ratingsPerPage).ToList();
+        var pagesDec = (double)ratings.Count/(double)ratingsPerPage;
+        pages = Convert.ToInt16(Math.Ceiling(pagesDec));
+        currentPageNumber = 1;
+    }
+}

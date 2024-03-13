@@ -1,0 +1,74 @@
+@page "/games/add"
+@inject IGameService GameService
+@inject NavigationManager Navigation
+
+<PageTitle>TNF - @pageTitle</PageTitle>
+
+<h1><i class="fa-solid fa-people-group me-2"></i> @pageTitle</h1>
+
+<EditForm Model="@newGameEntity" OnSubmit="@Add" Context="EditForm">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+    <div class="mb-3">
+        <label for="addDate" class="form-label">Date</label>
+        <InputDate class="form-control" id="addDate" @bind-Value="newGameEntity.Date" />
+    </div>
+
+    <div class="mb-3">
+        <label for="addDate" class="form-label">Time</label>
+        <div class="row">
+            <div class="col-auto">
+                <div class="input-group">
+                    <InputNumber class="form-control" min="0" max="23"  @bind-Value="hour" />
+                    <InputNumber class="form-control" min="0" max="59" @bind-Value="minute" />
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <label for="addTitle" class="form-label">Title</label>
+        <InputText class="form-control" id="addTitle" @bind-Value="newGameEntity.Title" />
+    </div>
+
+    <div class="mb-3">
+        <label for="addNotes" class="form-label">Notes</label>
+        <InputText class="form-control" id="addNotes" @bind-Value="newGameEntity.Notes" />
+    </div>
+    
+    <div class="modal-footer">
+        <button type="submit" class="btn btn-primary">Add Game</button>
+    </div>
+</EditForm>
+
+@code {
+    private GameEntity newGameEntity = new();
+
+    private int hour;
+
+    private int minute;
+
+    private string pageTitle;
+
+    protected override void OnInitialized()
+    {
+        RefreshData();
+    }
+
+    protected async Task Add()
+    {
+        var dt = new DateTime(newGameEntity.Date.Year, newGameEntity.Date.Month, newGameEntity.Date.Day, hour, minute, 0, DateTimeKind.Utc);
+        newGameEntity.Date = dt;
+        await GameService.UpsertGameEntity(newGameEntity);
+        Navigation.NavigateTo("/games");
+    }
+
+    private void RefreshData()
+    {
+        hour = 18;
+        minute = 30;
+        newGameEntity = new();
+        newGameEntity.Date = DateTimeOffset.UtcNow;
+        pageTitle = "Add a Game";
+    }
+}

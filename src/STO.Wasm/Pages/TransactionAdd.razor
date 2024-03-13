@@ -54,8 +54,6 @@
 </AuthorizeView>
 
 @code {
-    private string gameRowKey = string.Empty;
-
     private List<Player> players = new();
 
     private TransactionEntity newTransactionEntity = new();
@@ -63,14 +61,7 @@
     private string pageTitle;
 
     protected override async Task OnInitializedAsync()
-    {
-        // Get query string params
-        var uri = Navigation.ToAbsoluteUri(Navigation.Uri);
-@*         if(QueryHelpers.ParseQuery(uri.Query).TryGetValue("game", out var token))
-        {
-            gameRowKey = token.First();
-        } *@
-        
+    {   
         await RefreshData();
     }
 

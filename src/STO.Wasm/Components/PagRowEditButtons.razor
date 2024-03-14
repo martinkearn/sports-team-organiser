@@ -18,11 +18,10 @@ else
 
 @code {
     [Parameter]
-    public PlayerAtGame pag { get; set; }
+    public PlayerAtGame pag { get; set; } = default!;
 
     [Parameter]
-    public EventCallback RefreshMainPage { get; set; }
-
+    public EventCallback RefreshMainPage { get; set; } = default!;
 
     protected async override Task OnInitializedAsync()
     {

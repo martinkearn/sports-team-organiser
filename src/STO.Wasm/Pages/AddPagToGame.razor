@@ -37,13 +37,14 @@
             <option value="">Select Game ...</option>
             @foreach (var game in games)
             {
-                if (game.GameEntity.RowKey == nextGame.GameEntity.RowKey)
+                var gameRowKey = game?.GameEntity?.RowKey;
+                if (gameRowKey == nextGame?.GameEntity?.RowKey)
                 {
-                    <option value="@game.GameEntity.RowKey"><GameTitle Game="@game" Link="false" /></option>
+                    <option value="@gameRowKey"><GameTitle Game="@game" Link="false" /></option>
                 }
                 else
                 {
-                    <option value="@game.GameEntity.RowKey"><GameTitle Game="@game" Link="false" /></option>
+                    <option value="@gameRowKey"><GameTitle Game="@game" Link="false" /></option>
                 }
             }
         </InputSelect>

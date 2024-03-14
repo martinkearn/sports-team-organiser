@@ -46,9 +46,9 @@
     [Parameter]
     public string TransactionRowKey { get; set; }
 
-    private Transaction transaction;
+    private Transaction transaction = default!;
 
-    private string pageTitle;
+    private string pageTitle = default!;
 
     protected override async Task OnInitializedAsync()
     {

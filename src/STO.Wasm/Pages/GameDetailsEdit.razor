@@ -49,15 +49,15 @@
 
 @code {
     [Parameter]
-    public string GameRowKey { get; set; }
+    public string GameRowKey { get; set; } = default!;
 
-    private Game game;
+    private Game game = default!;
 
-    private int hour;
+    private int hour = default!;
 
-    private int minute;
+    private int minute = default!;
 
-    private string pageTitle;
+    private string pageTitle = default!;
 
     protected override async Task OnInitializedAsync()
     {

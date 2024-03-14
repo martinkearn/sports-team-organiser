@@ -73,13 +73,13 @@
 
 @code {
     [Parameter]
-    public string PlayerRowKey { get; set; }
+    public string PlayerRowKey { get; set; } = default!;
 
-    private Player player;
+    private Player player = default!;
 
     private List<Game> games = new();
 
-    private string pageTitle;
+    private string pageTitle = default!;
 
     protected override async Task OnInitializedAsync()
     {

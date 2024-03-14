@@ -169,19 +169,19 @@
 
 @code {
     [Parameter]
-    public string GameRowKey { get; set; }
+    public string GameRowKey { get; set; } = default!;
 
-    private Game game;
+    private Game game = default!;
 
     private List<Player> players = new();
 
-    private PlayerAtGameEntity newPagEntity;
+    private PlayerAtGameEntity newPagEntity = default!;
 
-    private string pageTitle;
+    private string pageTitle = default!;
 
-    private string markAllPlayedLabel;
+    private string markAllPlayedLabel = default!;
 
-    private string simpleViewLabel;
+    private string simpleViewLabel = default!;
 
     private bool simpleView = false;
 

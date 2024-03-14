@@ -68,15 +68,13 @@
 </EditForm>
 
 @code {
-
     private List<Game> games = new();
 
     private List<PlayerAtGame> playersAtGame = new();
 
     private RatingEntity newRatingEntity = new();
 
-
-    private string pageTitle;
+    private string pageTitle = default!;
 
     protected override async Task OnInitializedAsync()
     {   

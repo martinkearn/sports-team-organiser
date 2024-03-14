@@ -72,12 +72,13 @@
 
 @code {
     [Parameter]
-    public string PagRowKey { get; set; }
+    public string PagRowKey { get; set; } = default!;
 
-    private PlayerAtGame pag;
-    private string pageTitle;
+    private PlayerAtGame pag = default!;
+    
+    private string pageTitle = default!;
 
-    private Game game;
+    private Game game = default!;
 
     protected override async Task OnInitializedAsync()
     {

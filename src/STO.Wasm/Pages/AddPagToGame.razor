@@ -56,11 +56,12 @@
 
 @code {
     private List<Game> games = new();
+
     private List<Player> players = new();
 
-    private PlayerAtGameEntity newPagEntity;
+    private PlayerAtGameEntity newPagEntity = default!;
 
-    private Game nextGame;
+    private Game nextGame = default!;
 
     protected override async Task OnInitializedAsync()
     {

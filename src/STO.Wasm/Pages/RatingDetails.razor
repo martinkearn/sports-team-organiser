@@ -44,11 +44,11 @@
 
 @code {
     [Parameter]
-    public string RatingRowKey { get; set; }
+    public string RatingRowKey { get; set; } = default!;
 
-    private Rating rating;
+    private Rating rating = default!;
 
-    private string pageTitle;
+    private string pageTitle = default!;
 
     protected override async Task OnInitializedAsync()
     {

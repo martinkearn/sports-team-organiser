@@ -14,8 +14,6 @@ jobs:
     with:
       rg: 'TNF-Prod'
       uniquelabel: 'tnfprod'
-      blazorservercsprojpath: './src/STO.Server/STO.Server.csproj'
-      blazorserverdotnetoutputpath: './src/STO.Server/output'
       apicsprojpath: './src/STO.Api/STO.Api.csproj'
       apidotnetoutputpath: './src/STO.Api/output'
       blazorwasmcsprojpath: './src/STO.Wasm/STO.Wasm.csproj'

@@ -40,17 +40,6 @@ resource applicationInsights 'Microsoft.Insights/components@2020-02-02' = {
   kind: 'web'
 }
 
-//LINUX APP SERVICE PLAN
-resource linuxAppServicePlan 'Microsoft.Web/serverfarms@2022-09-01' = {
-  name: 'app-serviceplan-linux-${uniqueName}'
-  location: location
-  sku: {
-    name: 'B1'
-  }
-  kind: 'linux'
-  properties: { reserved: true }
-}
-
 //WINDOWS APP SERVICE PLAN
 resource windowsAppServicePlan 'Microsoft.Web/serverfarms@2023-01-01' = {
   name: 'app-serviceplan-windows-${uniqueName}'
@@ -91,67 +80,6 @@ resource api 'Microsoft.Web/sites@2022-09-01' = {
   }
 }
 output ApiName string = api.name
-
-//BLAZOR SERVER WEB APP
-resource blazorServer 'Microsoft.Web/sites@2022-09-01' = {
-  name: 'blazorserver-${uniqueName}'
-  location: location
-  properties: {
-    serverFarmId: linuxAppServicePlan.id
-    httpsOnly: true
-    siteConfig: {
-      linuxFxVersion: 'DOTNETCORE|8.0'
-      alwaysOn: true
-      appSettings: [
-        {
-          name: 'APPINSIGHTS_INSTRUMENTATIONKEY'
-          value: applicationInsights.properties.InstrumentationKey
-        }
-        {
-          name: 'StorageConfiguration__DataTable'
-          value: storageAccountTableServiceDataTable.name
-        }
-        {
-          name: 'StorageConfiguration__ConnectionString'
-          value: 'DefaultEndpointsProtocol=https;AccountName=${storageAccountName};EndpointSuffix=${environment().suffixes.storage};AccountKey=${listKeys(storageAccount.id, '2019-06-01').keys[0].value}'
-        }
-        {
-          name: 'StorageConfiguration__ApiHost'
-          value: 'https://${api.properties.defaultHostName}'
-        }
-        {
-          name: 'AzureAdB2C__Instance'
-          value: 'https://tuesdayfootball.b2clogin.com/'
-        }
-        {
-          name: 'AzureAdB2C__ClientId'
-          value: 'e0c23c36-7084-4597-86e7-494611963e50'
-        }
-        {
-          name: 'AzureAdB2C__CallbackPath'
-          value: '/signin-oidc'
-        }
-        {
-          name: 'AzureAdB2C__Domain'
-          value: 'tuesdayfootball.onmicrosoft.com'
-        }
-        {
-          name: 'AzureAdB2C__SignUpSignInPolicyId'
-          value: 'b2c_1_susi'
-        }
-        {
-          name: 'AzureAdB2C__ResetPasswordPolicyId'
-          value: ''
-        }
-        {
-          name: 'AzureAdB2C__EditProfilePolicyId'
-          value: ''
-        }
-      ]
-    }
-  }
-}
-output blazorServerName string = blazorServer.name
 
 //BLAZOR WASM WEB APP
 resource blazorWasm 'Microsoft.Web/sites@2022-09-01' = {

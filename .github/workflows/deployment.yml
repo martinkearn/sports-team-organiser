@@ -11,12 +11,6 @@ on:
         uniquelabel:
           type: string
           required: true
-        blazorservercsprojpath:
-          type: string
-          required: true
-        blazorserverdotnetoutputpath:
-          type: string
-          required: true
         apicsprojpath:
           type: string
           required: true
@@ -81,19 +75,6 @@ jobs:
       with: 
         app-name: 'api-${{ inputs.uniquelabel }}'
         package: '${{ inputs.apidotnetoutputpath }}'
-
-# Blazor Server code
-    - name: blazorserver-dotnet-build-publish
-      run: |
-        dotnet restore ${{ inputs.blazorservercsprojpath }}
-        dotnet build ${{ inputs.blazorservercsprojpath }} --configuration Release
-        dotnet publish ${{ inputs.blazorservercsprojpath }} -c Release -o ${{ inputs.blazorserverdotnetoutputpath }}
-
-    - name: blazorserver-azure-deploy
-      uses: azure/webapps-deploy@v2
-      with: 
-        app-name: 'blazorserver-${{ inputs.uniquelabel }}'
-        package: '${{ inputs.blazorserverdotnetoutputpath }}'
 
 # Blazor Wasm code
     - name: blazorwasm-dotnet-build-publish

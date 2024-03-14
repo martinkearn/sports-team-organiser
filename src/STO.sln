@@ -2,10 +2,6 @@
 # Visual Studio Version 16
 VisualStudioVersion = 25.0.1705.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "STO.Server", "STO.Server\STO.Server.csproj", "{C452D17F-41D9-4E4A-BA16-4FD3CF82F598}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "STO.Client", "STO.Client\STO.Client.csproj", "{6F300787-522D-4489-8BBD-7EF9A1508131}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "STO.Models", "STO.Models\STO.Models.csproj", "{1F782A5C-B3A2-4168-B8ED-8B383315E9AA}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "STO.Services", "STO.Services\STO.Services.csproj", "{9D3AFC94-BA4D-4528-96F3-286D1B448C11}"

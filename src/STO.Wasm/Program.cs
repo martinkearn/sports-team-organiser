@@ -40,8 +40,8 @@ public class Program
                         if (user.Identity is not null && user.Identity.IsAuthenticated)
                         {
                             // User is authenticated
-                            var email = context?.User.FindFirst(c => c.Type == ClaimTypes.Email)?.Value;
-                            var authName = context?.User?.Identity?.Name;
+                            var email = user.FindFirst(c => c.Type == ClaimTypes.Email)?.Value;
+                            var authName = user.Identity.Name;
                             if (authName == "Martin Kearn")
                             {
                                 return true;

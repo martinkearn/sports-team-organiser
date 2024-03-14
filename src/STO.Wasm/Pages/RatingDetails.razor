@@ -14,18 +14,18 @@
         <p>@rating.RatingEntity.Timestamp.Value.ToString("dd MMM yyyy HH:mm")</p>
 
         <h5>Player</h5>
-        <p><a href="players/@rating.Player.PlayerEntity.RowKey/player">@rating.Player.PlayerEntity.Name</a></p>
+        <p><a href="players/@rating.Player.PlayerEntity.RowKey/player">@rating?.Player?.PlayerEntity?.Name</a></p>
 
         <h5>Game</h5>
-        <p><GameTitle Game="@rating.Game" Link="true" /></p>
+        <p><GameTitle Game="@rating?.Game" Link="true" /></p>
 
         <h5>Rating</h5>
-        <p>@rating.RatingEntity.Rating</p>
+        <p>@rating?.RatingEntity?.Rating</p>
 
         <h5>Notes</h5>
-        @if (rating.RatingEntity.Notes is not null)
+        @if (rating?.RatingEntity?.Notes is not null)
         {
-            <p>@rating.RatingEntity.Notes</p>
+            <p>@rating?.RatingEntity.Notes</p>
         }
         else
         {

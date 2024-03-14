@@ -44,7 +44,7 @@
 
 @code {
     [Parameter]
-    public string TransactionRowKey { get; set; }
+    public string TransactionRowKey { get; set; } = default!;
 
     private Transaction transaction = default!;
 

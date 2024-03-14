@@ -43,5 +43,7 @@ namespace STO.Models.Interfaces
         /// </summary>
         /// <param name="ratingEntity">The RatingEntity to upsert.</param>
         public Task UpsertRatingEntity(RatingEntity playerEntity);
+
+        public string FormatRatingTime(RatingEntity ratingEntity);
     }
 }

@@ -25,11 +25,11 @@
                 @foreach (var rating in pageOfRatings)
                 {
                     <tr>
-                        <td><a href="/ratings/@rating.RatingEntity.RowKey">@rating.RatingEntity.Timestamp.Value.ToString("dd MMM yyyy HH:mm")</a></td>
-                        <td><a href="/players/@rating.Player.PlayerEntity.RowKey/player">@rating.Player.PlayerEntity.Name</a></td>
-                        <td><GameTitle Game="@rating.Game" Link="true" /></td>
-                        <td>@rating.RatingEntity.Rating</td>
-                        <td class="d-none d-lg-table-cell">@rating.RatingEntity.Notes</td>
+                        <td><a href="/ratings/@rating?.RatingEntity.RowKey">@RatingService.FormatRatingTime(rating?.RatingEntity)</a></td>
+                        <td><a href="/players/@rating?.Player?.PlayerEntity.RowKey/player">@rating?.Player?.PlayerEntity.Name</a></td>
+                        <td><GameTitle Game="@rating?.Game" Link="true" /></td>
+                        <td>@rating?.RatingEntity.Rating</td>
+                        <td class="d-none d-lg-table-cell">@rating?.RatingEntity.Notes</td>
                     </tr>
                 }
             </tbody>

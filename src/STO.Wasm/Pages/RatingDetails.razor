@@ -10,11 +10,11 @@
     <Authorized>
         <p>Ratings cannot be edited, only deleted</p>
 
-        <h5>Date</h5>
-        <p>@rating.RatingEntity.Timestamp.Value.ToString("dd MMM yyyy HH:mm")</p>
+        <h5>Date & Time</h5>
+        <p>@RatingService.FormatRatingTime(rating?.RatingEntity)</p>
 
         <h5>Player</h5>
-        <p><a href="players/@rating.Player.PlayerEntity.RowKey/player">@rating?.Player?.PlayerEntity?.Name</a></p>
+        <p><a href="players/@rating?.Player?.PlayerEntity?.RowKey/player">@rating?.Player?.PlayerEntity?.Name</a></p>
 
         <h5>Game</h5>
         <p><GameTitle Game="@rating?.Game" Link="true" /></p>
@@ -64,6 +64,6 @@
     async Task RefreshData()
     {
         rating = await RatingService.GetRating(RatingRowKey);
-        pageTitle = $"Rating for {@rating.Player.PlayerEntity.Name}, {@rating.Game.GameEntity.Date.Date.ToString("dd MMM")}";
+        pageTitle = $"Rating for {@rating?.Player?.PlayerEntity.Name}, {@rating?.Game?.GameEntity.Date.Date.ToString("dd MMM")}";
     }
 }

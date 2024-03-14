@@ -71,5 +71,15 @@ namespace STO.Services
             }
             return ratings.OrderByDescending(o => o.RatingEntity.Timestamp).ToList();
         }
+
+        public string FormatRatingTime(RatingEntity ratingEntity)
+        {
+            var timestamp = ratingEntity.Timestamp;
+            if (timestamp is not null)
+            {
+                return timestamp.Value.ToString("dd MMM yyyy HH:mm") ?? "N/A";
+            }
+            return string.Empty;
+        }
     }
 }

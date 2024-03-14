@@ -51,13 +51,13 @@
 
 @code {
     [Parameter]
-    public string PlayerRowKey { get; set; }
+    public string PlayerRowKey { get; set; } = default!;
 
-    private Player player;
+    private Player player = default!;
 
-    private string pageTitle;
+    private string pageTitle = default!;
 
-    private string deleteAllLabel;
+    private string deleteAllLabel = default!;
 
     protected override async Task OnInitializedAsync()
     {

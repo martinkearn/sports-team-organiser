@@ -44,11 +44,11 @@
 
 @code {
     [Parameter]
-    public string TransactionRowKey { get; set; }
+    public string TransactionRowKey { get; set; } = default!;
 
-    private Transaction transaction;
+    private Transaction transaction = default!;
 
-    private string pageTitle;
+    private string pageTitle = default!;
 
     protected override async Task OnInitializedAsync()
     {

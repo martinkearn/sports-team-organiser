@@ -36,16 +36,16 @@ public class Program
                 config.AddPolicy("IsAdminEmail", policy =>
                     policy.RequireAssertion(context =>
                     {
-                        if (!context.User.Identity.IsAuthenticated)
+                        var user = context.User;
+                        if (user.Identity is not null && user.Identity.IsAuthenticated)
                         {
-                            return false;
-                        }
-
-                        var email = context?.User.FindFirst(c => c.Type == ClaimTypes.Email)?.Value;
-                        var authName = context?.User?.Identity?.Name;
-                        if (authName == "Martin Kearn")
-                        {
-                            return true;
+                            // User is authenticated
+                            var email = user.FindFirst(c => c.Type == ClaimTypes.Email)?.Value;
+                            var authName = user.Identity.Name;
+                            if (authName == "Martin Kearn")
+                            {
+                                return true;
+                            }
                         }
 
                         return false;

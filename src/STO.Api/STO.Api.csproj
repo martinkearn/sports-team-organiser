@@ -8,6 +8,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <_ContentIncludedByDefault Remove="appsettings.development.json" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\STO.Models\STO.Models.csproj" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
     <PackageReference Include="Azure.Data.Tables" Version="12.8.2" />

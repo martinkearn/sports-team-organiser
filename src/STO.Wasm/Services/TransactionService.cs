@@ -1,12 +1,9 @@
-using STO.Models;
-using STO.Models.Interfaces;
-
-namespace STO.Services
+namespace STO.Wasm.Services
 {
     /// <inheritdoc/>
-    public class TransactionService(IStorageService storageService, IPlayerService playerService) : ITransactionService
+    public class TransactionService(IApiService storageService, IPlayerService playerService) : ITransactionService
     {
-        private readonly IStorageService _storageService = storageService;
+        private readonly IApiService _storageService = storageService;
         private readonly IPlayerService _playerService = playerService;
 
         public async Task<List<Transaction>> GetTransactions(List<TransactionEntity> transactionEntities)
@@ -42,7 +39,15 @@ namespace STO.Services
             var transactionEntities = transactionEntitiesResult.Where(o => o.RowKey == rowKey).ToList();
             var transactionsResult = await TransactionEntitiesToTransactions(transactionEntities);
             var matchingTransaction = transactionsResult.FirstOrDefault();
-            return matchingTransaction;
+
+            if (matchingTransaction is not null)
+            {
+                return matchingTransaction;
+            }
+
+            // Create a null transaction to return
+            Transaction nullTransaction = new(new TransactionEntity());
+            return nullTransaction;
         }
 
         public async Task UpsertTransactionEntity(TransactionEntity transactionEntity)
@@ -54,8 +59,13 @@ namespace STO.Services
         {
             var gameEntityResult = await _storageService.QueryEntities<GameEntity>();
             var gameEntity = gameEntityResult.Where(o => o.RowKey == gameRowKey).FirstOrDefault();
-            var notes = $"For game {gameEntity.Date.Date.ToString("dd MMM yyyy")}";
-            return notes;
+            if (gameEntity is not null) 
+            {
+                var notes = $"For game {gameEntity.Date.Date:dd MMM yyyy}";
+                return notes;
+            }
+
+            return string.Empty;
         }
 
         private async Task<List<Transaction>> TransactionEntitiesToTransactions(List<TransactionEntity> transactionEntities)

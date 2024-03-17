@@ -1,4 +1,4 @@
-namespace STO.Models
+namespace STO.Api.Models
 {
     /// <summary>
     /// Used to strongly type the "StorageConfiguration" appsettings section
@@ -14,10 +14,5 @@ namespace STO.Models
         /// The name of a table in Azure Storage where entities are stored.
         /// </summary>
         public string DataTable { get; set; }
-
-        /// <summary>
-        /// The root url for the api.
-        /// </summary>
-        public string ApiHost { get; set; }
     }
 }

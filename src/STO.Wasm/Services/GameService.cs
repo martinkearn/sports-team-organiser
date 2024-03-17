@@ -1,23 +1,12 @@
-using Azure;
-using STO.Models;
-using STO.Models.Interfaces;
-
-namespace STO.Services
+namespace STO.Wasm.Services
 {
     /// <inheritdoc/>
-    public class GameService : IGameService
+    public class GameService(IApiService storageService, IPlayerService playerService, ITransactionService transactionService) : IGameService
     {
-        private readonly IStorageService _storageService;
-        private readonly IPlayerService _playerService;
+        private readonly IApiService _storageService = storageService;
+        private readonly IPlayerService _playerService = playerService;
 
-        private readonly ITransactionService _transactionService;
-
-        public GameService(IStorageService storageService, IPlayerService playerService, ITransactionService transactionService)
-        {
-            _storageService = storageService;
-            _playerService = playerService;
-            _transactionService = transactionService;
-        }
+        private readonly ITransactionService _transactionService = transactionService;
 
         public async Task DeleteGame(string gameRowKey)
         {
@@ -32,7 +21,7 @@ namespace STO.Services
             }
 
             // Delete PAGs
-            foreach(var pag in game.PlayersAtGame)
+            foreach (var pag in game.PlayersAtGame)
             {
                 await DeletePlayerAtGameEntity(pag.PlayerAtGameEntity);
             }
@@ -59,9 +48,16 @@ namespace STO.Services
             var gameEntities = gameEntitiesResult.Where(g => g.RowKey == gameRowKey).ToList();
             var games = await GetGames(gameEntities);
             var matchingGame = games.FirstOrDefault();
-            matchingGame.TeamA = matchingGame.TeamA.OrderBy(o => o.Player.PlayerEntity.Position).ToList();
-            matchingGame.TeamB = matchingGame.TeamB.OrderBy(o => o.Player.PlayerEntity.Position).ToList();
-            return matchingGame;
+            if (matchingGame is not null)
+            {
+                matchingGame.TeamA = [.. matchingGame.TeamA.OrderBy(o => o.Player.PlayerEntity.Position)];
+                matchingGame.TeamB = [.. matchingGame.TeamB.OrderBy(o => o.Player.PlayerEntity.Position)];
+                return matchingGame;
+            }
+
+            // Create a null game to return
+            Game nullGame = new(new GameEntity());
+            return nullGame;
         }
 
         public async Task<Game> GetNextGame()
@@ -70,7 +66,14 @@ namespace STO.Services
             var gameEntities = gameEntitiesResult.Where(g => g.Date.Date > DateTime.UtcNow.Date).ToList();
             var games = await GetGames(gameEntities);
             var nextGame = games.FirstOrDefault();
-            return nextGame;
+            if (nextGame is not null)
+            {
+                return nextGame;
+            }
+
+            // Create a null game to return
+            Game game = new(new GameEntity());
+            return game;
         }
 
         public async Task UpsertGameEntity(GameEntity gameEntity)
@@ -82,13 +85,20 @@ namespace STO.Services
         {
             var pagEntityResult = await _storageService.QueryEntities<PlayerAtGameEntity>();
             var pagEntity = pagEntityResult.FirstOrDefault(o => o.RowKey == pagRowKey);
-            var game = await GetGame(pagEntity.GameRowKey);
-            var pag = new PlayerAtGame(pagEntity)
+            if (pagEntity is not null)
             {
-                Player = await _playerService.GetPlayer(pagEntity.PlayerRowKey),
-                GameEntity = game.GameEntity
-            };
-            return pag;
+                var game = await GetGame(pagEntity.GameRowKey);
+                var pag = new PlayerAtGame(pagEntity)
+                {
+                    Player = await _playerService.GetPlayer(pagEntity.PlayerRowKey),
+                    GameEntity = game.GameEntity
+                };
+                return pag;
+            }
+
+            // Create a null pag to return
+            PlayerAtGame emptyPag = new(new PlayerAtGameEntity());
+            return emptyPag;
         }
 
         public async Task UpsertPlayerAtGameEntity(PlayerAtGameEntity pag)
@@ -104,13 +114,13 @@ namespace STO.Services
                 pag.RowKey = existingPag.PlayerAtGameEntity.RowKey;
                 pag.PartitionKey = existingPag.PlayerAtGameEntity.PartitionKey;
                 _ = await _storageService.UpsertEntity<PlayerAtGameEntity>(pag);
-            } 
+            }
         }
 
         public async Task DeletePlayerAtGameEntity(PlayerAtGameEntity pag)
         {
             await _storageService.DeleteEntity<PlayerAtGameEntity>(pag.RowKey);
-        }   
+        }
 
         public async Task<List<PlayerAtGame>> CalculateTeams(List<PlayerAtGame> pags)
         {
@@ -137,14 +147,14 @@ namespace STO.Services
                     await UpsertPlayerAtGameEntity(pagInPosition.PlayerAtGameEntity);
 
                     // Set team for next pag
-                    nextTeamToGetPag = (nextTeamToGetPag == "A") ? "B": "A";
+                    nextTeamToGetPag = (nextTeamToGetPag == "A") ? "B" : "A";
                 }
             }
 
             _ = newPags.OrderBy(o => o.Player.PlayerEntity.Name);
 
             return newPags;
-        }   
+        }
 
         public async Task MarkAllPlayed(string gameRowkey, bool played)
         {
@@ -156,7 +166,7 @@ namespace STO.Services
                 togglePlayedTasks.Add(TogglePlayerAtGamePlayed(pag.PlayerAtGameEntity, played));
             }
             await Task.WhenAll(togglePlayedTasks);
-        } 
+        }
 
         public async Task TogglePlayerAtGamePlayed(PlayerAtGameEntity pag, bool? played)
         {

@@ -1,12 +1,9 @@
-using STO.Models;
-using STO.Models.Interfaces;
-
-namespace STO.Services
+namespace STO.Wasm.Services
 {
     /// <inheritdoc/>
-    public class PlayerService(IStorageService storageService) : IPlayerService
+    public class PlayerService(IApiService storageService) : IPlayerService
     {
-        private readonly IStorageService _storageService = storageService;
+        private readonly IApiService _storageService = storageService;
 
         public async Task<List<Player>> GetPlayers(List<PlayerEntity> playerEntities)
         {
@@ -58,7 +55,14 @@ namespace STO.Services
             var playerEntities = playerEntitiesResult.Where(p => p.RowKey == rowKey).ToList();
             var matchingPlayerResult = await PlayerEntitiesToPlayers(playerEntities);
             var matchingPlayer = matchingPlayerResult.FirstOrDefault();
-            return matchingPlayer;
+            if (matchingPlayer is not null)
+            {
+                return matchingPlayer;
+            }
+
+            // Create a null player to return
+            Player nullPlayer = new(new PlayerEntity());
+            return nullPlayer;
         }
 
         public async Task UpsertPlayerEntity(PlayerEntity playerEntity)

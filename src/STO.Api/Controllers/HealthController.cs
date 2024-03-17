@@ -1,7 +1,4 @@
 using Microsoft.AspNetCore.Mvc;
-using STO.Models;
-using STO.Models.Interfaces;
-using STO.Services;
 
 namespace STO.Api.Controllers;
 

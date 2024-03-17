@@ -1,30 +1,26 @@
 using System.Text.Json;
 using Azure.Data.Tables;
 using Microsoft.Extensions.Options;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http.Json;
-using STO.Models;
-using STO.Models.Interfaces;
 
-namespace STO.Services
+namespace STO.Wasm.Services
 {
     /// <inheritdoc/>
-    public class ApiStorageService : IStorageService
+    public class ApiService : IApiService
     {
-        private readonly StorageConfiguration _options;
-        private List<PlayerEntity> _playerEntities;
-        private List<GameEntity> _gameEntities;
-        private List<TransactionEntity> _transactionEntities;
-        private List<PlayerAtGameEntity> _playerAtGameEntities;
-        private List<RatingEntity> _ratingEntities;
-        private bool _gotData;
+        private readonly ApiConfiguration _options;
+        private List<PlayerEntity> _playerEntities = [];
+        private List<GameEntity> _gameEntities = [];
+        private List<TransactionEntity> _transactionEntities = [];
+        private List<PlayerAtGameEntity> _playerAtGameEntities = [];
+        private List<RatingEntity> _ratingEntities = [];
+        private bool _gotData = false;
 
         private JsonSerializerOptions _jsonSerializerOptions;
 
         private readonly HttpClient _httpClient;
 
-        public ApiStorageService(IOptions<StorageConfiguration> storageConfigurationOptions, IHttpClientFactory httpClientFactory)
+        public ApiService(IOptions<ApiConfiguration> storageConfigurationOptions, IHttpClientFactory httpClientFactory)
         { 
             _options = storageConfigurationOptions.Value;
 
@@ -96,7 +92,7 @@ namespace STO.Services
             }
             else
             {
-                return null;
+                return [];
             }
         }   
 
@@ -152,13 +148,16 @@ namespace STO.Services
         {
             var httpResponseMessage = await _httpClient.GetAsync($"{_options.ApiHost}/{path}");
 
-            List<T> response = new();
+            List<T> response = [];
 
             if (httpResponseMessage.IsSuccessStatusCode)
             {
                 using var content = await httpResponseMessage.Content.ReadAsStreamAsync();
                 var result = await JsonSerializer.DeserializeAsync<IEnumerable<T>>(content, _jsonSerializerOptions);
-                response = result.ToList();
+                if (result is not null)
+                {
+                    return result.ToList();
+                }
             }
 
             return response;
@@ -187,10 +186,10 @@ namespace STO.Services
             response.EnsureSuccessStatusCode();
         }
 
-        private string GetApiPath<T>()
+        private static string GetApiPath<T>()
         {
             var ty = typeof(T);
-            var apiPath = ty.ToString().Replace("STO.Models.", String.Empty);
+            var apiPath = ty.ToString().Replace("STO.Models.", string.Empty);
             return apiPath;
         }
     }

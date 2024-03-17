@@ -1,9 +1,9 @@
 namespace STO.Wasm.Services
 {
     /// <inheritdoc/>
-    public class TransactionService(IStorageService storageService, IPlayerService playerService) : ITransactionService
+    public class TransactionService(IApiService storageService, IPlayerService playerService) : ITransactionService
     {
-        private readonly IStorageService _storageService = storageService;
+        private readonly IApiService _storageService = storageService;
         private readonly IPlayerService _playerService = playerService;
 
         public async Task<List<Transaction>> GetTransactions(List<TransactionEntity> transactionEntities)

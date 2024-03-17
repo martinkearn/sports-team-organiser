@@ -1,9 +1,9 @@
 namespace STO.Wasm.Services
 {
     /// <inheritdoc/>
-    public class GameService(IStorageService storageService, IPlayerService playerService, ITransactionService transactionService) : IGameService
+    public class GameService(IApiService storageService, IPlayerService playerService, ITransactionService transactionService) : IGameService
     {
-        private readonly IStorageService _storageService = storageService;
+        private readonly IApiService _storageService = storageService;
         private readonly IPlayerService _playerService = playerService;
 
         private readonly ITransactionService _transactionService = transactionService;

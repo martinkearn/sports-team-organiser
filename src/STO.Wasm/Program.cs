@@ -60,7 +60,7 @@ public class Program
             });
 
         // Add custom services
-        builder.Services.AddSingleton<IStorageService, ApiStorageService>();
+        builder.Services.AddSingleton<IApiService, ApiService>();
         builder.Services.AddSingleton<IPlayerService, PlayerService>();
         builder.Services.AddSingleton<IGameService, GameService>();
         builder.Services.AddSingleton<ITransactionService, TransactionService>();

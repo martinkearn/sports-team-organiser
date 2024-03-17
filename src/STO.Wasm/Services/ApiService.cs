@@ -6,7 +6,7 @@ using System.Net.Http.Json;
 namespace STO.Wasm.Services
 {
     /// <inheritdoc/>
-    public class ApiStorageService : IStorageService
+    public class ApiService : IApiService
     {
         private readonly ApiConfiguration _options;
         private List<PlayerEntity> _playerEntities = [];
@@ -20,7 +20,7 @@ namespace STO.Wasm.Services
 
         private readonly HttpClient _httpClient;
 
-        public ApiStorageService(IOptions<ApiConfiguration> storageConfigurationOptions, IHttpClientFactory httpClientFactory)
+        public ApiService(IOptions<ApiConfiguration> storageConfigurationOptions, IHttpClientFactory httpClientFactory)
         { 
             _options = storageConfigurationOptions.Value;
 

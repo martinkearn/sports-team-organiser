@@ -96,7 +96,7 @@ resource blazorWasm 'Microsoft.Web/sites@2022-09-01' = {
           value: applicationInsights.properties.InstrumentationKey
         }
         {
-          name: 'StorageConfiguration__ApiHost'
+          name: 'ApiConfiguration__ApiHost'
           value: 'https://${api.properties.defaultHostName}'
         }
         {

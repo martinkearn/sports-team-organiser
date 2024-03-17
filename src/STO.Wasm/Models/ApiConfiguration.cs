@@ -8,6 +8,6 @@ namespace STO.Wasm.Models
         /// <summary>
         /// The host url with protocol and port for the Api.
         /// </summary>
-        public string ApiHost { get; set; }
+        public required string ApiHost { get; set; }
     }
 }

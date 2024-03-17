@@ -9,12 +9,12 @@ namespace STO.Wasm.Services
     public class ApiStorageService : IStorageService
     {
         private readonly ApiConfiguration _options;
-        private List<PlayerEntity> _playerEntities;
-        private List<GameEntity> _gameEntities;
-        private List<TransactionEntity> _transactionEntities;
-        private List<PlayerAtGameEntity> _playerAtGameEntities;
-        private List<RatingEntity> _ratingEntities;
-        private bool _gotData;
+        private List<PlayerEntity> _playerEntities = [];
+        private List<GameEntity> _gameEntities = [];
+        private List<TransactionEntity> _transactionEntities = [];
+        private List<PlayerAtGameEntity> _playerAtGameEntities = [];
+        private List<RatingEntity> _ratingEntities = [];
+        private bool _gotData = false;
 
         private JsonSerializerOptions _jsonSerializerOptions;
 
@@ -92,7 +92,7 @@ namespace STO.Wasm.Services
             }
             else
             {
-                return null;
+                return [];
             }
         }   
 
@@ -148,13 +148,16 @@ namespace STO.Wasm.Services
         {
             var httpResponseMessage = await _httpClient.GetAsync($"{_options.ApiHost}/{path}");
 
-            List<T> response = new();
+            List<T> response = [];
 
             if (httpResponseMessage.IsSuccessStatusCode)
             {
                 using var content = await httpResponseMessage.Content.ReadAsStreamAsync();
                 var result = await JsonSerializer.DeserializeAsync<IEnumerable<T>>(content, _jsonSerializerOptions);
-                response = result.ToList();
+                if (result is not null)
+                {
+                    return result.ToList();
+                }
             }
 
             return response;
@@ -183,10 +186,10 @@ namespace STO.Wasm.Services
             response.EnsureSuccessStatusCode();
         }
 
-        private string GetApiPath<T>()
+        private static string GetApiPath<T>()
         {
             var ty = typeof(T);
-            var apiPath = ty.ToString().Replace("STO.Models.", String.Empty);
+            var apiPath = ty.ToString().Replace("STO.Models.", string.Empty);
             return apiPath;
         }
     }

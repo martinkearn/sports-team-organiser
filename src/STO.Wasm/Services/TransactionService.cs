@@ -39,7 +39,15 @@ namespace STO.Wasm.Services
             var transactionEntities = transactionEntitiesResult.Where(o => o.RowKey == rowKey).ToList();
             var transactionsResult = await TransactionEntitiesToTransactions(transactionEntities);
             var matchingTransaction = transactionsResult.FirstOrDefault();
-            return matchingTransaction;
+
+            if (matchingTransaction is not null)
+            {
+                return matchingTransaction;
+            }
+
+            // Create a null transaction to return
+            Transaction nullTransaction = new(new TransactionEntity());
+            return nullTransaction;
         }
 
         public async Task UpsertTransactionEntity(TransactionEntity transactionEntity)
@@ -51,8 +59,13 @@ namespace STO.Wasm.Services
         {
             var gameEntityResult = await _storageService.QueryEntities<GameEntity>();
             var gameEntity = gameEntityResult.Where(o => o.RowKey == gameRowKey).FirstOrDefault();
-            var notes = $"For game {gameEntity.Date.Date.ToString("dd MMM yyyy")}";
-            return notes;
+            if (gameEntity is not null) 
+            {
+                var notes = $"For game {gameEntity.Date.Date:dd MMM yyyy}";
+                return notes;
+            }
+
+            return string.Empty;
         }
 
         private async Task<List<Transaction>> TransactionEntitiesToTransactions(List<TransactionEntity> transactionEntities)

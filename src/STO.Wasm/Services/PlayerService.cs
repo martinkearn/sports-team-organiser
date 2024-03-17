@@ -55,7 +55,14 @@ namespace STO.Wasm.Services
             var playerEntities = playerEntitiesResult.Where(p => p.RowKey == rowKey).ToList();
             var matchingPlayerResult = await PlayerEntitiesToPlayers(playerEntities);
             var matchingPlayer = matchingPlayerResult.FirstOrDefault();
-            return matchingPlayer;
+            if (matchingPlayer is not null)
+            {
+                return matchingPlayer;
+            }
+
+            // Create a null player to return
+            Player nullPlayer = new(new PlayerEntity());
+            return nullPlayer;
         }
 
         public async Task UpsertPlayerEntity(PlayerEntity playerEntity)

@@ -1,17 +1,11 @@
 namespace STO.Wasm.Services
 {
     /// <inheritdoc/>
-    public class RatingService : IRatingService
+    public class RatingService(IStorageService storageService, IPlayerService playerService, IGameService gameService) : IRatingService
     {
-        private readonly IStorageService _storageService;
-        private readonly IPlayerService _playerService;
-        private readonly IGameService _gameService;
-        public RatingService(IStorageService storageService, IPlayerService playerService, IGameService gameService)
-        {
-            _storageService = storageService;
-            _playerService = playerService;
-            _gameService = gameService;
-        }
+        private readonly IStorageService _storageService = storageService;
+        private readonly IPlayerService _playerService = playerService;
+        private readonly IGameService _gameService = gameService;
 
         public async Task<List<Rating>> GetRatings()
         {
@@ -71,11 +65,15 @@ namespace STO.Wasm.Services
 
         public string FormatRatingTime(RatingEntity ratingEntity)
         {
-            var timestamp = ratingEntity.Timestamp;
-            if (timestamp is not null)
+            if (ratingEntity is not null)
             {
-                return timestamp.Value.ToString("dd MMM yyyy HH:mm") ?? "N/A";
+                var timestamp = ratingEntity.Timestamp;
+                if (timestamp is not null)
+                {
+                    return timestamp.Value.ToString("dd MMM yyyy HH:mm") ?? "N/A";
+                }
             }
+
             return string.Empty;
         }
     }

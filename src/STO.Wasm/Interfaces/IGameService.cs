@@ -1,4 +1,4 @@
-namespace STO.Models.Interfaces
+namespace STO.Wasm.Interfaces
 {
     /// <summary>
     /// Service for working with Games and their balance.

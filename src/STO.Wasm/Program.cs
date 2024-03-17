@@ -1,12 +1,11 @@
 global using STO.Models;
-global using STO.Models.Interfaces;
-global using STO.Services;
+global using STO.Wasm.Services;
+global using STO.Wasm.Models;
+global using STO.Wasm.Interfaces;
 using System.Security.Claims;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+
 
 namespace STO.Wasm;
 
@@ -54,10 +53,10 @@ public class Program
             });
 
         // Add custom app settings
-        builder.Services.AddOptions<StorageConfiguration>()
+        builder.Services.AddOptions<ApiConfiguration>()
             .Configure<IConfiguration>((settings, configuration) =>
             {
-                configuration.GetSection(nameof(StorageConfiguration)).Bind(settings);
+                configuration.GetSection(nameof(ApiConfiguration)).Bind(settings);
             });
 
         // Add custom services

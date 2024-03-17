@@ -1,7 +1,4 @@
-using STO.Models;
-using STO.Models.Interfaces;
-
-namespace STO.Services
+namespace STO.Wasm.Services
 {
     /// <inheritdoc/>
     public class TransactionService(IStorageService storageService, IPlayerService playerService) : ITransactionService

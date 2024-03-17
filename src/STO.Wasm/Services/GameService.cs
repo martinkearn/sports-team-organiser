@@ -1,8 +1,4 @@
-using Azure;
-using STO.Models;
-using STO.Models.Interfaces;
-
-namespace STO.Services
+namespace STO.Wasm.Services
 {
     /// <inheritdoc/>
     public class GameService : IGameService

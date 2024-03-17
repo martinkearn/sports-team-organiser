@@ -1,7 +1,4 @@
-using STO.Models;
-using STO.Models.Interfaces;
-
-namespace STO.Services
+namespace STO.Wasm.Services
 {
     /// <inheritdoc/>
     public class PlayerService(IStorageService storageService) : IPlayerService

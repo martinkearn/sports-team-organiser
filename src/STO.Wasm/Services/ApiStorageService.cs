@@ -1,18 +1,14 @@
 using System.Text.Json;
 using Azure.Data.Tables;
 using Microsoft.Extensions.Options;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http.Json;
-using STO.Models;
-using STO.Models.Interfaces;
 
-namespace STO.Services
+namespace STO.Wasm.Services
 {
     /// <inheritdoc/>
     public class ApiStorageService : IStorageService
     {
-        private readonly StorageConfiguration _options;
+        private readonly ApiConfiguration _options;
         private List<PlayerEntity> _playerEntities;
         private List<GameEntity> _gameEntities;
         private List<TransactionEntity> _transactionEntities;
@@ -24,7 +20,7 @@ namespace STO.Services
 
         private readonly HttpClient _httpClient;
 
-        public ApiStorageService(IOptions<StorageConfiguration> storageConfigurationOptions, IHttpClientFactory httpClientFactory)
+        public ApiStorageService(IOptions<ApiConfiguration> storageConfigurationOptions, IHttpClientFactory httpClientFactory)
         { 
             _options = storageConfigurationOptions.Value;
 

@@ -14,17 +14,18 @@
 @code{
     string? noteContent;
 
-    public async void ReadLocalStorage()
+    public async Task ReadLocalStorage()
     {
-        noteContent = await localStore.GetItemAsStringAsync("note");
+        var noteValue = await localStore.GetItemAsStringAsync("note");
+        noteContent = noteValue ?? "No 'note' value saved";
     }
 
-    public async void UpdateLocalStorage()
+    public async Task UpdateLocalStorage()
     {
         await localStore.SetItemAsync("note", $"Last updated at {DateTime.UtcNow.ToLongTimeString()}");
     }
 
-    public async void ClearLocalStorage()
+    public async Task ClearLocalStorage()
     {
         await localStore.RemoveItemAsync("note");
     }

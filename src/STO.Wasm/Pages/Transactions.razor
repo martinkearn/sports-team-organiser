@@ -26,7 +26,7 @@
                 {
                     <tr>
                         <td><a href="/transactions/@transaction.TransactionEntity.RowKey">@transaction.TransactionEntity.Date.ToString("dd MMM yyyy HH:mm")</a></td>
-                        <td><CurrencyDisplay @rendermode="RenderMode.InteractiveAuto" Amount="@transaction.TransactionEntity.Amount" /></td>
+                        <td><CurrencyDisplay Amount="@transaction.TransactionEntity.Amount" /></td>
                         <td><a href="/players/@transaction.Player.PlayerEntity.RowKey/player">@transaction.Player.PlayerEntity.Name</a></td>
                         <td class="d-none d-lg-table-cell">@transaction.TransactionEntity.Notes</td>
                     </tr>

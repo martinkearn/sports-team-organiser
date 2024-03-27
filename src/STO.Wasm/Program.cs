@@ -2,10 +2,10 @@ global using STO.Models;
 global using STO.Wasm.Services;
 global using STO.Wasm.Models;
 global using STO.Wasm.Interfaces;
+global using Blazored.LocalStorage;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
-
 
 namespace STO.Wasm;
 
@@ -65,6 +65,9 @@ public class Program
         builder.Services.AddSingleton<IGameService, GameService>();
         builder.Services.AddSingleton<ITransactionService, TransactionService>();
         builder.Services.AddSingleton<IRatingService, RatingService>();
+
+        // Add Blazored.LocalStorage
+        builder.Services.AddBlazoredLocalStorage();
 
         builder.Services.AddCascadingAuthenticationState();
 

@@ -67,7 +67,7 @@ public class Program
         builder.Services.AddSingleton<IRatingService, RatingService>();
 
         // Add Blazored.LocalStorage
-        builder.Services.AddBlazoredLocalStorage();
+        builder.Services.AddBlazoredLocalStorageAsSingleton();
 
         builder.Services.AddCascadingAuthenticationState();
 

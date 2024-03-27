@@ -3,29 +3,29 @@
 
 <h1>Browser Storage</h1>
 
-<textarea @bind="noteContent" />
+<p>@noteContent</p>
 
 <br>
 
+<button @onclick="ReadLocalStorage">Read</button>
 <button @onclick="UpdateLocalStorage">Save</button>
 <button @onclick="ClearLocalStorage">Clear</button>
 
 @code{
-    const string noteKey = "note";
     string? noteContent;
 
-    protected override async Task OnInitializedAsync()
+    public async void ReadLocalStorage()
     {
-        noteContent = await localStore.GetItemAsStringAsync(noteKey);
+        noteContent = await localStore.GetItemAsStringAsync("note");
     }
 
     public async void UpdateLocalStorage()
     {
-        await localStore.SetItemAsync(noteKey, noteContent);
+        await localStore.SetItemAsync("note", $"Last updated at {DateTime.UtcNow.ToLongTimeString()}");
     }
 
     public async void ClearLocalStorage()
     {
-        await localStore.RemoveItemAsync(noteKey);
+        await localStore.RemoveItemAsync("note");
     }
 }

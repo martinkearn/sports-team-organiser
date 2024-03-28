@@ -8,6 +8,8 @@ namespace STO.Wasm.Services
     /// <inheritdoc/>
     public class ApiService : IApiService
     {
+        private const string DataRefreshedKey = "DataRefreshed";
+
         private readonly ApiConfiguration _options;
 
         private readonly ILocalStorageService _localStore;
@@ -85,6 +87,8 @@ namespace STO.Wasm.Services
             var ratingTask =  RefreshEntitiesFromStorage<RatingEntity>();
 
             await Task.WhenAll(playerTask, gameTask, transactionTask, playerAtGameTask, ratingTask);
+
+            await _localStore.SetItemAsync(DataRefreshedKey, $"{DateTime.UtcNow}");
         }
 
         private async Task RefreshEntitiesFromStorage<T>() where T : class, ITableEntity
@@ -97,13 +101,11 @@ namespace STO.Wasm.Services
         private async Task EnsureBrowserData()
         {
             // TO DO - need something here to ensure we've got the latest data from the actual API
-
-            const string key = "DataRefreshed";
-            var gotData = await _localStore.GetItemAsStringAsync(key); 
+            var gotData = await _localStore.GetItemAsStringAsync(DataRefreshedKey); 
             if (gotData is null)
             {
                 await RefreshData();
-                await _localStore.SetItemAsync(key, $"{DateTime.UtcNow}");
+                await _localStore.SetItemAsync(DataRefreshedKey, $"{DateTime.UtcNow}");
             }
         }
 

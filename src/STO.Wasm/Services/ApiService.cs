@@ -8,8 +8,6 @@ namespace STO.Wasm.Services
     /// <inheritdoc/>
     public class ApiService : IApiService
     {
-        private const string DataRefreshedKey = "DataRefreshed";
-
         private readonly ApiConfiguration _options;
 
         private readonly ILocalStorageService _localStore;
@@ -82,28 +80,37 @@ namespace STO.Wasm.Services
             var transactionTask =  RefreshEntitiesFromStorage<TransactionEntity>();
             var playerAtGameTask =  RefreshEntitiesFromStorage<PlayerAtGameEntity>();
             var ratingTask =  RefreshEntitiesFromStorage<RatingEntity>();
+            var dataDetailsTask =  RefreshEntitiesFromStorage<DataDetailsEntity>();
 
-            await Task.WhenAll(playerTask, gameTask, transactionTask, playerAtGameTask, ratingTask);
-
-            await _localStore.SetItemAsync(DataRefreshedKey, $"{DateTime.UtcNow}");
+            await Task.WhenAll(playerTask, gameTask, transactionTask, playerAtGameTask, ratingTask, dataDetailsTask);
         }
 
         private async Task RefreshEntitiesFromStorage<T>() where T : class, ITableEntity
         {
             var apiPath = GetApiPath<T>();
             var data = await ApiGet<T>(apiPath);
-            await _localStore.SetItemAsync<List<T>>(typeof(T).Name, data);
+            if (data is not null)
+            {
+                if (typeof(T) == typeof(DataDetailsEntity))
+                {
+                    await _localStore.SetItemAsync<T>(typeof(T).Name, data.FirstOrDefault());
+                }
+                else
+                {
+                    await _localStore.SetItemAsync<List<T>>(typeof(T).Name, data);
+                }
+            }
         } 
 
         private async Task EnsureBrowserData()
         {
-            // TO DO - need something here to ensure we've got the latest data from the actual API
+/*             // TO DO - need something here to ensure we've got the latest data from the actual API
             var gotData = await _localStore.GetItemAsStringAsync(DataRefreshedKey); 
             if (gotData is null)
-            {
+            { */
                 await RefreshData();
-                await _localStore.SetItemAsync(DataRefreshedKey, $"{DateTimeOffset.Now.ToUnixTimeSeconds()}");
-            }
+                //await _localStore.SetItemAsync(DataRefreshedKey, $"{DateTimeOffset.Now.ToUnixTimeSeconds()}");
+            //}
         }
 
         private async Task<List<T>> ApiGet<T>(string path) where T : class, ITableEntity

@@ -4,13 +4,13 @@ namespace STO.Api.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class DataDetailsController : ControllerBase
+public class DataDetailsEntityController : ControllerBase
 {
     private readonly ILogger<GameEntityController> _logger;
 
     private readonly IStorageService _storageService;
 
-    public DataDetailsController(ILogger<GameEntityController> logger, IStorageService storageService)
+    public DataDetailsEntityController(ILogger<GameEntityController> logger, IStorageService storageService)
     {
         _logger = logger;
         _storageService = storageService;

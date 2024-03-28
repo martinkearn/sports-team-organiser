@@ -28,7 +28,11 @@ namespace STO.Api.Services
             //Get data if we have not done so yet
             if (!_doneInitialLoad) await RefreshData();
 
+            // Delete Entity
             await _tableClient.DeleteEntityAsync(typeof(T).ToString(), rowKey);
+
+            // Update DataDetails
+            await UpdateDataDetails();
 
             // Refresh data from storage
             await RefreshEntitiesFromStorage<T>();
@@ -45,6 +49,9 @@ namespace STO.Api.Services
 
             // Upsert entity
             await _tableClient.UpsertEntityAsync<T>(entity, TableUpdateMode.Replace);
+
+            // Update DataDetails
+            await UpdateDataDetails();
 
             // Refresh data from storage
             await RefreshEntitiesFromStorage<T>();
@@ -99,6 +106,15 @@ namespace STO.Api.Services
             await RefreshEntitiesFromStorage<PlayerAtGameEntity>();
             await RefreshEntitiesFromStorage<RatingEntity>();
             _doneInitialLoad = true;
+        }
+
+        private async Task UpdateDataDetails()
+        {
+            // Create DataDetailsEntity
+            var dataDetailsEntity = new DataDetailsEntity();
+
+            // Upsert entity
+            await _tableClient.UpsertEntityAsync<DataDetailsEntity>(dataDetailsEntity, TableUpdateMode.Replace);
         }
 
         private async Task RefreshEntitiesFromStorage<T>() where T : class, ITableEntity

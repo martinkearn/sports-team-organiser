@@ -21,4 +21,11 @@ public class HealthController : ControllerBase
     {
         await _storageService.RefreshData();
     }
+
+    [HttpGet(Name = "GetDataDetails")]
+    public async Task<DataDetailsEntity> Get()
+    {
+        var dataDetailsEntity = await _storageService.QueryEntities<DataDetailsEntity>();
+        return dataDetailsEntity.FirstOrDefault();
+    }
 }

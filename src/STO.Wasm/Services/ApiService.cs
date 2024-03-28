@@ -105,7 +105,7 @@ namespace STO.Wasm.Services
             if (gotData is null)
             {
                 await RefreshData();
-                await _localStore.SetItemAsync(DataRefreshedKey, $"{DateTime.UtcNow}");
+                await _localStore.SetItemAsync(DataRefreshedKey, $"{DateTimeOffset.Now.ToUnixTimeSeconds()}");
             }
         }
 

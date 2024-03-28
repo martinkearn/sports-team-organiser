@@ -96,6 +96,8 @@ namespace STO.Wasm.Services
 
         private async Task EnsureBrowserData()
         {
+            // TO DO - need something here to ensure we've got the latest data from the actual API
+
             const string key = "DataRefreshed";
             var gotData = await _localStore.GetItemAsStringAsync(key); 
             if (gotData is null)

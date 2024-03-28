@@ -6,38 +6,30 @@ using System.Net.Http.Json;
 namespace STO.Wasm.Services
 {
     /// <inheritdoc/>
-    public class DataService : IDataService
+    public class DataService(IOptions<ApiConfiguration> storageConfigurationOptions, ILocalStorageService localStorageService, IApiService apiService) : IDataService
     {
-        private readonly ApiConfiguration _options;
+        private readonly ApiConfiguration _options = storageConfigurationOptions.Value;
 
-        private readonly ILocalStorageService _localStore;
+        private readonly ILocalStorageService _localStore = localStorageService;
 
-        private JsonSerializerOptions _jsonSerializerOptions;
-
-        private readonly HttpClient _httpClient;
-
-        public DataService(IOptions<ApiConfiguration> storageConfigurationOptions, IHttpClientFactory httpClientFactory, ILocalStorageService localStorageService)
-        { 
-            _options = storageConfigurationOptions.Value;
-
-            _httpClient = httpClientFactory.CreateClient();
-
-            _localStore = localStorageService;
-
-            _jsonSerializerOptions = new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true,
-            };
-        }
+        private readonly IApiService _apiService = apiService;
 
         public async Task DeleteEntity<T>(string rowKey) where T : class, ITableEntity
         {
             // Delete entity in browser storage
-            await BrowserStorageDelete<T>(rowKey);
+            var data = await _localStore.GetItemAsync<List<T>>(typeof(T).Name);
+
+            if (data is not null)
+            {
+                // Remove entity from list
+                data.RemoveAll(o => o.RowKey == rowKey);
+                
+                // Save new List to browser storage
+                await _localStore.SetItemAsync<List<T>>(typeof(T).Name, data);
+            }
 
             // Delete Entity in Api
-            var apiPath = GetApiPath<T>();
-            await Task.Run(() => ApiDelete(apiPath, rowKey));
+            await Task.Run(() => _apiService.ApiDelete<T>(rowKey));
         } 
 
         public async Task<T> UpsertEntity<T>(T entity) where T : class, ITableEntity
@@ -47,11 +39,21 @@ namespace STO.Wasm.Services
             if (entity.PartitionKey == default) entity.PartitionKey = typeof(T).ToString();
 
             // Upsert entity in browser storage
-            await BrowserStoragePost<T>(entity);
+            var data = await _localStore.GetItemAsync<List<T>>(typeof(T).Name);
+            if (data is not null)
+            {
+                // Remove entity from list
+                data.RemoveAll(o => o.RowKey == entity.RowKey);
+
+                // Add new entity to list
+                data.Add(entity);
+                
+                // Save new List to browser storage
+                await _localStore.SetItemAsync<List<T>>(typeof(T).Name, data);
+            }
 
             // Upsert entity in Api
-            var apiPath = GetApiPath<T>();
-            await Task.Run(() => ApiPost<T>(apiPath, entity));
+            await Task.Run(() => _apiService.ApiPost<T>(entity));
             
             // Return
             return entity;
@@ -59,9 +61,6 @@ namespace STO.Wasm.Services
 
         public async Task<List<T>> QueryEntities<T>() where T : class, ITableEntity
         {
-            // Only queries from browser storage
-            // TO DO need to check that cache is fresh and re-cache if not. By default, cache will load from Api when blazor app loads initially
-
             var data = await _localStore.GetItemAsync<List<T>>(typeof(T).Name);
             if (data is not null)
             {
@@ -73,8 +72,9 @@ namespace STO.Wasm.Services
             }
         }   
 
-        public async Task LoadDataFromApi()
+        public async Task LoadData()
         {
+            // TO DO need to check that cache is fresh and re-cache if not. By default, cache will load from Api when blazor app loads initially
             var playerTask = GetDataFromApi<PlayerEntity>();
             var gameTask =  GetDataFromApi<GameEntity>();
             var transactionTask =  GetDataFromApi<TransactionEntity>();
@@ -87,87 +87,11 @@ namespace STO.Wasm.Services
 
         private async Task GetDataFromApi<T>() where T : class, ITableEntity
         {
-            var apiPath = GetApiPath<T>();
-            var data = await ApiGet<T>(apiPath);
+            var data = await _apiService.ApiGet<T>();
             if (data is not null)
             {
                 await _localStore.SetItemAsync<List<T>>(typeof(T).Name, data);
             }
         } 
-
-        private async Task BrowserStoragePost<T>(T entity) where T : class, ITableEntity
-        {
-            // Get current List of T
-            var data = await _localStore.GetItemAsync<List<T>>(typeof(T).Name);
-
-            if (data is not null)
-            {
-                // Remove entity from list
-                data.RemoveAll(o => o.RowKey == entity.RowKey);
-
-                // Add new entity to list
-                data.Add(entity);
-                
-                // Save new List to browser storage
-                await _localStore.SetItemAsync<List<T>>(typeof(T).Name, data);
-            }
-        }
-
-        private async Task BrowserStorageDelete<T>(string rowKey) where T : class, ITableEntity
-        {
-            // Get current List of T
-            var data = await _localStore.GetItemAsync<List<T>>(typeof(T).Name);
-
-            if (data is not null)
-            {
-                // Remove entity from list
-                data.RemoveAll(o => o.RowKey == rowKey);
-                
-                // Save new List to browser storage
-                await _localStore.SetItemAsync<List<T>>(typeof(T).Name, data);
-            }
-        }
-
-        private async Task<List<T>> ApiGet<T>(string path) where T : class, ITableEntity
-        {
-            var httpResponseMessage = await _httpClient.GetAsync($"{_options.ApiHost}/{path}");
-
-            List<T> response = [];
-
-            if (httpResponseMessage.IsSuccessStatusCode)
-            {
-                using var content = await httpResponseMessage.Content.ReadAsStreamAsync();
-                var result = await JsonSerializer.DeserializeAsync<IEnumerable<T>>(content, _jsonSerializerOptions);
-                if (result is not null)
-                {
-                    return result.ToList();
-                }
-            }
-
-            return response;
-        } 
-
-        private async Task ApiPost<T>(string path, T entity) where T : class, ITableEntity   
-        {
-            using HttpResponseMessage response = await _httpClient.PostAsJsonAsync(
-                $"{_options.ApiHost}/{path}", 
-                entity);
-
-            response.EnsureSuccessStatusCode();
-        }
-
-        private async Task ApiDelete(string path, string rowKey)   
-        {
-            using HttpResponseMessage response = await _httpClient.DeleteAsync($"{_options.ApiHost}/{path}?rowkey={rowKey}");
-
-            response.EnsureSuccessStatusCode();
-        }
-
-        private static string GetApiPath<T>()
-        {
-            var ty = typeof(T);
-            var apiPath = ty.ToString().Replace("STO.Models.", string.Empty);
-            return apiPath;
-        }
     }
 }

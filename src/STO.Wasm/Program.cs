@@ -60,6 +60,7 @@ public class Program
             });
 
         // Add custom services
+        builder.Services.AddSingleton<IApiService, ApiService>();
         builder.Services.AddSingleton<IDataService, DataService>();
         builder.Services.AddSingleton<IPlayerService, PlayerService>();
         builder.Services.AddSingleton<IGameService, GameService>();
@@ -78,7 +79,7 @@ public class Program
 
         // Initialise data
         var dataService = host.Services.GetRequiredService<IDataService>();
-        await dataService.LoadDataFromApi();
+        await dataService.LoadData();
 
         //await builder.Build().RunAsync();
         await host.RunAsync();

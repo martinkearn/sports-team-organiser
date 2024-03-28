@@ -30,6 +30,6 @@ namespace STO.Wasm.Interfaces
         /// <summary>
         /// Loads/Reloads the raw data from the API
         /// </summary>
-        public Task LoadDataFromApi();
+        public Task LoadData();
     }
 }

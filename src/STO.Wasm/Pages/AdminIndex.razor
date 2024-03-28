@@ -94,7 +94,7 @@
             claims = user.Claims;
         }
 
-        await DataService.LoadDataFromApi();
+        await DataService.LoadData();
         allPlayers = await DataService.QueryEntities<PlayerEntity>();
         allGames = await DataService.QueryEntities<GameEntity>();
         allTransactions = await DataService.QueryEntities<TransactionEntity>();

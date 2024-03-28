@@ -1,9 +1,9 @@
 namespace STO.Wasm.Services
 {
     /// <inheritdoc/>
-    public class GameService(IApiService storageService, IPlayerService playerService, ITransactionService transactionService) : IGameService
+    public class GameService(IDataService dataService, IPlayerService playerService, ITransactionService transactionService) : IGameService
     {
-        private readonly IApiService _storageService = storageService;
+        private readonly IDataService _dataService = dataService;
         private readonly IPlayerService _playerService = playerService;
 
         private readonly ITransactionService _transactionService = transactionService;
@@ -12,12 +12,12 @@ namespace STO.Wasm.Services
         {
             var game = await GetGame(gameRowKey);
 
-            // Delete Ratings - Cannot use RatingService due to circular dependecy so must use StorageService directly
-            var allRatingEntities = await _storageService.QueryEntities<RatingEntity>();
+            // Delete Ratings - Cannot use RatingService due to circular dependecy so must use dataService directly
+            var allRatingEntities = await _dataService.QueryEntities<RatingEntity>();
             var ratingsForGame = allRatingEntities.Where(o => o.GameRowKey == gameRowKey).ToList();
             foreach (var rating in ratingsForGame)
             {
-                await _storageService.DeleteEntity<RatingEntity>(rating.RowKey);
+                await _dataService.DeleteEntity<RatingEntity>(rating.RowKey);
             }
 
             // Delete PAGs
@@ -27,7 +27,7 @@ namespace STO.Wasm.Services
             }
 
             // Delete game
-            await _storageService.DeleteEntity<GameEntity>(gameRowKey);
+            await _dataService.DeleteEntity<GameEntity>(gameRowKey);
         }
 
         public async Task<List<Game>> GetGames(List<GameEntity> gameEntities)
@@ -37,14 +37,14 @@ namespace STO.Wasm.Services
 
         public async Task<List<Game>> GetGames()
         {
-            var gameEntitiesResult = await _storageService.QueryEntities<GameEntity>();
+            var gameEntitiesResult = await _dataService.QueryEntities<GameEntity>();
             var gameEntities = gameEntitiesResult.OrderByDescending(g => g.Date).ToList();
             return await GameEntitiesToGames(gameEntities);
         }
 
         public async Task<Game> GetGame(string gameRowKey)
         {
-            var gameEntitiesResult = await _storageService.QueryEntities<GameEntity>();
+            var gameEntitiesResult = await _dataService.QueryEntities<GameEntity>();
             var gameEntities = gameEntitiesResult.Where(g => g.RowKey == gameRowKey).ToList();
             var games = await GetGames(gameEntities);
             var matchingGame = games.FirstOrDefault();
@@ -62,7 +62,7 @@ namespace STO.Wasm.Services
 
         public async Task<Game> GetNextGame()
         {
-            var gameEntitiesResult = await _storageService.QueryEntities<GameEntity>();
+            var gameEntitiesResult = await _dataService.QueryEntities<GameEntity>();
             var gameEntities = gameEntitiesResult.Where(g => g.Date.Date > DateTime.UtcNow.Date).ToList();
             var games = await GetGames(gameEntities);
             var nextGame = games.FirstOrDefault();
@@ -78,12 +78,12 @@ namespace STO.Wasm.Services
 
         public async Task UpsertGameEntity(GameEntity gameEntity)
         {
-            _ = await _storageService.UpsertEntity<GameEntity>(gameEntity);
+            _ = await _dataService.UpsertEntity<GameEntity>(gameEntity);
         }
 
         public async Task<PlayerAtGame> GetPlayerAtGame(string pagRowKey)
         {
-            var pagEntityResult = await _storageService.QueryEntities<PlayerAtGameEntity>();
+            var pagEntityResult = await _dataService.QueryEntities<PlayerAtGameEntity>();
             var pagEntity = pagEntityResult.FirstOrDefault(o => o.RowKey == pagRowKey);
             if (pagEntity is not null)
             {
@@ -107,19 +107,19 @@ namespace STO.Wasm.Services
             var existingPag = game.PlayersAtGame.FirstOrDefault(p => p.Player.PlayerEntity.RowKey == pag.PlayerRowKey);
             if (existingPag == default)
             {
-                _ = await _storageService.UpsertEntity<PlayerAtGameEntity>(pag);
+                _ = await _dataService.UpsertEntity<PlayerAtGameEntity>(pag);
             }
             else
             {
                 pag.RowKey = existingPag.PlayerAtGameEntity.RowKey;
                 pag.PartitionKey = existingPag.PlayerAtGameEntity.PartitionKey;
-                _ = await _storageService.UpsertEntity<PlayerAtGameEntity>(pag);
+                _ = await _dataService.UpsertEntity<PlayerAtGameEntity>(pag);
             }
         }
 
         public async Task DeletePlayerAtGameEntity(PlayerAtGameEntity pag)
         {
-            await _storageService.DeleteEntity<PlayerAtGameEntity>(pag.RowKey);
+            await _dataService.DeleteEntity<PlayerAtGameEntity>(pag.RowKey);
         }
 
         public async Task<List<PlayerAtGame>> CalculateTeams(List<PlayerAtGame> pags)
@@ -217,7 +217,7 @@ namespace STO.Wasm.Services
             foreach (var ge in gameEntities)
             {
                 // Get entities from storage
-                var playersAtGameEntitiesResult = await _storageService.QueryEntities<PlayerAtGameEntity>();
+                var playersAtGameEntitiesResult = await _dataService.QueryEntities<PlayerAtGameEntity>();
                 var playersAtGameEntities = playersAtGameEntitiesResult.Where(pag => pag.GameRowKey == ge.RowKey);
 
                 // Calculate PlayerAtGame

@@ -5,7 +5,7 @@
 @using System.Security.Claims
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @using Azure.Data.Tables
-@inject IApiService StorageService
+@inject IDataService DataService
 
 <PageTitle>Tuesday.Football</PageTitle>
 
@@ -94,11 +94,11 @@
             claims = user.Claims;
         }
 
-        await StorageService.RefreshData();
-        allPlayers = await StorageService.QueryEntities<PlayerEntity>();
-        allGames = await StorageService.QueryEntities<GameEntity>();
-        allTransactions = await StorageService.QueryEntities<TransactionEntity>();
-        allPlayerAtGame = await StorageService.QueryEntities<PlayerAtGameEntity>();
-        allRatings = await StorageService.QueryEntities<RatingEntity>();
+        await DataService.RefreshData();
+        allPlayers = await DataService.QueryEntities<PlayerEntity>();
+        allGames = await DataService.QueryEntities<GameEntity>();
+        allTransactions = await DataService.QueryEntities<TransactionEntity>();
+        allPlayerAtGame = await DataService.QueryEntities<PlayerAtGameEntity>();
+        allRatings = await DataService.QueryEntities<RatingEntity>();
     }
 }

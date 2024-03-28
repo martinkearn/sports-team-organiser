@@ -1,15 +1,15 @@
 namespace STO.Wasm.Services
 {
     /// <inheritdoc/>
-    public class RatingService(IApiService storageService, IPlayerService playerService, IGameService gameService) : IRatingService
+    public class RatingService(IDataService dataService, IPlayerService playerService, IGameService gameService) : IRatingService
     {
-        private readonly IApiService _storageService = storageService;
+        private readonly IDataService _dataService = dataService;
         private readonly IPlayerService _playerService = playerService;
         private readonly IGameService _gameService = gameService;
 
         public async Task<List<Rating>> GetRatings()
         {
-            var entitiesResult = await _storageService.QueryEntities<RatingEntity>();
+            var entitiesResult = await _dataService.QueryEntities<RatingEntity>();
             var ratings = await RatingEntitiesToRatings(entitiesResult);
             return ratings;
         }
@@ -37,12 +37,12 @@ namespace STO.Wasm.Services
 
         public async Task DeleteRatingEntity(string rowKey)
         {
-            await _storageService.DeleteEntity<RatingEntity>(rowKey);
+            await _dataService.DeleteEntity<RatingEntity>(rowKey);
         }
 
         public async Task UpsertRatingEntity(RatingEntity ratingEntity)
         {
-            _ = await _storageService.UpsertEntity<RatingEntity>(ratingEntity);
+            _ = await _dataService.UpsertEntity<RatingEntity>(ratingEntity);
         }
 
         private async Task<List<Rating>> RatingEntitiesToRatings(List<RatingEntity> ratingEntities)

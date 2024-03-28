@@ -26,10 +26,5 @@ namespace STO.Api.Interfaces
         /// </summary>
         /// <returns>A list of entities of type T which match the query.</returns>
         public Task<List<T>> QueryEntities<T>() where T : class, ITableEntity;
-
-        /// <summary>
-        /// Refreshes cached data from storage.
-        /// </summary>
-        public Task RefreshData();
     }
 }

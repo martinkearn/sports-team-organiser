@@ -4,25 +4,19 @@ namespace STO.Api.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class HealthController : ControllerBase
+public class DataDetailsController : ControllerBase
 {
     private readonly ILogger<GameEntityController> _logger;
 
     private readonly IStorageService _storageService;
 
-    public HealthController(ILogger<GameEntityController> logger, IStorageService storageService)
+    public DataDetailsController(ILogger<GameEntityController> logger, IStorageService storageService)
     {
         _logger = logger;
         _storageService = storageService;
     }
 
-    [HttpPut(Name = "PutLatestData")]
-    public async Task Put()
-    {
-        await _storageService.RefreshData();
-    }
-
-    [HttpGet(Name = "GetDataDetails")]
+    [HttpGet(Name = "GetDataDetailsEntity")]
     public async Task<DataDetailsEntity> Get()
     {
         var dataDetailsEntity = await _storageService.QueryEntities<DataDetailsEntity>();

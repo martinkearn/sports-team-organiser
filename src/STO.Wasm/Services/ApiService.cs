@@ -9,24 +9,20 @@ namespace STO.Wasm.Services
     public class ApiService : IApiService
     {
         private readonly ApiConfiguration _options;
-        private List<PlayerEntity> _playerEntities = [];
-        private List<GameEntity> _gameEntities = [];
-        private List<TransactionEntity> _transactionEntities = [];
-        private List<PlayerAtGameEntity> _playerAtGameEntities = [];
-        private List<RatingEntity> _ratingEntities = [];
-        private bool _gotData = false;
+
+        private readonly ILocalStorageService _localStore;
 
         private JsonSerializerOptions _jsonSerializerOptions;
 
         private readonly HttpClient _httpClient;
 
-        public ApiService(IOptions<ApiConfiguration> storageConfigurationOptions, IHttpClientFactory httpClientFactory)
+        public ApiService(IOptions<ApiConfiguration> storageConfigurationOptions, IHttpClientFactory httpClientFactory, ILocalStorageService localStorageService)
         { 
             _options = storageConfigurationOptions.Value;
 
             _httpClient = httpClientFactory.CreateClient();
 
-            _gotData = false;
+            _localStore = localStorageService;
 
             _jsonSerializerOptions = new JsonSerializerOptions
             {
@@ -36,8 +32,6 @@ namespace STO.Wasm.Services
 
         public async Task DeleteEntity<T>(string rowKey) where T : class, ITableEntity
         {
-            if(!_gotData) await RefreshData();
-
             // Delete Entity
             var apiPath = GetApiPath<T>();
             await ApiDelete(apiPath, rowKey);
@@ -48,8 +42,6 @@ namespace STO.Wasm.Services
 
         public async Task<T> UpsertEntity<T>(T entity) where T : class, ITableEntity
         {
-            if(!_gotData) await RefreshData();
-
             // Complete required values
             if (entity.RowKey == default) entity.RowKey = Guid.NewGuid().ToString();
             if (entity.PartitionKey == default) entity.PartitionKey = typeof(T).ToString();
@@ -67,28 +59,12 @@ namespace STO.Wasm.Services
 
         public async Task<List<T>> QueryEntities<T>() where T : class, ITableEntity
         {
-            if(!_gotData) await RefreshData();
+            await EnsureBrowserData();
 
-            var ty = typeof(T);
-            if (ty == typeof(PlayerEntity))
+            var data = await _localStore.GetItemAsync<List<T>>(typeof(T).Name);
+            if (data is not null)
             {
-                return (List<T>)Convert.ChangeType(_playerEntities, typeof(List<T>));
-            }
-            else if (ty == typeof(GameEntity))
-            {
-                return (List<T>)Convert.ChangeType(_gameEntities, typeof(List<T>));
-            }
-            else if (ty == typeof(TransactionEntity))
-            {
-                return (List<T>)Convert.ChangeType(_transactionEntities, typeof(List<T>));
-            }
-            else if (ty == typeof(PlayerAtGameEntity))
-            {
-                return (List<T>)Convert.ChangeType(_playerAtGameEntities, typeof(List<T>));
-            }
-            else if (ty == typeof(RatingEntity))
-            {
-                return (List<T>)Convert.ChangeType(_ratingEntities, typeof(List<T>));
+                return (List<T>)Convert.ChangeType(data, typeof(List<T>));
             }
             else
             {
@@ -109,40 +85,25 @@ namespace STO.Wasm.Services
             var ratingTask =  RefreshEntitiesFromStorage<RatingEntity>();
 
             await Task.WhenAll(playerTask, gameTask, transactionTask, playerAtGameTask, ratingTask);
-            
-            _gotData = true;
         }
 
         private async Task RefreshEntitiesFromStorage<T>() where T : class, ITableEntity
         {
-            var ty = typeof(T);
             var apiPath = GetApiPath<T>();
-
-            if (ty == typeof(PlayerEntity))
-            {
-                _playerEntities = await ApiGet<PlayerEntity>(apiPath);
-            }
-
-            if (ty == typeof(GameEntity))
-            {
-                _gameEntities = await ApiGet<GameEntity>(apiPath);
-            }
-
-            if (ty == typeof(TransactionEntity))
-            {
-                _transactionEntities = await ApiGet<TransactionEntity>(apiPath);
-            }
-                        
-            if (ty == typeof(PlayerAtGameEntity))
-            {
-                _playerAtGameEntities = await ApiGet<PlayerAtGameEntity>(apiPath);
-            }
-
-            if (ty == typeof(RatingEntity))
-            {
-                _ratingEntities = await ApiGet<RatingEntity>(apiPath);
-            }
+            var data = await ApiGet<T>(apiPath);
+            await _localStore.SetItemAsync<List<T>>(typeof(T).Name, data);
         } 
+
+        private async Task EnsureBrowserData()
+        {
+            const string key = "DataRefreshed";
+            var gotData = await _localStore.GetItemAsStringAsync(key); 
+            if (gotData is null)
+            {
+                await RefreshData();
+                await _localStore.SetItemAsync(key, $"{DateTime.UtcNow}");
+            }
+        }
 
         private async Task<List<T>> ApiGet<T>(string path) where T : class, ITableEntity
         {

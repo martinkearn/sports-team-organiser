@@ -76,9 +76,6 @@ namespace STO.Wasm.Services
 
         public async Task RefreshData()
         {
-            // Ask API to refresh data
-            await ApiPut("health");
-            
             // Refresh caches
             var playerTask = RefreshEntitiesFromStorage<PlayerEntity>();
             var gameTask =  RefreshEntitiesFromStorage<GameEntity>();

@@ -69,9 +69,6 @@ public class Program
         // Add Blazored.LocalStorage
         builder.Services.AddBlazoredLocalStorageAsSingleton();
 
-        // Initialise data
-        
-
         builder.Services.AddCascadingAuthenticationState();
 
         Console.WriteLine($"Client Hosting Environment: {builder.HostEnvironment.Environment}");
@@ -79,6 +76,7 @@ public class Program
 
         var host = builder.Build();
 
+        // Initialise data
         var apiService = host.Services.GetRequiredService<IApiService>();
         await apiService.RefreshData();
 

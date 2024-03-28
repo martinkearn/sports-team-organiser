@@ -32,12 +32,12 @@ namespace STO.Wasm.Services
 
         public async Task DeleteEntity<T>(string rowKey) where T : class, ITableEntity
         {
-            // Delete Entity
-            var apiPath = GetApiPath<T>();
-            await ApiDelete(apiPath, rowKey);
+            // Delete entity in browser storage
+            await BrowserStorageDelete<T>(rowKey);
 
-            // Refresh data from storage
-            await RefreshEntitiesFromStorage<T>();
+            // Delete Entity in Api
+            var apiPath = GetApiPath<T>();
+            await Task.Run(() => ApiDelete(apiPath, rowKey));
         } 
 
         public async Task<T> UpsertEntity<T>(T entity) where T : class, ITableEntity
@@ -46,12 +46,12 @@ namespace STO.Wasm.Services
             if (entity.RowKey == default) entity.RowKey = Guid.NewGuid().ToString();
             if (entity.PartitionKey == default) entity.PartitionKey = typeof(T).ToString();
 
-            // Upsert entity
-            var apiPath = GetApiPath<T>();
-            await ApiPost<T>(apiPath, entity);
+            // Upsert entity in browser storage
+            await BrowserStoragePost<T>(entity);
 
-            // Refresh data from storage
-            await RefreshEntitiesFromStorage<T>();
+            // Upsert entity in Api
+            var apiPath = GetApiPath<T>();
+            await Task.Run(() => ApiPost<T>(apiPath, entity));
             
             // Return
             return entity;
@@ -59,7 +59,8 @@ namespace STO.Wasm.Services
 
         public async Task<List<T>> QueryEntities<T>() where T : class, ITableEntity
         {
-            await EnsureBrowserData();
+            // Only queries from browser storage
+            // TO DO need to check that cache is fresh and re-cache if not. By default, cache will load from Api when blazor app loads initially
 
             var data = await _localStore.GetItemAsync<List<T>>(typeof(T).Name);
             if (data is not null)
@@ -72,45 +73,59 @@ namespace STO.Wasm.Services
             }
         }   
 
-        public async Task RefreshData()
+        public async Task LoadDataFromApi()
         {
-            // Refresh caches
-            var playerTask = RefreshEntitiesFromStorage<PlayerEntity>();
-            var gameTask =  RefreshEntitiesFromStorage<GameEntity>();
-            var transactionTask =  RefreshEntitiesFromStorage<TransactionEntity>();
-            var playerAtGameTask =  RefreshEntitiesFromStorage<PlayerAtGameEntity>();
-            var ratingTask =  RefreshEntitiesFromStorage<RatingEntity>();
-            var dataDetailsTask =  RefreshEntitiesFromStorage<DataDetailsEntity>();
+            var playerTask = GetDataFromApi<PlayerEntity>();
+            var gameTask =  GetDataFromApi<GameEntity>();
+            var transactionTask =  GetDataFromApi<TransactionEntity>();
+            var playerAtGameTask =  GetDataFromApi<PlayerAtGameEntity>();
+            var ratingTask =  GetDataFromApi<RatingEntity>();
+            var dataDetailsTask =  GetDataFromApi<DataDetailsEntity>();
 
             await Task.WhenAll(playerTask, gameTask, transactionTask, playerAtGameTask, ratingTask, dataDetailsTask);
         }
 
-        private async Task RefreshEntitiesFromStorage<T>() where T : class, ITableEntity
+        private async Task GetDataFromApi<T>() where T : class, ITableEntity
         {
             var apiPath = GetApiPath<T>();
             var data = await ApiGet<T>(apiPath);
             if (data is not null)
             {
-                if (typeof(T) == typeof(DataDetailsEntity))
-                {
-                    await _localStore.SetItemAsync<T>(typeof(T).Name, data.FirstOrDefault());
-                }
-                else
-                {
-                    await _localStore.SetItemAsync<List<T>>(typeof(T).Name, data);
-                }
+                await _localStore.SetItemAsync<List<T>>(typeof(T).Name, data);
             }
         } 
 
-        private async Task EnsureBrowserData()
+        private async Task BrowserStoragePost<T>(T entity) where T : class, ITableEntity
         {
-/*             // TO DO - need something here to ensure we've got the latest data from the actual API
-            var gotData = await _localStore.GetItemAsStringAsync(DataRefreshedKey); 
-            if (gotData is null)
-            { */
-                await RefreshData();
-                //await _localStore.SetItemAsync(DataRefreshedKey, $"{DateTimeOffset.Now.ToUnixTimeSeconds()}");
-            //}
+            // Get current List of T
+            var data = await _localStore.GetItemAsync<List<T>>(typeof(T).Name);
+
+            if (data is not null)
+            {
+                // Remove entity from list
+                data.RemoveAll(o => o.RowKey == entity.RowKey);
+
+                // Add new entity to list
+                data.Add(entity);
+                
+                // Save new List to browser storage
+                await _localStore.SetItemAsync<List<T>>(typeof(T).Name, data);
+            }
+        }
+
+        private async Task BrowserStorageDelete<T>(string rowKey) where T : class, ITableEntity
+        {
+            // Get current List of T
+            var data = await _localStore.GetItemAsync<List<T>>(typeof(T).Name);
+
+            if (data is not null)
+            {
+                // Remove entity from list
+                data.RemoveAll(o => o.RowKey == rowKey);
+                
+                // Save new List to browser storage
+                await _localStore.SetItemAsync<List<T>>(typeof(T).Name, data);
+            }
         }
 
         private async Task<List<T>> ApiGet<T>(string path) where T : class, ITableEntity
@@ -144,13 +159,6 @@ namespace STO.Wasm.Services
         private async Task ApiDelete(string path, string rowKey)   
         {
             using HttpResponseMessage response = await _httpClient.DeleteAsync($"{_options.ApiHost}/{path}?rowkey={rowKey}");
-
-            response.EnsureSuccessStatusCode();
-        }
-
-        private async Task ApiPut(string path)   
-        {
-            using HttpResponseMessage response = await _httpClient.PutAsync($"{_options.ApiHost}/{path}", null);
 
             response.EnsureSuccessStatusCode();
         }

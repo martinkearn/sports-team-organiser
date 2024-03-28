@@ -78,7 +78,7 @@ public class Program
 
         // Initialise data
         var dataService = host.Services.GetRequiredService<IDataService>();
-        await dataService.RefreshData();
+        await dataService.LoadDataFromApi();
 
         //await builder.Build().RunAsync();
         await host.RunAsync();

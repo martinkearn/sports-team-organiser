@@ -28,8 +28,8 @@ namespace STO.Wasm.Interfaces
         public Task<List<T>> QueryEntities<T>() where T : class, ITableEntity;
 
         /// <summary>
-        /// Refreshes cached data from storage.
+        /// Loads/Reloads the raw data from the API
         /// </summary>
-        public Task RefreshData();
+        public Task LoadDataFromApi();
     }
 }

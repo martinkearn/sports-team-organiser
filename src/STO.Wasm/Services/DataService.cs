@@ -74,15 +74,39 @@ namespace STO.Wasm.Services
 
         public async Task LoadData()
         {
-            // TO DO need to check that cache is fresh and re-cache if not. By default, cache will load from Api when blazor app loads initially
+            if (_apiService is null)
+            {
+                throw new Exception();
+            }
+
+            if (_localStore is null)
+            {
+                throw new Exception();
+            }
+
+            // Check data freshness
+            //TO DO - this logic is not working. Doe snot load data if no data already exists
+            var apiDataDetailsEntities = await _apiService.ApiGet<DataDetailsEntity>();
+            DataDetailsEntity apiDataDetailsEntity = apiDataDetailsEntities.First();
+            var localStorageDataDetailsEntities = await _localStore.GetItemAsync<List<DataDetailsEntity>>(typeof(DataDetailsEntity).Name);
+            if (localStorageDataDetailsEntities is not null)
+            {
+                DataDetailsEntity localStorageDataDetailsEntity = localStorageDataDetailsEntities.First();
+
+                if (apiDataDetailsEntity.LastWriteEpoch > localStorageDataDetailsEntity?.LastWriteEpoch)
+                {
+                    return;
+                }
+            }
+
+            // Load all data
             var playerTask = GetDataFromApi<PlayerEntity>();
             var gameTask =  GetDataFromApi<GameEntity>();
             var transactionTask =  GetDataFromApi<TransactionEntity>();
             var playerAtGameTask =  GetDataFromApi<PlayerAtGameEntity>();
             var ratingTask =  GetDataFromApi<RatingEntity>();
-            var dataDetailsTask =  GetDataFromApi<DataDetailsEntity>();
 
-            await Task.WhenAll(playerTask, gameTask, transactionTask, playerAtGameTask, ratingTask, dataDetailsTask);
+            await Task.WhenAll(playerTask, gameTask, transactionTask, playerAtGameTask, ratingTask);
         }
 
         private async Task GetDataFromApi<T>() where T : class, ITableEntity

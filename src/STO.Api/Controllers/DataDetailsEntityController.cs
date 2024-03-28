@@ -17,9 +17,9 @@ public class DataDetailsEntityController : ControllerBase
     }
 
     [HttpGet(Name = "GetDataDetailsEntity")]
-    public async Task<DataDetailsEntity> Get()
+    public async Task<IEnumerable<DataDetailsEntity>> Get()
     {
         var dataDetailsEntity = await _storageService.QueryEntities<DataDetailsEntity>();
-        return dataDetailsEntity.FirstOrDefault();
+        return dataDetailsEntity;
     }
 }

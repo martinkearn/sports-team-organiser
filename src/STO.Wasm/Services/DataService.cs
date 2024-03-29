@@ -1,15 +1,10 @@
-using System.Text.Json;
 using Azure.Data.Tables;
-using Microsoft.Extensions.Options;
-using System.Net.Http.Json;
 
 namespace STO.Wasm.Services
 {
     /// <inheritdoc/>
-    public class DataService(IOptions<ApiConfiguration> storageConfigurationOptions, ILocalStorageService localStorageService, IApiService apiService) : IDataService
+    public class DataService(ILocalStorageService localStorageService, IApiService apiService) : IDataService
     {
-        private readonly ApiConfiguration _options = storageConfigurationOptions.Value;
-
         private readonly ILocalStorageService _localStore = localStorageService;
 
         private readonly IApiService _apiService = apiService;
@@ -25,7 +20,7 @@ namespace STO.Wasm.Services
                 data.RemoveAll(o => o.RowKey == rowKey);
                 
                 // Save new List to browser storage
-                await _localStore.SetItemAsync<List<T>>(typeof(T).Name, data);
+                await _localStore.SetItemAsync(typeof(T).Name, data);
             }
 
             // Delete Entity in Api
@@ -49,7 +44,7 @@ namespace STO.Wasm.Services
                 data.Add(entity);
                 
                 // Save new List to browser storage
-                await _localStore.SetItemAsync<List<T>>(typeof(T).Name, data);
+                await _localStore.SetItemAsync(typeof(T).Name, data);
             }
 
             // Upsert entity in Api
@@ -93,7 +88,7 @@ namespace STO.Wasm.Services
             {
                 DataDetailsEntity localStorageDataDetailsEntity = localStorageDataDetailsEntities.First();
 
-                if (apiDataDetailsEntity.LastWriteEpoch > localStorageDataDetailsEntity?.LastWriteEpoch)
+                if (apiDataDetailsEntity.LastWriteEpoch == localStorageDataDetailsEntity?.LastWriteEpoch)
                 {
                     return;
                 }
@@ -105,8 +100,9 @@ namespace STO.Wasm.Services
             var transactionTask =  GetDataFromApi<TransactionEntity>();
             var playerAtGameTask =  GetDataFromApi<PlayerAtGameEntity>();
             var ratingTask =  GetDataFromApi<RatingEntity>();
+            var dataDetailsTask = GetDataFromApi<DataDetailsEntity>();
 
-            await Task.WhenAll(playerTask, gameTask, transactionTask, playerAtGameTask, ratingTask);
+            await Task.WhenAll(playerTask, gameTask, transactionTask, playerAtGameTask, ratingTask, dataDetailsTask);
         }
 
         private async Task GetDataFromApi<T>() where T : class, ITableEntity
@@ -114,7 +110,7 @@ namespace STO.Wasm.Services
             var data = await _apiService.ApiGet<T>();
             if (data is not null)
             {
-                await _localStore.SetItemAsync<List<T>>(typeof(T).Name, data);
+                await _localStore.SetItemAsync(typeof(T).Name, data);
             }
         } 
     }

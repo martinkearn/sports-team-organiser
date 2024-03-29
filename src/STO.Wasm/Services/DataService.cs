@@ -79,23 +79,25 @@ namespace STO.Wasm.Services
                 throw new Exception();
             }
 
-            // Check data freshness
-            //TO DO - this logic is not working. Doe snot load data if no data already exists
-            var apiDataDetailsEntities = await _apiService.ApiGet<DataDetailsEntity>();
-            DataDetailsEntity apiDataDetailsEntity = apiDataDetailsEntities.First();
-            var localStorageDataDetailsEntities = await _localStore.GetItemAsync<List<DataDetailsEntity>>(typeof(DataDetailsEntity).Name);
-            if (localStorageDataDetailsEntities is not null)
-            {
-                DataDetailsEntity localStorageDataDetailsEntity = localStorageDataDetailsEntities.First();
+			// Look for reasons not to load data from API
+			var apiDataDetailsEntities = await _apiService.ApiGet<DataDetailsEntity>();
+			if (apiDataDetailsEntities?.Count > 0)
+			{
+				var apiDataDetailsEntity = apiDataDetailsEntities.First();
+				var localStorageDataDetailsEntities = await _localStore.GetItemAsync<List<DataDetailsEntity>>(typeof(DataDetailsEntity).Name);
+				if (localStorageDataDetailsEntities?.Count > 0)
+				{
+					var localStorageDataDetailsEntity = localStorageDataDetailsEntities.First();
+					if (apiDataDetailsEntity.LastWriteEpoch == localStorageDataDetailsEntity?.LastWriteEpoch)
+					{
+						return;
+					}
+				}
+			}
 
-                if (apiDataDetailsEntity.LastWriteEpoch == localStorageDataDetailsEntity?.LastWriteEpoch)
-                {
-                    return;
-                }
-            }
 
-            // Load all data
-            var playerTask = GetDataFromApi<PlayerEntity>();
+			// Load all data
+			var playerTask = GetDataFromApi<PlayerEntity>();
             var gameTask =  GetDataFromApi<GameEntity>();
             var transactionTask =  GetDataFromApi<TransactionEntity>();
             var playerAtGameTask =  GetDataFromApi<PlayerAtGameEntity>();

@@ -46,17 +46,17 @@
 }
 
 @code {
-	[Parameter]
-	public string TransactionRowKey { get; set; } = default!;
+    [Parameter]
+    public string TransactionRowKey { get; set; } = default!;
 
-	private Transaction transaction = default!;
+    private Transaction transaction = default!;
 
-	private string pageTitle = default!;
+    private string pageTitle = default!;
 
-	private bool dataReady = false;
+    private bool dataReady = false;
 
-	protected override async Task OnInitializedAsync()
-	{
+    protected override async Task OnInitializedAsync()
+    {
 		await RefreshData();
 	}
 

@@ -7,98 +7,104 @@
 @using Azure.Data.Tables
 @inject IDataService DataService
 
-<PageTitle>Tuesday.Football</PageTitle>
+@if (dataReady)
+{
+	<PageTitle>Tuesday.Football</PageTitle>
 
-<h1>Tuesday.Football Admin Portal</h1>
+	<h1>Tuesday.Football Admin Portal</h1>
 
-<p><a href="/browserstorage">Browser Storage</a></p>
+	<AuthorizeView Policy="IsAdminEmail">
+		<Authorized>
 
-<AuthorizeView Policy="IsAdminEmail">
-    <Authorized>
+			<h2>Config</h2>
+			<p>SettingsFile: <b>@Configuration["SettingsFile"]</b></p>
 
-        <h2>Config</h2>
-        <p>SettingsFile: <b>@Configuration["SettingsFile"]</b></p>
+			<p>StorageConfiguration:ApiHost: <b>@Configuration["StorageConfiguration:ApiHost"]</b></p>
 
-        <p>StorageConfiguration:ApiHost: <b>@Configuration["StorageConfiguration:ApiHost"]</b></p>
+			<p>AzureAdB2C:ClientId: <b>@Configuration["AzureAdB2C:ClientId"]</b></p>
 
-        <p>AzureAdB2C:ClientId: <b>@Configuration["AzureAdB2C:ClientId"]</b></p>
+			<p>AzureAdB2C:Authority: <b>@Configuration["AzureAdB2C:Authority"]</b></p>
 
-        <p>AzureAdB2C:Authority: <b>@Configuration["AzureAdB2C:Authority"]</b></p>
+			<p>Environment: <b>@Env.Environment</b></p>
 
-        <p>Environment: <b>@Env.Environment</b></p>
+			<p>Authnetication state: <b>@context.User.Identity?.Name</b></p>
 
-        <p>Authnetication state: <b>@context.User.Identity?.Name</b></p>
+			<p>IsAdminEmail?: <b>Yes</b></p>
 
-        <p>IsAdminEmail?: <b>Yes</b></p>
+			<p>Claims</p>
+			@if (claims.Count() > 0)
+			{
+				<ul>
+					@foreach (var claim in claims)
+					{
+						<li>@claim.Type: @claim.Value</li>
+					}
+				</ul>
+			}
 
-        <p>Claims</p>
-        @if (claims.Count() > 0)
-        {
-            <ul>
-                @foreach (var claim in claims)
-                {
-                    <li>@claim.Type: @claim.Value</li>
-                }
-            </ul>
-        }
+			<h2>Data</h2>
+			<button class="btn btn-primary" @onclick="RefreshData">Refresh Data</button>
+			@foreach (var p in allPlayers)
+			{
+				<p><a href="/players/@p.RowKey/player">Player, @p.RowKey, @p.Name</a></p>
+			}
+			@foreach (var g in allGames)
+			{
+				<p><a href="/games/@g.RowKey">Game, @g.RowKey, @g.Date</a></p>
+			}
+			@foreach (var t in allTransactions)
+			{
+				<p><a href="/transactions/@t.RowKey">Transaction, @t.RowKey, @t.Date, @t.Amount</a></p>
+			}
+			@foreach (var pag in allPlayerAtGame)
+			{
+				<p><a href="/pags/@pag.RowKey">PlayerAtGame, @pag.RowKey, @pag.PlayerRowKey, @pag.GameRowKey</a></p>
+			}
+			@foreach (var r in allRatings)
+			{
+				<p><a href="/ratings/@r.RowKey">Rating, @r.RowKey, @r.PlayerRowKey, @r.GameRowKey, @r.Rating</a></p>
+			}
 
-        <h2>Data</h2>
-        <button class="btn btn-primary" @onclick="RefreshData">Refresh Data</button>
-        @foreach (var p in allPlayers)
-        {
-            <p><a href="/players/@p.RowKey/player">Player, @p.RowKey, @p.Name</a></p>
-        }        
-        @foreach (var g in allGames)
-        {
-            <p><a href="/games/@g.RowKey">Game, @g.RowKey, @g.Date</a></p>
-        }        
-        @foreach (var t in allTransactions)
-        {
-            <p><a href="/transactions/@t.RowKey">Transaction, @t.RowKey, @t.Date, @t.Amount</a></p>
-        }        
-        @foreach (var pag in allPlayerAtGame)
-        {
-            <p><a href="/pags/@pag.RowKey">PlayerAtGame, @pag.RowKey, @pag.PlayerRowKey, @pag.GameRowKey</a></p>
-        }
-        @foreach (var r in allRatings)
-        {
-            <p><a href="/ratings/@r.RowKey">Rating, @r.RowKey, @r.PlayerRowKey, @r.GameRowKey, @r.Rating</a></p>
-        }
+			<BootstrapBreakpoints />
+		</Authorized>
+		<NotAuthorized>
+			<h4>Access Denied!</h4>
+			<a class="btn btn-primary" href="authentication/login"><i class="fa-solid fa-key me-2"></i> Log in</a>
+		</NotAuthorized>
+	</AuthorizeView>
 
-        <BootstrapBreakpoints />
-    </Authorized>
-    <NotAuthorized>
-        <h4>Access Denied!</h4>
-    </NotAuthorized>
-</AuthorizeView>
+}
 
 @code {
-    private List<PlayerEntity> allPlayers = new();
-    private List<GameEntity> allGames = new();
-    private List<TransactionEntity> allTransactions = new();
-    private List<PlayerAtGameEntity> allPlayerAtGame = new();
-    private List<RatingEntity> allRatings = new();
-    private IEnumerable<Claim> claims = Enumerable.Empty<Claim>();       
+	private List<PlayerEntity> allPlayers = new();
+	private List<GameEntity> allGames = new();
+	private List<TransactionEntity> allTransactions = new();
+	private List<PlayerAtGameEntity> allPlayerAtGame = new();
+	private List<RatingEntity> allRatings = new();
+	private IEnumerable<Claim> claims = Enumerable.Empty<Claim>();
+	private bool dataReady = false;
 
-    protected override async Task OnInitializedAsync()
-    {
-        await RefreshData();
-    }
+	protected override async Task OnInitializedAsync()
+	{
+		await RefreshData();
+	}
 
-    private async Task RefreshData()
-    {
-        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-        var user = authState.User;
-        if (user.Identity is not null && user.Identity.IsAuthenticated)
-        {
-            claims = user.Claims;
-        }
+	private async Task RefreshData()
+	{
+		var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+		var user = authState.User;
+		if (user.Identity is not null && user.Identity.IsAuthenticated)
+		{
+			claims = user.Claims;
+		}
 
-        await DataService.LoadData();
-        allPlayers = await DataService.QueryEntities<PlayerEntity>();
-        allGames = await DataService.QueryEntities<GameEntity>();
-        allTransactions = await DataService.QueryEntities<TransactionEntity>();
-        allPlayerAtGame = await DataService.QueryEntities<PlayerAtGameEntity>();
-        allRatings = await DataService.QueryEntities<RatingEntity>();
-    }
+		await DataService.LoadData();
+		allPlayers = await DataService.QueryEntities<PlayerEntity>();
+		allGames = await DataService.QueryEntities<GameEntity>();
+		allTransactions = await DataService.QueryEntities<TransactionEntity>();
+		allPlayerAtGame = await DataService.QueryEntities<PlayerAtGameEntity>();
+		allRatings = await DataService.QueryEntities<RatingEntity>();
+
+		dataReady = true;
+	}
 }

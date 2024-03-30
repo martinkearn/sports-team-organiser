@@ -4,78 +4,85 @@
 @inject ITransactionService TransactionService
 @inject NavigationManager Navigation
 
-<PageTitle>TNF - @pageTitle</PageTitle>
+@if (dataReady)
+{
+	<PageTitle>TNF - @pageTitle</PageTitle>
 
-<h1><i class="fa-solid fa-user me-2"></i> @pageTitle</h1>
+	<h1><i class="fa-solid fa-user me-2"></i> @pageTitle</h1>
 
-<AuthorizeView Policy="IsAdminEmail">
-    <Authorized>
-        <ul class="nav nav-tabs">
-            <li class="nav-item">
-                <a class="nav-link" @onclick="SwitchTabPlayer">Player</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link active">Transactions</a>
-            </li>
-        </ul>
+	<AuthorizeView Policy="IsAdminEmail">
+		<Authorized>
+			<ul class="nav nav-tabs">
+				<li class="nav-item">
+					<a class="nav-link" @onclick="SwitchTabPlayer">Player</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link active">Transactions</a>
+				</li>
+			</ul>
 
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th scope="col">Date</th>
-                    <th scope="col">Amount</th>
-                    <th scope="col" class="d-none d-lg-table-cell">Notes</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var transactionEntity in player.Transactions)
-                {
-                    <tr>
-                        <td><a href="/transactions/@transactionEntity.RowKey">@transactionEntity.Date.ToString("dd MMM yyyy HH:mm")</a></td>
-                        <td><CurrencyDisplay Amount="@transactionEntity.Amount" /></td>
-                        <td class="d-none d-lg-table-cell">@transactionEntity.Notes</td>
-                    </tr>
-                }
-            </tbody>
-        </table>
+			<table class="table table-striped">
+				<thead>
+					<tr>
+						<th scope="col">Date</th>
+						<th scope="col">Amount</th>
+						<th scope="col" class="d-none d-lg-table-cell">Notes</th>
+					</tr>
+				</thead>
+				<tbody>
+					@foreach (var transactionEntity in player.Transactions)
+					{
+						<tr>
+							<td><a href="/transactions/@transactionEntity.RowKey">@transactionEntity.Date.ToString("dd MMM yyyy HH:mm")</a></td>
+							<td><CurrencyDisplay Amount="@transactionEntity.Amount" /></td>
+							<td class="d-none d-lg-table-cell">@transactionEntity.Notes</td>
+						</tr>
+					}
+				</tbody>
+			</table>
 
-        <div class="modal-footer">
-            <a class="btn btn-primary" href="/players/"><i class="fa-solid fa-arrow-left"></i> All Players</a>
-            <DeleteButtonWithCheck DeleteWhatLabel="@deleteAllLabel" ButtonLabel="Delete all transactions" ParentPageCallback="DeleteTransactionsForPlayer" />
-        </div>
-    </Authorized>
-    <NotAuthorized>
-        <h4>Access Denied!</h4>
-    </NotAuthorized>
-</AuthorizeView>
+			<div class="modal-footer">
+				<a class="btn btn-primary" href="/players/"><i class="fa-solid fa-arrow-left"></i> All Players</a>
+				<DeleteButtonWithCheck DeleteWhatLabel="@deleteAllLabel" ButtonLabel="Delete all transactions" ParentPageCallback="DeleteTransactionsForPlayer" />
+			</div>
+		</Authorized>
+		<NotAuthorized>
+			<h4>Access Denied!</h4>
+			<a class="btn btn-primary" href="authentication/login"><i class="fa-solid fa-key me-2"></i> Log in</a>
+		</NotAuthorized>
+	</AuthorizeView>
+}
 
 @code {
-    [Parameter]
-    public string PlayerRowKey { get; set; } = default!;
+	[Parameter]
+	public string PlayerRowKey { get; set; } = default!;
 
-    private Player player = default!;
+	private Player player = default!;
 
-    private string pageTitle = default!;
+	private string pageTitle = default!;
 
-    private string deleteAllLabel = default!;
+	private string deleteAllLabel = default!;
 
-    protected override async Task OnInitializedAsync()
-    {
-        await RefreshData();
-    }
+	private bool dataReady = false;
 
-    private async Task RefreshData()
-    {
-        player = await PlayerService.GetPlayer(PlayerRowKey);
-        deleteAllLabel = $"All transactions for {player.PlayerEntity.Name}";
-        pageTitle = $"{player.PlayerEntity.Name}";
-    }
+	protected override async Task OnInitializedAsync()
+	{
+		await RefreshData();
+	}
 
-    private async Task DeleteTransactionsForPlayer()
-    {
-        await TransactionService.DeleteTransactionEntiesForPlayer(PlayerRowKey);
-        Navigation.NavigateTo("/players");
-    }
+	private async Task DeleteTransactionsForPlayer()
+	{
+		await TransactionService.DeleteTransactionEntiesForPlayer(PlayerRowKey);
+		Navigation.NavigateTo("/players");
+	}
 
-    private void SwitchTabPlayer() => Navigation.NavigateTo($"/players/{@PlayerRowKey}/player");
+	private void SwitchTabPlayer() => Navigation.NavigateTo($"/players/{@PlayerRowKey}/player");
+
+	private async Task RefreshData()
+	{
+		player = await PlayerService.GetPlayer(PlayerRowKey);
+		deleteAllLabel = $"All transactions for {player.PlayerEntity.Name}";
+		pageTitle = $"{player.PlayerEntity.Name}";
+		dataReady = true;
+	}
 }

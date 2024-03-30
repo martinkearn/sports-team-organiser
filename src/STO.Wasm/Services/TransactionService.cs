@@ -1,9 +1,9 @@
 namespace STO.Wasm.Services
 {
     /// <inheritdoc/>
-    public class TransactionService(IApiService storageService, IPlayerService playerService) : ITransactionService
+    public class TransactionService(IDataService dataService, IPlayerService playerService) : ITransactionService
     {
-        private readonly IApiService _storageService = storageService;
+        private readonly IDataService _dataService = dataService;
         private readonly IPlayerService _playerService = playerService;
 
         public async Task<List<Transaction>> GetTransactions(List<TransactionEntity> transactionEntities)
@@ -13,13 +13,13 @@ namespace STO.Wasm.Services
 
         public async Task<List<Transaction>> GetTransactions()
         {
-            var TransactionEntitiesResult = await _storageService.QueryEntities<TransactionEntity>();
+            var TransactionEntitiesResult = await _dataService.QueryEntities<TransactionEntity>();
             return await TransactionEntitiesToTransactions(TransactionEntitiesResult);
         }
 
         public async Task DeleteTransactionEntity(string rowKey)
         {
-            await _storageService.DeleteEntity<TransactionEntity>(rowKey);
+            await _dataService.DeleteEntity<TransactionEntity>(rowKey);
         }
 
         public async Task DeleteTransactionEntiesForPlayer(string playerRowKey)
@@ -35,7 +35,7 @@ namespace STO.Wasm.Services
 
         public async Task<Transaction> GetTransaction(string rowKey)
         {
-            var transactionEntitiesResult = await _storageService.QueryEntities<TransactionEntity>();
+            var transactionEntitiesResult = await _dataService.QueryEntities<TransactionEntity>();
             var transactionEntities = transactionEntitiesResult.Where(o => o.RowKey == rowKey).ToList();
             var transactionsResult = await TransactionEntitiesToTransactions(transactionEntities);
             var matchingTransaction = transactionsResult.FirstOrDefault();
@@ -52,12 +52,12 @@ namespace STO.Wasm.Services
 
         public async Task UpsertTransactionEntity(TransactionEntity transactionEntity)
         {
-            await _storageService.UpsertEntity<TransactionEntity>(transactionEntity);
+            await _dataService.UpsertEntity<TransactionEntity>(transactionEntity);
         }
 
         public async Task<string> GetNotesForGame(string gameRowKey)
         {
-            var gameEntityResult = await _storageService.QueryEntities<GameEntity>();
+            var gameEntityResult = await _dataService.QueryEntities<GameEntity>();
             var gameEntity = gameEntityResult.Where(o => o.RowKey == gameRowKey).FirstOrDefault();
             if (gameEntity is not null) 
             {

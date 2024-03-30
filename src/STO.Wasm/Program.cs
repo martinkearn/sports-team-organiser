@@ -2,10 +2,10 @@ global using STO.Models;
 global using STO.Wasm.Services;
 global using STO.Wasm.Models;
 global using STO.Wasm.Interfaces;
+global using Blazored.LocalStorage;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
-
 
 namespace STO.Wasm;
 
@@ -61,15 +61,27 @@ public class Program
 
         // Add custom services
         builder.Services.AddSingleton<IApiService, ApiService>();
+        builder.Services.AddSingleton<IDataService, DataService>();
         builder.Services.AddSingleton<IPlayerService, PlayerService>();
         builder.Services.AddSingleton<IGameService, GameService>();
         builder.Services.AddSingleton<ITransactionService, TransactionService>();
         builder.Services.AddSingleton<IRatingService, RatingService>();
 
+        // Add Blazored.LocalStorage
+        builder.Services.AddBlazoredLocalStorageAsSingleton();
+
         builder.Services.AddCascadingAuthenticationState();
 
         Console.WriteLine($"Client Hosting Environment: {builder.HostEnvironment.Environment}");
 
-        await builder.Build().RunAsync();
+
+        var host = builder.Build();
+
+        // Initialise data
+        var dataService = host.Services.GetRequiredService<IDataService>();
+        await dataService.LoadData();
+
+        //await builder.Build().RunAsync();
+        await host.RunAsync();
     }
 }

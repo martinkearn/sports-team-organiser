@@ -1,11 +1,11 @@
 using Azure.Data.Tables;
 
-namespace STO.Api.Interfaces
+namespace STO.Wasm.Interfaces
 {
     /// <summary>
     /// Service for working with Azure Storage.
     /// </summary>
-    public interface IStorageService
+    public interface IDataService
     {
         /// <summary>
         /// Adds or Updates an entity. Updates if rowkey is present, adds if not.
@@ -26,5 +26,10 @@ namespace STO.Api.Interfaces
         /// </summary>
         /// <returns>A list of entities of type T which match the query.</returns>
         public Task<List<T>> QueryEntities<T>() where T : class, ITableEntity;
+
+        /// <summary>
+        /// Loads/Reloads the raw data from the API
+        /// </summary>
+        public Task LoadData();
     }
 }

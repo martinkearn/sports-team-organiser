@@ -3,66 +3,71 @@
 @inject IGameService GameService
 @inject NavigationManager Navigation
 
-<PageTitle>Add Player to Game</PageTitle>
+@if (dataReady)
+{
+    <PageTitle>Add Player to Game</PageTitle>
 
-<h1><i class="fa-solid fa-people-group me-2"></i> Add Player to Game</h1>
+    <h1><i class="fa-solid fa-people-group me-2"></i> Add Player to Game</h1>
 
-<EditForm Model="@newPagEntity" OnValidSubmit="AddPagEntity" Context="NewPagEntity">
-    <DataAnnotationsValidator />
-    <ValidationSummary />
+    <EditForm Model="@newPagEntity" OnValidSubmit="AddPagEntity" Context="NewPagEntity">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
 
-    <div class="mb-3">
-        <label for="addPlayerRowKey" class="form-label">Player</label>
-        <InputSelect class="form-select" @bind-Value="newPagEntity.PlayerRowKey">
-            <option value="">Select Player ...</option>
-            @foreach (var player in players)
-            {
-                <option value="@player.PlayerEntity.RowKey">@player.PlayerEntity.Name</option>
-            }
-        </InputSelect>
-    </div>
-
-    @if (nextGame is not null)
-    {
-        <p>Next game is <GameTitle Game="@nextGame" /></p>
-    }
-    else
-    {
-        <p>No future games avaliable.</p>
-    }
-
-    <div class="mb-3">
-        <label for="addGameRowKey" class="form-label">Game</label>
-        <InputSelect class="form-select" @bind-Value="newPagEntity.GameRowKey">
-            <option value="">Select Game ...</option>
-            @foreach (var game in games)
-            {
-                var gameRowKey = game?.GameEntity?.RowKey;
-                if (gameRowKey == nextGame?.GameEntity?.RowKey)
+        <div class="mb-3">
+            <label for="addPlayerRowKey" class="form-label">Player</label>
+            <InputSelect class="form-select" @bind-Value="newPagEntity.PlayerRowKey">
+                <option value="">Select Player ...</option>
+                @foreach (var player in players)
                 {
-                    <option value="@gameRowKey"><GameTitle Game="@game" Link="false" /></option>
+                    <option value="@player.PlayerEntity.RowKey">@player.PlayerEntity.Name</option>
                 }
-                else
-                {
-                    <option value="@gameRowKey"><GameTitle Game="@game" Link="false" /></option>
-                }
-            }
-        </InputSelect>
-    </div>
+            </InputSelect>
+        </div>
 
-    <div class="modal-footer">
-        <button type="submit" class="btn btn-primary"><i class="fa-solid fa-plus"></i> Add Player</button>
-    </div>
-</EditForm>
+        @if (nextGame is not null)
+        {
+            <p>Next game is <GameTitle Game="@nextGame" /></p>
+        }
+        else
+        {
+            <p>No future games avaliable.</p>
+        }
+
+        <div class="mb-3">
+            <label for="addGameRowKey" class="form-label">Game</label>
+            <InputSelect class="form-select" @bind-Value="newPagEntity.GameRowKey">
+                <option value="">Select Game ...</option>
+                @foreach (var game in games)
+                {
+                    var gameRowKey = game?.GameEntity?.RowKey;
+                    if (gameRowKey == nextGame?.GameEntity?.RowKey)
+                    {
+                        <option value="@gameRowKey"><GameTitle Game="@game" Link="false" /></option>
+                    }
+                    else
+                    {
+                        <option value="@gameRowKey"><GameTitle Game="@game" Link="false" /></option>
+                    }
+                }
+            </InputSelect>
+        </div>
+
+        <div class="modal-footer">
+            <button type="submit" class="btn btn-primary"><i class="fa-solid fa-plus"></i> Add Player</button>
+        </div>
+    </EditForm>
+}
 
 @code {
     private List<Game> games = new();
 
     private List<Player> players = new();
 
-    private PlayerAtGameEntity newPagEntity = default!;
+    private PlayerAtGameEntity newPagEntity = new();
 
     private Game nextGame = default!;
+
+    private bool dataReady = false;
 
     protected override async Task OnInitializedAsync()
     {
@@ -88,5 +93,7 @@
             Forecast = PlayingOptions.Yes.ToString(),
             GameRowKey = nextGame.GameEntity.RowKey,
         };
+
+        dataReady = true;
     }
 }

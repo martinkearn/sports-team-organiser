@@ -2,118 +2,121 @@ using Azure.Data.Tables;
 
 namespace STO.Wasm.Services
 {
-    /// <inheritdoc/>
-    public class DataService(ILocalStorageService localStorageService, IApiService apiService) : IDataService
-    {
-        private readonly ILocalStorageService _localStore = localStorageService;
+	/// <inheritdoc/>
+	public class DataService(IApiService apiService) : IDataService
+	{
+		private List<PlayerEntity> _playerEntities = [];
+		private List<GameEntity> _gameEntities = [];
+		private List<TransactionEntity> _transactionEntities = [];
+		private List<PlayerAtGameEntity> _playerAtGameEntities = [];
+		private List<RatingEntity> _ratingEntities = [];
+		private bool _gotData = false;
 
-        private readonly IApiService _apiService = apiService;
+		private readonly IApiService _apiService = apiService;
 
-        public async Task DeleteEntity<T>(string rowKey) where T : class, ITableEntity
-        {
-            // Delete entity in browser storage
-            var data = await _localStore.GetItemAsync<List<T>>(typeof(T).Name);
+		public async Task DeleteEntity<T>(string rowKey) where T : class, ITableEntity
+		{
+			if (!_gotData) await LoadData();
 
-            if (data is not null)
-            {
-                // Remove entity from list
-                data.RemoveAll(o => o.RowKey == rowKey);
-                
-                // Save new List to browser storage
-                await _localStore.SetItemAsync(typeof(T).Name, data);
-            }
+			// Delete Entity
+			await _apiService.ApiDelete<T>(rowKey);
 
-            // Delete Entity in Api
-            await Task.Run(() => _apiService.ApiDelete<T>(rowKey));
-        } 
+			// Refresh data from storage
+			await RefreshEntitiesFromStorage<T>();
+		}
 
-        public async Task<T> UpsertEntity<T>(T entity) where T : class, ITableEntity
-        {
-            // Complete required values
-            if (entity.RowKey == default) entity.RowKey = Guid.NewGuid().ToString();
-            if (entity.PartitionKey == default) entity.PartitionKey = typeof(T).ToString();
+		public async Task<T> UpsertEntity<T>(T entity) where T : class, ITableEntity
+		{
+			if (!_gotData) await LoadData();
 
-            // Upsert entity in browser storage
-            var data = await _localStore.GetItemAsync<List<T>>(typeof(T).Name);
-            if (data is not null)
-            {
-                // Remove entity from list
-                data.RemoveAll(o => o.RowKey == entity.RowKey);
+			// Complete required values
+			if (entity.RowKey == default) entity.RowKey = Guid.NewGuid().ToString();
+			if (entity.PartitionKey == default) entity.PartitionKey = typeof(T).ToString();
 
-                // Add new entity to list
-                data.Add(entity);
-                
-                // Save new List to browser storage
-                await _localStore.SetItemAsync(typeof(T).Name, data);
-            }
+			// Upsert entity
+			await _apiService.ApiPost<T>(entity);
 
-            // Upsert entity in Api
-            await Task.Run(() => _apiService.ApiPost<T>(entity));
-            
-            // Return
-            return entity;
-        } 
+			// Refresh data from storage
+			await RefreshEntitiesFromStorage<T>();
 
-        public async Task<List<T>> QueryEntities<T>() where T : class, ITableEntity
-        {
-            var data = await _localStore.GetItemAsync<List<T>>(typeof(T).Name);
-            if (data is not null)
-            {
-                return (List<T>)Convert.ChangeType(data, typeof(List<T>));
-            }
-            else
-            {
-                return [];
-            }
-        }   
+			// Return
+			return entity;
+		}
 
-        public async Task LoadData()
-        {
-            if (_apiService is null)
-            {
-                throw new Exception();
-            }
+		public async Task<List<T>> QueryEntities<T>() where T : class, ITableEntity
+		{
+			if (!_gotData) await LoadData();
 
-            if (_localStore is null)
-            {
-                throw new Exception();
-            }
-
-			// Look for reasons not to load data from API
-			var apiDataDetailsEntities = await _apiService.ApiGet<DataDetailsEntity>();
-			if (apiDataDetailsEntities?.Count > 0)
+			var ty = typeof(T);
+			if (ty == typeof(PlayerEntity))
 			{
-				var apiDataDetailsEntity = apiDataDetailsEntities.First();
-				var localStorageDataDetailsEntities = await _localStore.GetItemAsync<List<DataDetailsEntity>>(typeof(DataDetailsEntity).Name);
-				if (localStorageDataDetailsEntities?.Count > 0)
-				{
-					var localStorageDataDetailsEntity = localStorageDataDetailsEntities.First();
-					if (apiDataDetailsEntity.LastWriteEpoch == localStorageDataDetailsEntity?.LastWriteEpoch)
-					{
-						return;
-					}
-				}
+				return (List<T>)Convert.ChangeType(_playerEntities, typeof(List<T>));
+			}
+			else if (ty == typeof(GameEntity))
+			{
+				return (List<T>)Convert.ChangeType(_gameEntities, typeof(List<T>));
+			}
+			else if (ty == typeof(TransactionEntity))
+			{
+				return (List<T>)Convert.ChangeType(_transactionEntities, typeof(List<T>));
+			}
+			else if (ty == typeof(PlayerAtGameEntity))
+			{
+				return (List<T>)Convert.ChangeType(_playerAtGameEntities, typeof(List<T>));
+			}
+			else if (ty == typeof(RatingEntity))
+			{
+				return (List<T>)Convert.ChangeType(_ratingEntities, typeof(List<T>));
+			}
+			else
+			{
+				return [];
+			}
+		}
+
+		public async Task LoadData()
+		{
+			// Refresh caches
+			var playerTask = RefreshEntitiesFromStorage<PlayerEntity>();
+			var gameTask = RefreshEntitiesFromStorage<GameEntity>();
+			var transactionTask = RefreshEntitiesFromStorage<TransactionEntity>();
+			var playerAtGameTask = RefreshEntitiesFromStorage<PlayerAtGameEntity>();
+			var ratingTask = RefreshEntitiesFromStorage<RatingEntity>();
+
+			await Task.WhenAll(playerTask, gameTask, transactionTask, playerAtGameTask, ratingTask);
+
+			_gotData = true;
+		}
+
+		private async Task RefreshEntitiesFromStorage<T>() where T : class, ITableEntity
+		{
+			var ty = typeof(T);
+
+			if (ty == typeof(PlayerEntity))
+			{
+				_playerEntities = await _apiService.ApiGet<PlayerEntity>();
 			}
 
+			if (ty == typeof(GameEntity))
+			{
+				_gameEntities = await _apiService.ApiGet<GameEntity>();
+			}
 
-			// Load all data
-			var playerTask = GetDataFromApi<PlayerEntity>();
-            var gameTask =  GetDataFromApi<GameEntity>();
-            var transactionTask =  GetDataFromApi<TransactionEntity>();
-            var playerAtGameTask =  GetDataFromApi<PlayerAtGameEntity>();
-            var ratingTask =  GetDataFromApi<RatingEntity>();
-            var dataDetailsTask = GetDataFromApi<DataDetailsEntity>();
+			if (ty == typeof(TransactionEntity))
+			{
+				_transactionEntities = await _apiService.ApiGet<TransactionEntity>();
+			}
 
-            await Task.WhenAll(playerTask, gameTask, transactionTask, playerAtGameTask, ratingTask, dataDetailsTask);
-        }
+			if (ty == typeof(PlayerAtGameEntity))
+			{
+				_playerAtGameEntities = await _apiService.ApiGet<PlayerAtGameEntity>();
+			}
 
-        private async Task GetDataFromApi<T>() where T : class, ITableEntity
-        {
-            var data = await _apiService.ApiGet<T>();
-            if (data is not null)
-            {
-                await _localStore.SetItemAsync(typeof(T).Name, data);
-            }
-        } 
-    }
+			if (ty == typeof(RatingEntity))
+			{
+				_ratingEntities = await _apiService.ApiGet<RatingEntity>();
+			}
+		}
+
+	}
 }

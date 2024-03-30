@@ -1,12 +1,13 @@
-﻿Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 25.0.1705.1
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.9.34701.34
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "STO.Models", "STO.Models\STO.Models.csproj", "{1F782A5C-B3A2-4168-B8ED-8B383315E9AA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "STO.Models", "STO.Models\STO.Models.csproj", "{1F782A5C-B3A2-4168-B8ED-8B383315E9AA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "STO.Api", "STO.Api\STO.Api.csproj", "{B9A24974-AEFC-40E9-BAB6-B624DDE0C870}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "STO.Api", "STO.Api\STO.Api.csproj", "{B9A24974-AEFC-40E9-BAB6-B624DDE0C870}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "STO.Wasm", "STO.Wasm\STO.Wasm.csproj", "{9F20768B-9B71-4ED5-A46C-764D11C3C34D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "STO.Wasm", "STO.Wasm\STO.Wasm.csproj", "{9F20768B-9B71-4ED5-A46C-764D11C3C34D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

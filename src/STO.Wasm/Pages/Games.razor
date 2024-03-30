@@ -1,37 +1,30 @@
 @page "/games"
 @inject IGameService GameService
 
-@if (dataReady)
-{
-	<PageTitle>TNF - @pageTitle</PageTitle>
+<PageTitle>TNF - @pageTitle</PageTitle>
 
-	<h1><i class="fa-solid fa-people-group me-2"></i> @pageTitle</h1>
+<h1><i class="fa-solid fa-people-group me-2"></i> @pageTitle</h1>
 
-	<table class="table table-striped">
-		<thead>
+<table class="table table-striped">
+	<thead>
+		<tr>
+			<th scope="col">Date</th>
+		</tr>
+	</thead>
+	<tbody>
+		@foreach (var game in games)
+		{
 			<tr>
-				<th scope="col">Date</th>
-				<th scope="col">Forecast Players</th>
-				<th scope="col">Actual Players</th>
+				<td><GameTitle Game="@game" Link="true" /></td>
 			</tr>
-		</thead>
-		<tbody>
-			@foreach (var game in games)
-			{
-				<tr>
-					<td><GameTitle Game="@game" Link="true" /></td>
-					<td>@game.PlayersAtGame.Count()</td>
-					<td>@game.PlayersAtGame.Where(pag => pag.PlayerAtGameEntity.Played).Count()</td>
-				</tr>
-			}
-		</tbody>
-	</table>
+		}
+	</tbody>
+</table>
 
-	<div class="modal-footer px-0">
-		<a class="btn btn-primary" href="/quickaddpag"><i class="fa-solid fa-plus"></i> Add Player to Game</a>
-		<a class="btn btn-primary" href="/games/add"><i class="fa-solid fa-plus"></i> Add Game</a>
-	</div>
-}
+<div class="modal-footer px-0">
+	<a class="btn btn-primary" href="/quickaddpag"><i class="fa-solid fa-plus"></i> Add Player to Game</a>
+	<a class="btn btn-primary" href="/games/add"><i class="fa-solid fa-plus"></i> Add Game</a>
+</div>
 
 
 @code {

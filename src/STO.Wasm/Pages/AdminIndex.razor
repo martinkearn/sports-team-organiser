@@ -7,73 +7,71 @@
 @using Azure.Data.Tables
 @inject IDataService DataService
 
-@if (dataReady)
-{
-	<PageTitle>Tuesday.Football</PageTitle>
 
-	<h1>Tuesday.Football Admin Portal</h1>
+<PageTitle>Tuesday.Football</PageTitle>
 
-	<AuthorizeView Policy="IsAdminEmail">
-		<Authorized>
+<h1>Tuesday.Football Admin Portal</h1>
 
-			<h2>Config</h2>
-			<p>SettingsFile: <b>@Configuration["SettingsFile"]</b></p>
+<AuthorizeView Policy="IsAdminEmail">
+	<Authorized>
 
-			<p>StorageConfiguration:ApiHost: <b>@Configuration["StorageConfiguration:ApiHost"]</b></p>
+		<h2>Config</h2>
+		<p>SettingsFile: <b>@Configuration["SettingsFile"]</b></p>
 
-			<p>AzureAdB2C:ClientId: <b>@Configuration["AzureAdB2C:ClientId"]</b></p>
+		<p>StorageConfiguration:ApiHost: <b>@Configuration["StorageConfiguration:ApiHost"]</b></p>
 
-			<p>AzureAdB2C:Authority: <b>@Configuration["AzureAdB2C:Authority"]</b></p>
+		<p>AzureAdB2C:ClientId: <b>@Configuration["AzureAdB2C:ClientId"]</b></p>
 
-			<p>Environment: <b>@Env.Environment</b></p>
+		<p>AzureAdB2C:Authority: <b>@Configuration["AzureAdB2C:Authority"]</b></p>
 
-			<p>Authnetication state: <b>@context.User.Identity?.Name</b></p>
+		<p>Environment: <b>@Env.Environment</b></p>
 
-			<p>IsAdminEmail?: <b>Yes</b></p>
+		<p>Authnetication state: <b>@context.User.Identity?.Name</b></p>
 
-			<p>Claims</p>
-			@if (claims.Count() > 0)
-			{
-				<ul>
-					@foreach (var claim in claims)
-					{
-						<li>@claim.Type: @claim.Value</li>
-					}
-				</ul>
-			}
+		<p>IsAdminEmail?: <b>Yes</b></p>
 
-			<h2>Data</h2>
-			<button class="btn btn-primary" @onclick="RefreshData">Refresh Data</button>
-			@foreach (var p in allPlayers)
-			{
-				<p><a href="/players/@p.RowKey/player">Player, @p.RowKey, @p.Name</a></p>
-			}
-			@foreach (var g in allGames)
-			{
-				<p><a href="/games/@g.RowKey">Game, @g.RowKey, @g.Date</a></p>
-			}
-			@foreach (var t in allTransactions)
-			{
-				<p><a href="/transactions/@t.RowKey">Transaction, @t.RowKey, @t.Date, @t.Amount</a></p>
-			}
-			@foreach (var pag in allPlayerAtGame)
-			{
-				<p><a href="/pags/@pag.RowKey">PlayerAtGame, @pag.RowKey, @pag.PlayerRowKey, @pag.GameRowKey</a></p>
-			}
-			@foreach (var r in allRatings)
-			{
-				<p><a href="/ratings/@r.RowKey">Rating, @r.RowKey, @r.PlayerRowKey, @r.GameRowKey, @r.Rating</a></p>
-			}
+		<p>Claims</p>
+		@if (claims.Count() > 0)
+		{
+			<ul>
+				@foreach (var claim in claims)
+				{
+					<li>@claim.Type: @claim.Value</li>
+				}
+			</ul>
+		}
 
-			<BootstrapBreakpoints />
-		</Authorized>
-		<NotAuthorized>
-			<h4>Access Denied!</h4>
-			<a class="btn btn-primary" href="authentication/login"><i class="fa-solid fa-key me-2"></i> Log in</a>
-		</NotAuthorized>
-	</AuthorizeView>
+		<h2>Data</h2>
+		<button class="btn btn-primary" @onclick="RefreshData">Refresh Data</button>
+		@foreach (var p in allPlayers)
+		{
+			<p><a href="/players/@p.RowKey/player">Player, @p.RowKey, @p.Name</a></p>
+		}
+		@foreach (var g in allGames)
+		{
+			<p><a href="/games/@g.RowKey">Game, @g.RowKey, @g.Date</a></p>
+		}
+		@foreach (var t in allTransactions)
+		{
+			<p><a href="/transactions/@t.RowKey">Transaction, @t.RowKey, @t.Date, @t.Amount</a></p>
+		}
+		@foreach (var pag in allPlayerAtGame)
+		{
+			<p><a href="/pags/@pag.RowKey">PlayerAtGame, @pag.RowKey, @pag.PlayerRowKey, @pag.GameRowKey</a></p>
+		}
+		@foreach (var r in allRatings)
+		{
+			<p><a href="/ratings/@r.RowKey">Rating, @r.RowKey, @r.PlayerRowKey, @r.GameRowKey, @r.Rating</a></p>
+		}
 
-}
+		<BootstrapBreakpoints />
+	</Authorized>
+	<NotAuthorized>
+		<h4>Access Denied!</h4>
+		<a class="btn btn-primary" href="authentication/login"><i class="fa-solid fa-key me-2"></i> Log in</a>
+	</NotAuthorized>
+</AuthorizeView>
+
 
 @code {
 	private List<PlayerEntity> allPlayers = new();

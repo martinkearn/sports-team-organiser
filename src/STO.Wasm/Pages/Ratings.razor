@@ -1,65 +1,63 @@
 @page "/ratings"
 @inject IRatingService RatingService
 
-@if (dataReady)
-{
 
-	<PageTitle>TNF - @pageTitle</PageTitle>
+<PageTitle>TNF - @pageTitle</PageTitle>
 
-	<h1><i class="fa-regular fa-star me-2"></i> @pageTitle</h1>
+<h1><i class="fa-regular fa-star me-2"></i> @pageTitle</h1>
 
-	<AuthorizeView Policy="IsAdminEmail">
-		<Authorized>
-			<div>
-				<a class="btn btn-primary me-3 mb-3" href="/ratings/add"><i class="fa-solid fa-plus"></i> Add Rating</a>
-			</div>
+<AuthorizeView Policy="IsAdminEmail">
+	<Authorized>
+		<div>
+			<a class="btn btn-primary me-3 mb-3" href="/ratings/add"><i class="fa-solid fa-plus"></i> Add Rating</a>
+		</div>
 
-			<table class="table table-striped">
-				<thead>
-					<tr>
-						<th scope="col">Timestamp</th>
-						<th scope="col"><button class="btn btn-link m-0 p-0" @onclick="() => Sort(Enums.SortRatingsBy.Player)">Player</button></th>
-						<th scope="col"><button class="btn btn-link m-0 p-0" @onclick="() => Sort(Enums.SortRatingsBy.Game)">Game</button></th>
-						<th scope="col"><button class="btn btn-link m-0 p-0" @onclick="() => Sort(Enums.SortRatingsBy.Rating)">Rating</button></th>
-						<th scope="col" class="d-none d-lg-table-cell">Notes</th>
-					</tr>
-				</thead>
-				<tbody>
-					@foreach (Rating rating in pageOfRatings)
+		<table class="table table-striped">
+			<thead>
+				<tr>
+					<th scope="col">Timestamp</th>
+					<th scope="col"><button class="btn btn-link m-0 p-0" @onclick="() => Sort(Enums.SortRatingsBy.Player)">Player</button></th>
+					<th scope="col"><button class="btn btn-link m-0 p-0" @onclick="() => Sort(Enums.SortRatingsBy.Game)">Game</button></th>
+					<th scope="col"><button class="btn btn-link m-0 p-0" @onclick="() => Sort(Enums.SortRatingsBy.Rating)">Rating</button></th>
+					<th scope="col" class="d-none d-lg-table-cell">Notes</th>
+				</tr>
+			</thead>
+			<tbody>
+				@foreach (Rating rating in pageOfRatings)
+				{
+					@if (rating is not null)
 					{
-						@if (rating is not null)
-						{
-							<tr>
-								<td><a href="/ratings/@rating.RatingEntity.RowKey">@RatingService.FormatRatingTime(rating.RatingEntity)</a></td>
-								<td><a href="/players/@rating.Player?.PlayerEntity.RowKey/player">@rating.Player?.PlayerEntity.Name</a></td>
-								<td><GameTitle Game="@rating.Game" Link="true" /></td>
-								<td>@rating.RatingEntity.Rating</td>
-								<td class="d-none d-lg-table-cell">@rating.RatingEntity.Notes</td>
-							</tr>
-						}
+						<tr>
+							<td><a href="/ratings/@rating.RatingEntity.RowKey">@RatingService.FormatRatingTime(rating.RatingEntity)</a></td>
+							<td><a href="/players/@rating.Player?.PlayerEntity.RowKey/player">@rating.Player?.PlayerEntity.Name</a></td>
+							<td><GameTitle Game="@rating.Game" Link="true" /></td>
+							<td>@rating.RatingEntity.Rating</td>
+							<td class="d-none d-lg-table-cell">@rating.RatingEntity.Notes</td>
+						</tr>
 					}
-				</tbody>
-			</table>
+				}
+			</tbody>
+		</table>
 
-			<nav aria-label="Page navigation">
-				<ul class="pagination">
-					@for (int p = 1; p <= pages; p++)
-					{
-						var thisPage = p;
-						var css = (currentPageNumber == p) ? "page-item active" : "page-item";
-						<li class="@css"><a class="page-link" @onclick="@(e => ChangePage(thisPage))">@p</a></li>
-					}
-				</ul>
-			</nav>
+		<nav aria-label="Page navigation">
+			<ul class="pagination">
+				@for (int p = 1; p <= pages; p++)
+				{
+					var thisPage = p;
+					var css = (currentPageNumber == p) ? "page-item active" : "page-item";
+					<li class="@css"><a class="page-link" @onclick="@(e => ChangePage(thisPage))">@p</a></li>
+				}
+			</ul>
+		</nav>
 
-			<p>@ratings.Count ratings. @ratingsPerPage per page.</p>
-		</Authorized>
-		<NotAuthorized>
-			<h4>Access Denied!</h4>
-			<a class="btn btn-primary" href="authentication/login"><i class="fa-solid fa-key me-2"></i> Log in</a>
-		</NotAuthorized>
-	</AuthorizeView>
-}
+		<p>@ratings.Count ratings. @ratingsPerPage per page.</p>
+	</Authorized>
+	<NotAuthorized>
+		<h4>Access Denied!</h4>
+		<a class="btn btn-primary" href="authentication/login"><i class="fa-solid fa-key me-2"></i> Log in</a>
+	</NotAuthorized>
+</AuthorizeView>
+
 
 @code {
 	private List<Rating> ratings = new();

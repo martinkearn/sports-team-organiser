@@ -1,4 +1,5 @@
 @page "/cachedplayers/{PlayerRowKey}/player"
+@inject ICachedDataService DataService
 @inject IPlayerService PlayerService
 @inject NavigationManager Navigation
 
@@ -101,7 +102,11 @@
 
 	private async Task RefreshData()
 	{
-		player = await PlayerService.GetPlayer(PlayerRowKey);
+		var playerEntitiesResult = await DataService.QueryEntities<PlayerEntity>();
+		var playerEntity = playerEntitiesResult.Where(p => p.RowKey == PlayerRowKey).FirstOrDefault();
+
+
+
 		pageTitle = $"Cached {player.PlayerEntity.Name}";
 		dataReady = true;
 	}

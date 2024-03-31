@@ -1,0 +1,50 @@
+@page "/cachedgames"
+@inject IGameService GameService
+@inject ILocalStorageService LocalStorageService
+
+<PageTitle>TNF - @pageTitle</PageTitle>
+
+<h1><i class="fa-solid fa-people-group me-2"></i> @pageTitle</h1>
+
+<table class="table table-striped">
+	<thead>
+		<tr>
+			<th scope="col">Date</th>
+		</tr>
+	</thead>
+	<tbody>
+		@foreach (var game in games)
+		{
+			<tr>
+				<td><GameEntityTitle GameEntity="@game" Link="true" /></td>
+			</tr>
+		}
+	</tbody>
+</table>
+
+<div class="modal-footer px-0">
+	<a class="btn btn-primary" href="/quickaddpag"><i class="fa-solid fa-plus"></i> Add Player to Game</a>
+	<a class="btn btn-primary" href="/games/add"><i class="fa-solid fa-plus"></i> Add Game</a>
+</div>
+
+
+@code {
+	private List<GameEntity> games = new();
+
+	private string pageTitle = default!;
+
+	protected override async Task OnInitializedAsync()
+	{
+		await RefreshData();
+	}
+
+	private async Task RefreshData()
+	{
+		var gameEntitiesResult = await LocalStorageService.GetItemAsync<List<GameEntity>>(typeof(GameEntity).Name);
+		if (gameEntitiesResult is not null)
+		{
+			games = gameEntitiesResult.OrderByDescending(g => g.Date).ToList();
+		}
+		pageTitle = "Cached Games";
+	}
+}

@@ -1,9 +1,10 @@
 using Azure.Data.Tables;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace STO.Wasm.Services
 {
 	/// <inheritdoc/>
-	public class DataService(IApiService apiService) : IDataService
+	public class DataService(IApiService apiService, ILocalStorageService localStorageService) : IDataService
 	{
 		private List<PlayerEntity> _playerEntities = [];
 		private List<GameEntity> _gameEntities = [];
@@ -13,6 +14,7 @@ namespace STO.Wasm.Services
 		private bool _gotData = false;
 
 		private readonly IApiService _apiService = apiService;
+		private readonly ILocalStorageService _localStorageService = localStorageService;
 
 		public async Task DeleteEntity<T>(string rowKey) where T : class, ITableEntity
 		{
@@ -100,6 +102,10 @@ namespace STO.Wasm.Services
 			if (ty == typeof(GameEntity))
 			{
 				_gameEntities = await _apiService.ApiGet<GameEntity>();
+                if (_gameEntities is not null)
+				{
+                    await _localStorageService.SetItemAsync(typeof(GameEntity).Name, _gameEntities);
+                }
 			}
 
 			if (ty == typeof(TransactionEntity))

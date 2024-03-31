@@ -5,7 +5,7 @@
 
 <h1><i class="fa-solid fa-user me-2"></i> @pageTitle</h1>
 
-<p>@players.Count players registered.</p>
+<p>@playerEntitiess.Count players registered.</p>
 
 <div>
 	<a class="btn btn-primary me-3 mb-3" href="/players/add"><i class="fa-solid fa-plus"></i> Add Player</a>
@@ -22,16 +22,16 @@
 		</tr>
 	</thead>
 	<tbody>
-		@foreach (var player in players)
+		@foreach (var pe in playerEntitiess)
 		{
 			<tr>
-				<td><a href="/cachedplayers/@player.PlayerEntity.RowKey/player">@player.PlayerEntity.Name</a></td>
-				<td class="d-none d-lg-table-cell">@player.PlayerEntity.Position</td>
-				<td class="d-none d-lg-table-cell"><CurrencyDisplay Amount="@player.PlayerEntity.DefaultRate" BlackText="true" /></td>
+				<td><a href="/players/@pe.RowKey/player">@pe.Name</a></td>
+				<td class="d-none d-lg-table-cell">@pe.Position</td>
+				<td class="d-none d-lg-table-cell"><CurrencyDisplay Amount="@pe.DefaultRate" BlackText="true" /></td>
 				<AuthorizeView Policy="IsAdminEmail">
 					<Authorized>
-						<td class="d-none d-lg-table-cell">@player.PlayerEntity.AdminRating</td>
-						<td><CurrencyDisplay Amount="@player.Balance" /></td>
+						<td class="d-none d-lg-table-cell">@pe.AdminRating</td>
+						<td>Not implemented</td>
 					</Authorized>
 					<NotAuthorized>
 						<td class="d-none d-lg-table-cell"><i class="fa-solid fa-key grey"></i></td>
@@ -45,7 +45,7 @@
 
 
 @code {
-	private List<Player> players = new();
+	private List<PlayerEntity> playerEntitiess = new();
 
 	private string pageTitle = default!;
 
@@ -58,7 +58,7 @@
 
 	private async Task RefreshData()
 	{
-		players = await PlayerService.GetPlayers();
+		playerEntitiess = await PlayerService.GetPlayerEntitiess();
 		pageTitle = "Cached Players";
 		dataReady = true;
 	}

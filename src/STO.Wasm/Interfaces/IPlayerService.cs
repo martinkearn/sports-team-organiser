@@ -18,11 +18,17 @@ namespace STO.Wasm.Interfaces
         /// <returns>List of Players.</returns>
         public Task<List<Player>> GetPlayers();
 
-        /// <summary>
-        /// Gets a single player by row key.
-        /// </summary>
-        /// <returns>A Player.</returns>
-        public Task<Player> GetPlayer(string rowKey);
+		/// <summary>
+		/// Gets a list of PlayerEnties
+		/// </summary>
+		/// <returns>List of Players.</returns>
+		public Task<List<PlayerEntity>> GetPlayerEntitiess();
+
+		/// <summary>
+		/// Gets a single player by row key.
+		/// </summary>
+		/// <returns>A Player.</returns>
+		public Task<Player> GetPlayer(string rowKey);
 
         /// <summary>
         /// Deletes the PlayerEntity, TransactionEntity and PlayerAtGameEntity associated with a Player.

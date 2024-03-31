@@ -19,7 +19,16 @@ namespace STO.Wasm.Services
             return await PlayerEntitiesToPlayers(playerEntities);
         }
 
-        public async Task DeletePlayer(string playerRowkey)
+		public async Task<List<PlayerEntity>> GetPlayerEntitiess()
+		{
+			var playerEntitiesResult = await _dataService.QueryEntities<PlayerEntity>();
+			var playerEntities = playerEntitiesResult
+				.OrderBy(p => p.Name)
+				.ToList();
+			return playerEntities;
+		}
+
+		public async Task DeletePlayer(string playerRowkey)
         {
             // Delete Ratings - Cannot use RatingService due to circular dependecy so must use dataService directly
             var allRatingEntities = await _dataService.QueryEntities<RatingEntity>();

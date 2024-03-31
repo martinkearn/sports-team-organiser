@@ -3,7 +3,7 @@ using Azure.Data.Tables;
 namespace STO.Wasm.Services
 {
 	/// <inheritdoc/>
-	public class CachedDataService(IApiService apiService, ILocalStorageService localStorageService) : IDataService
+	public class CachedDataService(IApiService apiService, ILocalStorageService localStorageService) : ICachedDataService
 	{
 		private readonly IApiService _apiService = apiService;
 		private readonly ILocalStorageService _localStorageService = localStorageService;
@@ -52,8 +52,9 @@ namespace STO.Wasm.Services
 			var transactionTask = RefreshEntitiesFromApi<TransactionEntity>();
 			var playerAtGameTask = RefreshEntitiesFromApi<PlayerAtGameEntity>();
 			var ratingTask = RefreshEntitiesFromApi<RatingEntity>();
+			var dataDetailsTask = RefreshEntitiesFromApi<DataDetailsEntity>();
 
-			await Task.WhenAll(playerTask, gameTask, transactionTask, playerAtGameTask, ratingTask);
+			await Task.WhenAll(playerTask, gameTask, transactionTask, playerAtGameTask, ratingTask, dataDetailsTask);
 		}
 
 		private async Task RefreshEntitiesFromApi<T>() where T : class, ITableEntity

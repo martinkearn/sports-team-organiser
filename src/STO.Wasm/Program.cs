@@ -62,10 +62,11 @@ public class Program
 
         // Add custom services
         builder.Services.AddSingleton<IApiService, ApiService>();
-        builder.Services.AddKeyedSingleton<IDataService, DataService>(typeof(DataService));
-		builder.Services.AddKeyedSingleton<IDataService, CachedDataService>(typeof(CachedDataService));
+        builder.Services.AddSingleton<IDataService, DataService>();
+		builder.Services.AddSingleton<ICachedDataService, CachedDataService>();
 		builder.Services.AddSingleton<IPlayerService, PlayerService>();
-        builder.Services.AddSingleton<IGameService, GameService>();
+		builder.Services.AddSingleton<ICachedPlayerService, CachedPlayerService>();
+		builder.Services.AddSingleton<IGameService, GameService>();
         builder.Services.AddSingleton<ITransactionService, TransactionService>();
         builder.Services.AddSingleton<IRatingService, RatingService>();
 
@@ -79,10 +80,10 @@ public class Program
         var host = builder.Build();
 
         // Initialise data
-        var dataService = host.Services.GetRequiredKeyedService<IDataService>(typeof(DataService));
+        var dataService = host.Services.GetRequiredService<IDataService>();
         await dataService.LoadData();
 
-		var cachedDataService = host.Services.GetRequiredKeyedService<IDataService>(typeof(CachedDataService));
+		var cachedDataService = host.Services.GetRequiredService<ICachedDataService>();
 		await cachedDataService.LoadData();
 
 		//await builder.Build().RunAsync();

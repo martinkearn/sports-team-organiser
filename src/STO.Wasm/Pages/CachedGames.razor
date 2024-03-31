@@ -1,4 +1,5 @@
 @page "/cachedgames"
+@inject ICachedDataService DataService
 
 <PageTitle>TNF - @pageTitle</PageTitle>
 
@@ -27,9 +28,6 @@
 
 
 @code {
-	[Inject(Key = typeof(CachedDataService))]
-	public IDataService dataService { get; set; } = default!;
-
 	private List<GameEntity> games = new();
 
 	private string pageTitle = default!;
@@ -41,10 +39,10 @@
 
 	private async Task RefreshData()
 	{
-		var gameEntitiesResult = await dataService.QueryEntities<GameEntity>();
-		if (gameEntitiesResult is not null)
+		var data = await DataService.QueryEntities<GameEntity>();
+		if (data is not null)
 		{
-			games = gameEntitiesResult.OrderByDescending(g => g.Date).ToList();
+			games = data.OrderByDescending(g => g.Date).ToList();
 		}
 		pageTitle = "Cached Games";
 	}

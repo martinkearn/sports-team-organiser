@@ -30,11 +30,17 @@ namespace STO.Wasm.Interfaces
 		/// <returns>A Player.</returns>
 		public Task<Player> GetPlayer(string rowKey);
 
-        /// <summary>
-        /// Deletes the PlayerEntity, TransactionEntity and PlayerAtGameEntity associated with a Player.
-        /// </summary>
-        /// <param name="playerRowkey">The RowKey for the PlayerEntities to delete.</param>
-        public Task DeletePlayer(string playerRowkey);
+		/// <summary>
+		/// Gets a Player based on PlayerEntity
+		/// </summary>
+		/// <returns>A Player.</returns>
+		public Task<Player> GetPlayerFromEntity(PlayerEntity pe);
+
+		/// <summary>
+		/// Deletes the PlayerEntity, TransactionEntity and PlayerAtGameEntity associated with a Player.
+		/// </summary>
+		/// <param name="playerRowkey">The RowKey for the PlayerEntities to delete.</param>
+		public Task DeletePlayer(string playerRowkey);
 
         /// <summary>
         /// Adds a new PlayerEntity.

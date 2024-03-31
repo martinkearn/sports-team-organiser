@@ -1,3 +1,5 @@
+using STO.Wasm.Pages;
+
 namespace STO.Wasm.Services
 {
     /// <inheritdoc/>
@@ -74,7 +76,23 @@ namespace STO.Wasm.Services
             return nullPlayer;
         }
 
-        public async Task UpsertPlayerEntity(PlayerEntity playerEntity)
+        public async Task<Player> GetPlayerFromEntity(PlayerEntity pe)
+        {
+			var playersTransactionsResult = await _dataService.QueryEntities<TransactionEntity>();
+			var playersTransactions = playersTransactionsResult
+				.Where(o => o.PlayerRowKey == pe.RowKey)
+				.OrderByDescending(o => o.Date)
+				.ToList();
+			var playerBalance = playersTransactions.Sum(o => o.Amount);
+			var player = new Player(pe)
+			{
+				Transactions = playersTransactions,
+				Balance = playerBalance
+			};
+            return player;
+		}
+
+		public async Task UpsertPlayerEntity(PlayerEntity playerEntity)
         {
             _ = await _dataService.UpsertEntity<PlayerEntity>(playerEntity);
         }

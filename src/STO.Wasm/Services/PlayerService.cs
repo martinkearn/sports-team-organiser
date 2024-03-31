@@ -1,9 +1,9 @@
 namespace STO.Wasm.Services
 {
     /// <inheritdoc/>
-    public class PlayerService(IDataService dataService) : IPlayerService
+    public class PlayerService(ICachedDataService dataService) : IPlayerService
     {
-        private readonly IDataService _dataService = dataService;
+        private readonly ICachedDataService _dataService = dataService;
 
         public async Task<List<Player>> GetPlayers(List<PlayerEntity> playerEntities)
         {

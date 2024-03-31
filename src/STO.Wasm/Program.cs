@@ -6,6 +6,7 @@ global using Blazored.LocalStorage;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace STO.Wasm;
 
@@ -61,8 +62,9 @@ public class Program
 
         // Add custom services
         builder.Services.AddSingleton<IApiService, ApiService>();
-        builder.Services.AddSingleton<IDataService, DataService>();
-        builder.Services.AddSingleton<IPlayerService, PlayerService>();
+        builder.Services.AddKeyedSingleton<IDataService, DataService>(typeof(DataService));
+		builder.Services.AddKeyedSingleton<IDataService, CachedDataService>(typeof(CachedDataService));
+		builder.Services.AddSingleton<IPlayerService, PlayerService>();
         builder.Services.AddSingleton<IGameService, GameService>();
         builder.Services.AddSingleton<ITransactionService, TransactionService>();
         builder.Services.AddSingleton<IRatingService, RatingService>();
@@ -74,14 +76,16 @@ public class Program
 
         Console.WriteLine($"Client Hosting Environment: {builder.HostEnvironment.Environment}");
 
-
         var host = builder.Build();
 
         // Initialise data
-        var dataService = host.Services.GetRequiredService<IDataService>();
+        var dataService = host.Services.GetRequiredKeyedService<IDataService>(typeof(DataService));
         await dataService.LoadData();
 
-        //await builder.Build().RunAsync();
-        await host.RunAsync();
+		var cachedDataService = host.Services.GetRequiredKeyedService<IDataService>(typeof(CachedDataService));
+		await cachedDataService.LoadData();
+
+		//await builder.Build().RunAsync();
+		await host.RunAsync();
     }
 }

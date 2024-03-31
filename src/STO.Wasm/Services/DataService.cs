@@ -22,7 +22,7 @@ namespace STO.Wasm.Services
 			await _apiService.ApiDelete<T>(rowKey);
 
 			// Refresh data from storage
-			await RefreshEntitiesFromStorage<T>();
+			await RefreshEntitiesFromApi<T>();
 		}
 
 		public async Task<T> UpsertEntity<T>(T entity) where T : class, ITableEntity
@@ -37,7 +37,7 @@ namespace STO.Wasm.Services
 			await _apiService.ApiPost<T>(entity);
 
 			// Refresh data from storage
-			await RefreshEntitiesFromStorage<T>();
+			await RefreshEntitiesFromApi<T>();
 
 			// Return
 			return entity;
@@ -77,18 +77,18 @@ namespace STO.Wasm.Services
 		public async Task LoadData()
 		{
 			// Refresh caches
-			var playerTask = RefreshEntitiesFromStorage<PlayerEntity>();
-			var gameTask = RefreshEntitiesFromStorage<GameEntity>();
-			var transactionTask = RefreshEntitiesFromStorage<TransactionEntity>();
-			var playerAtGameTask = RefreshEntitiesFromStorage<PlayerAtGameEntity>();
-			var ratingTask = RefreshEntitiesFromStorage<RatingEntity>();
+			var playerTask = RefreshEntitiesFromApi<PlayerEntity>();
+			var gameTask = RefreshEntitiesFromApi<GameEntity>();
+			var transactionTask = RefreshEntitiesFromApi<TransactionEntity>();
+			var playerAtGameTask = RefreshEntitiesFromApi<PlayerAtGameEntity>();
+			var ratingTask = RefreshEntitiesFromApi<RatingEntity>();
 
 			await Task.WhenAll(playerTask, gameTask, transactionTask, playerAtGameTask, ratingTask);
 
 			_gotData = true;
 		}
 
-		private async Task RefreshEntitiesFromStorage<T>() where T : class, ITableEntity
+		private async Task RefreshEntitiesFromApi<T>() where T : class, ITableEntity
 		{
 			var ty = typeof(T);
 

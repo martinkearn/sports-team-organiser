@@ -39,17 +39,6 @@ namespace STO.Wasm.Services
 
 		public async Task<List<T>> QueryEntities<T>() where T : class, ITableEntity
 		{
-			// Return from service data if we have it
-			//if (typeof(T) == typeof(PlayerEntity))
-			//{
-			//	return (List<T>)Convert.ChangeType(_playerEntities, typeof(List<T>));
-			//}
-
-			//if (typeof(T) == typeof(TransactionEntity))
-			//{
-			//	return (List<T>)Convert.ChangeType(_transactionEntities, typeof(List<T>));
-			//}
-
 			var data = await _localStorageService.GetItemAsync<List<T>>(typeof(T).Name);
 			if (data is not null)
 			{
@@ -61,6 +50,22 @@ namespace STO.Wasm.Services
 
 		public async Task LoadData()
 		{
+			// Check Data Details, set lists from local storage and exit if they are up to date
+			var apiDdes = await _apiService.ApiGet<DataDetailsEntity>();
+			var localDdes = await _localStorageService.GetItemAsync<List<DataDetailsEntity>>(nameof(DataDetailsEntity));
+			if (apiDdes?.Count > 0 && localDdes?.Count > 0)
+			{
+				if (apiDdes.First().LastWriteEpoch == localDdes.First()?.LastWriteEpoch)
+				{
+					// Load memory lists from storage
+					PlayerEntities = await _localStorageService.GetItemAsync<List<PlayerEntity>>(nameof(PlayerEntity)) ?? [];
+					TransactionEntities = await _localStorageService.GetItemAsync<List<TransactionEntity>>(nameof(TransactionEntity)) ?? [];
+
+					// Exit
+					return;
+				}
+			}
+
 			// Refresh caches
 			var playerTask = RefreshEntitiesFromApi<PlayerEntity>();
 			var gameTask = RefreshEntitiesFromApi<GameEntity>();
@@ -68,7 +73,6 @@ namespace STO.Wasm.Services
 			var playerAtGameTask = RefreshEntitiesFromApi<PlayerAtGameEntity>();
 			var ratingTask = RefreshEntitiesFromApi<RatingEntity>();
 			var dataDetailsTask = RefreshEntitiesFromApi<DataDetailsEntity>();
-
 			await Task.WhenAll(playerTask, gameTask, transactionTask, playerAtGameTask, ratingTask, dataDetailsTask);
 		}
 

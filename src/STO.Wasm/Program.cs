@@ -68,7 +68,8 @@ public class Program
 		builder.Services.AddSingleton<IPlayerEntityService, PlayerEntityService>();
 		builder.Services.AddSingleton<IGameService, GameService>();
         builder.Services.AddSingleton<ITransactionService, TransactionService>();
-        builder.Services.AddSingleton<IRatingService, RatingService>();
+		builder.Services.AddSingleton<ITransactionEntityService, TransactionEntityService>();
+		builder.Services.AddSingleton<IRatingService, RatingService>();
 
         // Add Blazored.LocalStorage
         builder.Services.AddBlazoredLocalStorageAsSingleton();

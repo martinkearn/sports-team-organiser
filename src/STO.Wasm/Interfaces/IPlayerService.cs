@@ -1,28 +1,22 @@
 namespace STO.Wasm.Interfaces
 {
-    /// <summary>
-    /// Service for working with Players and their balance.
-    /// </summary>
-    public interface IPlayerService
-    {
-        /// <summary>
-        /// Converts a list of PlayerEntities to a full list of Players.
-        /// </summary>
-        /// <param name="playerEntities">The list of PlayerEntities to convert.</param>
-        /// <returns>List of Players.</returns>
-        public Task<List<Player>> GetPlayers(List<PlayerEntity> playerEntities);
-
-        /// <summary>
-        /// Converts all PlayerEntities to a full list of Players.
-        /// </summary>
-        /// <returns>List of Players.</returns>
-        public Task<List<Player>> GetPlayers();
+	/// <summary>
+	/// Service for working with Players and their balance.
+	/// </summary>
+	public interface IPlayerService
+	{
+		/// <summary>
+		/// Converts a list of PlayerEntities to a full list of Players.
+		/// </summary>
+		/// <param name="playerEntities">The list of PlayerEntities to convert.</param>
+		/// <returns>List of Players.</returns>
+		public Task<List<Player>> GetPlayers(List<PlayerEntity> playerEntities);
 
 		/// <summary>
-		/// Gets a list of PlayerEnties
+		/// Converts all PlayerEntities to a full list of Players.
 		/// </summary>
 		/// <returns>List of Players.</returns>
-		public Task<List<PlayerEntity>> GetPlayerEntitiess();
+		public Task<List<Player>> GetPlayers();
 
 		/// <summary>
 		/// Gets a single player by row key.
@@ -31,21 +25,15 @@ namespace STO.Wasm.Interfaces
 		public Task<Player> GetPlayer(string rowKey);
 
 		/// <summary>
-		/// Gets a Player based on PlayerEntity
-		/// </summary>
-		/// <returns>A Player.</returns>
-		public Task<Player> GetPlayerFromEntity(PlayerEntity pe);
-
-		/// <summary>
 		/// Deletes the PlayerEntity, TransactionEntity and PlayerAtGameEntity associated with a Player.
 		/// </summary>
 		/// <param name="playerRowkey">The RowKey for the PlayerEntities to delete.</param>
 		public Task DeletePlayer(string playerRowkey);
 
-        /// <summary>
-        /// Adds a new PlayerEntity.
-        /// </summary>
-        /// <param name="playerEntity">The PlayerEntity to upsert.</param>
-        public Task UpsertPlayerEntity(PlayerEntity playerEntity);
-    }
+		/// <summary>
+		/// Adds a new PlayerEntity.
+		/// </summary>
+		/// <param name="playerEntity">The PlayerEntity to upsert.</param>
+		public Task UpsertPlayerEntity(PlayerEntity playerEntity);
+	}
 }

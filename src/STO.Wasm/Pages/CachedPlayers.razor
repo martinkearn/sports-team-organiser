@@ -1,5 +1,5 @@
 @page "/cachedplayers"
-@inject IPlayerService PlayerService
+@inject ICachedDataService DataService
 
 <PageTitle>TNF - @pageTitle</PageTitle>
 
@@ -58,7 +58,7 @@
 
 	private async Task RefreshData()
 	{
-		playerEntitiess = await PlayerService.GetPlayerEntitiess();
+		playerEntitiess = await DataService.QueryEntities<PlayerEntity>();
 		pageTitle = "Cached Players";
 		dataReady = true;
 	}

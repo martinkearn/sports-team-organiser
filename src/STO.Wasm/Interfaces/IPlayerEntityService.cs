@@ -15,7 +15,7 @@ namespace STO.Wasm.Interfaces
 		/// Gets a PlayerEntity object
 		/// </summary>
 		/// <returns>A PlayerEntity.</returns>
-		public Player GetPlayerEntity(string rowKey);
+		public PlayerEntity GetPlayerEntity(string rowKey);
 
 		/// <summary>
 		/// Gets a Player object

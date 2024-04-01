@@ -1,3 +1,5 @@
+using STO.Models;
+
 namespace STO.Wasm.Services
 {
 	/// <inheritdoc/>
@@ -10,14 +12,33 @@ namespace STO.Wasm.Services
 			return _dataService.PlayerEntities;
 		}
 
-		public Player GetPlayerEntity(string rowKey)
+		public PlayerEntity GetPlayerEntity(string rowKey)
 		{
-			throw new NotImplementedException();
+			var pes = _dataService.PlayerEntities;
+			return pes.First(o => o.RowKey == rowKey);
 		}
 
 		public Player GetPlayer(string rowKey)
 		{
-			throw new NotImplementedException();
+			// Get PlayerEntity
+			var playerEntity = GetPlayerEntity(rowKey);
+
+			// Get Transactions
+			var playersTransactions = _dataService.TransactionEntities.Where(o => o.PlayerRowKey == rowKey)
+				.OrderByDescending(o => o.Date)
+				.ToList();
+
+			// Get Balance
+			var playerBalance = playersTransactions.Sum(o => o.Amount);
+
+			// Construct Player
+			var player = new Player(playerEntity)
+			{
+				Transactions = playersTransactions,
+				Balance = playerBalance
+			};
+
+			return player;
 		}
 
 		public void DeletePlayerEntity(string playerRowkey)

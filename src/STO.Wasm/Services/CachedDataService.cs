@@ -28,7 +28,7 @@ namespace STO.Wasm.Services
 			if (entity.PartitionKey == default) entity.PartitionKey = typeof(T).ToString();
 
 			// Upsert entity
-			await _apiService.ApiPost<T>(entity);
+			await _apiService.ApiPost(entity);
 
 			// Refresh data from storage
 			await RefreshEntitiesFromApi<T>();

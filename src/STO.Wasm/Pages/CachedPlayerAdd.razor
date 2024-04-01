@@ -1,5 +1,5 @@
 @page "/cachedplayers/add"
-@inject ICachedDataService DataService
+@inject IPlayerEntityService PlayerEntityService
 @inject NavigationManager Navigation
 
 <PageTitle>TNF - @pageTitle</PageTitle>
@@ -53,14 +53,14 @@
 		RefreshData();
 	}
 
-	protected async Task Add()
+	protected void Add()
 	{
-		await DataService.UpsertEntity<PlayerEntity>(newPlayerEntity);
+		PlayerEntityService.UpsertPlayerEntity(newPlayerEntity);
 		Navigation.NavigateTo("/cachedplayers");
 	}
 
 	private void RefreshData()
 	{
-		newPlayerEntity.DefaultRate = 4;
+		newPlayerEntity.DefaultRate = 3;
 	}
 }

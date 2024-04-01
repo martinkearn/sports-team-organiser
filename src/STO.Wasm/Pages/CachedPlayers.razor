@@ -1,11 +1,11 @@
 @page "/cachedplayers"
-@inject ICachedDataService DataService
+@inject IPlayerEntityService PlayerEntityService
 
 <PageTitle>TNF - @pageTitle</PageTitle>
 
 <h1><i class="fa-solid fa-user me-2"></i> @pageTitle</h1>
 
-<p>@DataService.PlayerEntities.Count players registered.</p>
+<p>@playerEntities.Count players registered.</p>
 
 <div>
 	<a class="btn btn-primary me-3 mb-3" href="/cachedplayers/add"><i class="fa-solid fa-plus"></i> Add Player</a>
@@ -20,7 +20,7 @@
 		</tr>
 	</thead>
 	<tbody>
-		@foreach (var pe in DataService.PlayerEntities)
+		@foreach (var pe in playerEntities)
 		{
 			<tr>
 				<td><a href="/cachedplayers/@pe.RowKey/player">@pe.Name</a></td>
@@ -40,5 +40,11 @@
 
 
 @code {
+	private List<PlayerEntity> playerEntities = [];
 	private string pageTitle = "Cached Players";
+
+	protected override void OnInitialized()
+	{
+		playerEntities = PlayerEntityService.GetPlayerEntities();
+	}
 }

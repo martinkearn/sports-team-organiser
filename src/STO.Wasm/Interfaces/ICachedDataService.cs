@@ -5,14 +5,18 @@ namespace STO.Wasm.Interfaces
     /// <summary>
     /// Service for working with Azure Storage.
     /// </summary>
-    public interface IDataService
+    public interface ICachedDataService
     {
-        /// <summary>
-        /// Adds or Updates an entity. Updates if rowkey is present, adds if not.
-        /// </summary>
-        /// <param name="entity">The entity of type T to upsert.</param>
-        /// <returns>Stored representation of the entity of type T.</returns>
-        public Task<T> UpsertEntity<T>(T entity) where T : class, ITableEntity;
+        public List<PlayerEntity> PlayerEntities { get; set; }
+
+		public List<TransactionEntity> TransactionEntities { get; set; }
+
+		/// <summary>
+		/// Adds or Updates an entity. Updates if rowkey is present, adds if not.
+		/// </summary>
+		/// <param name="entity">The entity of type T to upsert.</param>
+		/// <returns>Stored representation of the entity of type T.</returns>
+		public Task<T> UpsertEntity<T>(T entity) where T : class, ITableEntity;
 
         /// <summary>
         /// Deletes an entity of type T.

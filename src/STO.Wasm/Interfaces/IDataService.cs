@@ -5,7 +5,7 @@ namespace STO.Wasm.Interfaces
     /// <summary>
     /// Service for working with Cached data
     /// </summary>
-    public interface ICachedDataService
+    public interface IDataService
     {
         /// <summary>
         /// Adds or Updates an entity. Updates if rowkey is present, adds if not.

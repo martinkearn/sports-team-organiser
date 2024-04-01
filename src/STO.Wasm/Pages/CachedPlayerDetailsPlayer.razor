@@ -1,6 +1,5 @@
 @page "/cachedplayers/{PlayerRowKey}/player"
 @inject ICachedDataService DataService
-@inject IPlayerService PlayerService
 @inject NavigationManager Navigation
 
 @if (dataReady)
@@ -84,28 +83,41 @@
 
 	protected override async Task OnInitializedAsync()
 	{
-		await RefreshData();
+		RefreshData();
 	}
 
 	async Task Edit()
 	{
-		await PlayerService.UpsertPlayerEntity(player.PlayerEntity);
+		//await PlayerService.UpsertPlayerEntity(player.PlayerEntity);
 	}
 
 	private async Task DeletePlayer()
 	{
-		await PlayerService.DeletePlayer(PlayerRowKey);
-		Navigation.NavigateTo("/players");
+		//await PlayerService.DeletePlayer(PlayerRowKey);
+		Navigation.NavigateTo("/cachedplayers");
 	}
 
-	private void SwitchTabTransactions() => Navigation.NavigateTo($"/players/{@PlayerRowKey}/transactions");
+	private void SwitchTabTransactions() => Navigation.NavigateTo($"/cachedplayers/{@PlayerRowKey}/transactions");
 
-	private async Task RefreshData()
+	private void RefreshData()
 	{
-		var playerEntitiesResult = await DataService.QueryEntities<PlayerEntity>();
-		var playerEntity = playerEntitiesResult.Where(p => p.RowKey == PlayerRowKey).FirstOrDefault();
+		// Get Player
+		var playerEntity = DataService.PlayerEntities.Where(o => o.RowKey == PlayerRowKey).FirstOrDefault();
 
+		// Get Transactions
+		var playersTransactions = DataService.TransactionEntities.Where(o => o.PlayerRowKey == PlayerRowKey)
+			.OrderByDescending(o => o.Date)
+			.ToList();
 
+		// Get Balance
+		var playerBalance = playersTransactions.Sum(o => o.Amount);
+
+		// Construct Player
+		player = new Player(playerEntity)
+			{
+				Transactions = playersTransactions,
+				Balance = playerBalance
+			};
 
 		pageTitle = $"Cached {player.PlayerEntity.Name}";
 		dataReady = true;

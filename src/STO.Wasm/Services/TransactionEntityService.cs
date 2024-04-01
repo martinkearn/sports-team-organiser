@@ -1,7 +1,7 @@
 namespace STO.Wasm.Services
 {
     /// <inheritdoc/>
-    public class TransactionEtityService(IDataService dataService, IPlayerService playerService) : ITransactionEntityService
+    public class TransactionEntityService(IDataService dataService, IPlayerService playerService) : ITransactionEntityService
     {
         private readonly IDataService _dataService = dataService;
         private readonly IPlayerService _playerService = playerService;

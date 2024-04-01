@@ -79,8 +79,8 @@ public class Program
         var host = builder.Build();
 
         // Initialise data
-        var dataService = host.Services.GetRequiredService<IDataService>();
-        await dataService.LoadData();
+        //var dataService = host.Services.GetRequiredService<IDataService>();
+        //await dataService.LoadData();
 
 		var cachedDataService = host.Services.GetRequiredService<ICachedDataService>();
 		await cachedDataService.LoadData();

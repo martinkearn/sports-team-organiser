@@ -5,7 +5,7 @@
 
 <h1><i class="fa-solid fa-user me-2"></i> @pageTitle</h1>
 
-<p>@playerEntities.Count players registered.</p>
+<p>@DataService.PlayerEntities.Count players registered.</p>
 
 <div>
 	<a class="btn btn-primary me-3 mb-3" href="/players/add"><i class="fa-solid fa-plus"></i> Add Player</a>
@@ -20,7 +20,7 @@
 		</tr>
 	</thead>
 	<tbody>
-		@foreach (var pe in playerEntities)
+		@foreach (var pe in DataService.PlayerEntities)
 		{
 			<tr>
 				<td><a href="/cachedplayers/@pe.RowKey/player">@pe.Name</a></td>
@@ -40,8 +40,6 @@
 
 
 @code {
-	private List<PlayerEntity> playerEntities = new();
-
 	private string pageTitle = default!;
 
 	private bool dataReady = false;
@@ -53,7 +51,6 @@
 
 	private async Task RefreshData()
 	{
-		playerEntities = await DataService.QueryEntities<PlayerEntity>();
 		pageTitle = "Cached Players";
 		dataReady = true;
 	}

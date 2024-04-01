@@ -1,6 +1,5 @@
 @page "/cachedplayers/{PlayerRowKey}/player"
 @inject IPlayerEntityService PlayerEntityService
-@inject ICachedDataService DataService
 @inject NavigationManager Navigation
 
 <PageTitle>TNF - @pageTitle</PageTitle>
@@ -87,12 +86,12 @@
 
 	async Task Edit()
 	{
-		await DataService.UpsertEntity<PlayerEntity>(player.PlayerEntity);
+		await PlayerEntityService.UpsertPlayerEntity(player.PlayerEntity);
 	}
 
 	private async Task DeletePlayer()
 	{
-		await DataService.DeleteEntity<PlayerEntity>(PlayerRowKey);
+		await PlayerEntityService.DeletePlayerEntity(PlayerRowKey);
 		Navigation.NavigateTo("/cachedplayers");
 	}
 

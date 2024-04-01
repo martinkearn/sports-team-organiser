@@ -41,14 +41,39 @@ namespace STO.Wasm.Services
 			return player;
 		}
 
-		public void DeletePlayerEntity(string playerRowkey)
+		public async Task DeletePlayerEntity(string playerRowkey)
 		{
-			throw new NotImplementedException();
+			// Delete Ratings
+			var allRatingEntities = await _dataService.QueryEntities<RatingEntity>();
+			var ratingsForPlayer = allRatingEntities.Where(o => o.PlayerRowKey == playerRowkey).ToList();
+			foreach (var rating in ratingsForPlayer)
+			{
+				await _dataService.DeleteEntity<RatingEntity>(rating.RowKey);
+			}
+
+			// Delete TransactionEntity
+			var transactionsResult = await _dataService.QueryEntities<TransactionEntity>();
+			var transactions = transactionsResult.Where(t => t.PlayerRowKey == playerRowkey);
+			foreach (var transaction in transactions)
+			{
+				await _dataService.DeleteEntity<TransactionEntity>(transaction.RowKey);
+			}
+
+			// Delete PlayerAtGameEntity
+			var pagsResult = await _dataService.QueryEntities<PlayerAtGameEntity>();
+			var pags = pagsResult.Where(pag => pag.PlayerRowKey == playerRowkey);
+			foreach (var pag in pags)
+			{
+				await _dataService.DeleteEntity<PlayerAtGameEntity>(pag.RowKey);
+			}
+
+			// Delete PlayerEntity
+			await _dataService.DeleteEntity<PlayerEntity>(playerRowkey);
 		}
 
-		public void UpsertPlayerEntity(PlayerEntity playerEntity)
+		public async Task UpsertPlayerEntity(PlayerEntity playerEntity)
 		{
-			throw new NotImplementedException();
+			await _dataService.UpsertEntity(playerEntity);
 		}
 
 	}

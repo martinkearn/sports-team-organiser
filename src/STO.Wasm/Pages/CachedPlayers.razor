@@ -40,18 +40,5 @@
 
 
 @code {
-	private string pageTitle = default!;
-
-	private bool dataReady = false;
-
-	protected override async Task OnInitializedAsync()
-	{
-		await RefreshData();
-	}
-
-	private async Task RefreshData()
-	{
-		pageTitle = "Cached Players";
-		dataReady = true;
-	}
+	private string pageTitle = "Cached Players";
 }

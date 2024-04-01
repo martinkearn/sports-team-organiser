@@ -83,7 +83,7 @@ public class Program
         //await dataService.LoadData();
 
 		var cachedDataService = host.Services.GetRequiredService<ICachedDataService>();
-		await cachedDataService.LoadData();
+		await cachedDataService.LoadData(false);
 
 		//await builder.Build().RunAsync();
 		await host.RunAsync();

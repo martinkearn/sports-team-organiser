@@ -1,0 +1,101 @@
+@page "/cachedadmin"
+@using Microsoft.Extensions.Configuration
+@inject IConfiguration Configuration
+@inject IWebAssemblyHostEnvironment Env
+@using System.Security.Claims
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@using Azure.Data.Tables
+@inject ICachedDataService DataService
+
+<PageTitle>Tuesday.Football</PageTitle>
+
+<h1>Tuesday.Football Admin Portal</h1>
+
+<AuthorizeView Policy="IsAdminEmail">
+	<Authorized>
+
+		<h2>Config</h2>
+		<p>SettingsFile: <b>@Configuration["SettingsFile"]</b></p>
+
+		<p>StorageConfiguration:ApiHost: <b>@Configuration["StorageConfiguration:ApiHost"]</b></p>
+
+		<p>AzureAdB2C:ClientId: <b>@Configuration["AzureAdB2C:ClientId"]</b></p>
+
+		<p>AzureAdB2C:Authority: <b>@Configuration["AzureAdB2C:Authority"]</b></p>
+
+		<p>Environment: <b>@Env.Environment</b></p>
+
+		<p>Authnetication state: <b>@context.User.Identity?.Name</b></p>
+
+		<p>IsAdminEmail?: <b>Yes</b></p>
+
+		<p>Claims</p>
+		@if (claims.Count() > 0)
+		{
+			<ul>
+				@foreach (var claim in claims)
+				{
+					<li>@claim.Type: @claim.Value</li>
+				}
+			</ul>
+		}
+
+		<h2>Data</h2>
+		<button class="btn btn-primary" @onclick="() => RefreshData(true)">Refresh Data</button>
+		@foreach (var p in DataService.PlayerEntities)
+		{
+			<p><a href="/players/@p.RowKey/player">Player, @p.RowKey, @p.Name</a></p>
+		}
+		@foreach (var g in allGames)
+		{
+			<p><a href="/games/@g.RowKey">Game, @g.RowKey, @g.Date</a></p>
+		}
+		@foreach (var t in DataService.TransactionEntities)
+		{
+			<p><a href="/transactions/@t.RowKey">Transaction, @t.RowKey, @t.Date, @t.Amount</a></p>
+		}
+		@foreach (var pag in allPlayerAtGame)
+		{
+			<p><a href="/pags/@pag.RowKey">PlayerAtGame, @pag.RowKey, @pag.PlayerRowKey, @pag.GameRowKey</a></p>
+		}
+		@foreach (var r in allRatings)
+		{
+			<p><a href="/ratings/@r.RowKey">Rating, @r.RowKey, @r.PlayerRowKey, @r.GameRowKey, @r.Rating</a></p>
+		}
+
+		<BootstrapBreakpoints />
+	</Authorized>
+	<NotAuthorized>
+		<h4>Access Denied!</h4>
+		<a class="btn btn-primary" href="authentication/login"><i class="fa-solid fa-key me-2"></i> Log in</a>
+	</NotAuthorized>
+</AuthorizeView>
+
+
+@code {
+	private List<GameEntity> allGames = new();
+	private List<PlayerAtGameEntity> allPlayerAtGame = new();
+	private List<RatingEntity> allRatings = new();
+	private IEnumerable<Claim> claims = Enumerable.Empty<Claim>();
+	private bool dataReady = false;
+
+	protected override async Task OnInitializedAsync()
+	{
+		await RefreshData(false);
+	}
+
+	private async Task RefreshData(bool forceApi)
+	{
+		var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+		var user = authState.User;
+		if (user.Identity is not null && user.Identity.IsAuthenticated)
+		{
+			claims = user.Claims;
+		}
+
+		await DataService.LoadData(forceApi);
+		allGames = await DataService.QueryEntities<GameEntity>();
+		allPlayerAtGame = await DataService.QueryEntities<PlayerAtGameEntity>();
+		allRatings = await DataService.QueryEntities<RatingEntity>();
+	}
+}

@@ -31,9 +31,10 @@ namespace STO.Wasm.Interfaces
         /// <returns>A list of entities of type T which match the query.</returns>
         public Task<List<T>> QueryEntities<T>() where T : class, ITableEntity;
 
-        /// <summary>
-        /// Loads/Reloads the raw data from the API
-        /// </summary>
-        public Task LoadData();
+		/// <summary>
+		/// Loads/Reloads the raw data from the API
+		/// </summary>
+		/// <param name="forceApi">Forces a data refresh from Api even if local data is up to date.</param>
+		public Task LoadData(bool forceApi);
     }
 }

@@ -48,21 +48,24 @@ namespace STO.Wasm.Services
 			return [];
 		}
 
-		public async Task LoadData()
+		public async Task LoadData(bool forceApi)
 		{
-			// Check Data Details, set lists from local storage and exit if they are up to date
-			var apiDdes = await _apiService.ApiGet<DataDetailsEntity>();
-			var localDdes = await _localStorageService.GetItemAsync<List<DataDetailsEntity>>(nameof(DataDetailsEntity));
-			if (apiDdes?.Count > 0 && localDdes?.Count > 0)
+			if (!forceApi)
 			{
-				if (apiDdes.First().LastWriteEpoch == localDdes.First()?.LastWriteEpoch)
+				// Check Data Details, set lists from local storage and exit if they are up to date
+				var apiDdes = await _apiService.ApiGet<DataDetailsEntity>();
+				var localDdes = await _localStorageService.GetItemAsync<List<DataDetailsEntity>>(nameof(DataDetailsEntity));
+				if (apiDdes?.Count > 0 && localDdes?.Count > 0)
 				{
-					// Load memory lists from storage
-					PlayerEntities = await _localStorageService.GetItemAsync<List<PlayerEntity>>(nameof(PlayerEntity)) ?? [];
-					TransactionEntities = await _localStorageService.GetItemAsync<List<TransactionEntity>>(nameof(TransactionEntity)) ?? [];
+					if (apiDdes.First().LastWriteEpoch == localDdes.First()?.LastWriteEpoch)
+					{
+						// Load memory lists from storage
+						PlayerEntities = await _localStorageService.GetItemAsync<List<PlayerEntity>>(nameof(PlayerEntity)) ?? [];
+						TransactionEntities = await _localStorageService.GetItemAsync<List<TransactionEntity>>(nameof(TransactionEntity)) ?? [];
 
-					// Exit
-					return;
+						// Exit
+						return;
+					}
 				}
 			}
 

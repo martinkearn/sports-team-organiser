@@ -1,6 +1,6 @@
 @page "/transactions/add"
 @inject ITransactionService TransactionService
-@inject IPlayerService PlayerService
+@inject IPlayerEntityService PlayerEntityService
 @inject IGameService GameService
 @inject NavigationManager Navigation
 
@@ -19,9 +19,9 @@
 					<label for="addPlayerRowKey" class="form-label">Player</label>
 					<InputSelect class="form-select" @bind-Value="newTransactionEntity.PlayerRowKey">
 						<option value="">Select Player ...</option>
-						@foreach (var player in players)
+						@foreach (var pe in playerEntities)
 						{
-							<option value="@player.PlayerEntity.RowKey">@player.PlayerEntity.Name</option>
+							<option value="@pe.RowKey">@pe.Name</option>
 						}
 					</InputSelect>
 				</div>
@@ -58,7 +58,7 @@
 }
 
 @code {
-	private List<Player> players = new();
+	private List<PlayerEntity> playerEntities = new();
 
 	private TransactionEntity newTransactionEntity = new();
 
@@ -66,9 +66,9 @@
 
 	private bool dataReady = false;
 
-	protected override async Task OnInitializedAsync()
+	protected override void OnInitialized()
 	{
-		await RefreshData();
+		RefreshData();
 	}
 
 	protected async Task Add()
@@ -77,10 +77,10 @@
 		Navigation.NavigateTo("/transactions");
 	}
 
-	private async Task RefreshData()
+	private void RefreshData()
 	{
 		newTransactionEntity = new();
-		players = await PlayerService.GetPlayers();
+		playerEntities = PlayerEntityService.GetPlayerEntities();
 		pageTitle = "Add Transaction";
 		dataReady = true;
 	}

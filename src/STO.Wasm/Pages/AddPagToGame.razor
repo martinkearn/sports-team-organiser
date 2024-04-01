@@ -1,5 +1,5 @@
 @page "/quickaddpag"
-@inject IPlayerService PlayerService
+@inject IPlayerEntityService PlayerEntityService
 @inject IGameService GameService
 @inject NavigationManager Navigation
 
@@ -17,9 +17,9 @@
             <label for="addPlayerRowKey" class="form-label">Player</label>
             <InputSelect class="form-select" @bind-Value="newPagEntity.PlayerRowKey">
                 <option value="">Select Player ...</option>
-                @foreach (var player in players)
+                @foreach (var pe in playerEntities)
                 {
-                    <option value="@player.PlayerEntity.RowKey">@player.PlayerEntity.Name</option>
+                    <option value="@pe.RowKey">@pe.Name</option>
                 }
             </InputSelect>
         </div>
@@ -61,7 +61,7 @@
 @code {
     private List<Game> games = new();
 
-    private List<Player> players = new();
+    private List<PlayerEntity> playerEntities = new();
 
     private PlayerAtGameEntity newPagEntity = new();
 
@@ -84,7 +84,7 @@
     async Task RefreshData()
     {
         games = await GameService.GetGames();
-        players = await PlayerService.GetPlayers();
+        playerEntities = PlayerEntityService.GetPlayerEntities();
         nextGame = await GameService.GetNextGame();
 
         newPagEntity = new PlayerAtGameEntity()

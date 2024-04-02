@@ -77,8 +77,6 @@
 
 	private string pageTitle = default!;
 
-	private bool dataReady = false;
-
 	protected override void OnInitialized()
 	{
 		RefreshData();
@@ -102,6 +100,5 @@
 		// Get Player
 		player = PlayerEntityService.GetPlayer(PlayerRowKey);
 		pageTitle = $"{player.PlayerEntity.Name}";
-		dataReady = true;
 	}
 }

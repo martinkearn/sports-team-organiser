@@ -1,5 +1,5 @@
 @page "/games/{GameRowKey}"
-@inject IPlayerService PlayerService
+@inject IPlayerEntityService PlayerEntityService
 @inject IGameService GameService
 @inject ITransactionService TransactionService
 @inject NavigationManager Navigation
@@ -21,11 +21,11 @@
 				<div class="input-group col-12">
 					<InputSelect class="form-select" @bind-Value="newPagEntity.PlayerRowKey">
 						<option value="">Add player to game ...</option>
-						@foreach (var player in players)
+						@foreach (var pe in playerEntities)
 						{
-							if (game.PlayersAtGame.FirstOrDefault(pag => pag.PlayerAtGameEntity.PlayerRowKey == player.PlayerEntity.RowKey) == default)
+							if (game.PlayersAtGame.FirstOrDefault(pag => pag.PlayerAtGameEntity.PlayerRowKey == pe.RowKey) == default)
 							{
-								<option value="@player.PlayerEntity.RowKey">@player.PlayerEntity.Name</option>
+								<option value="@pe.RowKey">@pe.Name</option>
 							}
 						}
 					</InputSelect>
@@ -176,7 +176,7 @@
 
 	private Game game = default!;
 
-	private List<Player> players = new();
+	private List<PlayerEntity> playerEntities = new();
 
 	private PlayerAtGameEntity newPagEntity = default!;
 
@@ -253,7 +253,7 @@
 
 	async Task RefreshGameData()
 	{
-		players = await PlayerService.GetPlayers();
+		playerEntities = PlayerEntityService.GetPlayerEntities();
 		game = await GameService.GetGame(GameRowKey);
 		newPagEntity = new PlayerAtGameEntity()
 			{

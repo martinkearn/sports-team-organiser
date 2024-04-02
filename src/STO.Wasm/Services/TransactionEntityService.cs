@@ -1,10 +1,12 @@
+using Azure;
+
 namespace STO.Wasm.Services
 {
     /// <inheritdoc/>
-    public class TransactionEntityService(IDataService dataService, IPlayerService playerService) : ITransactionEntityService
+    public class TransactionEntityService(IDataService dataService, IPlayerEntityService playerEntityService) : ITransactionEntityService
     {
         private readonly IDataService _dataService = dataService;
-        private readonly IPlayerService _playerService = playerService;
+        private readonly IPlayerEntityService _playerEntityService = playerEntityService;
 
         public async Task<List<Transaction>> GetTransactions(List<TransactionEntity> transactionEntities)
         {
@@ -72,10 +74,10 @@ namespace STO.Wasm.Services
         {
             var transactions = new List<Transaction>();
             foreach (var te in transactionEntities)
-            {
-                var transactionPlayer = await _playerService.GetPlayer(te.PlayerRowKey);
+			{
+                var transactionPlayer = _playerEntityService.GetPlayer(te.PlayerRowKey);
 
-                var Transaction = new Transaction(te)
+				var Transaction = new Transaction(te)
                 {
                     Player = transactionPlayer
                 };

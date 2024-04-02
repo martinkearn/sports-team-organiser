@@ -1,10 +1,12 @@
+using Azure;
+
 namespace STO.Wasm.Services
 {
     /// <inheritdoc/>
-    public class RatingService(IDataService dataService, IPlayerService playerService, IGameService gameService) : IRatingService
+    public class RatingService(IDataService dataService, IPlayerEntityService playerEntityService, IGameService gameService) : IRatingService
     {
         private readonly IDataService _dataService = dataService;
-        private readonly IPlayerService _playerService = playerService;
+        private readonly IPlayerEntityService _playerEntityService = playerEntityService;
         private readonly IGameService _gameService = gameService;
 
         public async Task<List<Rating>> GetRatings()
@@ -42,16 +44,16 @@ namespace STO.Wasm.Services
 
         public async Task UpsertRatingEntity(RatingEntity ratingEntity)
         {
-            _ = await _dataService.UpsertEntity<RatingEntity>(ratingEntity);
+            _ = await _dataService.UpsertEntity(ratingEntity);
         }
 
         private async Task<List<Rating>> RatingEntitiesToRatings(List<RatingEntity> ratingEntities)
         {
             var ratings = new List<Rating>();
             foreach (var re in ratingEntities)
-            {
-                var player = await _playerService.GetPlayer(re.PlayerRowKey);
-                var game = await _gameService.GetGame(re.GameRowKey);
+			{
+                var player = _playerEntityService.GetPlayer(re.PlayerRowKey);
+				var game = await _gameService.GetGame(re.GameRowKey);
 
                 var rating = new Rating(re)
                 {

@@ -1,12 +1,13 @@
 namespace STO.Wasm.Services
 {
     /// <inheritdoc/>
-    public class TransactionService(IDataService dataService, IPlayerService playerService) : ITransactionService
-    {
-        private readonly IDataService _dataService = dataService;
-        private readonly IPlayerService _playerService = playerService;
+    public class TransactionService(IDataService dataService, IPlayerEntityService playerEntityService) : ITransactionService
+	{
+		private readonly IDataService _dataService = dataService;
+		private readonly IPlayerEntityService _playerEntityService = playerEntityService;
 
-        public async Task<List<Transaction>> GetTransactions(List<TransactionEntity> transactionEntities)
+
+		public async Task<List<Transaction>> GetTransactions(List<TransactionEntity> transactionEntities)
         {
             return await TransactionEntitiesToTransactions(transactionEntities);
         }
@@ -73,9 +74,9 @@ namespace STO.Wasm.Services
             var transactions = new List<Transaction>();
             foreach (var te in transactionEntities)
             {
-                var transactionPlayer = await _playerService.GetPlayer(te.PlayerRowKey);
+                var transactionPlayer = _playerEntityService.GetPlayer(te.PlayerRowKey);
 
-                var Transaction = new Transaction(te)
+				var Transaction = new Transaction(te)
                 {
                     Player = transactionPlayer
                 };

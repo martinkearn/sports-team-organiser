@@ -64,7 +64,6 @@ public class Program
         builder.Services.AddSingleton<IApiService, ApiService>();
         builder.Services.AddSingleton<IDataService, DataService>();
 		builder.Services.AddSingleton<ICachedDataService, CachedDataService>();
-		builder.Services.AddSingleton<IPlayerService, PlayerService>();
 		builder.Services.AddSingleton<IPlayerEntityService, PlayerEntityService>();
 		builder.Services.AddSingleton<IGameService, GameService>();
         builder.Services.AddSingleton<ITransactionService, TransactionService>();

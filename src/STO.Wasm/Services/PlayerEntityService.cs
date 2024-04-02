@@ -15,7 +15,15 @@ namespace STO.Wasm.Services
 		public PlayerEntity GetPlayerEntity(string rowKey)
 		{
 			var pes = _dataService.PlayerEntities;
-			return pes.First(o => o.RowKey == rowKey);
+			try
+			{
+				return pes.First(o => o.RowKey == rowKey);
+			}
+			catch (Exception ex)
+			{
+				var m = ex.Message;
+				return new PlayerEntity();
+			}
 		}
 
 		public Player GetPlayer(string rowKey)

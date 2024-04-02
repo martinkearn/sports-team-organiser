@@ -1,11 +1,10 @@
 namespace STO.Wasm.Services
 {
     /// <inheritdoc/>
-    public class GameService(IDataService dataService, IPlayerService playerService, ITransactionService transactionService) : IGameService
+    public class GameService(IDataService dataService, IPlayerEntityService playerEntityService, ITransactionService transactionService) : IGameService
     {
         private readonly IDataService _dataService = dataService;
-        private readonly IPlayerService _playerService = playerService;
-
+        private readonly IPlayerEntityService _playerEntityService = playerEntityService;
         private readonly ITransactionService _transactionService = transactionService;
 
         public async Task DeleteGame(string gameRowKey)
@@ -78,7 +77,7 @@ namespace STO.Wasm.Services
 
         public async Task UpsertGameEntity(GameEntity gameEntity)
         {
-            _ = await _dataService.UpsertEntity<GameEntity>(gameEntity);
+            _ = await _dataService.UpsertEntity(gameEntity);
         }
 
         public async Task<PlayerAtGame> GetPlayerAtGame(string pagRowKey)
@@ -90,14 +89,14 @@ namespace STO.Wasm.Services
                 var game = await GetGame(pagEntity.GameRowKey);
                 var pag = new PlayerAtGame(pagEntity)
                 {
-                    Player = await _playerService.GetPlayer(pagEntity.PlayerRowKey),
+                    Player = _playerEntityService.GetPlayer(pagEntity.PlayerRowKey),
                     GameEntity = game.GameEntity
                 };
                 return pag;
             }
 
-            // Create a null pag to return
-            PlayerAtGame emptyPag = new(new PlayerAtGameEntity());
+			// Create a null pag to return
+			PlayerAtGame emptyPag = new(new PlayerAtGameEntity());
             return emptyPag;
         }
 
@@ -107,13 +106,13 @@ namespace STO.Wasm.Services
             var existingPag = game.PlayersAtGame.FirstOrDefault(p => p.Player.PlayerEntity.RowKey == pag.PlayerRowKey);
             if (existingPag == default)
             {
-                _ = await _dataService.UpsertEntity<PlayerAtGameEntity>(pag);
+                _ = await _dataService.UpsertEntity(pag);
             }
             else
             {
                 pag.RowKey = existingPag.PlayerAtGameEntity.RowKey;
                 pag.PartitionKey = existingPag.PlayerAtGameEntity.PartitionKey;
-                _ = await _dataService.UpsertEntity<PlayerAtGameEntity>(pag);
+                _ = await _dataService.UpsertEntity(pag);
             }
         }
 
@@ -171,7 +170,7 @@ namespace STO.Wasm.Services
         public async Task TogglePlayerAtGamePlayed(PlayerAtGameEntity pag, bool? played)
         {
             // Get player for pag
-            var player = await _playerService.GetPlayer(pag.PlayerRowKey);
+            var player = _playerEntityService.GetPlayer(pag.PlayerRowKey);
 
             if (played != null)
             {
@@ -226,7 +225,7 @@ namespace STO.Wasm.Services
                 {
                     var pag = new PlayerAtGame(playersAtGameEntity)
                     {
-                        Player = await _playerService.GetPlayer(playersAtGameEntity.PlayerRowKey),
+                        Player = _playerEntityService.GetPlayer(playersAtGameEntity.PlayerRowKey),
                         GameEntity = ge
                     };
                     playersAtGame.Add(pag);

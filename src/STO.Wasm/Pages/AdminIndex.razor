@@ -80,7 +80,6 @@
 	private List<PlayerAtGameEntity> allPlayerAtGame = new();
 	private List<RatingEntity> allRatings = new();
 	private IEnumerable<Claim> claims = Enumerable.Empty<Claim>();
-	private bool dataReady = false;
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -102,7 +101,5 @@
 		allTransactions = await DataService.QueryEntities<TransactionEntity>();
 		allPlayerAtGame = await DataService.QueryEntities<PlayerAtGameEntity>();
 		allRatings = await DataService.QueryEntities<RatingEntity>();
-
-		dataReady = true;
 	}
 }

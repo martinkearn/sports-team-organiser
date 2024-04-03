@@ -1,5 +1,3 @@
-using Azure;
-
 namespace STO.Wasm.Services
 {
     /// <inheritdoc/>

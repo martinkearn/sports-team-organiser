@@ -1,5 +1,5 @@
 @page "/transactions"
-@inject ITransactionService TransactionService
+@inject ITransactionEntityService TransactionEntityService
 
 
 <PageTitle>TNF - @pageTitle</PageTitle>
@@ -17,18 +17,18 @@
 				<tr>
 					<th scope="col"><button class="btn btn-link m-0 p-0" @onclick="() => SortTransactions(Enums.SortTransactionsBy.Date)">Date</button></th>
 					<th scope="col"><button class="btn btn-link m-0 p-0" @onclick="() => SortTransactions(Enums.SortTransactionsBy.Amount)">Amount</button></th>
-					<th scope="col"><button class="btn btn-link m-0 p-0" @onclick="() => SortTransactions(Enums.SortTransactionsBy.Player)">Player</button></th>
+					<th scope="col" class="d-none d-lg-table-cell">PlayerRowKey (for now)</th>
 					<th scope="col" class="d-none d-lg-table-cell">Notes</th>
 				</tr>
 			</thead>
 			<tbody>
-				@foreach (var transaction in pageOfTransactions)
+				@foreach (var te in pageOfTransactionEntities)
 				{
 					<tr>
-						<td><a href="/transactions/@transaction.TransactionEntity.RowKey">@transaction.TransactionEntity.Date.ToString("dd MMM yyyy HH:mm")</a></td>
-						<td><CurrencyDisplay Amount="@transaction.TransactionEntity.Amount" /></td>
-						<td><a href="/players/@transaction.Player.PlayerEntity.RowKey/player">@transaction.Player.PlayerEntity.Name</a></td>
-						<td class="d-none d-lg-table-cell">@transaction.TransactionEntity.Notes</td>
+						<td><a href="/transactions/@te.RowKey">@te.Date.ToString("dd MMM yyyy HH:mm")</a></td>
+						<td><CurrencyDisplay Amount="@te.Amount" /></td>
+						<td class="d-none d-lg-table-cell">@te.PlayerRowKey</td>
+						<td class="d-none d-lg-table-cell">@te.Notes</td>
 					</tr>
 				}
 			</tbody>
@@ -45,7 +45,7 @@
 			</ul>
 		</nav>
 
-		<p>@transactions.Count transactions. @transactionsPerPage per page.</p>
+		<p>@transactionEntities.Count transactions. @transactionsPerPage per page.</p>
 	</Authorized>
 	<NotAuthorized>
 		<h4>Access Denied!</h4>
@@ -55,9 +55,9 @@
 
 
 @code {
-	private List<Transaction> transactions = new();
+	private List<TransactionEntity> transactionEntities = new();
 
-	private List<Transaction> pageOfTransactions = new();
+	private List<TransactionEntity> pageOfTransactionEntities = new();
 
 	private int transactionsPerPage = 40;
 
@@ -69,11 +69,9 @@
 
 	private string pageTitle = default!;
 
-	private bool dataReady = false;
-
-	protected override async Task OnInitializedAsync()
+	protected override void OnInitialized()
 	{
-		await RefreshData();
+		RefreshData();
 	}
 
 	private void SortTransactions(Enums.SortTransactionsBy by)
@@ -81,22 +79,17 @@
 		switch (by)
 		{
 			case Enums.SortTransactionsBy.Date:
-				transactions = (currentSortBy == by) ?
-					transactions.OrderByDescending(o => o.TransactionEntity.Date.Date).ToList() :
-					transactions.OrderBy(o => o.TransactionEntity.Date.Date).ToList();
+				transactionEntities = (currentSortBy == by) ?
+					transactionEntities.OrderByDescending(o => o.Date.Date).ToList() :
+					transactionEntities.OrderBy(o => o.Date.Date).ToList();
 				break;
 			case Enums.SortTransactionsBy.Amount:
-				transactions = (currentSortBy == by) ?
-					transactions.OrderByDescending(o => o.TransactionEntity.Amount).ToList() :
-					transactions.OrderBy(o => o.TransactionEntity.Amount).ToList();
-				break;
-			case Enums.SortTransactionsBy.Player:
-				transactions = (currentSortBy == by) ?
-					transactions.OrderByDescending(o => o.Player.PlayerEntity.Name).ToList() :
-					transactions.OrderBy(o => o.Player.PlayerEntity.Name).ToList();
+				transactionEntities = (currentSortBy == by) ?
+					transactionEntities.OrderByDescending(o => o.Amount).ToList() :
+					transactionEntities.OrderBy(o => o.Amount).ToList();
 				break;
 			default:
-				transactions = transactions.OrderBy(o => o.TransactionEntity.Date.Date).ToList();
+				transactionEntities = transactionEntities.OrderBy(o => o.Date.Date).ToList();
 				break;
 		}
 
@@ -106,20 +99,18 @@
 	private void ChangePage(int page)
 	{
 		currentPageNumber = page;
-		pageOfTransactions = transactions.Skip((page - 1) * transactionsPerPage).Take(transactionsPerPage).ToList();
+		pageOfTransactionEntities = transactionEntities.Skip((page - 1) * transactionsPerPage).Take(transactionsPerPage).ToList();
 	}
 
-	private async Task RefreshData()
+	private void RefreshData()
 	{
-		transactions = await TransactionService.GetTransactions();
+		transactionEntities = TransactionEntityService.GetTransactionEntities();
 		pageTitle = "Transactions";
 
 		// Setup paging
-		pageOfTransactions = transactions.Take(transactionsPerPage).ToList();
-		var pagesDec = (double)transactions.Count / (double)transactionsPerPage;
+		pageOfTransactionEntities = transactionEntities.Take(transactionsPerPage).ToList();
+		var pagesDec = (double)transactionEntities.Count / (double)transactionsPerPage;
 		pages = Convert.ToInt16(Math.Ceiling(pagesDec));
 		currentPageNumber = 1;
-
-		dataReady = true;
 	}
 }

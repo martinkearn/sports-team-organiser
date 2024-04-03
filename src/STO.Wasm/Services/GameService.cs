@@ -191,7 +191,7 @@ namespace STO.Wasm.Services
                     PlayerRowKey = pag.PlayerRowKey,
                     Amount = -player.PlayerEntity.DefaultRate,
                     Date = DateTimeOffset.UtcNow,
-                    Notes = await _transactionService.GetNotesForGame(pag.GameRowKey)
+                    Notes = await GetNotesForGame(pag.GameRowKey)
                 };
                 await _transactionService.UpsertTransactionEntity(transaction);
             }
@@ -208,6 +208,19 @@ namespace STO.Wasm.Services
 
             // Upsert pag
             await UpsertPlayerAtGameEntity(pag);
+        }
+
+        public async Task<string> GetNotesForGame(string gameRowKey)
+        {
+            var gameEntityResult = await _dataService.QueryEntities<GameEntity>();
+            var gameEntity = gameEntityResult.Where(o => o.RowKey == gameRowKey).FirstOrDefault();
+            if (gameEntity is not null)
+            {
+                var notes = $"For game {gameEntity.Date.Date:dd MMM yyyy}";
+                return notes;
+            }
+
+            return string.Empty;
         }
 
         private async Task<List<Game>> GameEntitiesToGames(List<GameEntity> gameEntities)

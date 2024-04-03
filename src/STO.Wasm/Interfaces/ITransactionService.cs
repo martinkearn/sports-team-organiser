@@ -3,7 +3,7 @@ namespace STO.Wasm.Interfaces
     /// <summary>
     /// Service for working with TransactionEntity and Transactions.
     /// </summary>
-    public interface ITransactionEntityService
+    public interface ITransactionService
     {
         /// <summary>
         /// Converts a list of TransactionEntities to a full list of Transactions.
@@ -43,11 +43,6 @@ namespace STO.Wasm.Interfaces
         /// <param name="transactionEntity">The TransactionEntity to upsert.</param>
         public Task UpsertTransactionEntity(TransactionEntity transactionEntity);
         
-        /// <summary>
-        /// A string which can be used as notes when mapping a transaction to a game
-        /// </summary>
-        /// <param name="gameTitle"></param>
-        /// <returns></returns>
-        public Task<string> GetNotesForGame(string gameTitle);
+
     }
 }

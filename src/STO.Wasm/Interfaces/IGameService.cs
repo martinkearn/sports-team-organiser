@@ -79,5 +79,12 @@ namespace STO.Wasm.Interfaces
         /// </summary>
         /// <param name="pag">The PlayerAtGame to toggle the Played property for. Not used if null.</param>  
         public Task TogglePlayerAtGamePlayed(PlayerAtGameEntity pag, bool? played);
+
+        /// <summary>
+        /// A string which can be used as notes when mapping a transaction to a game
+        /// </summary>
+        /// <param name="gameTitle"></param>
+        /// <returns></returns>
+        public Task<string> GetNotesForGame(string gameTitle);
     }
 }

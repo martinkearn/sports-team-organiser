@@ -56,19 +56,6 @@ namespace STO.Wasm.Services
             await _dataService.UpsertEntity<TransactionEntity>(transactionEntity);
         }
 
-        public async Task<string> GetNotesForGame(string gameRowKey)
-        {
-            var gameEntityResult = await _dataService.QueryEntities<GameEntity>();
-            var gameEntity = gameEntityResult.Where(o => o.RowKey == gameRowKey).FirstOrDefault();
-            if (gameEntity is not null) 
-            {
-                var notes = $"For game {gameEntity.Date.Date:dd MMM yyyy}";
-                return notes;
-            }
-
-            return string.Empty;
-        }
-
         private async Task<List<Transaction>> TransactionEntitiesToTransactions(List<TransactionEntity> transactionEntities)
         {
             var transactions = new List<Transaction>();

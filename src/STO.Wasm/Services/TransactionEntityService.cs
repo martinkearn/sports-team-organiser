@@ -3,20 +3,27 @@ using Azure;
 namespace STO.Wasm.Services
 {
     /// <inheritdoc/>
-    public class TransactionEntityService(IDataService dataService, IPlayerEntityService playerEntityService) : ITransactionEntityService
+    public class TransactionEntityService(ICachedDataService dataService) : ITransactionEntityService
     {
-        private readonly IDataService _dataService = dataService;
-        private readonly IPlayerEntityService _playerEntityService = playerEntityService;
+        private readonly ICachedDataService _dataService = dataService;
 
-        public async Task<List<Transaction>> GetTransactions(List<TransactionEntity> transactionEntities)
+        public List<TransactionEntity> GetTransactionEntities()
         {
-            return await TransactionEntitiesToTransactions(transactionEntities);
+            return _dataService.TransactionEntities;
         }
 
-        public async Task<List<Transaction>> GetTransactions()
+        public TransactionEntity GetTransactionEntity(string rowKey)
         {
-            var TransactionEntitiesResult = await _dataService.QueryEntities<TransactionEntity>();
-            return await TransactionEntitiesToTransactions(TransactionEntitiesResult);
+            var tes = GetTransactionEntities();
+            try
+            {
+                return tes.First(o => o.RowKey == rowKey);
+            }
+            catch (Exception ex)
+            {
+                var m = ex.Message;
+                return new TransactionEntity();
+            }
         }
 
         public async Task DeleteTransactionEntity(string rowKey)
@@ -24,66 +31,9 @@ namespace STO.Wasm.Services
             await _dataService.DeleteEntity<TransactionEntity>(rowKey);
         }
 
-        public async Task DeleteTransactionEntiesForPlayer(string playerRowKey)
-        {
-            List<Transaction> allTransactions = await GetTransactions();
-            var playerTransactions = allTransactions.Where(o => o.Player.PlayerEntity.RowKey == playerRowKey).ToList();
-            var playerTransactionRowkeys = playerTransactions.Select(e => e.TransactionEntity.RowKey).ToList();
-            foreach (var t in playerTransactionRowkeys)
-            {
-                await DeleteTransactionEntity(t);
-            }
-        }
-
-        public async Task<Transaction> GetTransaction(string rowKey)
-        {
-            var transactionEntitiesResult = await _dataService.QueryEntities<TransactionEntity>();
-            var transactionEntities = transactionEntitiesResult.Where(o => o.RowKey == rowKey).ToList();
-            var transactionsResult = await TransactionEntitiesToTransactions(transactionEntities);
-            var matchingTransaction = transactionsResult.FirstOrDefault();
-
-            if (matchingTransaction is not null)
-            {
-                return matchingTransaction;
-            }
-
-            // Create a null transaction to return
-            Transaction nullTransaction = new(new TransactionEntity());
-            return nullTransaction;
-        }
-
         public async Task UpsertTransactionEntity(TransactionEntity transactionEntity)
         {
-            await _dataService.UpsertEntity<TransactionEntity>(transactionEntity);
-        }
-
-        public async Task<string> GetNotesForGame(string gameRowKey)
-        {
-            var gameEntityResult = await _dataService.QueryEntities<GameEntity>();
-            var gameEntity = gameEntityResult.Where(o => o.RowKey == gameRowKey).FirstOrDefault();
-            if (gameEntity is not null) 
-            {
-                var notes = $"For game {gameEntity.Date.Date:dd MMM yyyy}";
-                return notes;
-            }
-
-            return string.Empty;
-        }
-
-        private async Task<List<Transaction>> TransactionEntitiesToTransactions(List<TransactionEntity> transactionEntities)
-        {
-            var transactions = new List<Transaction>();
-            foreach (var te in transactionEntities)
-			{
-                var transactionPlayer = _playerEntityService.GetPlayer(te.PlayerRowKey);
-
-				var Transaction = new Transaction(te)
-                {
-                    Player = transactionPlayer
-                };
-                transactions.Add(Transaction);
-            }
-            return [.. transactions.OrderByDescending(o => o.TransactionEntity.Date)];
+            await _dataService.UpsertEntity(transactionEntity);
         }
     }
 }

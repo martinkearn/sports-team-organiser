@@ -1,29 +1,22 @@
 namespace STO.Wasm.Interfaces
 {
     /// <summary>
-    /// Service for working with Transactions.
+    /// Service for working with TransactionEntities.
     /// </summary>
-    public interface ITransactionService
+    public interface ITransactionEntityService
     {
         /// <summary>
-        /// Converts a list of TransactionEntities to a full list of Transactions.
+        /// Gets all TransactionEntities.
         /// </summary>
-        /// <param name="transactionEntities">The list of TransactionEntities to convert.</param>
-        /// <returns>List of Transactions.</returns>
-        public Task<List<Transaction>> GetTransactions(List<TransactionEntity> transactionEntities);
+        /// <returns>List of TransactionEntities.</returns>
+        public List<TransactionEntity> GetTransactionEntities();
 
         /// <summary>
-        /// Converts all TransactionEntities to a full list of Transactions.
+        /// Gets a specific TransactionEntity based on its RowKey
         /// </summary>
-        /// <returns>List of Transactions.</returns>
-        public Task<List<Transaction>> GetTransactions();
-
-        /// <summary>
-        /// Gets a single Transaction by row key.
-        /// </summary>
-        /// <param name="rowKey">The RowKey for the TransactionEntity to get.</param>
-        /// <returns>A Transaction.</returns>
-        public Task<Transaction> GetTransaction(string rowKey);
+        /// <param name="rowKey"></param>
+        /// <returns>a TransactionEntity</returns>
+        public TransactionEntity GetTransactionEntity(string rowKey);
 
         /// <summary>
         /// Deletes a TransactionEntity.
@@ -32,22 +25,10 @@ namespace STO.Wasm.Interfaces
         public Task DeleteTransactionEntity(string rowKey);
 
         /// <summary>
-        /// Deletes all TransactionEntity for a player.
-        /// </summary>
-        /// <param name="rowKey">The RowKey for the PlayerEntity to delete TransactionEntity for.</param>
-        public Task DeleteTransactionEntiesForPlayer(string playerRowKey);
-
-        /// <summary>
         /// Adds a new TransactionEntity.
         /// </summary>
         /// <param name="transactionEntity">The TransactionEntity to upsert.</param>
         public Task UpsertTransactionEntity(TransactionEntity transactionEntity);
         
-        /// <summary>
-        /// A string which can be used as notes when mapping a transaction to a game
-        /// </summary>
-        /// <param name="gameTitle"></param>
-        /// <returns></returns>
-        public Task<string> GetNotesForGame(string gameTitle);
     }
 }

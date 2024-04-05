@@ -11,6 +11,9 @@ namespace STO.Wasm.Services
 
 		public List<PlayerEntity> PlayerEntities { get; set; } = [];
 		public List<TransactionEntity> TransactionEntities { get; set; } = [];
+		public List<RatingEntity> RatingEntities { get; set; } = [];
+		public List<GameEntity> GameEntities { get; set; } = [];
+		public List<PlayerAtGameEntity> PlayerAtGameEntities { get; set; } = [];
 
 		public async Task DeleteEntity<T>(string rowKey) where T : class, ITableEntity
 		{
@@ -62,6 +65,9 @@ namespace STO.Wasm.Services
 						// Load memory lists from storage
 						PlayerEntities = await _localStorageService.GetItemAsync<List<PlayerEntity>>(nameof(PlayerEntity)) ?? [];
 						TransactionEntities = await _localStorageService.GetItemAsync<List<TransactionEntity>>(nameof(TransactionEntity)) ?? [];
+						RatingEntities = await _localStorageService.GetItemAsync<List<RatingEntity>>(nameof(RatingEntity)) ?? [];
+						GameEntities = await _localStorageService.GetItemAsync<List<GameEntity>>(nameof(GameEntity)) ?? [];
+						PlayerAtGameEntities = await _localStorageService.GetItemAsync<List<PlayerAtGameEntity>>(nameof(PlayerAtGameEntity)) ?? [];
 
 						// Exit
 						return;
@@ -94,6 +100,21 @@ namespace STO.Wasm.Services
 				if (typeof(T) == typeof(TransactionEntity))
 				{
 					TransactionEntities = (List<TransactionEntity>)Convert.ChangeType(data, typeof(List<T>));
+				}
+
+				if (typeof(T) == typeof(RatingEntity))
+				{
+					RatingEntities = (List<RatingEntity>)Convert.ChangeType(data, typeof(List<T>));
+				}
+
+				if (typeof(T) == typeof(GameEntity))
+				{
+					GameEntities = (List<GameEntity>)Convert.ChangeType(data, typeof(List<T>));
+				}
+
+				if (typeof(T) == typeof(PlayerAtGameEntity))
+				{
+					PlayerAtGameEntities = (List<PlayerAtGameEntity>)Convert.ChangeType(data, typeof(List<T>));
 				}
 			}
 		}

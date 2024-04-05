@@ -1,6 +1,6 @@
 @page "/pags/{PagRowKey}"
 @inject IGameService GameService
-@inject ITransactionService TransactionService
+@inject ITransactionEntityService TransactionEntityService
 @inject NavigationManager Navigation
 
 @if (dataReady)
@@ -98,7 +98,7 @@
 				PlayerRowKey = playerRowKey,
 				Amount = amount
 			};
-		await TransactionService.UpsertTransactionEntity(newTransactionEntityForPag);
+		TransactionEntityService?.UpsertTransactionEntity(newTransactionEntityForPag);
 		await RefreshData();
 	}
 

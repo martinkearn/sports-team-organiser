@@ -1,5 +1,5 @@
 @inject IGameService GameService
-@inject ITransactionService TransactionService
+@inject ITransactionEntityService TransactionEntityService
 
 @if (pag.PlayerAtGameEntity.Played)
 {
@@ -59,7 +59,7 @@ else
                 PlayerRowKey = pag.Player.PlayerEntity.RowKey,
                 Amount = amount
             };
-        await TransactionService.UpsertTransactionEntity(newTransactionEntityForPag);
+        TransactionEntityService?.UpsertTransactionEntity(newTransactionEntityForPag);
         await RefreshMainPage.InvokeAsync();
     }
 

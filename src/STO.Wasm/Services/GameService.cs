@@ -1,11 +1,11 @@
 namespace STO.Wasm.Services
 {
     /// <inheritdoc/>
-    public class GameService(IDataService dataService, IPlayerEntityService playerEntityService, ITransactionService transactionService) : IGameService
+    public class GameService(IDataService dataService, IPlayerEntityService playerEntityService, ITransactionEntityService transactionEntityService) : IGameService
     {
         private readonly IDataService _dataService = dataService;
         private readonly IPlayerEntityService _playerEntityService = playerEntityService;
-        private readonly ITransactionService _transactionService = transactionService;
+        private readonly ITransactionEntityService _transactionEntityService = transactionEntityService;
 
         public async Task DeleteGame(string gameRowKey)
         {
@@ -193,7 +193,7 @@ namespace STO.Wasm.Services
                     Date = DateTimeOffset.UtcNow,
                     Notes = await GetNotesForGame(pag.GameRowKey)
                 };
-                await _transactionService.UpsertTransactionEntity(transaction);
+                _transactionEntityService?.UpsertTransactionEntity(transaction);
             }
             else
             {
@@ -202,7 +202,7 @@ namespace STO.Wasm.Services
                     .Where(o => o.Amount < 0);
                 foreach (var pagDebitTransactionEntity in pagDebitTransactionEntities)
                 {
-                    await _transactionService.DeleteTransactionEntity(pagDebitTransactionEntity.RowKey);
+                    _transactionEntityService?.DeleteTransactionEntity(pagDebitTransactionEntity.RowKey);
                 }
             }
 

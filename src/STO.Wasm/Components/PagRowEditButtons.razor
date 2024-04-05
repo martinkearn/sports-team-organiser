@@ -1,7 +1,6 @@
 @inject IGameService GameService
 @inject ITransactionService TransactionService
 
-
 @if (pag.PlayerAtGameEntity.Played)
 {
     <button type="button" class="btn btn-outline-secondary btn-sm active d-none d-md-inline" @onclick="TogglePlayed"> Played</button>

@@ -85,7 +85,7 @@
 					transactionEntities.OrderBy(o => o.PlayerRowKey).ToList();
 				break;
 			default:
-				transactionEntities = transactionEntities.OrderBy(o => o.Date.Date).ToList();
+				transactionEntities = transactionEntities.OrderByDescending(o => o.Date.Date).ToList();
 				break;
 		}
 
@@ -101,7 +101,7 @@
 
 	private void RefreshData()
 	{
-		transactionEntities = TransactionEntityService.GetTransactionEntities();
+		transactionEntities = TransactionEntityService.GetTransactionEntities().OrderByDescending(o => o.Date.Date).ToList();
 		pageTitle = "Transactions";
 		SetupPages();
 	}

@@ -10,6 +10,9 @@ namespace STO.Wasm.Interfaces
         public List<PlayerEntity> PlayerEntities { get; set; }
 
 		public List<TransactionEntity> TransactionEntities { get; set; }
+		public List<RatingEntity> RatingEntities { get; set; }
+		public List<GameEntity> GameEntities { get; set; }
+		public List<PlayerAtGameEntity> PlayerAtGameEntities { get; set; }
 
 		/// <summary>
 		/// Adds or Updates an entity. Updates if rowkey is present, adds if not.

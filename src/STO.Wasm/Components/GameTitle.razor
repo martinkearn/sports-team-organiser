@@ -1,3 +1,4 @@
+@inject IGameService GameService
 @if (Game != default)
 {
     var gameDateLabel = Game.GameEntity.Date.ToString("dd MMM");
@@ -22,4 +23,15 @@ else
 
     [Parameter]
     public Game? Game { get; set; }
+
+    [Parameter]
+    public string? GameRowKey { get; set; }
+
+    protected async override Task OnInitializedAsync()
+    {
+        if (!string.IsNullOrEmpty(GameRowKey))
+        {
+            Game = await GameService.GetGame(GameRowKey);
+        }
+    }
 }

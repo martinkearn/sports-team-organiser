@@ -1,68 +1,144 @@
-﻿
-namespace STO.Wasm.Services
+﻿namespace STO.Wasm.Services
 {
 	/// <inheritdoc/>
-	public class GameEntityService(ICachedDataService dataService) : IGameEntityService
+	public class GameEntityService(ICachedDataService dataService, IRatingEntityService ratingEntityService, IPlayerEntityService playerEntityService, ITransactionEntityService transactionEntityService) : IGameEntityService
 	{
 		private readonly ICachedDataService _dataService = dataService;
-		public List<PlayerAtGame> CalculateTeams(List<PlayerAtGame> pags)
+		private readonly IRatingEntityService _ratingEntityService = ratingEntityService;
+		private readonly IPlayerEntityService _playerEntityService = playerEntityService;
+		private readonly ITransactionEntityService _transactionEntityService = transactionEntityService;
+
+		public List<PlayerAtGameEntity> CalculateTeams(List<PlayerAtGameEntity> pags)
 		{
 			throw new NotImplementedException();
 		}
 
-		public void DeleteGame(string gameRowkey)
+		public void DeleteGameEntity(string rowkey)
 		{
-			throw new NotImplementedException();
+			// Delete Ratings
+			var ratingsForGame = _ratingEntityService.GetRatingEntitiesForGame(rowkey);
+			foreach (var re in ratingsForGame)
+			{
+				_ratingEntityService.DeleteRatingEntity(re.RowKey);
+			}
+
+			// Delete PAGs
+			var pagsForGame = GetPlayerAtGameEntitiesForGame(rowkey);
+			foreach (var pag in pagsForGame)
+			{
+				DeletePlayerAtGameEntity(pag.RowKey);
+			}
+
+			// Delete game
+			_dataService.DeleteEntity<GameEntity>(rowkey);
 		}
 
-		public void DeletePlayerAtGameEntity(PlayerAtGameEntity pag)
+		public void DeletePlayerAtGameEntity(string rowKey)
 		{
-			throw new NotImplementedException();
+			_dataService.DeleteEntity<PlayerAtGameEntity>(rowKey);
 		}
 
-		public GameEntity GetGame(string gameRowKey)
+		public List<GameEntity> GetGameEntities()
 		{
-			throw new NotImplementedException();
+			return _dataService.GameEntities;
 		}
 
-		public List<GameEntity> GetGames()
+		public GameEntity GetGameEntity(string rowKey)
 		{
-			throw new NotImplementedException();
+			var ges = GetGameEntities();
+			return ges.First(o => o.RowKey == rowKey);
 		}
 
-		public GameEntity GetNextGame()
+		public GameEntity GetNextGameEntity()
 		{
-			throw new NotImplementedException();
+			var ges = GetGameEntities();
+			ges.OrderByDescending(o => o.Date.DateTime);
+			return ges.First();
 		}
 
-		public string GetNotesForGame(string gameTitle)
+		public string GetNotesForGame(string rowKey)
 		{
-			throw new NotImplementedException();
+			var ge = GetGameEntity(rowKey);
+			if (ge is not null)
+			{
+				var notes = $"For game {ge.Date.Date:dd MMM yyyy}";
+				return notes;
+			}
+
+			return string.Empty;
 		}
 
-		public PlayerAtGame GetPlayerAtGame(string pagRowKey)
+		public List<PlayerAtGameEntity> GetPlayerAtGameEntitiesForGame(string gameRowKey)
 		{
-			throw new NotImplementedException();
+			var pagsForGame = _dataService.PlayerAtGameEntities.Where(o => o.GameRowKey == gameRowKey).ToList();
+			return pagsForGame;
+		}
+
+		public PlayerAtGameEntity GetPlayerAtGameEntity(string rowKey)
+		{
+			return _dataService.PlayerAtGameEntities.First(o => o.RowKey == rowKey);
 		}
 
 		public void MarkAllPlayed(string gameRowkey, bool played)
 		{
-			throw new NotImplementedException();
+			var pags = GetPlayerAtGameEntitiesForGame(gameRowkey);
+			foreach (var pag in pags)
+			{
+				TogglePlayerAtGamePlayed(pag, played);
+			}
 		}
 
 		public void TogglePlayerAtGamePlayed(PlayerAtGameEntity pag, bool? played)
 		{
-			throw new NotImplementedException();
+			// Get player for pag
+			var playerEntity = _playerEntityService.GetPlayerEntity(pag.PlayerRowKey);
+
+			if (played != null)
+			{
+				// Set the pag value to what played is
+				pag.Played = (bool)played;
+			}
+			else
+			{
+				// Just toggle the pag value
+				pag.Played = !pag.Played;
+			}
+
+			// Add / remove transactions if played / not played
+			if (pag.Played)
+			{
+				var transaction = new TransactionEntity()
+				{
+					PlayerRowKey = pag.PlayerRowKey,
+					Amount = -playerEntity.DefaultRate,
+					Date = DateTimeOffset.UtcNow,
+					Notes = GetNotesForGame(pag.GameRowKey)
+				};
+				_transactionEntityService?.UpsertTransactionEntity(transaction);
+			}
+			else
+			{
+				// Get debit transactions (less than £0) for player and game
+				var teForPe = _transactionEntityService.GetTransactionEntities().Where(o => o.PlayerRowKey == playerEntity.RowKey);
+				var pagDebitTransactionEntities = teForPe.Where(o => o.Amount < 0);
+				foreach (var pagDebitTransactionEntity in pagDebitTransactionEntities)
+				{
+					_transactionEntityService?.DeleteTransactionEntity(pagDebitTransactionEntity.RowKey);
+				}
+			}
+
+			// Upsert pag
+			UpsertPlayerAtGameEntity(pag);
 		}
 
 		public void UpsertGameEntity(GameEntity gameEntity)
 		{
-			throw new NotImplementedException();
+			_dataService.UpsertEntity(gameEntity);
 		}
 
-		public void UpsertPlayerAtGameEntity(PlayerAtGameEntity pag)
+		public void UpsertPlayerAtGameEntity(PlayerAtGameEntity pagEntity)
 		{
-			throw new NotImplementedException();
+			_dataService.UpsertEntity(pagEntity);
 		}
 	}
 }

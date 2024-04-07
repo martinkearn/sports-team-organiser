@@ -9,25 +9,25 @@ namespace STO.Wasm.Interfaces
         /// Gets all GameEntities.
         /// </summary>
         /// <returns>List of GameEntity.</returns>
-        public List<GameEntity> GetGames();
+        public List<GameEntity> GetGameEntities();
 
         /// <summary>
         /// Gets a single GameEntity.
         /// </summary>
         /// <returns>GameEntity.</returns>
-        public GameEntity GetGame(string gameRowKey);
+        public GameEntity GetGameEntity(string rowKey);
 
         /// <summary>
         /// Gets the next GameEntity in terms of date.
         /// </summary>
         /// <returns>GameEntity.</returns>
-        public GameEntity GetNextGame();
+        public GameEntity GetNextGameEntity();
 
         /// <summary>
         /// Deletes the GameEntity and PlayerAtGameEntity associated with a Game.
         /// </summary>
         /// <param name="gameRowkey">The RowKey for the GameEntity to delete.</param>
-        public void DeleteGame(string gameRowkey);
+        public void DeleteGameEntity(string rowkey);
 
         /// <summary>
         /// Adds a new GameEntity.
@@ -35,30 +35,36 @@ namespace STO.Wasm.Interfaces
         /// <param name="playerEntity">The GameEntity to upsert.</param>
         public void UpsertGameEntity(GameEntity gameEntity);
 
-        /// <summary>
-        /// Gets a single Pag (player at game).
-        /// </summary>
-        /// <returns>PlayerAtGame.</returns>
-        public PlayerAtGame GetPlayerAtGame(string pagRowKey);
+		/// <summary>
+		/// Gets a list of PlayerAtGame for a given Game
+		/// </summary>
+		/// <returns>List of PlayerAtGame.</returns>
+		public List<PlayerAtGameEntity> GetPlayerAtGameEntitiesForGame(string gameRowKey);
 
 		/// <summary>
-		/// Upserts a PlayerAtGameEntity, including transactions.
+		/// Gets a single Pag (player at game).
 		/// </summary>
-		/// <param name="pag">The PlayerAtGame.</param>     
-		public void UpsertPlayerAtGameEntity(PlayerAtGameEntity pag);
+		/// <returns>PlayerAtGame.</returns>
+		public PlayerAtGameEntity GetPlayerAtGameEntity(string rowKey);
+
+		/// <summary>
+		/// Upserts a PlayerAtGameEntity.
+		/// </summary>
+		/// <param name="pagEntity">The PlayerAtGame.</param>     
+		public void UpsertPlayerAtGameEntity(PlayerAtGameEntity pagEntity);
 
 		/// <summary>
 		/// Deletes a PlayerAtGameEntity from a game.
 		/// </summary>
-		/// <param name="pag">The PlayerAtGame to delete.</param>     
-		public void DeletePlayerAtGameEntity(PlayerAtGameEntity pag);
+		/// <param name="rowKey">The RowKey for the PlayerAtGame to delete.</param>     
+		public void DeletePlayerAtGameEntity(string rowKey);
 
 		/// <summary>
 		/// Distributes PlayerAtGameEntitys into teams
 		/// </summary>
 		/// <param name="pag">The PlayerAtGame collection to assign teams to.</param> 
 		/// <returns>List of PlayerAtGame with team details.</returns>   
-		public List<PlayerAtGame> CalculateTeams(List<PlayerAtGame> pags);
+		public List<PlayerAtGameEntity> CalculateTeams(List<PlayerAtGameEntity> pags);
 
 		/// <summary>
 		/// Marks all PlayerAtGameEntity in a Game as having played.
@@ -73,11 +79,11 @@ namespace STO.Wasm.Interfaces
         /// <param name="pag">The PlayerAtGame to toggle the Played property for. Not used if null.</param>  
         public void TogglePlayerAtGamePlayed(PlayerAtGameEntity pag, bool? played);
 
-        /// <summary>
-        /// A string which can be used as notes when mapping a transaction to a game
-        /// </summary>
-        /// <param name="gameTitle"></param>
-        /// <returns></returns>
-        public string GetNotesForGame(string gameTitle);
+		/// <summary>
+		/// A string which can be used as notes when mapping a transaction to a game
+		/// </summary>
+		/// <param name="rowKey">The RowKey of teh GameEntity to create notes for.</param>
+		/// <returns>A string which can be used as notes for a Game.</returns>
+		public string GetNotesForGame(string rowKey);
     }
 }

@@ -17,6 +17,13 @@ namespace STO.Wasm.Interfaces
         /// <returns>GameEntity.</returns>
         public GameEntity GetGameEntity(string rowKey);
 
+		/// <summary>
+		/// Gets a single Game.
+		/// </summary>
+		/// <param name="rowKey">The RowKey of the GameEntity which the Game is based on.</param>
+		/// <returns>A Game.</returns>
+		public Game GetGame(string rowKey);
+
         /// <summary>
         /// Gets the next GameEntity in terms of date.
         /// </summary>
@@ -60,11 +67,11 @@ namespace STO.Wasm.Interfaces
 		public void DeletePlayerAtGameEntity(string rowKey);
 
 		/// <summary>
-		/// Distributes PlayerAtGameEntitys into teams
+		/// Distributes PlayerAtGames into teams
 		/// </summary>
 		/// <param name="pag">The PlayerAtGame collection to assign teams to.</param> 
 		/// <returns>List of PlayerAtGame with team details.</returns>   
-		public List<PlayerAtGameEntity> CalculateTeams(List<PlayerAtGameEntity> pags);
+		public List<PlayerAtGame> CalculateTeams(List<PlayerAtGame> pags);
 
 		/// <summary>
 		/// Marks all PlayerAtGameEntity in a Game as having played.

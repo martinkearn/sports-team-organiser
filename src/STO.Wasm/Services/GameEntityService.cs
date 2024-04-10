@@ -8,10 +8,40 @@
 		private readonly IPlayerEntityService _playerEntityService = playerEntityService;
 		private readonly ITransactionEntityService _transactionEntityService = transactionEntityService;
 
-		public List<PlayerAtGameEntity> CalculateTeams(List<PlayerAtGameEntity> pags)
+		public List<PlayerAtGame> CalculateTeams(List<PlayerAtGame> pags)
 		{
-			throw new NotImplementedException();
-		}
+            var newPags = new List<PlayerAtGame>();
+            var rng = new Random();
+            var yesPags = pags
+                .Where(o => o.PlayerAtGameEntity.Forecast.Equals("yes", StringComparison.InvariantCultureIgnoreCase))
+                .OrderBy(o => o.Player.PlayerEntity.AdminRating).ToList();
+            var nextTeamToGetPag = "A";
+
+            foreach (var position in Enum.GetNames(typeof(Enums.PlayerPosition)))
+            {
+                // Get pags in this position
+                var pagsInPosition = yesPags.Where(o => o.Player.PlayerEntity.Position.ToString() == position.ToString());
+
+                // Distribute pags in this position between teams
+                foreach (var pagInPosition in pagsInPosition)
+                {
+                    // Set team for page
+                    pagInPosition.PlayerAtGameEntity.Team = nextTeamToGetPag;
+                    newPags.Add(pagInPosition);
+
+                    // Update pag in storage
+                    UpsertPlayerAtGameEntity(pagInPosition.PlayerAtGameEntity);
+
+                    // Set team for next pag
+                    nextTeamToGetPag = (nextTeamToGetPag == "A") ? "B" : "A";
+                }
+            }
+
+            _ = newPags.OrderBy(o => o.Player.PlayerEntity.Name);
+
+            return newPags;
+
+        }
 
 		public void DeleteGameEntity(string rowkey)
 		{
@@ -47,6 +77,47 @@
 		{
 			var ges = GetGameEntities();
 			return ges.First(o => o.RowKey == rowKey);
+		}
+
+		public Game GetGame(string rowKey)
+		{
+			// Get GameEntity
+			var ge = GetGameEntity(rowKey);
+
+			// Get PlayerAtGame's for GameEntity
+			var playersAtGameEntities = GetPlayerAtGameEntitiesForGame(rowKey);
+
+			// Calculate PlayerAtGame
+			var playersAtGame = new List<PlayerAtGame>();
+			foreach (var playersAtGameEntity in playersAtGameEntities)
+			{
+				var pag = new PlayerAtGame(playersAtGameEntity)
+				{
+					Player = _playerEntityService.GetPlayer(playersAtGameEntity.PlayerRowKey),
+					GameEntity = ge
+				};
+				playersAtGame.Add(pag);
+			}
+
+			// Add teams to PlayerAtGame
+			var teamA = playersAtGame
+				.Where(pag => pag.PlayerAtGameEntity.Team == "A")
+				.OrderBy(o => o.Player.PlayerEntity.Name)
+				.ToList();
+			var teamB = playersAtGame
+				.Where(pag => pag.PlayerAtGameEntity.Team == "B")
+				.OrderBy(o => o.Player.PlayerEntity.Name)
+				.ToList();
+
+			// Construct Game
+			var game = new Game(ge)
+			{
+				PlayersAtGame = playersAtGame.OrderBy(o => o.Player.PlayerEntity.Name).ToList(),
+				TeamA = teamA,
+				TeamB = teamB
+			};
+
+			return game;
 		}
 
 		public GameEntity GetNextGameEntity()

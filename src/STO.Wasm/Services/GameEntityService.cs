@@ -112,7 +112,7 @@
 			// Construct Game
 			var game = new Game(ge)
 			{
-				PlayersAtGame = playersAtGame.OrderBy(o => o.Player.PlayerEntity.Name).ToList(),
+				PlayersAtGame = [.. playersAtGame.OrderBy(o => o.Player.PlayerEntity.Name)],
 				TeamA = teamA,
 				TeamB = teamB
 			};

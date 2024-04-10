@@ -1,7 +1,7 @@
 @page "/ratings/{RatingRowKey}"
 @inject IRatingEntityService RatingEntityService
 @inject IPlayerEntityService PlayerEntityService
-@inject IGameService GameService
+@inject IGameEntityService GameEntityService
 @inject NavigationManager Navigation
 
 <PageTitle>TNF - @pageTitle</PageTitle>
@@ -19,7 +19,7 @@
 		<p><a href="players/@ratingEntity.PlayerRowKey/player">@playerEntity.Name</a></p>
 
 		<h5>Game</h5>
-		<p><GameTitle GameRowKey="@ratingEntity.GameRowKey" Link="true" /></p>
+		<p><GameEntityTitle GameRowKey="@ratingEntity.GameRowKey" Link="true" /></p>
 
 		<h5>Rating</h5>
 		<p>@ratingEntity.Rating</p>
@@ -57,9 +57,9 @@
 
 	private string pageTitle = default!;
 
-	protected override async Task OnInitializedAsync()
+	protected override void OnInitialized()
 	{
-		await RefreshData();
+		RefreshData();
 	}
 
 	private void DeleteRating()
@@ -68,12 +68,11 @@
 		Navigation.NavigateTo("/ratings");
 	}
 
-	async Task RefreshData()
+	private void RefreshData()
 	{
 		ratingEntity = RatingEntityService.GetRatingEntity(RatingRowKey);
 		playerEntity = PlayerEntityService.GetPlayerEntity(ratingEntity.PlayerRowKey);
-		var game = await GameService.GetGame(ratingEntity.GameRowKey);
-		gameEntity = game.GameEntity;
+		gameEntity = GameEntityService.GetGameEntity(ratingEntity.GameRowKey);
 		pageTitle = $"Rating for {@playerEntity.Name}, {@gameEntity.Date.Date.ToShortDateString()}";
 	}
 }

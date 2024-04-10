@@ -62,10 +62,8 @@ public class Program
 
         // Add custom services
         builder.Services.AddSingleton<IApiService, ApiService>();
-        builder.Services.AddSingleton<IDataService, DataService>();
 		builder.Services.AddSingleton<ICachedDataService, CachedDataService>();
 		builder.Services.AddSingleton<IPlayerEntityService, PlayerEntityService>();
-		builder.Services.AddSingleton<IGameService, GameService>();
 		builder.Services.AddSingleton<IGameEntityService, GameEntityService>();
 		builder.Services.AddSingleton<ITransactionEntityService, TransactionEntityService>();
         builder.Services.AddSingleton<IRatingEntityService, RatingEntityService>();

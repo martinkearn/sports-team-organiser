@@ -1,6 +1,6 @@
 @page "/quickaddpag"
 @inject IPlayerEntityService PlayerEntityService
-@inject IGameService GameService
+@inject IGameEntityService GameEntityService
 @inject NavigationManager Navigation
 
 @if (dataReady)
@@ -24,9 +24,9 @@
             </InputSelect>
         </div>
 
-        @if (nextGame is not null)
+        @if (nextGameEntity is not null)
         {
-            <p>Next game is <GameTitle Game="@nextGame" /></p>
+            <p>Next game is <GameEntityTitle GameEntity="@nextGameEntity" /></p>
         }
         else
         {
@@ -37,16 +37,16 @@
             <label for="addGameRowKey" class="form-label">Game</label>
             <InputSelect class="form-select" @bind-Value="newPagEntity.GameRowKey">
                 <option value="">Select Game ...</option>
-                @foreach (var game in games)
+                @foreach (var ge in gameEntities)
                 {
-                    var gameRowKey = game?.GameEntity?.RowKey;
-                    if (gameRowKey == nextGame?.GameEntity?.RowKey)
+                    var gameRowKey = ge.RowKey;
+                    if (gameRowKey == nextGameEntity?.RowKey)
                     {
-                        <option value="@gameRowKey"><GameTitle Game="@game" Link="false" /></option>
+                        <option value="@gameRowKey" selected><GameEntityTitle GameEntity="@ge" Link="false" /></option>
                     }
                     else
                     {
-                        <option value="@gameRowKey"><GameTitle Game="@game" Link="false" /></option>
+                        <option value="@gameRowKey"><GameEntityTitle GameEntity="@ge" Link="false" /></option>
                     }
                 }
             </InputSelect>
@@ -59,39 +59,39 @@
 }
 
 @code {
-    private List<Game> games = new();
+    private List<GameEntity> gameEntities = new();
 
     private List<PlayerEntity> playerEntities = new();
 
     private PlayerAtGameEntity newPagEntity = new();
 
-    private Game nextGame = default!;
+    private GameEntity nextGameEntity = default!;
 
     private bool dataReady = false;
 
-    protected override async Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
-        await RefreshData();
+        RefreshData();
     }
 
-    private async Task AddPagEntity()
+    private void AddPagEntity()
     {
-        await GameService.UpsertPlayerAtGameEntity(newPagEntity);
+        GameEntityService.UpsertPlayerAtGameEntity(newPagEntity);
         var nav = $"/games/{newPagEntity.GameRowKey}";
         Navigation.NavigateTo(nav);
     }
 
-    async Task RefreshData()
+    private void RefreshData()
     {
-        games = await GameService.GetGames();
+        gameEntities = GameEntityService.GetGameEntities();
         playerEntities = PlayerEntityService.GetPlayerEntities();
-        nextGame = await GameService.GetNextGame();
+        nextGameEntity = GameEntityService.GetNextGameEntity();
 
         newPagEntity = new PlayerAtGameEntity()
         {
             Played = false,
             Forecast = PlayingOptions.Yes.ToString(),
-            GameRowKey = nextGame.GameEntity.RowKey,
+            GameRowKey = nextGameEntity.RowKey,
         };
 
         dataReady = true;

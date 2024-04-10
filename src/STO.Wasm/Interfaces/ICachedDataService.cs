@@ -38,6 +38,7 @@ namespace STO.Wasm.Interfaces
 		/// Loads/Reloads the raw data from the API
 		/// </summary>
 		/// <param name="forceApi">Forces a data refresh from Api even if local data is up to date.</param>
-		public Task LoadData(bool forceApi);
+		/// <param name="forceLocalOnly">Only loads data from local storage without any Api or Data Details Entity checks.</param>
+		public Task LoadData(bool forceApi, bool forceLocalOnly);
     }
 }

@@ -51,8 +51,14 @@ namespace STO.Wasm.Services
 			return [];
 		}
 
-		public async Task LoadData(bool forceApi)
+		public async Task LoadData(bool forceApi, bool forceLocalOnly)
 		{
+			if (forceLocalOnly)
+			{
+				await LoadDataFromLocalStorage();
+				return;
+			}
+
 			if (!forceApi)
 			{
 				// Check Data Details, set lists from local storage and exit if they are up to date
@@ -62,14 +68,7 @@ namespace STO.Wasm.Services
 				{
 					if (apiDdes.First().LastWriteEpoch == localDdes.First()?.LastWriteEpoch)
 					{
-						// Load memory lists from storage
-						PlayerEntities = await _localStorageService.GetItemAsync<List<PlayerEntity>>(nameof(PlayerEntity)) ?? [];
-						TransactionEntities = await _localStorageService.GetItemAsync<List<TransactionEntity>>(nameof(TransactionEntity)) ?? [];
-						RatingEntities = await _localStorageService.GetItemAsync<List<RatingEntity>>(nameof(RatingEntity)) ?? [];
-						GameEntities = await _localStorageService.GetItemAsync<List<GameEntity>>(nameof(GameEntity)) ?? [];
-						PlayerAtGameEntities = await _localStorageService.GetItemAsync<List<PlayerAtGameEntity>>(nameof(PlayerAtGameEntity)) ?? [];
-
-						// Exit
+						await LoadDataFromLocalStorage();
 						return;
 					}
 				}
@@ -83,6 +82,15 @@ namespace STO.Wasm.Services
 			var ratingTask = RefreshEntitiesFromApi<RatingEntity>();
 			var dataDetailsTask = RefreshEntitiesFromApi<DataDetailsEntity>();
 			await Task.WhenAll(playerTask, gameTask, transactionTask, playerAtGameTask, ratingTask, dataDetailsTask);
+		}
+
+		private async Task LoadDataFromLocalStorage()
+		{
+			PlayerEntities = await _localStorageService.GetItemAsync<List<PlayerEntity>>(nameof(PlayerEntity)) ?? [];
+			TransactionEntities = await _localStorageService.GetItemAsync<List<TransactionEntity>>(nameof(TransactionEntity)) ?? [];
+			RatingEntities = await _localStorageService.GetItemAsync<List<RatingEntity>>(nameof(RatingEntity)) ?? [];
+			GameEntities = await _localStorageService.GetItemAsync<List<GameEntity>>(nameof(GameEntity)) ?? [];
+			PlayerAtGameEntities = await _localStorageService.GetItemAsync<List<PlayerAtGameEntity>>(nameof(PlayerAtGameEntity)) ?? [];
 		}
 
 		private async Task RefreshEntitiesFromApi<T>() where T : class, ITableEntity

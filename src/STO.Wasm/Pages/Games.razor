@@ -1,5 +1,5 @@
 @page "/games"
-@inject IGameService GameService
+@inject IGameEntityService GameEntityService
 
 <PageTitle>TNF - @pageTitle</PageTitle>
 
@@ -9,13 +9,15 @@
 	<thead>
 		<tr>
 			<th scope="col">Date</th>
+			<th scope="col">Notes</th>
 		</tr>
 	</thead>
 	<tbody>
-		@foreach (var game in games)
+		@foreach (var ge in gameEntities)
 		{
 			<tr>
-				<td><GameTitle Game="@game" Link="true" /></td>
+				<td><GameEntityTitle GameEntity="@ge" Link="true" /></td>
+				<td>@ge.Notes</td>
 			</tr>
 		}
 	</tbody>
@@ -26,23 +28,19 @@
 	<a class="btn btn-primary" href="/games/add"><i class="fa-solid fa-plus"></i> Add Game</a>
 </div>
 
-
 @code {
-	private List<Game> games = new();
+	private List<GameEntity> gameEntities = new();
 
 	private string pageTitle = default!;
 
-	private bool dataReady = false;
-
-	protected override async Task OnInitializedAsync()
+	protected override void OnInitialized()
 	{
-		await RefreshData();
+		RefreshData();
 	}
 
-	private async Task RefreshData()
+	private void RefreshData()
 	{
-		games = await GameService.GetGames();
+		gameEntities = GameEntityService.GetGameEntities();
 		pageTitle = "Games";
-		dataReady = true;
 	}
 }

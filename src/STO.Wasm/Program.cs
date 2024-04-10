@@ -80,11 +80,9 @@ public class Program
         var host = builder.Build();
 
         // Initialise data
-        //var dataService = host.Services.GetRequiredService<IDataService>();
-        //await dataService.LoadData();
-
 		var cachedDataService = host.Services.GetRequiredService<ICachedDataService>();
-		await cachedDataService.LoadData(false);
+        //var forceLocalDataOnly = (builder.HostEnvironment.Environment == "Localhost");
+		await cachedDataService.LoadData(false, false);
 
 		//await builder.Build().RunAsync();
 		await host.RunAsync();

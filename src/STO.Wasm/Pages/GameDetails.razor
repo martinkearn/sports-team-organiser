@@ -1,10 +1,9 @@
 @page "/games/{GameRowKey}"
 @inject IPlayerEntityService PlayerEntityService
-@inject IGameService GameService
+@inject IGameEntityService GameEntityService
 @inject NavigationManager Navigation
 
-@if (dataReady)
-{
+
 	<PageTitle>TNF - @pageTitle</PageTitle>
 
 	<h1><i class="fa-solid fa-people-group me-2"></i> <GameTitle Game="@game" Link="false" /></h1>
@@ -167,13 +166,12 @@
 			</Authorized>
 		</AuthorizeView>
 	</div>
-}
 
 @code {
 	[Parameter]
 	public string GameRowKey { get; set; } = default!;
 
-	private Game game = default!;
+	private GameEntity gameEntity = default!;
 
 	private List<PlayerEntity> playerEntities = new();
 
@@ -250,10 +248,10 @@
 		}
 	}
 
-	async Task RefreshGameData()
+	async void RefreshGameData()
 	{
 		playerEntities = PlayerEntityService.GetPlayerEntities();
-		game = await GameService.GetGame(GameRowKey);
+		gameEntity = GameEntityService.GetGame(GameRowKey);
 		newPagEntity = new PlayerAtGameEntity()
 			{
 				GameRowKey = game.GameEntity.RowKey,
@@ -271,7 +269,5 @@
 		SetSimpleViewLabel();
 
 		this.StateHasChanged();
-
-		dataReady = true;
 	}
 }

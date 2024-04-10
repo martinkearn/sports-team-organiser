@@ -1,7 +1,7 @@
-@inject IGameService GameService
+@inject IGameEntityService GameEntityService
 @inject ITransactionEntityService TransactionEntityService
 
-@if (pag.PlayerAtGameEntity.Played)
+@if (pagEntity.Played)
 {
     <button type="button" class="btn btn-outline-secondary btn-sm active d-none d-md-inline" @onclick="TogglePlayed"> Played</button>
 }
@@ -10,64 +10,63 @@ else
     <button type="button" class="btn btn-outline-secondary btn-sm d-none d-md-inline" @onclick="TogglePlayed"> Not Played</button>
 }
 <span></span>
-<button type="button" class="btn btn-outline-secondary btn-sm d-none d-md-inline" @onclick="SwitchPagTeam">@pag.PlayerAtGameEntity.Team <i class="fa-solid fa-repeat"></i></button>
-<button type="button" class="btn btn-outline-secondary btn-sm d-none d-lg-inline" @onclick="() => AddTransactionForPlayer(pag.Player.PlayerEntity.DefaultRate)"><i class="fa-solid fa-plus"></i> £@pag.Player.PlayerEntity.DefaultRate</button>
-<a type="button" class="btn btn-outline-secondary btn-sm d-inline" href="/pags/@pag.PlayerAtGameEntity.RowKey"><i class="fa-solid fa-edit"></i> Edit</a>
+<button type="button" class="btn btn-outline-secondary btn-sm d-none d-md-inline" @onclick="SwitchPagTeam">@pagEntity.Team <i class="fa-solid fa-repeat"></i></button>
+<button type="button" class="btn btn-outline-secondary btn-sm d-none d-lg-inline" @onclick="() => AddTransactionForPlayer(3)"><i class="fa-solid fa-plus"></i> £3 - To Do player default rate</button>
+<a type="button" class="btn btn-outline-secondary btn-sm d-inline" href="/pags/@pagEntity.RowKey"><i class="fa-solid fa-edit"></i> Edit</a>
 
 @code {
     [Parameter]
-    public PlayerAtGame pag { get; set; } = default!;
+    public PlayerAtGameEntity pagEntity { get; set; } = default!;
 
     [Parameter]
     public EventCallback RefreshMainPage { get; set; } = default!;
 
-    protected async override Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
-        await RefreshData();
+        RefreshData();
     }
 
-    async Task TogglePlayed()
+    private void TogglePlayed()
     {
-        await GameService.TogglePlayerAtGamePlayed(pag.PlayerAtGameEntity, null);
-        await RefreshMainPage.InvokeAsync();
+        GameEntityService.TogglePlayerAtGamePlayed(pagEntity, null);
+        RefreshMainPage.InvokeAsync();
     }
 
-    async Task SwitchPagTeam()
+    private void SwitchPagTeam()
     {
-        if (pag.PlayerAtGameEntity.Team == "A")
+        if (pagEntity.Team == "A")
         {
-            pag.PlayerAtGameEntity.Team = "B";
+            pagEntity.Team = "B";
         }
-        else if (pag.PlayerAtGameEntity.Team == "B")
+        else if (pagEntity.Team == "B")
         {
-            pag.PlayerAtGameEntity.Team = "";
+            pagEntity.Team = "";
         }
         else
         {
-            pag.PlayerAtGameEntity.Team = "A";
+            pagEntity.Team = "A";
         }
-        await GameService.UpsertPlayerAtGameEntity(pag.PlayerAtGameEntity);
-        await RefreshMainPage.InvokeAsync();
+        GameEntityService.UpsertPlayerAtGameEntity(pagEntity);
+        RefreshMainPage.InvokeAsync();
     }
 
-    private async Task AddTransactionForPlayer(double amount)
+    private void AddTransactionForPlayer(double amount)
     {
         var newTransactionEntityForPag = new TransactionEntity()
             {
                 Date = DateTimeOffset.UtcNow,
-                Notes = await GameService.GetNotesForGame(pag.GameEntity.RowKey),
-                PlayerRowKey = pag.Player.PlayerEntity.RowKey,
+                Notes = GameEntityService.GetNotesForGame(pagEntity.GameRowKey),
+                PlayerRowKey = pagEntity.PlayerRowKey,
                 Amount = amount
             };
         TransactionEntityService?.UpsertTransactionEntity(newTransactionEntityForPag);
-        await RefreshMainPage.InvokeAsync();
+        RefreshMainPage.InvokeAsync();
     }
 
-    async Task RefreshData()
+    private void RefreshData()
     {
-        var game = await GameService.GetGame(pag.GameEntity.RowKey);
-        pag = game.PlayersAtGame.Single(o => o.Player.PlayerEntity.RowKey == pag.Player.PlayerEntity.RowKey);
-        await RefreshMainPage.InvokeAsync();
+        var game = GameEntityService.GetGameEntity(pagEntity.GameRowKey);
+        RefreshMainPage.InvokeAsync();
     }
 
 }

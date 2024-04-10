@@ -1,6 +1,6 @@
 @page "/ratings/add"
 @inject IRatingEntityService RatingEntityService
-@inject IGameService GameService
+@inject IGameEntityService GameEntityService
 @inject NavigationManager Navigation
 
 <PageTitle>TNF - @pageTitle</PageTitle>
@@ -19,9 +19,9 @@
 		<label for="addGameRowKey" class="form-label">Game</label>
 		<InputSelect class="form-select" @bind-Value="newRatingEntity.GameRowKey">
 			<option value="">Select Game ...</option>
-			@foreach (var game in games)
+			@foreach (var ge in gameEntities)
 			{
-				<option value="@game.GameEntity.RowKey"><GameTitle Game="@game" Link="false" /></option>
+				<option value="@ge.RowKey"><GameEntityTitle GameEntity="@ge" Link="false" /></option>
 			}
 		</InputSelect>
 	</div>
@@ -33,13 +33,13 @@
 			@{
 				if (newRatingEntity.GameRowKey != default)
 				{
-					var game = games.Single<Game>(o => o.GameEntity.RowKey == newRatingEntity.GameRowKey);
-					playersAtGame = game.PlayersAtGame;
+					var game = gameEntities.Single<GameEntity>(o => o.RowKey == newRatingEntity.GameRowKey);
+					playersAtGameEntities = GameEntityService.GetPlayerAtGameEntitiesForGame(game.RowKey);
 				}
 			}
-			@foreach (var pag in playersAtGame)
+			@foreach (var pag in playersAtGameEntities)
 			{
-				<option value="@pag.Player.PlayerEntity.RowKey">@pag.Player.PlayerEntity.Name - @pag.Player.PlayerEntity.Position</option>
+				<option value="@pag.PlayerRowKey">@pag.PlayerRowKey - TO DO make this player name and position</option>
 			}
 		</InputSelect>
 	</div>
@@ -68,17 +68,17 @@
 
 
 @code {
-	private List<Game> games = new();
+	private List<GameEntity> gameEntities = new();
 
-	private List<PlayerAtGame> playersAtGame = new();
+	private List<PlayerAtGameEntity> playersAtGameEntities = new();
 
 	private RatingEntity newRatingEntity = new();
 
 	private string pageTitle = default!;
 
-	protected override async Task OnInitializedAsync()
+	protected override void OnInitialized()
 	{
-		await RefreshData();
+		RefreshData();
 	}
 
 	protected void Add()
@@ -91,14 +91,14 @@
 	{
 		if (newRatingEntity.GameRowKey != default)
 		{
-			var game = games.Single<Game>(o => o.GameEntity.RowKey == newRatingEntity.GameRowKey);
-			playersAtGame = game.PlayersAtGame;
+			var game = gameEntities.Single<GameEntity>(o => o.RowKey == newRatingEntity.GameRowKey);
+			playersAtGameEntities = GameEntityService.GetPlayerAtGameEntitiesForGame(game.RowKey);
 		}
 	}
 
-	private async Task RefreshData()
+	private void RefreshData()
 	{
-		games = await GameService.GetGames();
+		gameEntities = GameEntityService.GetGameEntities();
 		pageTitle = "Add Rating";
 	}
 }

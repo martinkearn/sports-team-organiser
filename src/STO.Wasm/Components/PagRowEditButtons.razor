@@ -59,7 +59,10 @@ else
                 PlayerRowKey = pagEntity.PlayerRowKey,
                 Amount = amount
             };
-        await TransactionEntityService?.UpsertTransactionEntityAsync(newTransactionEntityForPag);
+        if (TransactionEntityService is not null)
+        {
+            await TransactionEntityService.UpsertTransactionEntityAsync(newTransactionEntityForPag);
+        }
         await RefreshMainPage.InvokeAsync();
     }
 

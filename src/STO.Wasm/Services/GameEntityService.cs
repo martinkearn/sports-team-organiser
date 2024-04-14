@@ -185,17 +185,23 @@
 					Date = DateTimeOffset.UtcNow,
 					Notes = GetNotesForGame(pag.GameRowKey)
 				};
-				await _transactionEntityService?.UpsertTransactionEntityAsync(transaction);
+				if (_transactionEntityService is not null)
+                {
+                    await _transactionEntityService.UpsertTransactionEntityAsync(transaction);
+                }
 			}
 			else
 			{
 				// Get debit transactions (less than £0) for player and game
 				var teForPe = _transactionEntityService.GetTransactionEntities().Where(o => o.PlayerRowKey == playerEntity.RowKey);
 				var pagDebitTransactionEntities = teForPe.Where(o => o.Amount < 0);
-				foreach (var pagDebitTransactionEntity in pagDebitTransactionEntities)
-				{
-					await _transactionEntityService?.DeleteTransactionEntityAsync(pagDebitTransactionEntity.RowKey);
-				}
+				if (_transactionEntityService is not null)
+                {
+                    foreach (var pagDebitTransactionEntity in pagDebitTransactionEntities)
+                    {
+                        await _transactionEntityService.DeleteTransactionEntityAsync(pagDebitTransactionEntity.RowKey);
+                    }
+                }
 			}
 
 			// Upsert pag

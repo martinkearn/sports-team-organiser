@@ -53,9 +53,9 @@
 		RefreshData();
 	}
 
-	protected void Add()
+	protected async Task Add()
 	{
-		PlayerEntityService.UpsertPlayerEntity(newPlayerEntity);
+		await PlayerEntityService.UpsertPlayerEntityAsync(newPlayerEntity);
 		Navigation.NavigateTo("/players");
 	}
 

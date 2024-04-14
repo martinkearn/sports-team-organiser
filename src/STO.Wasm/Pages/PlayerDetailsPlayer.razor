@@ -84,12 +84,12 @@
 
 	async Task Edit()
 	{
-		await PlayerEntityService.UpsertPlayerEntity(player.PlayerEntity);
+		await PlayerEntityService.UpsertPlayerEntityAsync(player.PlayerEntity);
 	}
 
 	private async Task DeletePlayer()
 	{
-		await PlayerEntityService.DeletePlayerEntity(PlayerRowKey);
+		await PlayerEntityService.DeletePlayerEntityAsync(PlayerRowKey);
 		Navigation.NavigateTo("/players");
 	}
 

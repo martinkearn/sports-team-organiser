@@ -49,7 +49,7 @@ namespace STO.Wasm.Services
 			return player;
 		}
 
-		public async Task DeletePlayerEntity(string playerRowkey)
+		public async Task DeletePlayerEntityAsync(string playerRowkey)
 		{
 			// Delete Ratings
 			var allRatingEntities = await _dataService.QueryEntities<RatingEntity>();
@@ -79,7 +79,7 @@ namespace STO.Wasm.Services
 			await _dataService.DeleteEntity<PlayerEntity>(playerRowkey);
 		}
 
-		public async Task UpsertPlayerEntity(PlayerEntity playerEntity)
+		public async Task UpsertPlayerEntityAsync(PlayerEntity playerEntity)
 		{
 			await _dataService.UpsertEntity(playerEntity);
 		}

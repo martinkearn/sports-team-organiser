@@ -27,12 +27,12 @@ namespace STO.Wasm.Interfaces
 		/// Deletes the PlayerEntity, TransactionEntity and PlayerAtGameEntity associated with a Player.
 		/// </summary>
 		/// <param name="playerRowkey">The RowKey for the PlayerEntities to delete.</param>
-		public Task DeletePlayerEntity(string playerRowkey);
+		public Task DeletePlayerEntityAsync(string playerRowkey);
 
 		/// <summary>
 		/// Adds a new PlayerEntity.
 		/// </summary>
 		/// <param name="playerEntity">The PlayerEntity to upsert.</param>
-		public Task UpsertPlayerEntity(PlayerEntity playerEntity);
+		public Task UpsertPlayerEntityAsync(PlayerEntity playerEntity);
 	}
 }

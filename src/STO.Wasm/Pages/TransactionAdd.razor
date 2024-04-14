@@ -67,9 +67,9 @@
 		RefreshData();
 	}
 
-	protected void Add()
+	protected async Task Add()
 	{
-		TransactionEntityService.UpsertTransactionEntity(newTransactionEntity);
+		await TransactionEntityService.UpsertTransactionEntityAsync(newTransactionEntity);
 		Navigation.NavigateTo("/transactions");
 	}
 

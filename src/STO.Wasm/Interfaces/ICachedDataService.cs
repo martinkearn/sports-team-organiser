@@ -19,26 +19,26 @@ namespace STO.Wasm.Interfaces
 		/// </summary>
 		/// <param name="entity">The entity of type T to upsert.</param>
 		/// <returns>Stored representation of the entity of type T.</returns>
-		public Task<T> UpsertEntity<T>(T entity) where T : class, ITableEntity;
+		public Task<T> UpsertEntityAsync<T>(T entity) where T : class, ITableEntity;
 
         /// <summary>
         /// Deletes an entity of type T.
         /// </summary>
         /// <param name="rowKey">The rowKey value for the player to delete.</param>
         /// <returns>Nothing.</returns>
-        public Task DeleteEntity<T>(string rowKey) where T : class, ITableEntity;
+        public Task DeleteEntityAsync<T>(string rowKey) where T : class, ITableEntity;
 
         /// <summary>
         /// Queries entities of type T.
         /// </summary>
         /// <returns>A list of entities of type T which match the query.</returns>
-        public Task<List<T>> QueryEntities<T>() where T : class, ITableEntity;
+        public Task<List<T>> QueryEntitiesAsync<T>() where T : class, ITableEntity;
 
 		/// <summary>
 		/// Loads/Reloads the raw data from the API
 		/// </summary>
 		/// <param name="forceApi">Forces a data refresh from Api even if local data is up to date.</param>
 		/// <param name="forceLocalOnly">Only loads data from local storage without any Api or Data Details Entity checks.</param>
-		public Task LoadData(bool forceApi, bool forceLocalOnly);
+		public Task LoadDataAsync(bool forceApi, bool forceLocalOnly);
     }
 }

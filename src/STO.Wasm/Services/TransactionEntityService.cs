@@ -24,14 +24,14 @@ namespace STO.Wasm.Services
             }
         }
 
-        public async Task DeleteTransactionEntity(string rowKey)
+        public async Task DeleteTransactionEntityAsync(string rowKey)
         {
-            await _dataService.DeleteEntity<TransactionEntity>(rowKey);
+            await _dataService.DeleteEntityAsync<TransactionEntity>(rowKey);
         }
 
-        public async Task UpsertTransactionEntity(TransactionEntity transactionEntity)
+        public async Task UpsertTransactionEntityAsync(TransactionEntity transactionEntity)
         {
-            await _dataService.UpsertEntity(transactionEntity);
+            await _dataService.UpsertEntityAsync(transactionEntity);
         }
     }
 }

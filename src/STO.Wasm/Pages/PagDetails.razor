@@ -84,7 +84,7 @@
         RefreshData();
     }
 
-    private void AddTransactionForPlayer(string playerRowKey, double amount)
+    private async Task AddTransactionForPlayer(string playerRowKey, double amount)
     {
         var newTransactionEntityForPag = new TransactionEntity()
             {
@@ -93,7 +93,7 @@
                 PlayerRowKey = playerRowKey,
                 Amount = amount
             };
-        TransactionEntityService?.UpsertTransactionEntity(newTransactionEntityForPag);
+        await TransactionEntityService?.UpsertTransactionEntityAsync(newTransactionEntityForPag);
         RefreshData();
     }
 

@@ -59,7 +59,7 @@ else
                 PlayerRowKey = pagEntity.PlayerRowKey,
                 Amount = amount
             };
-        TransactionEntityService?.UpsertTransactionEntity(newTransactionEntityForPag);
+        await TransactionEntityService?.UpsertTransactionEntityAsync(newTransactionEntityForPag);
         await RefreshMainPage.InvokeAsync();
     }
 

@@ -92,9 +92,9 @@
 			claims = user.Claims;
 		}
 
-		await DataService.LoadData(forceApi, false);
-		allGames = await DataService.QueryEntities<GameEntity>();
-		allPlayerAtGame = await DataService.QueryEntities<PlayerAtGameEntity>();
-		allRatings = await DataService.QueryEntities<RatingEntity>();
+		await DataService.LoadDataAsync(forceApi, false);
+		allGames = await DataService.QueryEntitiesAsync<GameEntity>();
+		allPlayerAtGame = await DataService.QueryEntitiesAsync<PlayerAtGameEntity>();
+		allRatings = await DataService.QueryEntitiesAsync<RatingEntity>();
 	}
 }

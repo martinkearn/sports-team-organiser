@@ -67,11 +67,11 @@
         RefreshData();
     }
 
-    private void DeleteTransactionsForPlayer()
+    private async Task DeleteTransactionsForPlayer()
     {
         foreach (var te in playerTransactions)
         {
-            TransactionEntityService.DeleteTransactionEntity(te.RowKey);
+            await TransactionEntityService.DeleteTransactionEntityAsync(te.RowKey);
         }
 
         Navigation.NavigateTo("/players");

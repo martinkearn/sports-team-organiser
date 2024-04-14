@@ -59,9 +59,9 @@
 		RefreshData();
 	}
 
-	private void DeleteTransaction()
+	private async Task DeleteTransaction()
 	{
-		TransactionEntityService.DeleteTransactionEntity(TransactionRowKey);
+		await TransactionEntityService.DeleteTransactionEntityAsync(TransactionRowKey);
 		Navigation.NavigateTo("/transactions");
 	}
 

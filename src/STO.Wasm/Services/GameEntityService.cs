@@ -60,12 +60,12 @@
 			}
 
 			// Delete game
-			await _dataService.DeleteEntity<GameEntity>(rowkey);
+			await _dataService.DeleteEntityAsync<GameEntity>(rowkey);
 		}
 
 		public async Task DeletePlayerAtGameEntityAsync(string rowKey)
 		{
-			await _dataService.DeleteEntity<PlayerAtGameEntity>(rowKey);
+			await _dataService.DeleteEntityAsync<PlayerAtGameEntity>(rowKey);
 		}
 
 		public List<GameEntity> GetGameEntities()
@@ -185,7 +185,7 @@
 					Date = DateTimeOffset.UtcNow,
 					Notes = GetNotesForGame(pag.GameRowKey)
 				};
-				_transactionEntityService?.UpsertTransactionEntity(transaction);
+				await _transactionEntityService?.UpsertTransactionEntityAsync(transaction);
 			}
 			else
 			{
@@ -194,7 +194,7 @@
 				var pagDebitTransactionEntities = teForPe.Where(o => o.Amount < 0);
 				foreach (var pagDebitTransactionEntity in pagDebitTransactionEntities)
 				{
-					_transactionEntityService?.DeleteTransactionEntity(pagDebitTransactionEntity.RowKey);
+					await _transactionEntityService?.DeleteTransactionEntityAsync(pagDebitTransactionEntity.RowKey);
 				}
 			}
 
@@ -204,12 +204,12 @@
 
 		public async Task UpsertGameEntityAsync(GameEntity gameEntity)
 		{
-			await _dataService.UpsertEntity(gameEntity);
+			await _dataService.UpsertEntityAsync(gameEntity);
 		}
 
 		public async Task UpsertPlayerAtGameEntityAsync(PlayerAtGameEntity pagEntity)
 		{
-			await _dataService.UpsertEntity(pagEntity);
+			await _dataService.UpsertEntityAsync(pagEntity);
 		}
 	}
 }

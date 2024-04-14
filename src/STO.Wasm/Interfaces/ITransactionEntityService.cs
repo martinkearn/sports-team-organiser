@@ -22,13 +22,13 @@ namespace STO.Wasm.Interfaces
         /// Deletes a TransactionEntity.
         /// </summary>
         /// <param name="rowKey">The RowKey for the TransactionEntity to delete.</param>
-        public Task DeleteTransactionEntity(string rowKey);
+        public Task DeleteTransactionEntityAsync(string rowKey);
 
         /// <summary>
         /// Adds a new TransactionEntity.
         /// </summary>
         /// <param name="transactionEntity">The TransactionEntity to upsert.</param>
-        public Task UpsertTransactionEntity(TransactionEntity transactionEntity);
+        public Task UpsertTransactionEntityAsync(TransactionEntity transactionEntity);
         
     }
 }

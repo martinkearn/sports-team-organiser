@@ -7,7 +7,7 @@
 
 		public async Task DeleteRatingEntityAsync(string rowKey)
 		{
-			await _dataService.DeleteEntity<RatingEntity>(rowKey);
+			await _dataService.DeleteEntityAsync<RatingEntity>(rowKey);
 		}
 
 		public string FormatRatingTime(string rowKey)
@@ -50,7 +50,7 @@
 
 		public async Task UpsertRatingEntityAsync(RatingEntity ratingEntity)
 		{
-			await _dataService.UpsertEntity(ratingEntity);
+			await _dataService.UpsertEntityAsync(ratingEntity);
 		}
 	}
 }

@@ -18,7 +18,7 @@ namespace STO.Wasm.Services
 		public async Task DeleteEntityAsync<T>(string rowKey) where T : class, ITableEntity
 		{
 			// Delete Entity
-			await _apiService.ApiDelete<T>(rowKey);
+			await _apiService.ApiDeleteAsync<T>(rowKey);
 
 			// Refresh data from storage
 			await RefreshEntitiesFromApiAsync<T>();
@@ -31,7 +31,7 @@ namespace STO.Wasm.Services
 			if (entity.PartitionKey == default) entity.PartitionKey = typeof(T).ToString();
 
 			// Upsert entity
-			await _apiService.ApiPost(entity);
+			await _apiService.ApiPostAsync(entity);
 
 			// Refresh data from storage
 			// TO DO ... does this call actually need to happen? Providing the local storage is update with the same data as the Api store, we do not need to refresh the local store from the Api store? Can't we just update the local store directly? Same for Delete
@@ -63,7 +63,7 @@ namespace STO.Wasm.Services
 			if (!forceApi)
 			{
 				// Check Data Details, set lists from local storage and exit if they are up to date
-				var apiDdes = await _apiService.ApiGet<DataDetailsEntity>();
+				var apiDdes = await _apiService.ApiGetAsync<DataDetailsEntity>();
 				var localDdes = await _localStorageService.GetItemAsync<List<DataDetailsEntity>>(nameof(DataDetailsEntity));
 				if (apiDdes?.Count > 0 && localDdes?.Count > 0)
 				{
@@ -96,7 +96,7 @@ namespace STO.Wasm.Services
 
 		private async Task RefreshEntitiesFromApiAsync<T>() where T : class, ITableEntity
 		{
-			var data = await _apiService.ApiGet<T>();
+			var data = await _apiService.ApiGetAsync<T>();
             if (data is not null)
 			{
                 await _localStorageService.SetItemAsync(typeof(T).Name, data);

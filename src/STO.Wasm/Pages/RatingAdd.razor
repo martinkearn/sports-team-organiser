@@ -81,9 +81,9 @@
 		RefreshData();
 	}
 
-	protected void Add()
+	protected async Task Add()
 	{
-		RatingEntityService.UpsertRatingEntity(newRatingEntity);
+		await RatingEntityService.UpsertRatingEntityAsync(newRatingEntity);
 		Navigation.NavigateTo("/ratings/addthanks");
 	}
 

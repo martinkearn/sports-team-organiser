@@ -49,7 +49,7 @@
 			var ratingsForGame = _ratingEntityService.GetRatingEntitiesForGame(rowkey);
 			foreach (var re in ratingsForGame)
 			{
-				_ratingEntityService.DeleteRatingEntity(re.RowKey);
+				await _ratingEntityService.DeleteRatingEntityAsync(re.RowKey);
 			}
 
 			// Delete PAGs

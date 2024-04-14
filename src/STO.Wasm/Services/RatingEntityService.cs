@@ -5,9 +5,9 @@
 	{
 		private readonly ICachedDataService _dataService = dataService;
 
-		public void DeleteRatingEntity(string rowKey)
+		public async Task DeleteRatingEntityAsync(string rowKey)
 		{
-			_dataService.DeleteEntity<RatingEntity>(rowKey);
+			await _dataService.DeleteEntity<RatingEntity>(rowKey);
 		}
 
 		public string FormatRatingTime(string rowKey)
@@ -48,7 +48,7 @@
 			return res.First(o => o.RowKey == rowKey);
 		}
 
-		public async Task UpsertRatingEntity(RatingEntity ratingEntity)
+		public async Task UpsertRatingEntityAsync(RatingEntity ratingEntity)
 		{
 			await _dataService.UpsertEntity(ratingEntity);
 		}

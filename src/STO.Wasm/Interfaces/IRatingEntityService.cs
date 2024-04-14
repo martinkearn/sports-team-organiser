@@ -36,13 +36,13 @@ namespace STO.Wasm.Interfaces
         /// Deletes a RatingEntity.
         /// </summary>
         /// <param name="rowKey">The RowKey for the RatingEntity to delete.</param>
-        public void DeleteRatingEntity(string rowKey);
+        public Task DeleteRatingEntityAsync(string rowKey);
 
         /// <summary>
         /// Adds a new RatingEntity.
         /// </summary>
         /// <param name="ratingEntity">The RatingEntity to upsert.</param>
-        public Task UpsertRatingEntity(RatingEntity ratingEntity);
+        public Task UpsertRatingEntityAsync(RatingEntity ratingEntity);
 
 		/// <summary>
 		/// Formats RatingEntity time in a consistent way.

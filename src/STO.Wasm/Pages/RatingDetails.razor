@@ -62,9 +62,9 @@
 		RefreshData();
 	}
 
-	private void DeleteRating()
+	private async Task DeleteRating()
 	{
-		RatingEntityService.DeleteRatingEntity(RatingRowKey);
+		await RatingEntityService.DeleteRatingEntityAsync(RatingRowKey);
 		Navigation.NavigateTo("/ratings");
 	}
 

@@ -1,4 +1,5 @@
 using Azure.Data.Tables;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace STO.Wasm.Services
 {
@@ -30,15 +31,36 @@ namespace STO.Wasm.Services
 			if (entity.RowKey == default) entity.RowKey = Guid.NewGuid().ToString();
 			if (entity.PartitionKey == default) entity.PartitionKey = typeof(T).ToString();
 
-			// Upsert entity
-			await _apiService.ApiPostAsync(entity);
+            // Upsert entity to Api
+            await _apiService.ApiPostAsync(entity);
 
-			// Refresh data from storage
-			// TO DO ... does this call actually need to happen? Providing the local storage is update with the same data as the Api store, we do not need to refresh the local store from the Api store? Can't we just update the local store directly? Same for Delete
-			await RefreshEntitiesFromApiAsync<T>();
+            // Refresh data from storage
+            // TO DO ... does this call actually need to happen? Providing the local storage is update with the same data as the Api store, we do not need to refresh the local store from the Api store? Can't we just update the local store directly? Same for Delete
+            //await RefreshEntitiesFromApiAsync<T>();
 
-			// Return
-			return entity;
+            // Upsert entity to local store
+            if (typeof(T) == typeof(PlayerAtGameEntity))
+            {
+				var convertedEntity = (PlayerAtGameEntity)Convert.ChangeType(entity, typeof(PlayerAtGameEntity));
+                int existingEntityIndex = PlayerAtGameEntities.FindIndex(o => o.RowKey == entity.RowKey);
+				if (existingEntityIndex != -1)
+				{
+					// Replace
+					PlayerAtGameEntities[existingEntityIndex] = convertedEntity;
+				}
+				else 
+				{
+					// Insert
+					PlayerAtGameEntities.Add(convertedEntity);
+				}
+            }
+            else
+            {
+                await RefreshEntitiesFromApiAsync<T>();
+            }
+
+            // Return
+            return entity;
 		}
 
 		public async Task<List<T>> QueryEntitiesAsync<T>() where T : class, ITableEntity

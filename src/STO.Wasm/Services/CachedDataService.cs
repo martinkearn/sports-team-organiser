@@ -34,11 +34,71 @@ namespace STO.Wasm.Services
             // Upsert entity to Api
             await _apiService.ApiPostAsync(entity);
 
-            // Refresh data from storage
-            // TO DO ... does this call actually need to happen? Providing the local storage is update with the same data as the Api store, we do not need to refresh the local store from the Api store? Can't we just update the local store directly? Same for Delete
-            //await RefreshEntitiesFromApiAsync<T>();
-
             // Upsert entity to local store
+            if (typeof(T) == typeof(PlayerEntity))
+            {
+                var convertedEntity = (PlayerEntity)Convert.ChangeType(entity, typeof(PlayerEntity));
+                int existingEntityIndex = PlayerEntities.FindIndex(o => o.RowKey == entity.RowKey);
+                if (existingEntityIndex != -1)
+                {
+                    // Replace
+                    PlayerEntities[existingEntityIndex] = convertedEntity;
+                }
+                else
+                {
+                    // Insert
+                    PlayerEntities.Add(convertedEntity);
+                }
+            }
+
+            if (typeof(T) == typeof(TransactionEntity))
+            {
+                var convertedEntity = (TransactionEntity)Convert.ChangeType(entity, typeof(TransactionEntity));
+                int existingEntityIndex = TransactionEntities.FindIndex(o => o.RowKey == entity.RowKey);
+                if (existingEntityIndex != -1)
+                {
+                    // Replace
+                    TransactionEntities[existingEntityIndex] = convertedEntity;
+                }
+                else
+                {
+                    // Insert
+                    TransactionEntities.Add(convertedEntity);
+                }
+            }
+
+            if (typeof(T) == typeof(RatingEntity))
+            {
+                var convertedEntity = (RatingEntity)Convert.ChangeType(entity, typeof(RatingEntity));
+                int existingEntityIndex = RatingEntities.FindIndex(o => o.RowKey == entity.RowKey);
+                if (existingEntityIndex != -1)
+                {
+                    // Replace
+                    RatingEntities[existingEntityIndex] = convertedEntity;
+                }
+                else
+                {
+                    // Insert
+                    RatingEntities.Add(convertedEntity);
+                }
+            }
+
+            if (typeof(T) == typeof(GameEntity))
+            {
+                var convertedEntity = (GameEntity)Convert.ChangeType(entity, typeof(GameEntity));
+                int existingEntityIndex = GameEntities.FindIndex(o => o.RowKey == entity.RowKey);
+                if (existingEntityIndex != -1)
+                {
+                    // Replace
+                    GameEntities[existingEntityIndex] = convertedEntity;
+                }
+                else
+                {
+                    // Insert
+                    GameEntities.Add(convertedEntity);
+                }
+            }
+
             if (typeof(T) == typeof(PlayerAtGameEntity))
             {
 				var convertedEntity = (PlayerAtGameEntity)Convert.ChangeType(entity, typeof(PlayerAtGameEntity));
@@ -53,10 +113,6 @@ namespace STO.Wasm.Services
 					// Insert
 					PlayerAtGameEntities.Add(convertedEntity);
 				}
-            }
-            else
-            {
-                await RefreshEntitiesFromApiAsync<T>();
             }
 
             // Return

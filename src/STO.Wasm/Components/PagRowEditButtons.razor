@@ -21,18 +21,18 @@ else
     [Parameter]
     public EventCallback RefreshMainPage { get; set; } = default!;
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        RefreshData();
+        await RefreshData();
     }
 
-    private void TogglePlayed()
+    private async Task TogglePlayed()
     {
-        GameEntityService.TogglePlayerAtGamePlayed(pagEntity, null);
-        RefreshMainPage.InvokeAsync();
+        await GameEntityService.TogglePlayerAtGamePlayedAsync(pagEntity, null);
+        await RefreshMainPage.InvokeAsync();
     }
 
-    private void SwitchPagTeam()
+    private async Task SwitchPagTeam()
     {
         if (pagEntity.Team == "A")
         {
@@ -46,11 +46,11 @@ else
         {
             pagEntity.Team = "A";
         }
-        GameEntityService.UpsertPlayerAtGameEntity(pagEntity);
-        RefreshMainPage.InvokeAsync();
+        await GameEntityService.UpsertPlayerAtGameEntityAsync(pagEntity);
+        await RefreshMainPage.InvokeAsync();
     }
 
-    private void AddTransactionForPlayer(double amount)
+    private async Task AddTransactionForPlayer(double amount)
     {
         var newTransactionEntityForPag = new TransactionEntity()
             {
@@ -60,13 +60,13 @@ else
                 Amount = amount
             };
         TransactionEntityService?.UpsertTransactionEntity(newTransactionEntityForPag);
-        RefreshMainPage.InvokeAsync();
+        await RefreshMainPage.InvokeAsync();
     }
 
-    private void RefreshData()
+    private async Task RefreshData()
     {
         var game = GameEntityService.GetGameEntity(pagEntity.GameRowKey);
-        RefreshMainPage.InvokeAsync();
+        await RefreshMainPage.InvokeAsync();
     }
 
 }

@@ -74,9 +74,9 @@
         RefreshData();
     }
 
-    private void AddPagEntity()
+    private async Task AddPagEntity()
     {
-        GameEntityService.UpsertPlayerAtGameEntity(newPagEntity);
+        await GameEntityService.UpsertPlayerAtGameEntityAsync(newPagEntity);
         var nav = $"/games/{newPagEntity.GameRowKey}";
         Navigation.NavigateTo(nav);
     }

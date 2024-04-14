@@ -55,11 +55,11 @@
         RefreshData();
     }
 
-    protected void Add()
+    protected async Task Add()
     {
         var dt = new DateTime(newGameEntity.Date.Year, newGameEntity.Date.Month, newGameEntity.Date.Day, hour, minute, 0, DateTimeKind.Utc);
         newGameEntity.Date = dt;
-        GameEntityService.UpsertGameEntity(newGameEntity);
+        await GameEntityService.UpsertGameEntityAsync(newGameEntity);
         Navigation.NavigateTo("/games");
     }
 

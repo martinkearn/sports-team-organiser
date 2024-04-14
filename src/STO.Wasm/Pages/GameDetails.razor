@@ -191,15 +191,15 @@
         RefreshGameData();
     }
 
-    private void AddPagEntity()
+    private async Task AddPagEntity()
     {
-        GameEntityService.UpsertPlayerAtGameEntity(newPagEntity);
+        await GameEntityService.UpsertPlayerAtGameEntityAsync(newPagEntity);
         RefreshGameData();
     }
 
-    private void CalculateTeams()
+    private async Task CalculateTeams()
     {
-        var playersAtGameWithTeams = GameEntityService.CalculateTeams(game.PlayersAtGame);
+        var playersAtGameWithTeams = await GameEntityService.CalculateTeamsAsync(game.PlayersAtGame);
         game.TeamA = playersAtGameWithTeams
         	.Where(pag => pag.PlayerAtGameEntity.Team == "A")
         	.ToList();
@@ -210,10 +210,10 @@
         RefreshGameData();
     }
 
-    private void ToggleAllPlayed()
+    private async Task ToggleAllPlayed()
     {
         var played = MarkAsPLayedOrNotPLayed();
-        GameEntityService.MarkAllPlayed(game.GameEntity.RowKey, played);
+        await GameEntityService.MarkAllPlayedAsync(game.GameEntity.RowKey, played);
         RefreshGameData();
     }
 
@@ -264,7 +264,5 @@
 
         //Set simple view label
         SetSimpleViewLabel();
-
-        this.StateHasChanged();
     }
 }

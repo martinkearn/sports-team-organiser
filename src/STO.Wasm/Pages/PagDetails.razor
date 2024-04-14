@@ -97,21 +97,21 @@
         RefreshData();
     }
 
-    private void Edit()
+    private async Task Edit()
     {
-        GameEntityService.UpsertPlayerAtGameEntity(pagEntity);
+        await GameEntityService.UpsertPlayerAtGameEntityAsync(pagEntity);
         RefreshData();
     }
 
-    private void EditPlayed()
+    private async Task EditPlayed()
     {
-        GameEntityService.TogglePlayerAtGamePlayed(pagEntity, pagEntity.Played);
+        await GameEntityService.TogglePlayerAtGamePlayedAsync(pagEntity, pagEntity.Played);
         RefreshData();
     }
 
-    private void DeletePag()
+    private async Task DeletePag()
     {
-        GameEntityService.DeletePlayerAtGameEntity(pagEntity.GameRowKey);
+        await GameEntityService.DeletePlayerAtGameEntityAsync(pagEntity.GameRowKey);
         Navigation.NavigateTo($"/games/{pagEntity.GameRowKey}");
     }
 

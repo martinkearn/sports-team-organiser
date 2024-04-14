@@ -8,7 +8,7 @@
 		private readonly IPlayerEntityService _playerEntityService = playerEntityService;
 		private readonly ITransactionEntityService _transactionEntityService = transactionEntityService;
 
-		public List<PlayerAtGame> CalculateTeams(List<PlayerAtGame> pags)
+		public async Task<List<PlayerAtGame>> CalculateTeamsAsync(List<PlayerAtGame> pags)
 		{
             var newPags = new List<PlayerAtGame>();
             var rng = new Random();
@@ -30,7 +30,7 @@
                     newPags.Add(pagInPosition);
 
                     // Update pag in storage
-                    UpsertPlayerAtGameEntity(pagInPosition.PlayerAtGameEntity);
+                    await UpsertPlayerAtGameEntityAsync(pagInPosition.PlayerAtGameEntity);
 
                     // Set team for next pag
                     nextTeamToGetPag = (nextTeamToGetPag == "A") ? "B" : "A";
@@ -43,7 +43,7 @@
 
         }
 
-		public void DeleteGameEntity(string rowkey)
+		public async Task DeleteGameEntityAsync(string rowkey)
 		{
 			// Delete Ratings
 			var ratingsForGame = _ratingEntityService.GetRatingEntitiesForGame(rowkey);
@@ -56,16 +56,16 @@
 			var pagsForGame = GetPlayerAtGameEntitiesForGame(rowkey);
 			foreach (var pag in pagsForGame)
 			{
-				DeletePlayerAtGameEntity(pag.RowKey);
+				await DeletePlayerAtGameEntityAsync(pag.RowKey);
 			}
 
 			// Delete game
-			_dataService.DeleteEntity<GameEntity>(rowkey);
+			await _dataService.DeleteEntity<GameEntity>(rowkey);
 		}
 
-		public void DeletePlayerAtGameEntity(string rowKey)
+		public async Task DeletePlayerAtGameEntityAsync(string rowKey)
 		{
-			_dataService.DeleteEntity<PlayerAtGameEntity>(rowKey);
+			await _dataService.DeleteEntity<PlayerAtGameEntity>(rowKey);
 		}
 
 		public List<GameEntity> GetGameEntities()
@@ -150,16 +150,16 @@
 			return _dataService.PlayerAtGameEntities.First(o => o.RowKey == rowKey);
 		}
 
-		public void MarkAllPlayed(string gameRowkey, bool played)
+		public async Task MarkAllPlayedAsync(string gameRowkey, bool played)
 		{
 			var pags = GetPlayerAtGameEntitiesForGame(gameRowkey);
 			foreach (var pag in pags)
 			{
-				TogglePlayerAtGamePlayed(pag, played);
+				await TogglePlayerAtGamePlayedAsync(pag, played);
 			}
 		}
 
-		public void TogglePlayerAtGamePlayed(PlayerAtGameEntity pag, bool? played)
+		public async Task TogglePlayerAtGamePlayedAsync(PlayerAtGameEntity pag, bool? played)
 		{
 			// Get player for pag
 			var playerEntity = _playerEntityService.GetPlayerEntity(pag.PlayerRowKey);
@@ -199,17 +199,17 @@
 			}
 
 			// Upsert pag
-			UpsertPlayerAtGameEntity(pag);
+			await UpsertPlayerAtGameEntityAsync(pag);
 		}
 
-		public void UpsertGameEntity(GameEntity gameEntity)
+		public async Task UpsertGameEntityAsync(GameEntity gameEntity)
 		{
-			_dataService.UpsertEntity(gameEntity);
+			await _dataService.UpsertEntity(gameEntity);
 		}
 
-		public void UpsertPlayerAtGameEntity(PlayerAtGameEntity pagEntity)
+		public async Task UpsertPlayerAtGameEntityAsync(PlayerAtGameEntity pagEntity)
 		{
-			_dataService.UpsertEntity(pagEntity);
+			await _dataService.UpsertEntity(pagEntity);
 		}
 	}
 }

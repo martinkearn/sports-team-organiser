@@ -62,16 +62,16 @@
         RefreshData();
     }
 
-    private void Edit()
+    private async Task Edit()
     {
         var dt = new DateTime(gameEntity.Date.Year, gameEntity.Date.Month, gameEntity.Date.Day, hour, minute, 0, DateTimeKind.Utc);
         gameEntity.Date = dt;
-        GameEntityService.UpsertGameEntity(gameEntity);
+        await GameEntityService.UpsertGameEntityAsync(gameEntity);
     }
 
-    private void DeleteGame()
+    private async Task DeleteGame()
     {
-        GameEntityService.DeleteGameEntity(GameRowKey);
+        await GameEntityService.DeleteGameEntityAsync(GameRowKey);
         Navigation.NavigateTo("/games");
     }
 

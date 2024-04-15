@@ -5,6 +5,12 @@
 
 <h1><i class="fa-solid fa-people-group me-2"></i> @pageTitle</h1>
 
+<h1>@debugMessage</h1>
+
+<p>@gameEntities.Count games.</p>
+
+@if (dataReady)
+{
 <table class="table table-striped">
 	<thead>
 		<tr>
@@ -22,6 +28,7 @@
 		}
 	</tbody>
 </table>
+}
 
 <div class="modal-footer px-0">
 	<a class="btn btn-primary" href="/quickaddpag"><i class="fa-solid fa-plus"></i> Add Player to Game</a>
@@ -33,8 +40,19 @@
 
 	private string pageTitle = default!;
 
+	private string debugMessage = "default";
+
+	private bool dataReady;
+
 	protected override void OnInitialized()
 	{
+		debugMessage = "OnInitialized";
+		RefreshData();
+	}
+
+	protected override void OnParametersSet()
+	{
+		debugMessage = "OnParametersSet";
 		RefreshData();
 	}
 
@@ -42,5 +60,6 @@
 	{
 		gameEntities = GameEntityService.GetGameEntities();
 		pageTitle = "Games";
+		dataReady = true;
 	}
 }

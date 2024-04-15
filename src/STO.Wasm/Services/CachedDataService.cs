@@ -85,18 +85,20 @@ namespace STO.Wasm.Services
 
             if (typeof(T) == typeof(GameEntity))
             {
+				var listCopy = GameEntities;
                 var convertedEntity = (GameEntity)Convert.ChangeType(entity, typeof(GameEntity));
-                int existingEntityIndex = GameEntities.FindIndex(o => o.RowKey == entity.RowKey);
+                int existingEntityIndex = listCopy.FindIndex(o => o.RowKey == entity.RowKey);
                 if (existingEntityIndex != -1)
                 {
                     // Replace
-                    GameEntities[existingEntityIndex] = convertedEntity;
+                    listCopy[existingEntityIndex] = convertedEntity;
                 }
                 else
                 {
                     // Insert
-                    GameEntities.Add(convertedEntity);
+                    listCopy.Add(convertedEntity);
                 }
+				GameEntities = listCopy;
             }
 
             if (typeof(T) == typeof(PlayerAtGameEntity))

@@ -1,11 +1,11 @@
 @page "/games"
 @inject IGameEntityService GameEntityService
 
-<PageTitle>TNF - @pageTitle</PageTitle>
+<PageTitle>TNF - @_pageTitle</PageTitle>
 
-<h1><i class="fa-solid fa-people-group me-2"></i> @pageTitle</h1>
+<h1><i class="fa-solid fa-people-group me-2"></i> @_pageTitle</h1>
 
-<p>@gameEntities.Count games.</p>
+<p>@_gameEntities.Count games.</p>
 
 <table class="table table-striped">
 	<thead>
@@ -15,7 +15,7 @@
 		</tr>
 	</thead>
 	<tbody>
-		@foreach (var ge in gameEntities)
+		@foreach (var ge in _gameEntities)
 		{
 			<tr>
 				<td><GameEntityTitle GameEntity="@ge" Link="true" /></td>
@@ -31,9 +31,9 @@
 </div>
 
 @code {
-	private List<GameEntity> gameEntities = new();
+	private List<GameEntity> _gameEntities = new();
 
-	private string pageTitle = default!;
+	private string _pageTitle = default!;
 
 	protected override void OnInitialized()
 	{
@@ -42,7 +42,7 @@
 
 	private void RefreshData()
 	{
-		gameEntities = GameEntityService.GetGameEntities();
-		pageTitle = "Games";
+		_gameEntities = GameEntityService.GetGameEntities();
+		_pageTitle = "Games";
 	}
 }

@@ -2,9 +2,9 @@
 @inject IPlayerEntityService PlayerEntityService
 @inject NavigationManager Navigation
 
-<PageTitle>TNF - @pageTitle</PageTitle>
+<PageTitle>TNF - @_pageTitle</PageTitle>
 
-<h1><i class="fa-solid fa-user me-2"></i> @pageTitle</h1>
+<h1><i class="fa-solid fa-user me-2"></i> @_pageTitle</h1>
 
 <ul class="nav nav-tabs">
 	<li class="nav-item">
@@ -17,12 +17,12 @@
 
 <div class="mb-3">
 	<label class="form-label">Name</label>
-	<InputText class="form-control" id="addName" @bind-Value="player.PlayerEntity.Name" @bind-Value:after="() => Edit()" />
+	<InputText class="form-control" id="addName" @bind-Value="_player.PlayerEntity.Name" @bind-Value:after="() => Edit()" />
 </div>
 
 <div class="mb-3">
 	<label fclass="form-label">Position</label>
-	<InputSelect class="form-select" @bind-Value="player.PlayerEntity.Position" @bind-Value:after="() => Edit()">
+	<InputSelect class="form-select" @bind-Value="_player.PlayerEntity.Position" @bind-Value:after="() => Edit()">
 		@foreach (string option in Enum.GetNames(typeof(Enums.PlayerPosition)))
 		{
 			<option value="@option">@option</option>
@@ -34,7 +34,7 @@
 	<Authorized>
 		<div class="mb-3">
 			<label class="form-label">Admin Rating</label>
-			<InputNumber class="form-control" id="addAdminRating" min="1" max="5" @bind-Value="player.PlayerEntity.AdminRating" @bind-Value:after="() => Edit()" />
+			<InputNumber class="form-control" id="addAdminRating" min="1" max="5" @bind-Value="_player.PlayerEntity.AdminRating" @bind-Value:after="() => Edit()" />
 			<div class="form-text">1-5 (5 high).</div>
 		</div>
 
@@ -42,7 +42,7 @@
 			<label class="form-label">Default Rate</label>
 			<div class="input-group">
 				<span class="input-group-text">£</span>
-				<InputNumber type="number" min="0" class="form-control" id="addDefaultRate" @bind-Value="player.PlayerEntity.DefaultRate" @bind-Value:after="() => Edit()" />
+				<InputNumber type="number" min="0" class="form-control" id="addDefaultRate" @bind-Value="_player.PlayerEntity.DefaultRate" @bind-Value:after="() => Edit()" />
 			</div>
 			<div class="form-text">Default rate per game. Usually £3 or £4.</div>
 		</div>
@@ -52,7 +52,7 @@
 <div class="mb-3">
 	<label class="form-label">Balance</label>
 	<span class="form-control-plaintext">
-		<CurrencyDisplay Amount="@player.Balance" />
+		<CurrencyDisplay Amount="@_player.Balance" />
 	</span>
 </div>
 
@@ -60,7 +60,7 @@
 	<a class="btn btn-primary" href="/players/"><i class="fa-solid fa-arrow-left"></i> All Players</a>
 	<AuthorizeView Policy="IsAdminEmail">
 		<Authorized>
-			<DeleteButtonWithCheck DeleteWhatLabel="@player.PlayerEntity.Name" ButtonLabel="Delete" ParentPageCallback="DeletePlayer" />
+			<DeleteButtonWithCheck DeleteWhatLabel="@_player.PlayerEntity.Name" ButtonLabel="Delete" ParentPageCallback="DeletePlayer" />
 		</Authorized>
 		<NotAuthorized>
 			<a class="btn btn-primary disabled"><i class="fa-solid fa-trash"></i> Delete</a>
@@ -73,9 +73,9 @@
 	[Parameter]
 	public string PlayerRowKey { get; set; } = default!;
 
-	private Player player = default!;
+	private Player _player = default!;
 
-	private string pageTitle = default!;
+	private string _pageTitle = default!;
 
 	protected override void OnInitialized()
 	{
@@ -84,7 +84,7 @@
 
 	async Task Edit()
 	{
-		await PlayerEntityService.UpsertPlayerEntityAsync(player.PlayerEntity);
+		await PlayerEntityService.UpsertPlayerEntityAsync(_player.PlayerEntity);
 	}
 
 	private async Task DeletePlayer()
@@ -98,7 +98,7 @@
 	private void RefreshData()
 	{
 		// Get Player
-		player = PlayerEntityService.GetPlayer(PlayerRowKey);
-		pageTitle = $"{player.PlayerEntity.Name}";
+		_player = PlayerEntityService.GetPlayer(PlayerRowKey);
+		_pageTitle = $"{_player.PlayerEntity.Name}";
 	}
 }

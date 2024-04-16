@@ -4,7 +4,6 @@
 @inject IWebAssemblyHostEnvironment Env
 @using System.Security.Claims
 @inject AuthenticationStateProvider AuthenticationStateProvider
-@using Azure.Data.Tables
 @inject ICachedDataService DataService
 
 <PageTitle>Tuesday.Football</PageTitle>
@@ -30,10 +29,10 @@
 		<p>IsAdminEmail?: <b>Yes</b></p>
 
 		<p>Claims</p>
-		@if (claims.Count() > 0)
+		@if (_claims.Count() > 0)
 		{
 			<ul>
-				@foreach (var claim in claims)
+				@foreach (var claim in _claims)
 				{
 					<li>@claim.Type: @claim.Value</li>
 				}
@@ -46,7 +45,7 @@
 		{
 			<p><a href="/players/@p.RowKey/player">Player, @p.RowKey, @p.Name</a></p>
 		}
-		@foreach (var g in allGames)
+		@foreach (var g in _allGames)
 		{
 			<p><a href="/games/@g.RowKey">Game, @g.RowKey, @g.Date</a></p>
 		}
@@ -54,11 +53,11 @@
 		{
 			<p><a href="/transactions/@t.RowKey">Transaction, @t.RowKey, @t.Date, @t.Amount</a></p>
 		}
-		@foreach (var pag in allPlayerAtGame)
+		@foreach (var pag in _allPlayerAtGame)
 		{
 			<p><a href="/pags/@pag.RowKey">PlayerAtGame, @pag.RowKey, @pag.PlayerRowKey, @pag.GameRowKey</a></p>
 		}
-		@foreach (var r in allRatings)
+		@foreach (var r in _allRatings)
 		{
 			<p><a href="/ratings/@r.RowKey">Rating, @r.RowKey, @r.PlayerRowKey, @r.GameRowKey, @r.Rating</a></p>
 		}
@@ -73,10 +72,10 @@
 
 
 @code {
-	private List<GameEntity> allGames = new();
-	private List<PlayerAtGameEntity> allPlayerAtGame = new();
-	private List<RatingEntity> allRatings = new();
-	private IEnumerable<Claim> claims = Enumerable.Empty<Claim>();
+	private List<GameEntity> _allGames = new();
+	private List<PlayerAtGameEntity> _allPlayerAtGame = new();
+	private List<RatingEntity> _allRatings = new();
+	private IEnumerable<Claim> _claims = Enumerable.Empty<Claim>();
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -89,12 +88,12 @@
 		var user = authState.User;
 		if (user.Identity is not null && user.Identity.IsAuthenticated)
 		{
-			claims = user.Claims;
+			_claims = user.Claims;
 		}
 
 		await DataService.LoadDataAsync(forceApi, false);
-		allGames = await DataService.QueryEntitiesAsync<GameEntity>();
-		allPlayerAtGame = await DataService.QueryEntitiesAsync<PlayerAtGameEntity>();
-		allRatings = await DataService.QueryEntitiesAsync<RatingEntity>();
+		_allGames = await DataService.QueryEntitiesAsync<GameEntity>();
+		_allPlayerAtGame = await DataService.QueryEntitiesAsync<PlayerAtGameEntity>();
+		_allRatings = await DataService.QueryEntitiesAsync<RatingEntity>();
 	}
 }

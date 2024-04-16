@@ -1,5 +1,3 @@
-using STO.Models;
-
 namespace STO.Wasm.Services
 {
 	/// <inheritdoc/>

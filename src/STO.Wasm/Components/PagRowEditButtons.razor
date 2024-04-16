@@ -1,7 +1,7 @@
 @inject IGameEntityService GameEntityService
 @inject ITransactionEntityService TransactionEntityService
 
-@if (pagEntity.Played)
+@if (PagEntity.Played)
 {
     <button type="button" class="btn btn-outline-secondary btn-sm active d-none d-md-inline" @onclick="TogglePlayed"> Played</button>
 }
@@ -10,13 +10,13 @@ else
     <button type="button" class="btn btn-outline-secondary btn-sm d-none d-md-inline" @onclick="TogglePlayed"> Not Played</button>
 }
 <span></span>
-<button type="button" class="btn btn-outline-secondary btn-sm d-none d-md-inline" @onclick="SwitchPagTeam">@pagEntity.Team <i class="fa-solid fa-repeat"></i></button>
+<button type="button" class="btn btn-outline-secondary btn-sm d-none d-md-inline" @onclick="SwitchPagTeam">@PagEntity.Team <i class="fa-solid fa-repeat"></i></button>
 <button type="button" class="btn btn-outline-secondary btn-sm d-none d-lg-inline" @onclick="() => AddTransactionForPlayer(3)"><i class="fa-solid fa-plus"></i> £3 - To Do player default rate</button>
-<a type="button" class="btn btn-outline-secondary btn-sm d-inline" href="/pags/@pagEntity.RowKey"><i class="fa-solid fa-edit"></i> Edit</a>
+<a type="button" class="btn btn-outline-secondary btn-sm d-inline" href="/pags/@PagEntity.RowKey"><i class="fa-solid fa-edit"></i> Edit</a>
 
 @code {
     [Parameter]
-    public PlayerAtGameEntity pagEntity { get; set; } = default!;
+    public PlayerAtGameEntity PagEntity { get; set; } = default!;
 
     [Parameter]
     public EventCallback RefreshMainPage { get; set; } = default!;
@@ -28,25 +28,25 @@ else
 
     private async Task TogglePlayed()
     {
-        await GameEntityService.TogglePlayerAtGamePlayedAsync(pagEntity, null);
+        await GameEntityService.TogglePlayerAtGamePlayedAsync(PagEntity, null);
         await RefreshMainPage.InvokeAsync();
     }
 
     private async Task SwitchPagTeam()
     {
-        if (pagEntity.Team == "A")
+        if (PagEntity.Team == "A")
         {
-            pagEntity.Team = "B";
+            PagEntity.Team = "B";
         }
-        else if (pagEntity.Team == "B")
+        else if (PagEntity.Team == "B")
         {
-            pagEntity.Team = "";
+            PagEntity.Team = "";
         }
         else
         {
-            pagEntity.Team = "A";
+            PagEntity.Team = "A";
         }
-        await GameEntityService.UpsertPlayerAtGameEntityAsync(pagEntity);
+        await GameEntityService.UpsertPlayerAtGameEntityAsync(PagEntity);
         await RefreshMainPage.InvokeAsync();
     }
 
@@ -55,8 +55,8 @@ else
         var newTransactionEntityForPag = new TransactionEntity()
             {
                 Date = DateTimeOffset.UtcNow,
-                Notes = GameEntityService.GetNotesForGame(pagEntity.GameRowKey),
-                PlayerRowKey = pagEntity.PlayerRowKey,
+                Notes = GameEntityService.GetNotesForGame(PagEntity.GameRowKey),
+                PlayerRowKey = PagEntity.PlayerRowKey,
                 Amount = amount
             };
         if (TransactionEntityService is not null)
@@ -68,7 +68,7 @@ else
 
     private async Task RefreshData()
     {
-        var game = GameEntityService.GetGameEntity(pagEntity.GameRowKey);
+        var game = GameEntityService.GetGameEntity(PagEntity.GameRowKey);
         await RefreshMainPage.InvokeAsync();
     }
 

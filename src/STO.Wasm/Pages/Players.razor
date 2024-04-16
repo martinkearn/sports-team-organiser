@@ -1,11 +1,11 @@
 @page "/players"
 @inject IPlayerEntityService PlayerEntityService
 
-<PageTitle>TNF - @pageTitle</PageTitle>
+<PageTitle>TNF - @_pageTitle</PageTitle>
 
-<h1><i class="fa-solid fa-user me-2"></i> @pageTitle</h1>
+<h1><i class="fa-solid fa-user me-2"></i> @_pageTitle</h1>
 
-<p>@playerEntities.Count players registered.</p>
+<p>@_playerEntities.Count players registered.</p>
 
 <div>
 	<a class="btn btn-primary me-3 mb-3" href="/players/add"><i class="fa-solid fa-plus"></i> Add Player</a>
@@ -20,7 +20,7 @@
 		</tr>
 	</thead>
 	<tbody>
-		@foreach (var pe in playerEntities)
+		@foreach (var pe in _playerEntities)
 		{
 			<tr>
 				<td><a href="/players/@pe.RowKey/player">@pe.Name</a></td>
@@ -40,11 +40,11 @@
 
 
 @code {
-	private List<PlayerEntity> playerEntities = [];
-	private string pageTitle = "Players";
+	private List<PlayerEntity> _playerEntities = [];
+	private string _pageTitle = "Players";
 
 	protected override void OnInitialized()
 	{
-		playerEntities = PlayerEntityService.GetPlayerEntities();
+		_playerEntities = PlayerEntityService.GetPlayerEntities();
 	}
 }

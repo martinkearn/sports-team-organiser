@@ -2,21 +2,21 @@
 @inject IGameEntityService GameEntityService
 @inject NavigationManager Navigation
 
-<PageTitle>TNF - @pageTitle</PageTitle>
+<PageTitle>TNF - @_pageTitle</PageTitle>
 
-<h1><i class="fa-solid fa-people-group me-2"></i> Edit <GameEntityTitle GameEntity="@gameEntity" Link="false" /></h1>
+<h1><i class="fa-solid fa-people-group me-2"></i> Edit <GameEntityTitle GameEntity="@_gameEntity" Link="false" /></h1>
 
 <div class="mb-3">
     <label for="addDate" class="form-label">Date</label>
-    <InputDate class="form-control" @bind-Value="gameEntity.Date" />
+    <InputDate class="form-control" @bind-Value="_gameEntity.Date" />
 </div>
 <div class="mb-3">
     <label for="addDate" class="form-label">Time</label>
     <div class="row">
         <div class="col-auto">
             <div class="input-group">
-                <InputNumber class="form-control" min="0" max="23" @bind-Value="hour" @bind-Value:after="() => Edit()" />
-                <InputNumber class="form-control" min="0" max="59" @bind-Value="minute" @bind-Value:after="() => Edit()" />
+                <InputNumber class="form-control" min="0" max="23" @bind-Value="_hour" @bind-Value:after="() => Edit()" />
+                <InputNumber class="form-control" min="0" max="59" @bind-Value="_minute" @bind-Value:after="() => Edit()" />
             </div>
         </div>
     </div>
@@ -24,12 +24,12 @@
 
 <div class="mb-3">
     <label class="form-label">Title</label>
-    <InputText class="form-control" @bind-Value="gameEntity.Title" @bind-Value:after="() => Edit()" />
+    <InputText class="form-control" @bind-Value="_gameEntity.Title" @bind-Value:after="() => Edit()" />
 </div>
 
 <div class="mb-3">
     <label class="form-label">Notes</label>
-    <InputText class="form-control" @bind-Value="gameEntity.Notes" @bind-Value:after="() => Edit()" />
+    <InputText class="form-control" @bind-Value="_gameEntity.Notes" @bind-Value:after="() => Edit()" />
 </div>
 
 <div class="modal-footer px-0">
@@ -37,7 +37,7 @@
 
     <AuthorizeView Policy="IsAdminEmail">
         <Authorized>
-            <DeleteButtonWithCheck @rendermode="RenderMode.InteractiveAuto" DeleteWhatLabel="@pageTitle" ButtonLabel="Delete" ParentPageCallback="DeleteGame" />
+            <DeleteButtonWithCheck @rendermode="RenderMode.InteractiveAuto" DeleteWhatLabel="@_pageTitle" ButtonLabel="Delete" ParentPageCallback="DeleteGame" />
         </Authorized>
         <NotAuthorized>
             <a class="btn btn-primary disabled"><i class="fa-solid fa-trash"></i> Delete</a>
@@ -49,13 +49,13 @@
     [Parameter]
     public string GameRowKey { get; set; } = default!;
 
-    private GameEntity gameEntity = default!;
+    private GameEntity _gameEntity = default!;
 
-    private int hour = default!;
+    private int _hour = default!;
 
-    private int minute = default!;
+    private int _minute = default!;
 
-    private string pageTitle = default!;
+    private string _pageTitle = default!;
 
     protected override void OnInitialized()
     {
@@ -64,9 +64,9 @@
 
     private async Task Edit()
     {
-        var dt = new DateTime(gameEntity.Date.Year, gameEntity.Date.Month, gameEntity.Date.Day, hour, minute, 0, DateTimeKind.Utc);
-        gameEntity.Date = dt;
-        await GameEntityService.UpsertGameEntityAsync(gameEntity);
+        var dt = new DateTime(_gameEntity.Date.Year, _gameEntity.Date.Month, _gameEntity.Date.Day, _hour, _minute, 0, DateTimeKind.Utc);
+        _gameEntity.Date = dt;
+        await GameEntityService.UpsertGameEntityAsync(_gameEntity);
     }
 
     private async Task DeleteGame()
@@ -77,11 +77,11 @@
 
     private void RefreshData()
     {
-        gameEntity = GameEntityService.GetGameEntity(GameRowKey);
-        hour = gameEntity.Date.Hour;
-        minute = gameEntity.Date.Minute;
+        _gameEntity = GameEntityService.GetGameEntity(GameRowKey);
+        _hour = _gameEntity.Date.Hour;
+        _minute = _gameEntity.Date.Minute;
 
-        var gameDateLabel = gameEntity.Date.ToString("dd MMM");
-        pageTitle = string.IsNullOrEmpty(gameEntity.Title) ? gameDateLabel : $"{gameDateLabel} {gameEntity.Title}";
+        var gameDateLabel = _gameEntity.Date.ToString("dd MMM");
+        _pageTitle = string.IsNullOrEmpty(_gameEntity.Title) ? gameDateLabel : $"{gameDateLabel} {_gameEntity.Title}";
     }
 }

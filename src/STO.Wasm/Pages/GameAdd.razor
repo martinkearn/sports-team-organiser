@@ -2,16 +2,16 @@
 @inject IGameEntityService GameEntityService
 @inject NavigationManager Navigation
 
-<PageTitle>TNF - @pageTitle</PageTitle>
+<PageTitle>TNF - @_pageTitle</PageTitle>
 
-<h1><i class="fa-solid fa-people-group me-2"></i> @pageTitle</h1>
+<h1><i class="fa-solid fa-people-group me-2"></i> @_pageTitle</h1>
 
-<EditForm Model="@newGameEntity" OnSubmit="@Add" Context="EditForm">
+<EditForm Model="@_newGameEntity" OnSubmit="@Add" Context="editForm">
     <DataAnnotationsValidator />
     <ValidationSummary />
     <div class="mb-3">
         <label for="addDate" class="form-label">Date</label>
-        <InputDate class="form-control" id="addDate" @bind-Value="newGameEntity.Date" />
+        <InputDate class="form-control" id="addDate" @bind-Value="_newGameEntity.Date" />
     </div>
 
     <div class="mb-3">
@@ -19,8 +19,8 @@
         <div class="row">
             <div class="col-auto">
                 <div class="input-group">
-                    <InputNumber class="form-control" min="0" max="23" @bind-Value="hour" />
-                    <InputNumber class="form-control" min="0" max="59" @bind-Value="minute" />
+                    <InputNumber class="form-control" min="0" max="23" @bind-Value="_hour" />
+                    <InputNumber class="form-control" min="0" max="59" @bind-Value="_minute" />
                 </div>
             </div>
         </div>
@@ -28,12 +28,12 @@
 
     <div class="mb-3">
         <label for="addTitle" class="form-label">Title</label>
-        <InputText class="form-control" id="addTitle" @bind-Value="newGameEntity.Title" />
+        <InputText class="form-control" id="addTitle" @bind-Value="_newGameEntity.Title" />
     </div>
 
     <div class="mb-3">
         <label for="addNotes" class="form-label">Notes</label>
-        <InputText class="form-control" id="addNotes" @bind-Value="newGameEntity.Notes" />
+        <InputText class="form-control" id="addNotes" @bind-Value="_newGameEntity.Notes" />
     </div>
 
     <div class="modal-footer">
@@ -42,13 +42,13 @@
 </EditForm>
 
 @code {
-    private GameEntity newGameEntity = new();
+    private GameEntity _newGameEntity = new();
 
-    private int hour = default!;
+    private int _hour = default!;
 
-    private int minute = default!;
+    private int _minute = default!;
 
-    private string pageTitle = default!;
+    private string _pageTitle = default!;
 
     protected override void OnInitialized()
     {
@@ -57,18 +57,18 @@
 
     protected async Task Add()
     {
-        var dt = new DateTime(newGameEntity.Date.Year, newGameEntity.Date.Month, newGameEntity.Date.Day, hour, minute, 0, DateTimeKind.Utc);
-        newGameEntity.Date = dt;
-        await GameEntityService.UpsertGameEntityAsync(newGameEntity);
+        var dt = new DateTime(_newGameEntity.Date.Year, _newGameEntity.Date.Month, _newGameEntity.Date.Day, _hour, _minute, 0, DateTimeKind.Utc);
+        _newGameEntity.Date = dt;
+        await GameEntityService.UpsertGameEntityAsync(_newGameEntity);
         Navigation.NavigateTo("/games");
     }
 
     private void RefreshData()
     {
-        hour = 18;
-        minute = 30;
-        newGameEntity = new();
-        newGameEntity.Date = DateTimeOffset.UtcNow;
-        pageTitle = "Add a Game";
+        _hour = 18;
+        _minute = 30;
+        _newGameEntity = new();
+        _newGameEntity.Date = DateTimeOffset.UtcNow;
+        _pageTitle = "Add a Game";
     }
 }

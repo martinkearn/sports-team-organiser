@@ -2,9 +2,9 @@ namespace STO.Models
 {
     public class Transaction
     {
-        public Transaction(TransactionEntity TransactionEntity)
+        public Transaction(TransactionEntity transactionEntity)
         {
-            this.TransactionEntity = TransactionEntity;
+            this.TransactionEntity = transactionEntity;
         } 
         public TransactionEntity TransactionEntity { get; set; } = default!;
         

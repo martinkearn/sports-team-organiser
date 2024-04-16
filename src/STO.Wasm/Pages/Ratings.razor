@@ -1,9 +1,9 @@
 @page "/ratings"
 @inject IRatingEntityService RatingEntityService
 
-<PageTitle>TNF - @pageTitle</PageTitle>
+<PageTitle>TNF - @_pageTitle</PageTitle>
 
-<h1><i class="fa-regular fa-star me-2"></i> @pageTitle</h1>
+<h1><i class="fa-regular fa-star me-2"></i> @_pageTitle</h1>
 
 <AuthorizeView Policy="IsAdminEmail">
 	<Authorized>
@@ -22,7 +22,7 @@
 				</tr>
 			</thead>
 			<tbody>
-				@foreach (RatingEntity re in pageOfRatingEntities)
+				@foreach (RatingEntity re in _pageOfRatingEntities)
 				{
 					@if (re is not null)
 					{
@@ -40,16 +40,16 @@
 
 		<nav aria-label="Page navigation">
 			<ul class="pagination">
-				@for (int p = 1; p <= pages; p++)
+				@for (int p = 1; p <= _pages; p++)
 				{
 					var thisPage = p;
-					var css = (currentPageNumber == p) ? "page-item active" : "page-item";
+					var css = (_currentPageNumber == p) ? "page-item active" : "page-item";
 					<li class="@css"><a class="page-link" @onclick="@(e => ChangePage(thisPage))">@p</a></li>
 				}
 			</ul>
 		</nav>
 
-		<p>@ratingEntities.Count ratings. @ratingsPerPage per page.</p>
+		<p>@_ratingEntities.Count ratings. @_ratingsPerPage per page.</p>
 	</Authorized>
 	<NotAuthorized>
 		<h4>Access Denied!</h4>
@@ -58,19 +58,19 @@
 </AuthorizeView>
 
 @code {
-	private List<RatingEntity> ratingEntities = new();
+	private List<RatingEntity> _ratingEntities = new();
 
-	private List<RatingEntity> pageOfRatingEntities = new();
+	private List<RatingEntity> _pageOfRatingEntities = new();
 
-	private int ratingsPerPage = 40;
+	private int _ratingsPerPage = 40;
 
-	private int currentPageNumber = 1;
+	private int _currentPageNumber = 1;
 
-	private int pages = default!;
+	private int _pages = default!;
 
-	private Enums.SortRatingsBy currentSortBy = default!;
+	private Enums.SortRatingsBy _currentSortBy = default!;
 
-	private string pageTitle = default!;
+	private string _pageTitle = default!;
 
 	protected override void OnInitialized()
 	{
@@ -82,43 +82,43 @@
 		switch (by)
 		{
 			case Enums.SortRatingsBy.Game:
-				ratingEntities = (currentSortBy == by) ?
-					ratingEntities.OrderByDescending(o => o.GameRowKey).ToList() :
-					ratingEntities.OrderBy(o => o.GameRowKey).ToList();
+				_ratingEntities = (_currentSortBy == by) ?
+					_ratingEntities.OrderByDescending(o => o.GameRowKey).ToList() :
+					_ratingEntities.OrderBy(o => o.GameRowKey).ToList();
 				break;
 			case Enums.SortRatingsBy.Rating:
-				ratingEntities = (currentSortBy == by) ?
-					ratingEntities.OrderByDescending(o => o.Rating).ToList() :
-					ratingEntities.OrderBy(o => o.Rating).ToList();
+				_ratingEntities = (_currentSortBy == by) ?
+					_ratingEntities.OrderByDescending(o => o.Rating).ToList() :
+					_ratingEntities.OrderBy(o => o.Rating).ToList();
 				break;
 			case Enums.SortRatingsBy.Player:
-				ratingEntities = (currentSortBy == by) ?
-					ratingEntities.OrderByDescending(o => o.PlayerRowKey).ToList() :
-					ratingEntities.OrderBy(o => o.PlayerRowKey).ToList();
+				_ratingEntities = (_currentSortBy == by) ?
+					_ratingEntities.OrderByDescending(o => o.PlayerRowKey).ToList() :
+					_ratingEntities.OrderBy(o => o.PlayerRowKey).ToList();
 				break;
 			default:
-				ratingEntities = ratingEntities.OrderBy(o => o.Timestamp).ToList();
+				_ratingEntities = _ratingEntities.OrderBy(o => o.Timestamp).ToList();
 				break;
 		}
 
-		currentSortBy = by;
+		_currentSortBy = by;
 	}
 
 	private void ChangePage(int page)
 	{
-		currentPageNumber = page;
-		pageOfRatingEntities = ratingEntities.Skip((page - 1) * ratingsPerPage).Take(ratingsPerPage).ToList();
+		_currentPageNumber = page;
+		_pageOfRatingEntities = _ratingEntities.Skip((page - 1) * _ratingsPerPage).Take(_ratingsPerPage).ToList();
 	}
 
 	private void RefreshData()
 	{
-		ratingEntities = RatingEntityService.GetRatingEntities();
-		pageTitle = "Ratings";
+		_ratingEntities = RatingEntityService.GetRatingEntities();
+		_pageTitle = "Ratings";
 
 		// Setup paging
-		pageOfRatingEntities = ratingEntities.Take(ratingsPerPage).ToList();
-		var pagesDec = (double)ratingEntities.Count / (double)ratingsPerPage;
-		pages = Convert.ToInt16(Math.Ceiling(pagesDec));
-		currentPageNumber = 1;
+		_pageOfRatingEntities = _ratingEntities.Take(_ratingsPerPage).ToList();
+		var pagesDec = (double)_ratingEntities.Count / (double)_ratingsPerPage;
+		_pages = Convert.ToInt16(Math.Ceiling(pagesDec));
+		_currentPageNumber = 1;
 	}
 }

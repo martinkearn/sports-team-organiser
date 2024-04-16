@@ -32,8 +32,8 @@ public class RatingEntityController : ControllerBase
     }
 
     [HttpPost(Name = "UpsertRatingEntity")]
-    public async Task Post(RatingEntity RatingEntity)
+    public async Task Post(RatingEntity ratingEntity)
     {
-        await _storageService.UpsertEntity<RatingEntity>(RatingEntity);
+        await _storageService.UpsertEntity<RatingEntity>(ratingEntity);
     }
 }

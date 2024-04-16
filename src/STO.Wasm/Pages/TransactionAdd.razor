@@ -4,20 +4,20 @@
 @inject NavigationManager Navigation
 
 
-<PageTitle>TNF - @pageTitle</PageTitle>
+<PageTitle>TNF - @_pageTitle</PageTitle>
 
-<h1><i class="fa-solid fa-coins me-2"></i> @pageTitle</h1>
+<h1><i class="fa-solid fa-coins me-2"></i> @_pageTitle</h1>
 
 <AuthorizeView Policy="IsAdminEmail">
 	<Authorized>
-		<EditForm Model="@newTransactionEntity" OnValidSubmit="Add" Context="NewTransactionEntity">
+		<EditForm Model="@_newTransactionEntity" OnValidSubmit="Add" Context="newTransactionEntity">
 			<DataAnnotationsValidator />
 			<ValidationSummary />
 			<div class="mb-3">
 				<label for="addPlayerRowKey" class="form-label">Player</label>
-				<InputSelect class="form-select" @bind-Value="newTransactionEntity.PlayerRowKey">
+				<InputSelect class="form-select" @bind-Value="_newTransactionEntity.PlayerRowKey">
 					<option value="">Select Player ...</option>
-					@foreach (var pe in playerEntities)
+					@foreach (var pe in _playerEntities)
 					{
 						<option value="@pe.RowKey">@pe.Name</option>
 					}
@@ -26,19 +26,19 @@
 
 			<div class="mb-3">
 				<label for="addDate" class="form-label">Date</label>
-				<InputDate class="form-control" id="addDate" @bind-Value="newTransactionEntity.Date" />
+				<InputDate class="form-control" id="addDate" @bind-Value="_newTransactionEntity.Date" />
 			</div>
 
 			<div class="mb-3">
 				<label for="addNotes" class="form-label">Notes</label>
-				<InputText class="form-control" id="addNotes" @bind-Value="newTransactionEntity.Notes" />
+				<InputText class="form-control" id="addNotes" @bind-Value="_newTransactionEntity.Notes" />
 			</div>
 
 			<div class="mb-3">
 				<label for="addAmount" class="form-label">Amount</label>
 				<div class="input-group">
 					<span class="input-group-text">£</span>
-					<InputNumber type="number" class="form-control" id="addAmount" @bind-Value="newTransactionEntity.Amount" />
+					<InputNumber type="number" class="form-control" id="addAmount" @bind-Value="_newTransactionEntity.Amount" />
 				</div>
 				<div class="form-text">Positive for payments, negative to pay for a played game.</div>
 			</div>
@@ -56,11 +56,11 @@
 
 
 @code {
-	private List<PlayerEntity> playerEntities = new();
+	private List<PlayerEntity> _playerEntities = new();
 
-	private TransactionEntity newTransactionEntity = new();
+	private TransactionEntity _newTransactionEntity = new();
 
-	private string pageTitle = default!;
+	private string _pageTitle = default!;
 
 	protected override void OnInitialized()
 	{
@@ -69,14 +69,14 @@
 
 	protected async Task Add()
 	{
-		await TransactionEntityService.UpsertTransactionEntityAsync(newTransactionEntity);
+		await TransactionEntityService.UpsertTransactionEntityAsync(_newTransactionEntity);
 		Navigation.NavigateTo("/transactions");
 	}
 
 	private void RefreshData()
 	{
-		newTransactionEntity = new();
-		playerEntities = PlayerEntityService.GetPlayerEntities();
-		pageTitle = "Add Transaction";
+		_newTransactionEntity = new();
+		_playerEntities = PlayerEntityService.GetPlayerEntities();
+		_pageTitle = "Add Transaction";
 	}
 }

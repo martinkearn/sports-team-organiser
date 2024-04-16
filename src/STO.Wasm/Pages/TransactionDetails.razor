@@ -4,27 +4,27 @@
 @inject NavigationManager Navigation
 
 
-<PageTitle>TNF - @pageTitle</PageTitle>
+<PageTitle>TNF - @_pageTitle</PageTitle>
 
-<h1><i class="fa-solid fa-coins me-2"></i> @pageTitle</h1>
+<h1><i class="fa-solid fa-coins me-2"></i> @_pageTitle</h1>
 
 <AuthorizeView Policy="IsAdminEmail">
 	<Authorized>
 		<p>Transactions cannot be edited, only deleted</p>
 
 		<h5>Row Key</h5>
-		<p>@transactionEntity.RowKey</p>
+		<p>@_transactionEntity.RowKey</p>
 
 		<h5>Date</h5>
-		<p>@transactionEntity.Date.ToString("dd MMM yyyy HH:mm")</p>
+		<p>@_transactionEntity.Date.ToString("dd MMM yyyy HH:mm")</p>
 
 		<h5>Amount</h5>
-		<p><CurrencyDisplay Amount="@transactionEntity.Amount"></CurrencyDisplay></p>
+		<p><CurrencyDisplay Amount="@_transactionEntity.Amount"></CurrencyDisplay></p>
 
 		<h5>Notes</h5>
-		@if (transactionEntity.Notes is not null)
+		@if (_transactionEntity.Notes is not null)
 		{
-			<p>@transactionEntity.Notes</p>
+			<p>@_transactionEntity.Notes</p>
 		}
 		else
 		{
@@ -32,11 +32,11 @@
 		}
 
 		<h5>Player</h5>
-		<p><PlayerName Link="true" PlayerRowKey="@transactionEntity.PlayerRowKey" /></p>
+		<p><PlayerName Link="true" PlayerRowKey="@_transactionEntity.PlayerRowKey" /></p>
 
 		<div class="modal-footer">
 			<a class="btn btn-primary" href="/transactions/"><i class="fa-solid fa-arrow-left"></i> All Transactions</a>
-			<DeleteButtonWithCheck DeleteWhatLabel="@pageTitle" ButtonLabel="Delete" ParentPageCallback="DeleteTransaction" />
+			<DeleteButtonWithCheck DeleteWhatLabel="@_pageTitle" ButtonLabel="Delete" ParentPageCallback="DeleteTransaction" />
 		</div>
 	</Authorized>
 	<NotAuthorized>
@@ -50,9 +50,9 @@
 	[Parameter]
 	public string TransactionRowKey { get; set; } = default!;
 
-	private TransactionEntity transactionEntity = default!;
+	private TransactionEntity _transactionEntity = default!;
 
-	private string pageTitle = default!;
+	private string _pageTitle = default!;
 
 	protected override void OnInitialized()
 	{
@@ -67,8 +67,8 @@
 
 	private void RefreshData()
 	{
-		transactionEntity = TransactionEntityService.GetTransactionEntity(TransactionRowKey);
-		var playerEntity = PlayerEntityService.GetPlayerEntity(transactionEntity.PlayerRowKey);
-		pageTitle = $"Transaction for {@playerEntity.Name}, {@transactionEntity.Date.Date.ToShortDateString()}";
+		_transactionEntity = TransactionEntityService.GetTransactionEntity(TransactionRowKey);
+		var playerEntity = PlayerEntityService.GetPlayerEntity(_transactionEntity.PlayerRowKey);
+		_pageTitle = $"Transaction for {@playerEntity.Name}, {_transactionEntity.Date.Date.ToShortDateString()}";
 	}
 }

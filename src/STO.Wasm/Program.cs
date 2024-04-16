@@ -3,10 +3,8 @@ global using STO.Wasm.Services;
 global using STO.Wasm.Models;
 global using STO.Wasm.Interfaces;
 global using Blazored.LocalStorage;
-using System.Security.Claims;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace STO.Wasm;
 
@@ -40,7 +38,7 @@ public class Program
                         if (user.Identity is not null && user.Identity.IsAuthenticated)
                         {
                             // User is authenticated
-                            var email = user.FindFirst(c => c.Type == ClaimTypes.Email)?.Value;
+                            //var email = user.FindFirst(c => c.Type == ClaimTypes.Email)?.Value;
                             var authName = user.Identity.Name;
                             if (authName == "Martin Kearn")
                             {

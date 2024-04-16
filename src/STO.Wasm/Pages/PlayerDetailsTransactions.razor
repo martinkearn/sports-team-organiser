@@ -5,9 +5,9 @@
 @inject NavigationManager Navigation
 
 
-<PageTitle>TNF - @pageTitle</PageTitle>
+<PageTitle>TNF - @_pageTitle</PageTitle>
 
-<h1><i class="fa-solid fa-user me-2"></i> @pageTitle</h1>
+<h1><i class="fa-solid fa-user me-2"></i> @_pageTitle</h1>
 
 <AuthorizeView Policy="IsAdminEmail">
     <Authorized>
@@ -29,7 +29,7 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach (var transactionEntity in playerTransactions)
+                @foreach (var transactionEntity in _playerTransactions)
                 {
                     <tr>
                         <td><a href="/transactions/@transactionEntity.RowKey">@transactionEntity.Date.ToString("dd MMM")</a></td>
@@ -42,7 +42,7 @@
 
         <div class="modal-footer">
             <a class="btn btn-primary" href="/players/"><i class="fa-solid fa-arrow-left"></i> All Players</a>
-            <DeleteButtonWithCheck DeleteWhatLabel="@deleteAllLabel" ButtonLabel="Delete all transactions" ParentPageCallback="DeleteTransactionsForPlayer" />
+            <DeleteButtonWithCheck DeleteWhatLabel="@_deleteAllLabel" ButtonLabel="Delete all transactions" ParentPageCallback="DeleteTransactionsForPlayer" />
         </div>
     </Authorized>
     <NotAuthorized>
@@ -56,11 +56,11 @@
     [Parameter]
     public string PlayerRowKey { get; set; } = default!;
 
-    private List<TransactionEntity> playerTransactions = [];
+    private List<TransactionEntity> _playerTransactions = [];
 
-    private string pageTitle = default!;
+    private string _pageTitle = default!;
 
-    private string deleteAllLabel = default!;
+    private string _deleteAllLabel = default!;
 
     protected override void OnInitialized()
     {
@@ -69,7 +69,7 @@
 
     private async Task DeleteTransactionsForPlayer()
     {
-        foreach (var te in playerTransactions)
+        foreach (var te in _playerTransactions)
         {
             await TransactionEntityService.DeleteTransactionEntityAsync(te.RowKey);
         }
@@ -85,11 +85,11 @@
         var playerEntity = PlayerEntityService.GetPlayerEntity(PlayerRowKey);
 
         // Get Transactions
-        playerTransactions = DataService.TransactionEntities.Where(o => o.PlayerRowKey == PlayerRowKey)
+        _playerTransactions = DataService.TransactionEntities.Where(o => o.PlayerRowKey == PlayerRowKey)
             .OrderByDescending(o => o.Date)
             .ToList();
 
-        deleteAllLabel = $"All transactions for {playerEntity?.Name}";
-        pageTitle = $"{playerEntity?.Name}";
+        _deleteAllLabel = $"All transactions for {playerEntity?.Name}";
+        _pageTitle = $"{playerEntity?.Name}";
     }
 }

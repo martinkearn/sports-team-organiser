@@ -4,30 +4,30 @@
 @inject IGameEntityService GameEntityService
 @inject NavigationManager Navigation
 
-<PageTitle>TNF - @pageTitle</PageTitle>
+<PageTitle>TNF - @_pageTitle</PageTitle>
 
-<h1><i class="fa-regular fa-star me-2"></i> @pageTitle</h1>
+<h1><i class="fa-regular fa-star me-2"></i> @_pageTitle</h1>
 
 <AuthorizeView Policy="IsAdminEmail">
 	<Authorized>
 		<p>Ratings cannot be edited, only deleted</p>
 
 		<h5>Date & Time</h5>
-		<p>@RatingEntityService.FormatRatingTime(ratingEntity.RowKey)</p>
+		<p>@RatingEntityService.FormatRatingTime(_ratingEntity.RowKey)</p>
 
 		<h5>Player</h5>
-		<p><a href="players/@ratingEntity.PlayerRowKey/player">@playerEntity.Name</a></p>
+		<p><a href="players/@_ratingEntity.PlayerRowKey/player">@_playerEntity.Name</a></p>
 
 		<h5>Game</h5>
-		<p><GameEntityTitle GameRowKey="@ratingEntity.GameRowKey" Link="true" /></p>
+		<p><GameEntityTitle GameRowKey="@_ratingEntity.GameRowKey" Link="true" /></p>
 
 		<h5>Rating</h5>
-		<p>@ratingEntity.Rating</p>
+		<p>@_ratingEntity.Rating</p>
 
 		<h5>Notes</h5>
-		@if (ratingEntity?.Notes is not null)
+		@if (_ratingEntity?.Notes is not null)
 		{
-			<p>@ratingEntity.Notes</p>
+			<p>@_ratingEntity.Notes</p>
 		}
 		else
 		{
@@ -36,7 +36,7 @@
 
 		<div class="modal-footer">
 			<a class="btn btn-primary" href="/ratings/"><i class="fa-solid fa-arrow-left"></i>All Ratings</a>
-			<DeleteButtonWithCheck DeleteWhatLabel="@pageTitle" ButtonLabel="Delete" ParentPageCallback="DeleteRating" />
+			<DeleteButtonWithCheck DeleteWhatLabel="@_pageTitle" ButtonLabel="Delete" ParentPageCallback="DeleteRating" />
 		</div>
 	</Authorized>
 	<NotAuthorized>
@@ -49,13 +49,13 @@
 	[Parameter]
 	public string RatingRowKey { get; set; } = default!;
 
-	private RatingEntity ratingEntity = default!;
+	private RatingEntity _ratingEntity = default!;
 
-	private PlayerEntity playerEntity = default!;
+	private PlayerEntity _playerEntity = default!;
 
-	private GameEntity gameEntity = default!;
+	private GameEntity _gameEntity = default!;
 
-	private string pageTitle = default!;
+	private string _pageTitle = default!;
 
 	protected override void OnInitialized()
 	{
@@ -70,9 +70,9 @@
 
 	private void RefreshData()
 	{
-		ratingEntity = RatingEntityService.GetRatingEntity(RatingRowKey);
-		playerEntity = PlayerEntityService.GetPlayerEntity(ratingEntity.PlayerRowKey);
-		gameEntity = GameEntityService.GetGameEntity(ratingEntity.GameRowKey);
-		pageTitle = $"Rating for {@playerEntity.Name}, {@gameEntity.Date.Date.ToShortDateString()}";
+		_ratingEntity = RatingEntityService.GetRatingEntity(RatingRowKey);
+		_playerEntity = PlayerEntityService.GetPlayerEntity(_ratingEntity.PlayerRowKey);
+		_gameEntity = GameEntityService.GetGameEntity(_ratingEntity.GameRowKey);
+		_pageTitle = $"Rating for {_playerEntity.Name}, {_gameEntity.Date.Date.ToShortDateString()}";
 	}
 }

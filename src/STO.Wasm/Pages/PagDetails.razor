@@ -3,23 +3,23 @@
 @inject ITransactionEntityService TransactionEntityService
 @inject NavigationManager Navigation
 
-<PageTitle>TNF - @pageTitle</PageTitle>
+<PageTitle>TNF - @_pageTitle</PageTitle>
 
-<h1><i class="fa-solid fa-people-group me-2"></i> @pageTitle</h1>
+<h1><i class="fa-solid fa-people-group me-2"></i> @_pageTitle</h1>
 
 <div class="mb-3">
     <label class="form-label">Player Name</label>
-    <span class="form-control-plaintext"><a href="/players/@pagEntity.PlayerRowKey/player">@pagEntity.PlayerRowKey - To Do Player name here</a></span>
+    <span class="form-control-plaintext"><a href="/players/@_pagEntity.PlayerRowKey/player">@_pagEntity.PlayerRowKey - To Do Player name here</a></span>
 </div>
 
 <div class="mb-3">
     <label class="form-label">Game</label>
-    <span class="form-control-plaintext"><GameEntityTitle GameEntity="@gameEntity" Link="true" /></span>
+    <span class="form-control-plaintext"><GameEntityTitle GameEntity="@_gameEntity" Link="true" /></span>
 </div>
 
 <div class="mb-3">
     <label class="form-label">Playing Forecast</label>
-    <InputSelect class="form-select" @bind-Value=pagEntity.Forecast @bind-Value:after="() => Edit()">
+    <InputSelect class="form-select" @bind-Value=_pagEntity.Forecast @bind-Value:after="() => Edit()">
         <option value="Yes">Yes</option>
         <option value="Maybe">Maybe</option>
         <option value="Reserve1">Reserve1</option>
@@ -33,7 +33,7 @@
 
 <div class="mb-3">
     <label class="form-label">Played</label>
-    <InputSelect class="form-select" @bind-Value=pagEntity.Played @bind-Value:after="() => EditPlayed()">
+    <InputSelect class="form-select" @bind-Value=_pagEntity.Played @bind-Value:after="() => EditPlayed()">
         <option value="true">Yes</option>
         <option value="false">No</option>
     </InputSelect>
@@ -41,7 +41,7 @@
 
 <div class="mb-3">
     <label class="form-label">Team</label>
-    <InputSelect class="form-select" @bind-Value=pagEntity.Team @bind-Value:after="() => Edit()">
+    <InputSelect class="form-select" @bind-Value=_pagEntity.Team @bind-Value:after="() => Edit()">
         <option value="A">Team A</option>
         <option value="B">Team B</option>
         <option value="">No Team</option>
@@ -51,17 +51,17 @@
 <div class="mb-3">
     <label class="form-label">Add Payment</label>
     <br>
-    <button class="btn btn-outline-secondary" @onclick="() => AddTransactionForPlayer(pagEntity.RowKey, 3)"><i class="fa-solid fa-plus"></i> £3 To Do player default rate here</button>
+    <button class="btn btn-outline-secondary" @onclick="() => AddTransactionForPlayer(_pagEntity.RowKey, 3)"><i class="fa-solid fa-plus"></i> £3 To Do player default rate here</button>
     <br>
-    <span>Balance: <CurrencyDisplay Amount0" /> To Do player bnalance here</span>
+    <span>Balance: <CurrencyDisplay Amount="0" /> To Do player balance here</span>
 </div>
 
 <div class="modal-footer">
-    <a class="btn btn-primary" href="/games/@pagEntity.RowKey"><i class="fa-solid fa-arrow-left"></i> Back to Game</a>
+    <a class="btn btn-primary" href="/games/@_pagEntity.RowKey"><i class="fa-solid fa-arrow-left"></i> Back to Game</a>
 
     <AuthorizeView Policy="IsAdminEmail">
         <Authorized>
-            <DeleteButtonWithCheck DeleteWhatLabel="@pageTitle" ButtonLabel="Delete" ParentPageCallback="DeletePag" />
+            <DeleteButtonWithCheck DeleteWhatLabel="@_pageTitle" ButtonLabel="Delete" ParentPageCallback="DeletePag" />
         </Authorized>
         <NotAuthorized>
             <a class="btn btn-primary disabled"><i class="fa-solid fa-trash"></i> Delete</a>
@@ -73,11 +73,11 @@
     [Parameter]
     public string PagRowKey { get; set; } = default!;
 
-    private PlayerAtGameEntity pagEntity = default!;
+    private PlayerAtGameEntity _pagEntity = default!;
 
-    private string pageTitle = default!;
+    private string _pageTitle = default!;
 
-    private GameEntity gameEntity = default!;
+    private GameEntity _gameEntity = default!;
 
     protected override void OnInitialized()
     {
@@ -89,7 +89,7 @@
         var newTransactionEntityForPag = new TransactionEntity()
             {
                 Date = DateTimeOffset.UtcNow,
-                Notes = GameEntityService.GetNotesForGame(pagEntity.GameRowKey),
+                Notes = GameEntityService.GetNotesForGame(_pagEntity.GameRowKey),
                 PlayerRowKey = playerRowKey,
                 Amount = amount
             };
@@ -102,28 +102,28 @@
 
     private async Task Edit()
     {
-        await GameEntityService.UpsertPlayerAtGameEntityAsync(pagEntity);
+        await GameEntityService.UpsertPlayerAtGameEntityAsync(_pagEntity);
         RefreshData();
     }
 
     private async Task EditPlayed()
     {
-        await GameEntityService.TogglePlayerAtGamePlayedAsync(pagEntity, pagEntity.Played);
+        await GameEntityService.TogglePlayerAtGamePlayedAsync(_pagEntity, _pagEntity.Played);
         RefreshData();
     }
 
     private async Task DeletePag()
     {
-        await GameEntityService.DeletePlayerAtGameEntityAsync(pagEntity.GameRowKey);
-        Navigation.NavigateTo($"/games/{pagEntity.GameRowKey}");
+        await GameEntityService.DeletePlayerAtGameEntityAsync(_pagEntity.GameRowKey);
+        Navigation.NavigateTo($"/games/{_pagEntity.GameRowKey}");
     }
 
     private void RefreshData()
     {
-        pagEntity = GameEntityService.GetPlayerAtGameEntity(PagRowKey);
-        gameEntity = GameEntityService.GetGameEntity(pagEntity.GameRowKey);
+        _pagEntity = GameEntityService.GetPlayerAtGameEntity(PagRowKey);
+        _gameEntity = GameEntityService.GetGameEntity(_pagEntity.GameRowKey);
         //pageTitle = $"{@pag.Player.PlayerEntity.Name} at {@pag.GameEntity.Date.Date.ToString("dd MMM")}";
-        pageTitle = "To Do";
+        _pageTitle = "To Do";
     }
 
 }

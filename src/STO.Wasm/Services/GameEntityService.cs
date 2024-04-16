@@ -70,7 +70,7 @@
 
 		public List<GameEntity> GetGameEntities()
 		{
-			return _dataService.GameEntities;
+			return [.. _dataService.GameEntities.OrderByDescending(o => o.Date)];
 		}
 
 		public GameEntity GetGameEntity(string rowKey)

@@ -33,11 +33,11 @@
 
 <nav aria-label="Page navigation">
 	<ul class="pagination">
-		@for (int p = 1; p <= _pages; p++)
+		@for (var p = 1; p <= _pages; p++)
 		{
 			var thisPage = p;
 			var css = (_currentPageNumber == p) ? "page-item active" : "page-item";
-			<li class="@css"><a class="page-link" @onclick="@(e => ChangePage(thisPage))">@p</a></li>
+			<li class="@css"><button class="btn btn-outline-secondary btn-sm me-2 mb-2" @onclick="@(e => ChangePage(thisPage))">@p</button></li>
 		}
 	</ul>
 </nav>

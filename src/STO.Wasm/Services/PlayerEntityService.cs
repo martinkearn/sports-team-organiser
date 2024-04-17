@@ -3,16 +3,14 @@ namespace STO.Wasm.Services
 	/// <inheritdoc/>
 	public class PlayerEntityService(ICachedDataService dataService) : IPlayerEntityService
 	{
-		private readonly ICachedDataService _dataService = dataService;
-
 		public List<PlayerEntity> GetPlayerEntities()
 		{
-			return _dataService.PlayerEntities;
+			return [.. dataService.PlayerEntities.OrderBy(o => o.Name)];
 		}
 
 		public PlayerEntity GetPlayerEntity(string rowKey)
 		{
-			var pes = _dataService.PlayerEntities;
+			var pes = dataService.PlayerEntities;
 			try
 			{
 				return pes.First(o => o.RowKey == rowKey);
@@ -30,7 +28,7 @@ namespace STO.Wasm.Services
 			var playerEntity = GetPlayerEntity(rowKey);
 
 			// Get Transactions
-			var playersTransactions = _dataService.TransactionEntities.Where(o => o.PlayerRowKey == rowKey)
+			var playersTransactions = dataService.TransactionEntities.Where(o => o.PlayerRowKey == rowKey)
 				.OrderByDescending(o => o.Date)
 				.ToList();
 
@@ -50,36 +48,36 @@ namespace STO.Wasm.Services
 		public async Task DeletePlayerEntityAsync(string playerRowkey)
 		{
 			// Delete Ratings
-			var allRatingEntities = await _dataService.QueryEntitiesAsync<RatingEntity>();
+			var allRatingEntities = await dataService.QueryEntitiesAsync<RatingEntity>();
 			var ratingsForPlayer = allRatingEntities.Where(o => o.PlayerRowKey == playerRowkey).ToList();
 			foreach (var rating in ratingsForPlayer)
 			{
-				await _dataService.DeleteEntityAsync<RatingEntity>(rating.RowKey);
+				await dataService.DeleteEntityAsync<RatingEntity>(rating.RowKey);
 			}
 
 			// Delete TransactionEntity
-			var transactionsResult = await _dataService.QueryEntitiesAsync<TransactionEntity>();
+			var transactionsResult = await dataService.QueryEntitiesAsync<TransactionEntity>();
 			var transactions = transactionsResult.Where(t => t.PlayerRowKey == playerRowkey);
 			foreach (var transaction in transactions)
 			{
-				await _dataService.DeleteEntityAsync<TransactionEntity>(transaction.RowKey);
+				await dataService.DeleteEntityAsync<TransactionEntity>(transaction.RowKey);
 			}
 
 			// Delete PlayerAtGameEntity
-			var pagsResult = await _dataService.QueryEntitiesAsync<PlayerAtGameEntity>();
+			var pagsResult = await dataService.QueryEntitiesAsync<PlayerAtGameEntity>();
 			var pags = pagsResult.Where(pag => pag.PlayerRowKey == playerRowkey);
 			foreach (var pag in pags)
 			{
-				await _dataService.DeleteEntityAsync<PlayerAtGameEntity>(pag.RowKey);
+				await dataService.DeleteEntityAsync<PlayerAtGameEntity>(pag.RowKey);
 			}
 
 			// Delete PlayerEntity
-			await _dataService.DeleteEntityAsync<PlayerEntity>(playerRowkey);
+			await dataService.DeleteEntityAsync<PlayerEntity>(playerRowkey);
 		}
 
 		public async Task UpsertPlayerEntityAsync(PlayerEntity playerEntity)
 		{
-			await _dataService.UpsertEntityAsync(playerEntity);
+			await dataService.UpsertEntityAsync(playerEntity);
 		}
 
 	}

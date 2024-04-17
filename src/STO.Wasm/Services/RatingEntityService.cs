@@ -3,11 +3,9 @@
 	/// <inheritdoc/>
 	public class RatingEntityService(ICachedDataService dataService) : IRatingEntityService
 	{
-		private readonly ICachedDataService _dataService = dataService;
-
 		public async Task DeleteRatingEntityAsync(string rowKey)
 		{
-			await _dataService.DeleteEntityAsync<RatingEntity>(rowKey);
+			await dataService.DeleteEntityAsync<RatingEntity>(rowKey);
 		}
 
 		public string FormatRatingTime(string rowKey)
@@ -25,7 +23,7 @@
 
 		public List<RatingEntity> GetRatingEntities()
 		{
-			return _dataService.RatingEntities;
+			return [.. dataService.RatingEntities.OrderByDescending(o => o.Timestamp)];
 		}
 
 		public List<RatingEntity> GetRatingEntitiesForGame(string gameRowKey)
@@ -48,7 +46,7 @@
 
 		public async Task UpsertRatingEntityAsync(RatingEntity ratingEntity)
 		{
-			await _dataService.UpsertEntityAsync(ratingEntity);
+			await dataService.UpsertEntityAsync(ratingEntity);
 		}
 	}
 }

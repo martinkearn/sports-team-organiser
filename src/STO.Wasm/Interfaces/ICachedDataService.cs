@@ -8,7 +8,6 @@ namespace STO.Wasm.Interfaces
     public interface ICachedDataService
     {
         public List<PlayerEntity> PlayerEntities { get; set; }
-
 		public List<TransactionEntity> TransactionEntities { get; set; }
 		public List<RatingEntity> RatingEntities { get; set; }
 		public List<GameEntity> GameEntities { get; set; }
@@ -40,5 +39,10 @@ namespace STO.Wasm.Interfaces
 		/// <param name="forceApi">Forces a data refresh from Api even if local data is up to date.</param>
 		/// <param name="forceLocalOnly">Only loads data from local storage without any Api or Data Details Entity checks.</param>
 		public Task LoadDataAsync(bool forceApi, bool forceLocalOnly);
+
+		/// <summary>
+		/// Clear the local data cache
+		/// </summary>
+		public Task ClearLocalDataAsync();
     }
 }

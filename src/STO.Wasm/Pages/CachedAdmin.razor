@@ -40,6 +40,7 @@
 		}
 
 		<h2>Data</h2>
+		<button class="btn btn-primary" @onclick="ClearLocalData">Clear Local Data</button>
 		<button class="btn btn-primary" @onclick="() => RefreshData(true)">Refresh Data</button>
 		@foreach (var p in DataService.PlayerEntities)
 		{
@@ -96,4 +97,10 @@
 		_allPlayerAtGame = await DataService.QueryEntitiesAsync<PlayerAtGameEntity>();
 		_allRatings = await DataService.QueryEntitiesAsync<RatingEntity>();
 	}
+
+	private async Task ClearLocalData()
+	{
+		await DataService.ClearLocalDataAsync();
+	}
+
 }

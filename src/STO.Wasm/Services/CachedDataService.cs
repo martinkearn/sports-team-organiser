@@ -132,7 +132,7 @@ namespace STO.Wasm.Services
 
 			if (!forceApi)
 			{
-				// Check Data Details, set lists from local storage and exit if they are up to date
+				// Check Data Details, set lists from local storage and exit if they are up-to-date
 				var apiDdes = await apiService.ApiGetAsync<DataDetailsEntity>();
 				var localDdes = await localStorageService.GetItemAsync<List<DataDetailsEntity>>(nameof(DataDetailsEntity));
 				if (apiDdes?.Count > 0 && localDdes?.Count > 0)
@@ -153,6 +153,11 @@ namespace STO.Wasm.Services
 			var ratingTask = RefreshEntitiesFromApiAsync<RatingEntity>();
 			var dataDetailsTask = RefreshEntitiesFromApiAsync<DataDetailsEntity>();
 			await Task.WhenAll(playerTask, gameTask, transactionTask, playerAtGameTask, ratingTask, dataDetailsTask);
+		}
+
+		public async Task ClearLocalDataAsync()
+		{
+			await localStorageService.ClearAsync();
 		}
 
 		private async Task LoadDataFromLocalStorageAsync()

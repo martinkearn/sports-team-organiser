@@ -13,13 +13,11 @@
 		public string FormatRatingTime(string rowKey)
 		{
 			var re = GetRatingEntity(rowKey);
-			if (re is not null)
+			if (re is null) return string.Empty;
+			var timestamp = re.Timestamp;
+			if (timestamp is not null)
 			{
-				var timestamp = re.Timestamp;
-				if (timestamp is not null)
-				{
-					return timestamp.Value.ToString("dd MMM yyyy HH:mm") ?? "N/A";
-				}
+				return timestamp.Value.ToString("dd MMM yyyy HH:mm") ?? "N/A";
 			}
 
 			return string.Empty;

@@ -3,15 +3,9 @@
 	/// <inheritdoc/>
 	public class GameEntityService(ICachedDataService dataService, IRatingEntityService ratingEntityService, IPlayerEntityService playerEntityService, ITransactionEntityService transactionEntityService) : IGameEntityService
 	{
-		private readonly ICachedDataService _dataService = dataService;
-		private readonly IRatingEntityService _ratingEntityService = ratingEntityService;
-		private readonly IPlayerEntityService _playerEntityService = playerEntityService;
-		private readonly ITransactionEntityService _transactionEntityService = transactionEntityService;
-
 		public async Task<List<PlayerAtGame>> CalculateTeamsAsync(List<PlayerAtGame> pags)
 		{
             var newPags = new List<PlayerAtGame>();
-            var rng = new Random();
             var yesPags = pags
                 .Where(o => o.PlayerAtGameEntity.Forecast.Equals("yes", StringComparison.InvariantCultureIgnoreCase))
                 .OrderBy(o => o.Player.PlayerEntity.AdminRating).ToList();
@@ -46,10 +40,10 @@
 		public async Task DeleteGameEntityAsync(string rowkey)
 		{
 			// Delete Ratings
-			var ratingsForGame = _ratingEntityService.GetRatingEntitiesForGame(rowkey);
+			var ratingsForGame = ratingEntityService.GetRatingEntitiesForGame(rowkey);
 			foreach (var re in ratingsForGame)
 			{
-				await _ratingEntityService.DeleteRatingEntityAsync(re.RowKey);
+				await ratingEntityService.DeleteRatingEntityAsync(re.RowKey);
 			}
 
 			// Delete PAGs
@@ -60,17 +54,17 @@
 			}
 
 			// Delete game
-			await _dataService.DeleteEntityAsync<GameEntity>(rowkey);
+			await dataService.DeleteEntityAsync<GameEntity>(rowkey);
 		}
 
 		public async Task DeletePlayerAtGameEntityAsync(string rowKey)
 		{
-			await _dataService.DeleteEntityAsync<PlayerAtGameEntity>(rowKey);
+			await dataService.DeleteEntityAsync<PlayerAtGameEntity>(rowKey);
 		}
 
 		public List<GameEntity> GetGameEntities()
 		{
-			return [.. _dataService.GameEntities.OrderByDescending(o => o.Date)];
+			return [.. dataService.GameEntities.OrderByDescending(o => o.Date)];
 		}
 
 		public GameEntity GetGameEntity(string rowKey)
@@ -88,16 +82,11 @@
 			var playersAtGameEntities = GetPlayerAtGameEntitiesForGame(rowKey);
 
 			// Calculate PlayerAtGame
-			var playersAtGame = new List<PlayerAtGame>();
-			foreach (var playersAtGameEntity in playersAtGameEntities)
+			var playersAtGame = playersAtGameEntities.Select(playersAtGameEntity => new PlayerAtGame(playersAtGameEntity)
 			{
-				var pag = new PlayerAtGame(playersAtGameEntity)
-				{
-					Player = _playerEntityService.GetPlayer(playersAtGameEntity.PlayerRowKey),
-					GameEntity = ge
-				};
-				playersAtGame.Add(pag);
-			}
+				Player = playerEntityService.GetPlayer(playersAtGameEntity.PlayerRowKey), 
+				GameEntity = ge
+			}).ToList();
 
 			// Add teams to PlayerAtGame
 			var teamA = playersAtGame
@@ -123,31 +112,28 @@
 		public GameEntity GetNextGameEntity()
 		{
 			var ges = GetGameEntities();
-			ges.OrderByDescending(o => o.Date.DateTime);
-			return ges.First();
+			var gesOrderByDescending = ges.OrderByDescending(o => o.Date.DateTime);
+			return gesOrderByDescending.First();
 		}
 
 		public string GetNotesForGame(string rowKey)
 		{
 			var ge = GetGameEntity(rowKey);
-			if (ge is not null)
-			{
-				var notes = $"For game {ge.Date.Date:dd MMM yyyy}";
-				return notes;
-			}
+			if (ge is null) return string.Empty;
+			var notes = $"For game {ge.Date.Date:dd MMM yyyy}";
+			return notes;
 
-			return string.Empty;
 		}
 
 		public List<PlayerAtGameEntity> GetPlayerAtGameEntitiesForGame(string gameRowKey)
 		{
-			var pagsForGame = _dataService.PlayerAtGameEntities.Where(o => o.GameRowKey == gameRowKey).ToList();
+			var pagsForGame = dataService.PlayerAtGameEntities.Where(o => o.GameRowKey == gameRowKey).ToList();
 			return pagsForGame;
 		}
 
 		public PlayerAtGameEntity GetPlayerAtGameEntity(string rowKey)
 		{
-			return _dataService.PlayerAtGameEntities.First(o => o.RowKey == rowKey);
+			return dataService.PlayerAtGameEntities.First(o => o.RowKey == rowKey);
 		}
 
 		public async Task MarkAllPlayedAsync(string gameRowkey, bool played)
@@ -162,7 +148,7 @@
 		public async Task TogglePlayerAtGamePlayedAsync(PlayerAtGameEntity pag, bool? played)
 		{
 			// Get player for pag
-			var playerEntity = _playerEntityService.GetPlayerEntity(pag.PlayerRowKey);
+			var playerEntity = playerEntityService.GetPlayerEntity(pag.PlayerRowKey);
 
 			if (played != null)
 			{
@@ -185,21 +171,21 @@
 					Date = DateTimeOffset.UtcNow,
 					Notes = GetNotesForGame(pag.GameRowKey)
 				};
-				if (_transactionEntityService is not null)
+				if (transactionEntityService is not null)
                 {
-                    await _transactionEntityService.UpsertTransactionEntityAsync(transaction);
+                    await transactionEntityService.UpsertTransactionEntityAsync(transaction);
                 }
 			}
 			else
 			{
 				// Get debit transactions (less than £0) for player and game
-				var teForPe = _transactionEntityService.GetTransactionEntities().Where(o => o.PlayerRowKey == playerEntity.RowKey);
+				var teForPe = transactionEntityService.GetTransactionEntities().Where(o => o.PlayerRowKey == playerEntity.RowKey);
 				var pagDebitTransactionEntities = teForPe.Where(o => o.Amount < 0);
-				if (_transactionEntityService is not null)
+				if (transactionEntityService is not null)
                 {
                     foreach (var pagDebitTransactionEntity in pagDebitTransactionEntities)
                     {
-                        await _transactionEntityService.DeleteTransactionEntityAsync(pagDebitTransactionEntity.RowKey);
+                        await transactionEntityService.DeleteTransactionEntityAsync(pagDebitTransactionEntity.RowKey);
                     }
                 }
 			}
@@ -210,12 +196,12 @@
 
 		public async Task UpsertGameEntityAsync(GameEntity gameEntity)
 		{
-			await _dataService.UpsertEntityAsync(gameEntity);
+			await dataService.UpsertEntityAsync(gameEntity);
 		}
 
 		public async Task UpsertPlayerAtGameEntityAsync(PlayerAtGameEntity pagEntity)
 		{
-			await _dataService.UpsertEntityAsync(pagEntity);
+			await dataService.UpsertEntityAsync(pagEntity);
 		}
 	}
 }

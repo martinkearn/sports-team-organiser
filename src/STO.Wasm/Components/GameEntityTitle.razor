@@ -1,3 +1,5 @@
+@inject IGameEntityService GameEntityService
+
 @if (GameEntity != default)
 {
     var gameDateLabel = GameEntity.Date.ToString("dd MMM");
@@ -22,4 +24,20 @@ else
 
     [Parameter]
     public GameEntity? GameEntity { get; set; }
+    
+    [Parameter]
+    public string? GameEntityRowKey { get; set; }
+    
+    protected override void OnInitialized()
+    {
+        RefreshData();
+    }
+    
+    private void RefreshData()
+    {
+        if (GameEntityRowKey is not null)
+        {
+            GameEntity = GameEntityService.GetGameEntity(GameEntityRowKey);
+        }
+    }
 }

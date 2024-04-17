@@ -1,7 +1,7 @@
-<a href="/players/@pag?.Player.PlayerEntity.RowKey/player">
-@if (!string.IsNullOrEmpty(css))
+<a href="/players/@Pag?.Player.PlayerEntity.RowKey/player">
+@if (!string.IsNullOrEmpty(_css))
 {
-    <i class="@css"></i>  
+    <i class="@_css"></i>  
 }
 else
 {
@@ -14,12 +14,12 @@ else
 
 @code {
     [Parameter]
-    public PlayerAtGame? pag { get; set; }
+    public PlayerAtGame? Pag { get; set; }
 
     [Parameter]
     public string? Rag { get; set; }
 
-    private string? css;
+    private string? _css;
 
     protected override void OnParametersSet()
     {
@@ -33,22 +33,22 @@ else
 
     private void SetCss()
     {
-        if (pag is not null)
+        if (Pag is not null)
         {
             // Work out pag RAG status
             Rag = "red";
-            if (!pag.PlayerAtGameEntity.Played)
+            if (!Pag.PlayerAtGameEntity.Played)
             {
                 // Not played, so pre-game rag
-                if (pag.Player.Balance < 0)
+                if (Pag.Player.Balance < 0)
                 {
                     Rag = "red";
                 }
-                else if ((pag.Player.Balance >= 0) && (pag.Player.Balance < pag.Player.PlayerEntity.DefaultRate))
+                else if ((Pag.Player.Balance >= 0) && (Pag.Player.Balance < Pag.Player.PlayerEntity.DefaultRate))
                 {
                     Rag = "amber";
                 }
-                else if (pag.Player.Balance >= pag.Player.PlayerEntity.DefaultRate)
+                else if (Pag.Player.Balance >= Pag.Player.PlayerEntity.DefaultRate)
                 {
                     Rag = "green";
                 }
@@ -56,11 +56,11 @@ else
             else
             {
                 // Has played so post game rag
-                if (pag.Player.Balance >= 0)
+                if (Pag.Player.Balance >= 0)
                 {
                     Rag = "green";
                 }
-                else if ((pag.Player.Balance == 0) && (pag.Player.Balance > 0))
+                else if ((Pag.Player.Balance == 0) && (Pag.Player.Balance > 0))
                 {
                     Rag = "amber";
                 }
@@ -69,13 +69,13 @@ else
             switch (Rag)
             {
                 case "green":
-                    css = "fa-solid fa-circle-check text-success";
+                    _css = "fa-solid fa-circle-check text-success";
                     break;   
                 case "amber":
-                    css = "fa-solid fa-circle-question text-warning";
+                    _css = "fa-solid fa-circle-question text-warning";
                     break;  
                 case "red":
-                    css = "fa-solid fa-circle-exclamation text-danger";
+                    _css = "fa-solid fa-circle-exclamation text-danger";
                     break; 
                 default:
                     break;

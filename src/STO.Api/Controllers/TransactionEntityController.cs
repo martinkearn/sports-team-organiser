@@ -32,8 +32,8 @@ public class TransactionEntityController : ControllerBase
     }
 
     [HttpPost(Name = "UpsertTransactionEntity")]
-    public async Task Post(TransactionEntity TransactionEntity)
+    public async Task Post(TransactionEntity transactionEntity)
     {
-        await _storageService.UpsertEntity<TransactionEntity>(TransactionEntity);
+        await _storageService.UpsertEntity<TransactionEntity>(transactionEntity);
     }
 }

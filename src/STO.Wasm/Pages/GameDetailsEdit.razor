@@ -1,98 +1,87 @@
 @page "/games/{GameRowKey}/edit"
-@inject IPlayerService PlayerService
-@inject IGameService GameService
-@inject ITransactionService TransactionService
+@inject IGameEntityService GameEntityService
 @inject NavigationManager Navigation
 
-@if (dataReady)
-{
-	<PageTitle>TNF - @pageTitle</PageTitle>
+<PageTitle>TNF - @_pageTitle</PageTitle>
 
-	<h1><i class="fa-solid fa-people-group me-2"></i> Edit <GameTitle Game="@game" Link="false" /></h1>
+<h1><i class="fa-solid fa-people-group me-2"></i> Edit <GameEntityTitle GameEntity="@_gameEntity" Link="false" /></h1>
 
-	<div class="mb-3">
-		<label for="addDate" class="form-label">Date</label>
-		<InputDate class="form-control" @bind-Value="game.GameEntity.Date" />
-	</div>
-	<div class="mb-3">
-		<label for="addDate" class="form-label">Time</label>
-		<div class="row">
-			<div class="col-auto">
-				<div class="input-group">
-					<InputNumber class="form-control" min="0" max="23" @bind-Value="hour" @bind-Value:after="() => Edit()" />
-					<InputNumber class="form-control" min="0" max="59" @bind-Value="minute" @bind-Value:after="() => Edit()" />
-				</div>
-			</div>
-		</div>
-	</div>
+<div class="mb-3">
+    <label for="addDate" class="form-label">Date</label>
+    <InputDate class="form-control" @bind-Value="_gameEntity.Date" />
+</div>
+<div class="mb-3">
+    <label for="addDate" class="form-label">Time</label>
+    <div class="row">
+        <div class="col-auto">
+            <div class="input-group">
+                <InputNumber class="form-control" min="0" max="23" @bind-Value="_hour" @bind-Value:after="() => Edit()" />
+                <InputNumber class="form-control" min="0" max="59" @bind-Value="_minute" @bind-Value:after="() => Edit()" />
+            </div>
+        </div>
+    </div>
+</div>
 
-	<div class="mb-3">
-		<label class="form-label">Title</label>
-		<InputText class="form-control" @bind-Value="game.GameEntity.Title" @bind-Value:after="() => Edit()" />
-	</div>
+<div class="mb-3">
+    <label class="form-label">Title</label>
+    <InputText class="form-control" @bind-Value="_gameEntity.Title" @bind-Value:after="() => Edit()" />
+</div>
 
-	<div class="mb-3">
-		<label class="form-label">Notes</label>
-		<InputText class="form-control" @bind-Value="game.GameEntity.Notes" @bind-Value:after="() => Edit()" />
-	</div>
+<div class="mb-3">
+    <label class="form-label">Notes</label>
+    <InputText class="form-control" @bind-Value="_gameEntity.Notes" @bind-Value:after="() => Edit()" />
+</div>
 
-	<div class="modal-footer px-0">
-		<a class="btn btn-primary" href="/games/@GameRowKey"><i class="fa-solid fa-arrow-left"></i>Back to Game</a>
+<div class="modal-footer px-0">
+    <a class="btn btn-primary" href="/games/@GameRowKey"><i class="fa-solid fa-arrow-left"></i>Back to Game</a>
 
-		<AuthorizeView Policy="IsAdminEmail">
-			<Authorized>
-				<DeleteButtonWithCheck @rendermode="RenderMode.InteractiveAuto" DeleteWhatLabel="@pageTitle" ButtonLabel="Delete" ParentPageCallback="DeleteGame" />
-			</Authorized>
-			<NotAuthorized>
-				<a class="btn btn-primary disabled"><i class="fa-solid fa-trash"></i> Delete</a>
-			</NotAuthorized>
-		</AuthorizeView>
-	</div>
-}
+    <AuthorizeView Policy="IsAdminEmail">
+        <Authorized>
+            <DeleteButtonWithCheck @rendermode="RenderMode.InteractiveAuto" DeleteWhatLabel="@_pageTitle" ButtonLabel="Delete" ParentPageCallback="DeleteGame" />
+        </Authorized>
+        <NotAuthorized>
+            <a class="btn btn-primary disabled"><i class="fa-solid fa-trash"></i> Delete</a>
+        </NotAuthorized>
+    </AuthorizeView>
+</div>
 
 @code {
-	[Parameter]
-	public string GameRowKey { get; set; } = default!;
+    [Parameter]
+    public string GameRowKey { get; set; } = default!;
 
-	private Game game = default!;
+    private GameEntity _gameEntity = default!;
 
-	private int hour = default!;
+    private int _hour;
 
-	private int minute = default!;
+    private int _minute;
 
-	private string pageTitle = default!;
+    private string _pageTitle = default!;
 
-	private bool dataReady = false;
+    protected override void OnInitialized()
+    {
+        RefreshData();
+    }
 
-	protected override async Task OnInitializedAsync()
-	{
-		await RefreshGameData();
-	}
+    private async Task Edit()
+    {
+        var dt = new DateTime(_gameEntity.Date.Year, _gameEntity.Date.Month, _gameEntity.Date.Day, _hour, _minute, 0, DateTimeKind.Utc);
+        _gameEntity.Date = dt;
+        await GameEntityService.UpsertGameEntityAsync(_gameEntity);
+    }
 
-	async Task Edit()
-	{
-		var dt = new DateTime(game.GameEntity.Date.Year, game.GameEntity.Date.Month, game.GameEntity.Date.Day, hour, minute, 0, DateTimeKind.Utc);
-		game.GameEntity.Date = dt;
-		await GameService.UpsertGameEntity(game.GameEntity);
-	}
+    private async Task DeleteGame()
+    {
+        await GameEntityService.DeleteGameEntityAsync(GameRowKey);
+        Navigation.NavigateTo("/games");
+    }
 
-	private async Task DeleteGame()
-	{
-		await GameService.DeleteGame(GameRowKey);
-		Navigation.NavigateTo("/games");
-	}
+    private void RefreshData()
+    {
+        _gameEntity = GameEntityService.GetGameEntity(GameRowKey);
+        _hour = _gameEntity.Date.Hour;
+        _minute = _gameEntity.Date.Minute;
 
-	async Task RefreshGameData()
-	{
-		game = await GameService.GetGame(GameRowKey);
-		hour = game.GameEntity.Date.Hour;
-		minute = game.GameEntity.Date.Minute;
-
-		var gameDateLabel = game.GameEntity.Date.ToString("dd MMM");
-		pageTitle = string.IsNullOrEmpty(game.GameEntity.Title) ? gameDateLabel : $"{gameDateLabel} {game.GameEntity.Title}";
-
-		this.StateHasChanged();
-
-		dataReady = true;
-	}
+        var gameDateLabel = _gameEntity.Date.ToString("dd MMM");
+        _pageTitle = string.IsNullOrEmpty(_gameEntity.Title) ? gameDateLabel : $"{gameDateLabel} {_gameEntity.Title}";
+    }
 }

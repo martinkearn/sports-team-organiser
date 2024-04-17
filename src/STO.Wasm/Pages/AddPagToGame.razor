@@ -1,32 +1,32 @@
 @page "/quickaddpag"
-@inject IPlayerService PlayerService
-@inject IGameService GameService
+@inject IPlayerEntityService PlayerEntityService
+@inject IGameEntityService GameEntityService
 @inject NavigationManager Navigation
 
-@if (dataReady)
+@if (_dataReady)
 {
     <PageTitle>Add Player to Game</PageTitle>
 
     <h1><i class="fa-solid fa-people-group me-2"></i> Add Player to Game</h1>
 
-    <EditForm Model="@newPagEntity" OnValidSubmit="AddPagEntity" Context="NewPagEntity">
+    <EditForm Model="@_newPagEntity" OnValidSubmit="AddPagEntity" Context="newPagEntity">
         <DataAnnotationsValidator />
         <ValidationSummary />
 
         <div class="mb-3">
             <label for="addPlayerRowKey" class="form-label">Player</label>
-            <InputSelect class="form-select" @bind-Value="newPagEntity.PlayerRowKey">
+            <InputSelect class="form-select" @bind-Value="_newPagEntity.PlayerRowKey">
                 <option value="">Select Player ...</option>
-                @foreach (var player in players)
+                @foreach (var pe in _playerEntities)
                 {
-                    <option value="@player.PlayerEntity.RowKey">@player.PlayerEntity.Name</option>
+                    <option value="@pe.RowKey">@pe.Name</option>
                 }
             </InputSelect>
         </div>
 
-        @if (nextGame is not null)
+        @if (_nextGameEntity is not null)
         {
-            <p>Next game is <GameTitle Game="@nextGame" /></p>
+            <p>Next game is <GameEntityTitle GameEntity="@_nextGameEntity" /></p>
         }
         else
         {
@@ -35,18 +35,18 @@
 
         <div class="mb-3">
             <label for="addGameRowKey" class="form-label">Game</label>
-            <InputSelect class="form-select" @bind-Value="newPagEntity.GameRowKey">
+            <InputSelect class="form-select" @bind-Value="_newPagEntity.GameRowKey">
                 <option value="">Select Game ...</option>
-                @foreach (var game in games)
+                @foreach (var ge in _gameEntities)
                 {
-                    var gameRowKey = game?.GameEntity?.RowKey;
-                    if (gameRowKey == nextGame?.GameEntity?.RowKey)
+                    var gameRowKey = ge.RowKey;
+                    if (gameRowKey == _nextGameEntity?.RowKey)
                     {
-                        <option value="@gameRowKey"><GameTitle Game="@game" Link="false" /></option>
+                        <option value="@gameRowKey" selected><GameEntityTitle GameEntity="@ge" Link="false" /></option>
                     }
                     else
                     {
-                        <option value="@gameRowKey"><GameTitle Game="@game" Link="false" /></option>
+                        <option value="@gameRowKey"><GameEntityTitle GameEntity="@ge" Link="false" /></option>
                     }
                 }
             </InputSelect>
@@ -59,41 +59,41 @@
 }
 
 @code {
-    private List<Game> games = new();
+    private List<GameEntity> _gameEntities = [];
 
-    private List<Player> players = new();
+    private List<PlayerEntity> _playerEntities = [];
 
-    private PlayerAtGameEntity newPagEntity = new();
+    private PlayerAtGameEntity _newPagEntity = new();
 
-    private Game nextGame = default!;
+    private GameEntity _nextGameEntity = default!;
 
-    private bool dataReady = false;
+    private bool _dataReady;
 
-    protected override async Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
-        await RefreshData();
+        RefreshData();
     }
 
     private async Task AddPagEntity()
     {
-        await GameService.UpsertPlayerAtGameEntity(newPagEntity);
-        var nav = $"/games/{newPagEntity.GameRowKey}";
+        await GameEntityService.UpsertPlayerAtGameEntityAsync(_newPagEntity);
+        var nav = $"/games/{_newPagEntity.GameRowKey}";
         Navigation.NavigateTo(nav);
     }
 
-    async Task RefreshData()
+    private void RefreshData()
     {
-        games = await GameService.GetGames();
-        players = await PlayerService.GetPlayers();
-        nextGame = await GameService.GetNextGame();
+        _gameEntities = GameEntityService.GetGameEntities();
+        _playerEntities = PlayerEntityService.GetPlayerEntities();
+        _nextGameEntity = GameEntityService.GetNextGameEntity();
 
-        newPagEntity = new PlayerAtGameEntity()
+        _newPagEntity = new PlayerAtGameEntity()
         {
             Played = false,
             Forecast = PlayingOptions.Yes.ToString(),
-            GameRowKey = nextGame.GameEntity.RowKey,
+            GameRowKey = _nextGameEntity.RowKey,
         };
 
-        dataReady = true;
+        _dataReady = true;
     }
 }

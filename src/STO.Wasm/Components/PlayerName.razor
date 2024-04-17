@@ -1,0 +1,35 @@
+﻿@inject IPlayerEntityService PlayerEntityService
+
+@if (_pe != default)
+{
+    @if (Link)
+    {
+        <a href="/players/@_pe.RowKey/player">@_pe.Name</a>
+    }
+    else
+    {
+        @_pe.Name
+    }
+}
+else
+{
+    <span>No player</span>
+}
+
+@code {
+    [Parameter]
+    public bool Link { get; set; }
+
+    [Parameter]
+    public string PlayerRowKey { get; set; } = default!;
+
+    private PlayerEntity _pe = default!;
+
+    protected override void OnInitialized()
+    {
+        if (PlayerRowKey is not null)
+        {
+            _pe = PlayerEntityService.GetPlayerEntity(PlayerRowKey);
+        }
+    }
+}

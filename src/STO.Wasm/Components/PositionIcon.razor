@@ -1,6 +1,6 @@
-@if (!string.IsNullOrEmpty(css))
+@if (!string.IsNullOrEmpty(_css))
 {
-    <i class="@css"></i>
+    <i class="@_css"></i>
 }
 else
 {
@@ -12,7 +12,7 @@ else
     [Parameter]
     public Enums.PlayerPosition Position { get; set; }
 
-    private string? css;
+    private string? _css;
 
     protected override void OnParametersSet()
     {
@@ -26,7 +26,7 @@ else
 
     private void SetCss()
     {
-        css = Position switch
+        _css = Position switch
         {
             Enums.PlayerPosition.Defender => "fa-solid fa-shield-halved",
             Enums.PlayerPosition.PlayMaker => "fa-solid fa-arrows-spin",

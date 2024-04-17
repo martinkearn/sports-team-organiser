@@ -3,7 +3,6 @@ global using STO.Wasm.Services;
 global using STO.Wasm.Models;
 global using STO.Wasm.Interfaces;
 global using Blazored.LocalStorage;
-using System.Security.Claims;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 
@@ -39,7 +38,7 @@ public class Program
                         if (user.Identity is not null && user.Identity.IsAuthenticated)
                         {
                             // User is authenticated
-                            var email = user.FindFirst(c => c.Type == ClaimTypes.Email)?.Value;
+                            //var email = user.FindFirst(c => c.Type == ClaimTypes.Email)?.Value;
                             var authName = user.Identity.Name;
                             if (authName == "Martin Kearn")
                             {
@@ -61,27 +60,26 @@ public class Program
 
         // Add custom services
         builder.Services.AddSingleton<IApiService, ApiService>();
-        builder.Services.AddSingleton<IDataService, DataService>();
-        builder.Services.AddSingleton<IPlayerService, PlayerService>();
-        builder.Services.AddSingleton<IGameService, GameService>();
-        builder.Services.AddSingleton<ITransactionService, TransactionService>();
-        builder.Services.AddSingleton<IRatingService, RatingService>();
+		builder.Services.AddSingleton<ICachedDataService, CachedDataService>();
+		builder.Services.AddSingleton<IPlayerEntityService, PlayerEntityService>();
+		builder.Services.AddSingleton<IGameEntityService, GameEntityService>();
+		builder.Services.AddSingleton<ITransactionEntityService, TransactionEntityService>();
+        builder.Services.AddSingleton<IRatingEntityService, RatingEntityService>();
 
         // Add Blazored.LocalStorage
         builder.Services.AddBlazoredLocalStorageAsSingleton();
 
+        // Add Auth
         builder.Services.AddCascadingAuthenticationState();
 
-        Console.WriteLine($"Client Hosting Environment: {builder.HostEnvironment.Environment}");
-
-
+        // Build
         var host = builder.Build();
 
         // Initialise data
-        var dataService = host.Services.GetRequiredService<IDataService>();
-        await dataService.LoadData();
-
-        //await builder.Build().RunAsync();
-        await host.RunAsync();
+		var cachedDataService = host.Services.GetRequiredService<ICachedDataService>();
+		await cachedDataService.LoadDataAsync(false, false);
+        
+        // Run app
+		await host.RunAsync();
     }
 }

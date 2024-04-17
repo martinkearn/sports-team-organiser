@@ -31,8 +31,8 @@ public class PlayerAtGameEntityController : ControllerBase
     }
 
     [HttpPost(Name = "UpsertPlayerAtGameEntity")]
-    public async Task Post(PlayerAtGameEntity PlayerAtGameEntity)
+    public async Task Post(PlayerAtGameEntity playerAtGameEntity)
     {
-        await _storageService.UpsertEntity<PlayerAtGameEntity>(PlayerAtGameEntity);
+        await _storageService.UpsertEntity<PlayerAtGameEntity>(playerAtGameEntity);
     }
 }

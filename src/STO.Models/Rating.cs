@@ -2,9 +2,9 @@ namespace STO.Models
 {
     public class Rating
     {
-        public Rating(RatingEntity RatingEntity)
+        public Rating(RatingEntity ratingEntity)
         {
-            this.RatingEntity = RatingEntity;
+            this.RatingEntity = ratingEntity;
         } 
         public RatingEntity RatingEntity { get; set; } = default!;
         

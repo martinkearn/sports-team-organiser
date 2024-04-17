@@ -1,48 +1,48 @@
 @page "/games"
-@inject IGameService GameService
+@inject IGameEntityService GameEntityService
 
-<PageTitle>TNF - @pageTitle</PageTitle>
+<PageTitle>TNF - @_pageTitle</PageTitle>
 
-<h1><i class="fa-solid fa-people-group me-2"></i> @pageTitle</h1>
+<h1><i class="fa-solid fa-people-group me-2"></i> @_pageTitle</h1>
+
+<p>@_gameEntities.Count games.</p>
+
+<div>
+	<a class="btn btn-primary" href="/quickaddpag"><i class="fa-solid fa-plus"></i> Add Player to Game</a>
+	<a class="btn btn-primary" href="/games/add"><i class="fa-solid fa-plus"></i> Add Game</a>
+</div>
 
 <table class="table table-striped">
 	<thead>
 		<tr>
 			<th scope="col">Date</th>
+			<th scope="col">Notes</th>
 		</tr>
 	</thead>
 	<tbody>
-		@foreach (var game in games)
+		@foreach (var ge in _gameEntities)
 		{
 			<tr>
-				<td><GameTitle Game="@game" Link="true" /></td>
+				<td><GameEntityTitle GameEntity="@ge" Link="true" /></td>
+				<td>@ge.Notes</td>
 			</tr>
 		}
 	</tbody>
 </table>
 
-<div class="modal-footer px-0">
-	<a class="btn btn-primary" href="/quickaddpag"><i class="fa-solid fa-plus"></i> Add Player to Game</a>
-	<a class="btn btn-primary" href="/games/add"><i class="fa-solid fa-plus"></i> Add Game</a>
-</div>
-
-
 @code {
-	private List<Game> games = new();
+	private List<GameEntity> _gameEntities = [];
 
-	private string pageTitle = default!;
+	private string _pageTitle = default!;
 
-	private bool dataReady = false;
-
-	protected override async Task OnInitializedAsync()
+	protected override void OnInitialized()
 	{
-		await RefreshData();
+		RefreshData();
 	}
 
-	private async Task RefreshData()
+	private void RefreshData()
 	{
-		games = await GameService.GetGames();
-		pageTitle = "Games";
-		dataReady = true;
+		_gameEntities = GameEntityService.GetGameEntities();
+		_pageTitle = "Games";
 	}
 }

@@ -1,132 +1,129 @@
 @page "/pags/{PagRowKey}"
-@inject IPlayerService PlayerService
-@inject IGameService GameService
-@inject ITransactionService TransactionService
+@inject IGameEntityService GameEntityService
+@inject ITransactionEntityService TransactionEntityService
 @inject NavigationManager Navigation
 
-@if (dataReady)
-{
-	<PageTitle>TNF - @pageTitle</PageTitle>
+<PageTitle>TNF - @_pageTitle</PageTitle>
 
-	<h1><i class="fa-solid fa-people-group me-2"></i> @pageTitle</h1>
+<h1><i class="fa-solid fa-people-group me-2"></i> @_pageTitle</h1>
 
-	<div class="mb-3">
-		<label class="form-label">Player Name</label>
-		<span class="form-control-plaintext"><a href="/players/@pag.Player.PlayerEntity.RowKey/player">@pag.Player.PlayerEntity.Name</a></span>
-	</div>
+<div class="mb-3">
+    <label class="form-label">Player Name</label>
+    <span class="form-control-plaintext"><a href="/players/@_pagEntity.PlayerRowKey/player">@_pagEntity.PlayerRowKey - To Do Player name here</a></span>
+</div>
 
-	<div class="mb-3">
-		<label class="form-label">Game</label>
-		<span class="form-control-plaintext"><GameTitle Game="@game" Link="true" /></span>
-	</div>
+<div class="mb-3">
+    <label class="form-label">Game</label>
+    <span class="form-control-plaintext"><GameEntityTitle GameEntity="@_gameEntity" Link="true" /></span>
+</div>
 
-	<div class="mb-3">
-		<label class="form-label">Playing Forecast</label>
-		<InputSelect class="form-select" @bind-Value=pag.PlayerAtGameEntity.Forecast @bind-Value:after="() => Edit()">
-			<option value="Yes">Yes</option>
-			<option value="Maybe">Maybe</option>
-			<option value="Reserve1">Reserve1</option>
-			<option value="Reserve2">Reserve2</option>
-			<option value="Reserve3">Reserve3</option>
-			<option value="Reserve4">Reserve4</option>
-			<option value="Reserve5">Reserve5</option>
-			<option value="No">No</option>
-		</InputSelect>
-	</div>
+<div class="mb-3">
+    <label class="form-label">Playing Forecast</label>
+    <InputSelect class="form-select" @bind-Value=_pagEntity.Forecast @bind-Value:after="() => Edit()">
+        <option value="Yes">Yes</option>
+        <option value="Maybe">Maybe</option>
+        <option value="Reserve1">Reserve1</option>
+        <option value="Reserve2">Reserve2</option>
+        <option value="Reserve3">Reserve3</option>
+        <option value="Reserve4">Reserve4</option>
+        <option value="Reserve5">Reserve5</option>
+        <option value="No">No</option>
+    </InputSelect>
+</div>
 
-	<div class="mb-3">
-		<label class="form-label">Played</label>
-		<InputSelect class="form-select" @bind-Value=pag.PlayerAtGameEntity.Played @bind-Value:after="() => EditPlayed()">
-			<option value="true">Yes</option>
-			<option value="false">No</option>
-		</InputSelect>
-	</div>
+<div class="mb-3">
+    <label class="form-label">Played</label>
+    <InputSelect class="form-select" @bind-Value=_pagEntity.Played @bind-Value:after="() => EditPlayed()">
+        <option value="true">Yes</option>
+        <option value="false">No</option>
+    </InputSelect>
+</div>
 
-	<div class="mb-3">
-		<label class="form-label">Team</label>
-		<InputSelect class="form-select" @bind-Value=pag.PlayerAtGameEntity.Team @bind-Value:after="() => Edit()">
-			<option value="A">Team A</option>
-			<option value="B">Team B</option>
-			<option value="">No Team</option>
-		</InputSelect>
-	</div>
+<div class="mb-3">
+    <label class="form-label">Team</label>
+    <InputSelect class="form-select" @bind-Value=_pagEntity.Team @bind-Value:after="() => Edit()">
+        <option value="A">Team A</option>
+        <option value="B">Team B</option>
+        <option value="">No Team</option>
+    </InputSelect>
+</div>
 
-	<div class="mb-3">
-		<label class="form-label">Add Payment</label>
-		<br>
-		<button class="btn btn-outline-secondary" @onclick="() => AddTransactionForPlayer(pag.Player.PlayerEntity.RowKey, pag.Player.PlayerEntity.DefaultRate)"><i class="fa-solid fa-plus"></i> £@pag.Player.PlayerEntity.DefaultRate</button>
-		<br>
-		<span>Balance: <CurrencyDisplay Amount="@pag.Player.Balance" /></span>
-	</div>
+<div class="mb-3">
+    <label class="form-label">Add Payment</label>
+    <br>
+    <button class="btn btn-outline-secondary" @onclick="() => AddTransactionForPlayer(_pagEntity.RowKey, 3)"><i class="fa-solid fa-plus"></i> £3 To Do player default rate here</button>
+    <br>
+    <span>Balance: <CurrencyDisplay Amount="0" /> To Do player balance here</span>
+</div>
 
-	<div class="modal-footer">
-		<a class="btn btn-primary" href="/games/@pag.GameEntity.RowKey"><i class="fa-solid fa-arrow-left"></i> Back to Game</a>
+<div class="modal-footer">
+    <a class="btn btn-primary" href="/games/@_pagEntity.GameRowKey"><i class="fa-solid fa-arrow-left"></i> Back to Game</a>
 
-		<AuthorizeView Policy="IsAdminEmail">
-			<Authorized>
-				<DeleteButtonWithCheck DeleteWhatLabel="@pageTitle" ButtonLabel="Delete" ParentPageCallback="DeletePag" />
-			</Authorized>
-			<NotAuthorized>
-				<a class="btn btn-primary disabled"><i class="fa-solid fa-trash"></i> Delete</a>
-			</NotAuthorized>
-		</AuthorizeView>
-	</div>
-}
+    <AuthorizeView Policy="IsAdminEmail">
+        <Authorized>
+            <DeleteButtonWithCheck DeleteWhatLabel="@_pageTitle" ButtonLabel="Delete" ParentPageCallback="DeletePag" />
+        </Authorized>
+        <NotAuthorized>
+            <a class="btn btn-primary disabled"><i class="fa-solid fa-trash"></i> Delete</a>
+        </NotAuthorized>
+    </AuthorizeView>
+</div>
 
 @code {
-	[Parameter]
-	public string PagRowKey { get; set; } = default!;
+    [Parameter]
+    public string PagRowKey { get; set; } = default!;
 
-	private PlayerAtGame pag = default!;
+    private PlayerAtGameEntity _pagEntity = default!;
 
-	private string pageTitle = default!;
+    private string _pageTitle = default!;
 
-	private Game game = default!;
+    private GameEntity _gameEntity = default!;
 
-	private bool dataReady = false;
+    protected override void OnInitialized()
+    {
+        RefreshData();
+    }
 
-	protected override async Task OnInitializedAsync()
-	{
-		await RefreshData();
-	}
+    private async Task AddTransactionForPlayer(string playerRowKey, double amount)
+    {
+        var newTransactionEntityForPag = new TransactionEntity()
+            {
+                Date = DateTimeOffset.UtcNow,
+                Notes = GameEntityService.GetNotesForGame(_pagEntity.GameRowKey),
+                PlayerRowKey = playerRowKey,
+                Amount = amount
+            };
+        if (TransactionEntityService is not null)
+        {
+            await TransactionEntityService.UpsertTransactionEntityAsync(newTransactionEntityForPag);
+        }
+        RefreshData();
+    }
 
-	private async Task AddTransactionForPlayer(string playerRowKey, double amount)
-	{
-		var newTransactionEntityForPag = new TransactionEntity()
-			{
-				Date = DateTimeOffset.UtcNow,
-				Notes = await TransactionService.GetNotesForGame(pag.GameEntity.RowKey),
-				PlayerRowKey = playerRowKey,
-				Amount = amount
-			};
-		await TransactionService.UpsertTransactionEntity(newTransactionEntityForPag);
-		await RefreshData();
-	}
+    private async Task Edit()
+    {
+        await GameEntityService.UpsertPlayerAtGameEntityAsync(_pagEntity);
+        RefreshData();
+    }
 
-	async Task Edit()
-	{
-		await GameService.UpsertPlayerAtGameEntity(pag.PlayerAtGameEntity);
-		await RefreshData();
-	}
+    private async Task EditPlayed()
+    {
+        await GameEntityService.TogglePlayerAtGamePlayedAsync(_pagEntity, _pagEntity.Played);
+        RefreshData();
+    }
 
-	async Task EditPlayed()
-	{
-		await GameService.TogglePlayerAtGamePlayed(pag.PlayerAtGameEntity, pag.PlayerAtGameEntity.Played);
-		await RefreshData();
-	}
+    private async Task DeletePag()
+    {
+        await GameEntityService.DeletePlayerAtGameEntityAsync(_pagEntity.GameRowKey);
+        Navigation.NavigateTo($"/games/{_pagEntity.GameRowKey}");
+    }
 
-	async Task DeletePag()
-	{
-		await GameService.DeletePlayerAtGameEntity(pag.PlayerAtGameEntity);
-		Navigation.NavigateTo($"/games/{pag.PlayerAtGameEntity.GameRowKey}");
-	}
-
-	async Task RefreshData()
-	{
-		pag = await GameService.GetPlayerAtGame(PagRowKey);
-		game = await GameService.GetGame(pag.GameEntity.RowKey);
-		pageTitle = $"{@pag.Player.PlayerEntity.Name} at {@pag.GameEntity.Date.Date.ToString("dd MMM")}";
-		dataReady = true;
-	}
+    private void RefreshData()
+    {
+        _pagEntity = GameEntityService.GetPlayerAtGameEntity(PagRowKey);
+        _gameEntity = GameEntityService.GetGameEntity(_pagEntity.GameRowKey);
+        //pageTitle = $"{@pag.Player.PlayerEntity.Name} at {@pag.GameEntity.Date.Date.ToString("dd MMM")}";
+        _pageTitle = "To Do";
+    }
 
 }

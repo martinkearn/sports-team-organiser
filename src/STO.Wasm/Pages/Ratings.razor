@@ -1,10 +1,9 @@
 @page "/ratings"
-@inject IRatingService RatingService
+@inject IRatingEntityService RatingEntityService
 
+<PageTitle>TNF - @_pageTitle</PageTitle>
 
-<PageTitle>TNF - @pageTitle</PageTitle>
-
-<h1><i class="fa-regular fa-star me-2"></i> @pageTitle</h1>
+<h1><i class="fa-regular fa-star me-2"></i> @_pageTitle</h1>
 
 <AuthorizeView Policy="IsAdminEmail">
 	<Authorized>
@@ -23,16 +22,16 @@
 				</tr>
 			</thead>
 			<tbody>
-				@foreach (Rating rating in pageOfRatings)
+				@foreach (RatingEntity re in _pageOfRatingEntities)
 				{
-					@if (rating is not null)
+					@if (re is not null)
 					{
 						<tr>
-							<td><a href="/ratings/@rating.RatingEntity.RowKey">@RatingService.FormatRatingTime(rating.RatingEntity)</a></td>
-							<td><a href="/players/@rating.Player?.PlayerEntity.RowKey/player">@rating.Player?.PlayerEntity.Name</a></td>
-							<td><GameTitle Game="@rating.Game" Link="true" /></td>
-							<td>@rating.RatingEntity.Rating</td>
-							<td class="d-none d-lg-table-cell">@rating.RatingEntity.Notes</td>
+							<td><a href="/ratings/@re.RowKey">@RatingEntityService.FormatRatingTime(re.RowKey)</a></td>
+							<td><PlayerName Link="true" PlayerRowKey="@re.PlayerRowKey" /></td>
+							<td><GameEntityTitle GameEntityRowKey="@re.GameRowKey" Link="true" /></td>
+							<td>@re.Rating</td>
+							<td class="d-none d-lg-table-cell">@re.Notes</td>
 						</tr>
 					}
 				}
@@ -41,16 +40,16 @@
 
 		<nav aria-label="Page navigation">
 			<ul class="pagination">
-				@for (int p = 1; p <= pages; p++)
+				@for (int p = 1; p <= _pages; p++)
 				{
 					var thisPage = p;
-					var css = (currentPageNumber == p) ? "page-item active" : "page-item";
-					<li class="@css"><a class="page-link" @onclick="@(e => ChangePage(thisPage))">@p</a></li>
+					var css = (_currentPageNumber == p) ? "page-item active" : "page-item";
+					<li class="@css"><button class="btn btn-outline-secondary btn-sm me-2 mb-2" @onclick="@(e => ChangePage(thisPage))">@p</button></li>
 				}
 			</ul>
 		</nav>
 
-		<p>@ratings.Count ratings. @ratingsPerPage per page.</p>
+		<p>@_ratingEntities.Count ratings. @_ratingsPerPage per page.</p>
 	</Authorized>
 	<NotAuthorized>
 		<h4>Access Denied!</h4>
@@ -58,27 +57,24 @@
 	</NotAuthorized>
 </AuthorizeView>
 
-
 @code {
-	private List<Rating> ratings = new();
+	private List<RatingEntity> _ratingEntities = [];
 
-	private List<Rating> pageOfRatings = new();
+	private List<RatingEntity> _pageOfRatingEntities = [];
 
-	private int ratingsPerPage = 40;
+	private readonly int _ratingsPerPage = 40;
 
-	private int currentPageNumber = 1;
+	private int _currentPageNumber = 1;
 
-	private int pages = default!;
+	private int _pages;
 
-	private Enums.SortRatingsBy currentSortBy = default!;
+	private Enums.SortRatingsBy _currentSortBy;
 
-	private string pageTitle = default!;
+	private string _pageTitle = default!;
 
-	private bool dataReady = false;
-
-	protected override async Task OnInitializedAsync()
+	protected override void OnInitialized()
 	{
-		await RefreshData();
+		RefreshData();
 	}
 
 	private void Sort(Enums.SortRatingsBy by)
@@ -86,45 +82,43 @@
 		switch (by)
 		{
 			case Enums.SortRatingsBy.Game:
-				ratings = (currentSortBy == by) ?
-					ratings.OrderByDescending(o => o.Game.GameEntity.Date).ToList() :
-					ratings.OrderBy(o => o.Game.GameEntity.Date).ToList();
+				_ratingEntities = (_currentSortBy == by) ?
+					_ratingEntities.OrderByDescending(o => o.GameRowKey).ToList() :
+					_ratingEntities.OrderBy(o => o.GameRowKey).ToList();
 				break;
 			case Enums.SortRatingsBy.Rating:
-				ratings = (currentSortBy == by) ?
-					ratings.OrderByDescending(o => o.RatingEntity.Rating).ToList() :
-					ratings.OrderBy(o => o.RatingEntity.Rating).ToList();
+				_ratingEntities = (_currentSortBy == by) ?
+					_ratingEntities.OrderByDescending(o => o.Rating).ToList() :
+					_ratingEntities.OrderBy(o => o.Rating).ToList();
 				break;
 			case Enums.SortRatingsBy.Player:
-				ratings = (currentSortBy == by) ?
-					ratings.OrderByDescending(o => o.Player.PlayerEntity.Name).ToList() :
-					ratings.OrderBy(o => o.Player.PlayerEntity.Name).ToList();
+				_ratingEntities = (_currentSortBy == by) ?
+					_ratingEntities.OrderByDescending(o => o.PlayerRowKey).ToList() :
+					_ratingEntities.OrderBy(o => o.PlayerRowKey).ToList();
 				break;
 			default:
-				ratings = ratings.OrderBy(o => o.RatingEntity.Timestamp).ToList();
+				_ratingEntities = _ratingEntities.OrderBy(o => o.Timestamp).ToList();
 				break;
 		}
 
-		currentSortBy = by;
+		_currentSortBy = by;
 	}
 
 	private void ChangePage(int page)
 	{
-		currentPageNumber = page;
-		pageOfRatings = ratings.Skip((page - 1) * ratingsPerPage).Take(ratingsPerPage).ToList();
+		_currentPageNumber = page;
+		_pageOfRatingEntities = _ratingEntities.Skip((page - 1) * _ratingsPerPage).Take(_ratingsPerPage).ToList();
 	}
 
-	async Task RefreshData()
+	private void RefreshData()
 	{
-		ratings = await RatingService.GetRatings();
-		pageTitle = "Ratings";
+		_ratingEntities = RatingEntityService.GetRatingEntities();
+		_pageTitle = "Ratings";
 
 		// Setup paging
-		pageOfRatings = ratings.Take(ratingsPerPage).ToList();
-		var pagesDec = (double)ratings.Count / (double)ratingsPerPage;
-		pages = Convert.ToInt16(Math.Ceiling(pagesDec));
-		currentPageNumber = 1;
-
-		dataReady = true;
+		_pageOfRatingEntities = _ratingEntities.Take(_ratingsPerPage).ToList();
+		var pagesDec = (double)_ratingEntities.Count / (double)_ratingsPerPage;
+		_pages = Convert.ToInt16(Math.Ceiling(pagesDec));
+		_currentPageNumber = 1;
 	}
 }

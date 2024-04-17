@@ -1,4 +1,3 @@
-using Azure.Data.Tables;
 using Microsoft.AspNetCore.Mvc;
 
 namespace STO.Api.Controllers;

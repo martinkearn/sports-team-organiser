@@ -1,12 +1,10 @@
-@page "/admin"
+@page "/cachedadmin"
 @using Microsoft.Extensions.Configuration
 @inject IConfiguration Configuration
 @inject IWebAssemblyHostEnvironment Env
 @using System.Security.Claims
 @inject AuthenticationStateProvider AuthenticationStateProvider
-@using Azure.Data.Tables
-@inject IDataService DataService
-
+@inject ICachedDataService DataService
 
 <PageTitle>Tuesday.Football</PageTitle>
 
@@ -26,15 +24,15 @@
 
 		<p>Environment: <b>@Env.Environment</b></p>
 
-		<p>Authnetication state: <b>@context.User.Identity?.Name</b></p>
+		<p>Authentication state: <b>@context.User.Identity?.Name</b></p>
 
 		<p>IsAdminEmail?: <b>Yes</b></p>
 
 		<p>Claims</p>
-		@if (claims.Count() > 0)
+		@if (_claims.Any())
 		{
 			<ul>
-				@foreach (var claim in claims)
+				@foreach (var claim in _claims)
 				{
 					<li>@claim.Type: @claim.Value</li>
 				}
@@ -42,24 +40,25 @@
 		}
 
 		<h2>Data</h2>
-		<button class="btn btn-primary" @onclick="RefreshData">Refresh Data</button>
-		@foreach (var p in allPlayers)
+		<button class="btn btn-primary" @onclick="ClearLocalData">Clear Local Data</button>
+		<button class="btn btn-primary" @onclick="() => RefreshData(true)">Refresh Data</button>
+		@foreach (var p in DataService.PlayerEntities)
 		{
 			<p><a href="/players/@p.RowKey/player">Player, @p.RowKey, @p.Name</a></p>
 		}
-		@foreach (var g in allGames)
+		@foreach (var g in _allGames)
 		{
 			<p><a href="/games/@g.RowKey">Game, @g.RowKey, @g.Date</a></p>
 		}
-		@foreach (var t in allTransactions)
+		@foreach (var t in DataService.TransactionEntities)
 		{
 			<p><a href="/transactions/@t.RowKey">Transaction, @t.RowKey, @t.Date, @t.Amount</a></p>
 		}
-		@foreach (var pag in allPlayerAtGame)
+		@foreach (var pag in _allPlayerAtGame)
 		{
 			<p><a href="/pags/@pag.RowKey">PlayerAtGame, @pag.RowKey, @pag.PlayerRowKey, @pag.GameRowKey</a></p>
 		}
-		@foreach (var r in allRatings)
+		@foreach (var r in _allRatings)
 		{
 			<p><a href="/ratings/@r.RowKey">Rating, @r.RowKey, @r.PlayerRowKey, @r.GameRowKey, @r.Rating</a></p>
 		}
@@ -74,35 +73,34 @@
 
 
 @code {
-	private List<PlayerEntity> allPlayers = new();
-	private List<GameEntity> allGames = new();
-	private List<TransactionEntity> allTransactions = new();
-	private List<PlayerAtGameEntity> allPlayerAtGame = new();
-	private List<RatingEntity> allRatings = new();
-	private IEnumerable<Claim> claims = Enumerable.Empty<Claim>();
-	private bool dataReady = false;
+	private List<GameEntity> _allGames = [];
+	private List<PlayerAtGameEntity> _allPlayerAtGame = [];
+	private List<RatingEntity> _allRatings = [];
+	private IEnumerable<Claim> _claims = Enumerable.Empty<Claim>();
 
 	protected override async Task OnInitializedAsync()
 	{
-		await RefreshData();
+		await RefreshData(false);
 	}
 
-	private async Task RefreshData()
+	private async Task RefreshData(bool forceApi)
 	{
 		var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
 		var user = authState.User;
 		if (user.Identity is not null && user.Identity.IsAuthenticated)
 		{
-			claims = user.Claims;
+			_claims = user.Claims;
 		}
 
-		await DataService.LoadData();
-		allPlayers = await DataService.QueryEntities<PlayerEntity>();
-		allGames = await DataService.QueryEntities<GameEntity>();
-		allTransactions = await DataService.QueryEntities<TransactionEntity>();
-		allPlayerAtGame = await DataService.QueryEntities<PlayerAtGameEntity>();
-		allRatings = await DataService.QueryEntities<RatingEntity>();
-
-		dataReady = true;
+		await DataService.LoadDataAsync(forceApi, false);
+		_allGames = await DataService.QueryEntitiesAsync<GameEntity>();
+		_allPlayerAtGame = await DataService.QueryEntitiesAsync<PlayerAtGameEntity>();
+		_allRatings = await DataService.QueryEntitiesAsync<RatingEntity>();
 	}
+
+	private async Task ClearLocalData()
+	{
+		await DataService.ClearLocalDataAsync();
+	}
+
 }

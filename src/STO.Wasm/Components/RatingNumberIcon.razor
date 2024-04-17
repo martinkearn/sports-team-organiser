@@ -3,11 +3,11 @@
     i { vertical-align: middle; }
 </style>
 
-@if (!string.IsNullOrEmpty(css))
+@if (!string.IsNullOrEmpty(_css))
 {
     <span class="fa-stack small">
         <i class="fa-solid fa-star fa-stack-2x"></i>
-        <i class="@css"></i>
+        <i class="@_css"></i>
     </span>
 }
 
@@ -15,7 +15,7 @@
     [Parameter]
     public double Rating { get; set; }
 
-    private string? css;
+    private string? _css;
 
     protected override void OnParametersSet()
     {
@@ -33,22 +33,22 @@
         switch (roundedRating)
         {
             case 1:
-                css = "fa-solid fa-1 fa-stack-1x fa-inverse";
+                _css = "fa-solid fa-1 fa-stack-1x fa-inverse";
                 break;
             case 2:
-                css = "fa-solid fa-2 fa-stack-1x fa-inverse";
+                _css = "fa-solid fa-2 fa-stack-1x fa-inverse";
                 break;       
             case 3:
-                css = "fa-solid fa-3 fa-stack-1x fa-inverse";
+                _css = "fa-solid fa-3 fa-stack-1x fa-inverse";
                 break; 
             case 4:
-                css = "fa-solid fa-4 fa-stack-1x fa-inverse";
+                _css = "fa-solid fa-4 fa-stack-1x fa-inverse";
                 break;
             case 5:
-                css = "fa-solid fa-5 fa-stack-1x fa-inverse";
+                _css = "fa-solid fa-5 fa-stack-1x fa-inverse";
                 break;
             default:
-                css = "";
+                _css = "";
                 break;
         }
     }

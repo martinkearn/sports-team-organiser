@@ -1,13 +1,13 @@
-@if (!string.IsNullOrEmpty(css))
+@if (!string.IsNullOrEmpty(_css))
 {
-    <i class="@css red-text"></i>
+    <i class="@_css red-text"></i>
 }
 
 @code {
     [Parameter]
     public string? Forecast { get; set; }
 
-    private string? css;
+    private string? _css;
 
     protected override void OnParametersSet()
     {
@@ -34,7 +34,7 @@
             ["reserve5"] = "fa-solid fa-5"
         };
 
-        css = forecastCssMap.GetValueOrDefault(Forecast.ToLowerInvariant(), string.Empty);
+        _css = forecastCssMap.GetValueOrDefault(Forecast.ToLowerInvariant(), string.Empty);
     }
 
 }

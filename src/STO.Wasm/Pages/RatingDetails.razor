@@ -1,76 +1,78 @@
 @page "/ratings/{RatingRowKey}"
-@inject IRatingService RatingService
+@inject IRatingEntityService RatingEntityService
+@inject IPlayerEntityService PlayerEntityService
+@inject IGameEntityService GameEntityService
 @inject NavigationManager Navigation
 
-@if (dataReady)
-{
-	<PageTitle>TNF - @pageTitle</PageTitle>
+<PageTitle>TNF - @_pageTitle</PageTitle>
 
-	<h1><i class="fa-regular fa-star me-2"></i> @pageTitle</h1>
+<h1><i class="fa-regular fa-star me-2"></i> @_pageTitle</h1>
 
-	<AuthorizeView Policy="IsAdminEmail">
-		<Authorized>
-			<p>Ratings cannot be edited, only deleted</p>
+<AuthorizeView Policy="IsAdminEmail">
+	<Authorized>
+		<p>Ratings cannot be edited, only deleted</p>
 
-			<h5>Date & Time</h5>
-			<p>@RatingService.FormatRatingTime(rating.RatingEntity)</p>
+		<h5>Date & Time</h5>
+		<p>@RatingEntityService.FormatRatingTime(_ratingEntity.RowKey)</p>
 
-			<h5>Player</h5>
-			<p><a href="players/@rating?.Player?.PlayerEntity?.RowKey/player">@rating?.Player?.PlayerEntity?.Name</a></p>
+		<h5>Player</h5>
+		<p><a href="players/@_ratingEntity.PlayerRowKey/player">@_playerEntity.Name</a></p>
 
-			<h5>Game</h5>
-			<p><GameTitle Game="@rating?.Game" Link="true" /></p>
+		<h5>Game</h5>
+		<p><GameEntityTitle GameRowKey="@_ratingEntity.GameRowKey" Link="true" /></p>
 
-			<h5>Rating</h5>
-			<p>@rating?.RatingEntity?.Rating</p>
+		<h5>Rating</h5>
+		<p>@_ratingEntity.Rating</p>
 
-			<h5>Notes</h5>
-			@if (rating?.RatingEntity?.Notes is not null)
-			{
-				<p>@rating?.RatingEntity.Notes</p>
-			}
-			else
-			{
-				<p>No Notes</p>
-			}
+		<h5>Notes</h5>
+		@if (_ratingEntity?.Notes is not null)
+		{
+			<p>@_ratingEntity.Notes</p>
+		}
+		else
+		{
+			<p>No Notes</p>
+		}
 
-			<div class="modal-footer">
-				<a class="btn btn-primary" href="/ratings/"><i class="fa-solid fa-arrow-left"></i>All Ratings</a>
-				<DeleteButtonWithCheck DeleteWhatLabel="@pageTitle" ButtonLabel="Delete" ParentPageCallback="DeleteRating" />
-			</div>
-		</Authorized>
-		<NotAuthorized>
-			<h4>Access Denied!</h4>
-			<a class="btn btn-primary" href="authentication/login"><i class="fa-solid fa-key me-2"></i> Log in</a>
-		</NotAuthorized>
-	</AuthorizeView>
-}
+		<div class="modal-footer">
+			<a class="btn btn-primary" href="/ratings/"><i class="fa-solid fa-arrow-left"></i>All Ratings</a>
+			<DeleteButtonWithCheck DeleteWhatLabel="@_pageTitle" ButtonLabel="Delete" ParentPageCallback="DeleteRating" />
+		</div>
+	</Authorized>
+	<NotAuthorized>
+		<h4>Access Denied!</h4>
+		<a class="btn btn-primary" href="authentication/login"><i class="fa-solid fa-key me-2"></i> Log in</a>
+	</NotAuthorized>
+</AuthorizeView>
 
 @code {
 	[Parameter]
 	public string RatingRowKey { get; set; } = default!;
 
-	private Rating rating = default!;
+	private RatingEntity _ratingEntity = default!;
 
-	private string pageTitle = default!;
+	private PlayerEntity _playerEntity = default!;
 
-	private bool dataReady = false;
+	private GameEntity _gameEntity = default!;
 
-	protected override async Task OnInitializedAsync()
+	private string _pageTitle = default!;
+
+	protected override void OnInitialized()
 	{
-		await RefreshData();
+		RefreshData();
 	}
 
 	private async Task DeleteRating()
 	{
-		await RatingService.DeleteRatingEntity(RatingRowKey);
+		await RatingEntityService.DeleteRatingEntityAsync(RatingRowKey);
 		Navigation.NavigateTo("/ratings");
 	}
 
-	async Task RefreshData()
+	private void RefreshData()
 	{
-		rating = await RatingService.GetRating(RatingRowKey);
-		pageTitle = $"Rating for {@rating?.Player?.PlayerEntity.Name}, {@rating?.Game?.GameEntity.Date.Date.ToString("dd MMM")}";
-		dataReady = true;
+		_ratingEntity = RatingEntityService.GetRatingEntity(RatingRowKey);
+		_playerEntity = PlayerEntityService.GetPlayerEntity(_ratingEntity.PlayerRowKey);
+		_gameEntity = GameEntityService.GetGameEntity(_ratingEntity.GameRowKey);
+		_pageTitle = $"Rating for {_playerEntity.Name}, {_gameEntity.Date.Date.ToShortDateString()}";
 	}
 }

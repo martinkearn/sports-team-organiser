@@ -26,7 +26,7 @@ namespace STO.Wasm.Services
             };
         }
 
-        public async Task<List<T>> ApiGet<T>() where T : class, ITableEntity
+        public async Task<List<T>> ApiGetAsync<T>() where T : class, ITableEntity
         {
             var apiPath = GetApiPath<T>();
             var httpResponseMessage = await _httpClient.GetAsync($"{_options.ApiHost}/{apiPath}");
@@ -46,7 +46,7 @@ namespace STO.Wasm.Services
             return response;
         } 
 
-        public async Task ApiPost<T>(T entity) where T : class, ITableEntity   
+        public async Task ApiPostAsync<T>(T entity) where T : class, ITableEntity   
         {
             var apiPath = GetApiPath<T>();
             using HttpResponseMessage response = await _httpClient.PostAsJsonAsync(
@@ -56,7 +56,7 @@ namespace STO.Wasm.Services
             response.EnsureSuccessStatusCode();
         }
 
-        public async Task ApiDelete<T>(string rowKey) where T : class, ITableEntity   
+        public async Task ApiDeleteAsync<T>(string rowKey) where T : class, ITableEntity   
         {
             var apiPath = GetApiPath<T>();
             using HttpResponseMessage response = await _httpClient.DeleteAsync($"{_options.ApiHost}/{apiPath}?rowkey={rowKey}");

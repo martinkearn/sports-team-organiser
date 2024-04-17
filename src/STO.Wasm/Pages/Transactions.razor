@@ -46,11 +46,11 @@
 
 
 @code {
-	private List<TransactionEntity> _transactionEntities = new();
+	private List<TransactionEntity> _transactionEntities = [];
 
-	private List<TransactionEntity> _pageOfTransactionEntities = new();
+	private List<TransactionEntity> _pageOfTransactionEntities = [];
 
-	private int _transactionsPerPage = 40;
+	private readonly int _transactionsPerPage = 40;
 
 	private int _currentPageNumber = 1;
 

@@ -55,7 +55,7 @@
         RefreshData();
     }
 
-    protected async Task Add()
+    private async Task Add()
     {
         var dt = new DateTime(_newGameEntity.Date.Year, _newGameEntity.Date.Month, _newGameEntity.Date.Day, _hour, _minute, 0, DateTimeKind.Utc);
         _newGameEntity.Date = dt;
@@ -67,8 +67,10 @@
     {
         _hour = 18;
         _minute = 30;
-        _newGameEntity = new();
-        _newGameEntity.Date = DateTimeOffset.UtcNow;
+        _newGameEntity = new GameEntity()
+        {
+            Date = DateTimeOffset.UtcNow
+        };
         _pageTitle = "Add a Game";
     }
 }

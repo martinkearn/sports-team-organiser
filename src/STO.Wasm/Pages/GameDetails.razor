@@ -172,7 +172,7 @@
 
     private Game _game = default!;
 
-    private List<PlayerEntity> _playerEntities = new();
+    private List<PlayerEntity> _playerEntities = [];
 
     private PlayerAtGameEntity _newPagEntity = default!;
 
@@ -182,7 +182,7 @@
 
     private string _simpleViewLabel = default!;
 
-    private bool _simpleView = false;
+    private bool _simpleView;
 
     private string _simpleViewCss = "fa-solid fa-eye-slash";
 
@@ -225,8 +225,8 @@
 
     private bool MarkAsPLayedOrNotPLayed()
     {
-        int playedPagsCount = _game.PlayersAtGame.Where(o => o.PlayerAtGameEntity.Played).Count();
-        bool played = (playedPagsCount == 0) ? true : false;
+        var playedPagsCount = _game.PlayersAtGame.Count(o => o.PlayerAtGameEntity.Played);
+        var played = (playedPagsCount == 0);
         return played;
     }
 

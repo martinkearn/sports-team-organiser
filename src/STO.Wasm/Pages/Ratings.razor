@@ -58,17 +58,17 @@
 </AuthorizeView>
 
 @code {
-	private List<RatingEntity> _ratingEntities = new();
+	private List<RatingEntity> _ratingEntities = [];
 
-	private List<RatingEntity> _pageOfRatingEntities = new();
+	private List<RatingEntity> _pageOfRatingEntities = [];
 
-	private int _ratingsPerPage = 40;
+	private readonly int _ratingsPerPage = 40;
 
 	private int _currentPageNumber = 1;
 
-	private int _pages = default!;
+	private int _pages;
 
-	private Enums.SortRatingsBy _currentSortBy = default!;
+	private Enums.SortRatingsBy _currentSortBy;
 
 	private string _pageTitle = default!;
 

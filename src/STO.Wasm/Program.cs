@@ -69,18 +69,17 @@ public class Program
         // Add Blazored.LocalStorage
         builder.Services.AddBlazoredLocalStorageAsSingleton();
 
+        // Add Auth
         builder.Services.AddCascadingAuthenticationState();
 
-        Console.WriteLine($"Client Hosting Environment: {builder.HostEnvironment.Environment}");
-
+        // Build
         var host = builder.Build();
 
         // Initialise data
 		var cachedDataService = host.Services.GetRequiredService<ICachedDataService>();
-        //var forceLocalDataOnly = (builder.HostEnvironment.Environment == "Localhost");
 		await cachedDataService.LoadDataAsync(false, false);
-
-		//await builder.Build().RunAsync();
+        
+        // Run app
 		await host.RunAsync();
     }
 }

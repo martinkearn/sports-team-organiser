@@ -59,15 +59,15 @@
 }
 
 @code {
-    private List<GameEntity> _gameEntities = new();
+    private List<GameEntity> _gameEntities = [];
 
-    private List<PlayerEntity> _playerEntities = new();
+    private List<PlayerEntity> _playerEntities = [];
 
     private PlayerAtGameEntity _newPagEntity = new();
 
     private GameEntity _nextGameEntity = default!;
 
-    private bool _dataReady = false;
+    private bool _dataReady;
 
     protected override void OnInitialized()
     {

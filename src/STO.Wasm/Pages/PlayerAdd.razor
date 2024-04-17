@@ -46,14 +46,14 @@
 @code {
 	private PlayerEntity _newPlayerEntity = new();
 
-	private string _pageTitle = "Add Player";
+	private readonly string _pageTitle = "Add Player";
 
 	protected override void OnInitialized()
 	{
 		RefreshData();
 	}
 
-	protected async Task Add()
+	private async Task Add()
 	{
 		await PlayerEntityService.UpsertPlayerEntityAsync(_newPlayerEntity);
 		Navigation.NavigateTo("/players");

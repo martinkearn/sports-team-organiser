@@ -24,12 +24,12 @@
 
 		<p>Environment: <b>@Env.Environment</b></p>
 
-		<p>Authnetication state: <b>@context.User.Identity?.Name</b></p>
+		<p>Authentication state: <b>@context.User.Identity?.Name</b></p>
 
 		<p>IsAdminEmail?: <b>Yes</b></p>
 
 		<p>Claims</p>
-		@if (_claims.Count() > 0)
+		@if (_claims.Any())
 		{
 			<ul>
 				@foreach (var claim in _claims)
@@ -72,9 +72,9 @@
 
 
 @code {
-	private List<GameEntity> _allGames = new();
-	private List<PlayerAtGameEntity> _allPlayerAtGame = new();
-	private List<RatingEntity> _allRatings = new();
+	private List<GameEntity> _allGames = [];
+	private List<PlayerAtGameEntity> _allPlayerAtGame = [];
+	private List<RatingEntity> _allRatings = [];
 	private IEnumerable<Claim> _claims = Enumerable.Empty<Claim>();
 
 	protected override async Task OnInitializedAsync()

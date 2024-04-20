@@ -1,4 +1,4 @@
-<span>@TeamName has @Pags?.Count players and a rating of @Pags?.Select(o => o.Player.PlayerEntity.AdminRating).DefaultIfEmpty(0).Average().ToString("#.##")</span>
+<span>@TeamName has @Pags?.Count players and a rating of @Pags?.Select(o => o.PlayerEntity.AdminRating).DefaultIfEmpty(0).Average().ToString("#.##")</span>
 
 @code {
     [Parameter]

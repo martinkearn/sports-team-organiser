@@ -7,7 +7,7 @@
 
 <h1><i class="fa-solid fa-people-group me-2"></i> <GameEntityTitle GameEntity="@_game.GameEntity" Link="false" /></h1>
 
-<p>@_game.PlayersAtGame.Where(p => p.PlayerAtGameEntity.Forecast == PlayingOptions.Yes.ToString()).Count() yes, @_game.PlayersAtGame.Where(p => p.PlayerAtGameEntity.Forecast == PlayingOptions.Maybe.ToString()).Count() maybe. @_game.GameEntity.Date.TimeOfDay.Hours:@_game.GameEntity.Date.TimeOfDay.Minutes kick off.</p>
+<p>@_game.PlayersAtGame.Count(p => p.PlayerAtGameEntity.Forecast == PlayingOptions.Yes.ToString()) yes, @_game.PlayersAtGame.Count(p => p.PlayerAtGameEntity.Forecast == PlayingOptions.Maybe.ToString()) maybe. @_game.GameEntity.Date.TimeOfDay.Hours:@_game.GameEntity.Date.TimeOfDay.Minutes kick off.</p>
 <p>@_game.GameEntity.Notes</p>
 
 <div class="row">
@@ -54,13 +54,13 @@
             <tr>
                 <td>A</td>
                 <td>
-                    <a class="d-none d-lg-inline" href="/pags/@pag.PlayerAtGameEntity.RowKey">@pag.Player.PlayerEntity.Name</a> <span class="d-inline d-lg-none">@pag.Player.PlayerEntity.Name</span>
-                    <PlayingForecastIcon Forecast="@pag.PlayerAtGameEntity.Forecast" /> <PositionIcon Position="pag.Player.PlayerEntity.Position" /> <RagIcon Pag="@pag" />
+                    <a class="d-none d-lg-inline" href="/pags/@pag.PlayerAtGameEntity.RowKey">@pag.PlayerEntity.Name</a> <span class="d-inline d-lg-none">@pag.PlayerEntity.Name</span>
+                    <PlayingForecastIcon Forecast="@pag.PlayerAtGameEntity.Forecast" /> <PositionIcon Position="pag.PlayerEntity.Position" /> <RagIcon PagEntity="@pag.PlayerAtGameEntity" />
                     <AuthorizeView Policy="IsAdminEmail">
                         <Authorized>
                             @if (!_simpleView)
                             {
-                                <RatingNumberIcon Rating=@pag.Player.PlayerEntity.AdminRating />
+                                <RatingNumberIcon Rating=@pag.PlayerEntity.AdminRating />
                             }
                         </Authorized>
                     </AuthorizeView>
@@ -91,13 +91,13 @@
             <tr>
                 <td>B</td>
                 <td>
-                    <a class="d-none d-lg-inline" href="/pags/@pag.PlayerAtGameEntity.RowKey">@pag.Player.PlayerEntity.Name</a> <span class="d-inline d-lg-none">@pag.Player.PlayerEntity.Name</span>
-                    <PlayingForecastIcon Forecast="@pag.PlayerAtGameEntity.Forecast" /> <PositionIcon Position="pag.Player.PlayerEntity.Position" /> <RagIcon Pag="@pag" />
+                    <a class="d-none d-lg-inline" href="/pags/@pag.PlayerAtGameEntity.RowKey">@pag.PlayerEntity.Name</a> <span class="d-inline d-lg-none">@pag.PlayerEntity.Name</span>
+                    <PlayingForecastIcon Forecast="@pag.PlayerAtGameEntity.Forecast" /> <PositionIcon Position="pag.PlayerEntity.Position" /> <RagIcon PagEntity="@pag.PlayerAtGameEntity" />
                     <AuthorizeView Policy="IsAdminEmail">
                         <Authorized>
                             @if (!_simpleView)
                             {
-                                <RatingNumberIcon Rating=@pag.Player.PlayerEntity.AdminRating />
+                                <RatingNumberIcon Rating=@pag.PlayerEntity.AdminRating />
                             }
                         </Authorized>
                     </AuthorizeView>
@@ -128,13 +128,13 @@
             <tr>
                 <td>None</td>
                 <td>
-                    <span>@pag.Player.PlayerEntity.Name</span>
-                    <PlayingForecastIcon Forecast="@pag.PlayerAtGameEntity.Forecast" /> <PositionIcon Position="pag.Player.PlayerEntity.Position" /> <RagIcon Pag="@pag" />
+                    <span>@pag.PlayerEntity.Name</span>
+                    <PlayingForecastIcon Forecast="@pag.PlayerAtGameEntity.Forecast" /> <PositionIcon Position="pag.PlayerEntity.Position" /> <RagIcon PagEntity="@pag.PlayerAtGameEntity" />
                     <AuthorizeView Policy="IsAdminEmail">
                         <Authorized>
                             @if (!_simpleView)
                             {
-                                <RatingNumberIcon Rating=@pag.Player.PlayerEntity.AdminRating />
+                                <RatingNumberIcon Rating=@pag.PlayerEntity.AdminRating />
                             }
                         </Authorized>
                     </AuthorizeView>

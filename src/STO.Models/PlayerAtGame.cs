@@ -9,7 +9,7 @@ namespace STO.Models
 
         public PlayerAtGameEntity PlayerAtGameEntity { get; set; } = default!;
 
-        public Player Player { get; set; } = default!;
+        public PlayerEntity PlayerEntity { get; set; } = default!;
 
         public GameEntity GameEntity { get; set; } = default!;
     }

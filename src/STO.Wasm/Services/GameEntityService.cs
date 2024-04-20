@@ -8,13 +8,13 @@
             var newPags = new List<PlayerAtGame>();
             var yesPags = pags
                 .Where(o => o.PlayerAtGameEntity.Forecast.Equals("yes", StringComparison.InvariantCultureIgnoreCase))
-                .OrderBy(o => o.Player.PlayerEntity.AdminRating).ToList();
+                .OrderBy(o => o.PlayerEntity.AdminRating).ToList();
             var nextTeamToGetPag = "A";
 
             foreach (var position in Enum.GetNames(typeof(Enums.PlayerPosition)))
             {
                 // Get pags in this position
-                var pagsInPosition = yesPags.Where(o => o.Player.PlayerEntity.Position.ToString() == position.ToString());
+                var pagsInPosition = yesPags.Where(o => o.PlayerEntity.Position.ToString() == position.ToString());
 
                 // Distribute pags in this position between teams
                 foreach (var pagInPosition in pagsInPosition)
@@ -31,7 +31,7 @@
                 }
             }
 
-            _ = newPags.OrderBy(o => o.Player.PlayerEntity.Name);
+            _ = newPags.OrderBy(o => o.PlayerEntity.Name);
 
             return newPags;
 
@@ -84,24 +84,24 @@
 			// Calculate PlayerAtGame
 			var playersAtGame = playersAtGameEntities.Select(playersAtGameEntity => new PlayerAtGame(playersAtGameEntity)
 			{
-				Player = playerEntityService.GetPlayer(playersAtGameEntity.PlayerRowKey), 
+				PlayerEntity = playerEntityService.GetPlayerEntity(playersAtGameEntity.PlayerRowKey), 
 				GameEntity = ge
 			}).ToList();
 
 			// Add teams to PlayerAtGame
 			var teamA = playersAtGame
 				.Where(pag => pag.PlayerAtGameEntity.Team == "A")
-				.OrderBy(o => o.Player.PlayerEntity.Name)
+				.OrderBy(o => o.PlayerEntity.Name)
 				.ToList();
 			var teamB = playersAtGame
 				.Where(pag => pag.PlayerAtGameEntity.Team == "B")
-				.OrderBy(o => o.Player.PlayerEntity.Name)
+				.OrderBy(o => o.PlayerEntity.Name)
 				.ToList();
 
 			// Construct Game
 			var game = new Game(ge)
 			{
-				PlayersAtGame = [.. playersAtGame.OrderBy(o => o.Player.PlayerEntity.Name)],
+				PlayersAtGame = [.. playersAtGame.OrderBy(o => o.PlayerEntity.Name)],
 				TeamA = teamA,
 				TeamB = teamB
 			};

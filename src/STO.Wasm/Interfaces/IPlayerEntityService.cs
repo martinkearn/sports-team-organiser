@@ -1,5 +1,15 @@
 namespace STO.Wasm.Interfaces
 {
+	public class InClassName
+	{
+		public InClassName(string rowKey)
+		{
+			RowKey = rowKey;
+		}
+
+		public string RowKey { get; private set; }
+	}
+
 	/// <summary>
 	/// Service for working with Players, PlayerEntities.
 	/// </summary>
@@ -18,10 +28,18 @@ namespace STO.Wasm.Interfaces
 		public PlayerEntity GetPlayerEntity(string rowKey);
 
 		/// <summary>
-		/// Gets a Player object
+		/// Returns the default rate for the PlayerEntity associated with the rowKey
 		/// </summary>
-		/// <returns>A Player.</returns>
-		public Player GetPlayer(string rowKey);
+		/// <param name="rowKey">The Rowkey for the PlayerEntity to get the default rate for</param>
+		/// <returns>A double representing the default rate.</returns>
+		public double GetDefaultRateForPlayerEntity(string rowKey);
+		
+		/// <summary>
+		/// Returns the balance of all TransactionEntities for the PlayerEntity associated with the rowKey
+		/// </summary>
+		/// <param name="rowKey">The Rowkey for the PlayerEntity to get the balance for</param>
+		/// <returns>A double representing the balance.</returns>
+		public double GetBalanceForPlayerEntity(string rowKey);
 
 		/// <summary>
 		/// Deletes the PlayerEntity, TransactionEntity and PlayerAtGameEntity associated with a Player.

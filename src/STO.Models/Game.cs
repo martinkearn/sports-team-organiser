@@ -9,10 +9,10 @@ namespace STO.Models
 
         public GameEntity GameEntity { get; set; }
 
-        public List<PlayerAtGame> PlayersAtGame { get; set; }
+        public List<PlayerAtGameEntity> PlayersAtGame { get; set; }
 
-        public List<PlayerAtGame> TeamA { get; set; }
+        public List<PlayerAtGameEntity> TeamA { get; set; }
 
-        public List<PlayerAtGame> TeamB { get; set; }
+        public List<PlayerAtGameEntity> TeamB { get; set; }
     }
 }

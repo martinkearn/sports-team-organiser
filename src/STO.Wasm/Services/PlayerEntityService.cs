@@ -34,6 +34,13 @@ namespace STO.Wasm.Services
 			return transactions.Sum(o => o.Amount);
 		}
 
+		public double GetRatingForPlayerEntity(string rowKey)
+		{
+			// TO DO: Eventually this will get an average rating based on RatingEntity when we have the data to support that
+			var pe = GetPlayerEntity(rowKey);
+			return pe.AdminRating;
+		}
+
 		public async Task DeletePlayerEntityAsync(string playerRowkey)
 		{
 			// Delete Ratings

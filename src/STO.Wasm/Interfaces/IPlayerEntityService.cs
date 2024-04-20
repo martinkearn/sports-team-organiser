@@ -42,6 +42,13 @@ namespace STO.Wasm.Interfaces
 		public double GetBalanceForPlayerEntity(string rowKey);
 
 		/// <summary>
+		/// Returns the Rating for the PlayerEntity associated with the rowKey
+		/// </summary>
+		/// <param name="rowKey">The Rowkey for the PlayerEntity to get the rating for</param>
+		/// <returns>A double representing the player rating.</returns>
+		public double GetRatingForPlayerEntity(string rowKey);
+
+		/// <summary>
 		/// Deletes the PlayerEntity, TransactionEntity and PlayerAtGameEntity associated with a Player.
 		/// </summary>
 		/// <param name="playerRowkey">The RowKey for the PlayerEntities to delete.</param>

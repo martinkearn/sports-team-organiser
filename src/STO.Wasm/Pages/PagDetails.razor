@@ -1,7 +1,7 @@
 @page "/pags/{PagRowKey}"
 @inject IGameEntityService GameEntityService
 @inject ITransactionEntityService TransactionEntityService
-@inject  IPlayerEntityService PlayerEntityService
+@inject IPlayerEntityService PlayerEntityService
 @inject NavigationManager Navigation
 
 <PageTitle>TNF - @_pageTitle</PageTitle>
@@ -10,7 +10,7 @@
 
 <div class="mb-3">
     <label class="form-label">Player Name</label>
-    <span class="form-control-plaintext"><PlayerName PlayerRowKey="@_playerEntity.RowKey" /></span>
+    <span class="form-control-plaintext"><PlayerName PlayerRowKey="@_playerEntity.RowKey" Link="true" /></span>
 </div>
 
 <div class="mb-3">
@@ -52,9 +52,9 @@
 <div class="mb-3">
     <label class="form-label">Add Payment</label>
     <br>
-    <button class="btn btn-outline-secondary" @onclick="() => AddTransactionForPlayer(_pagEntity.RowKey)"><i class="fa-solid fa-plus"></i> @_playerEntity.DefaultRate</button>
+    <button class="btn btn-outline-secondary" @onclick="() => AddTransactionForPlayer()"><i class="fa-solid fa-plus"></i> @_playerEntity.DefaultRate</button>
     <br>
-    <span>Balance: <CurrencyDisplay Amount="0" /> To Do player balance here</span>
+    <span>Balance: <CurrencyDisplay Amount="@_playerEntityBalance" /></span>
 </div>
 
 <div class="modal-footer">
@@ -78,6 +78,8 @@
 
     private PlayerEntity _playerEntity = default!;
 
+    private double _playerEntityBalance;
+
     private string _pageTitle = default!;
 
     private GameEntity _gameEntity = default!;
@@ -87,13 +89,13 @@
         RefreshData();
     }
 
-    private async Task AddTransactionForPlayer(string playerRowKey)
+    private async Task AddTransactionForPlayer()
     {
         var newTransactionEntityForPag = new TransactionEntity()
             {
                 Date = DateTimeOffset.UtcNow,
                 Notes = GameEntityService.GetNotesForGame(_pagEntity.GameRowKey),
-                PlayerRowKey = playerRowKey,
+                PlayerRowKey = _playerEntity.RowKey,
                 Amount = _playerEntity.DefaultRate
             };
         if (TransactionEntityService is not null)
@@ -125,8 +127,9 @@
     {
         _pagEntity = GameEntityService.GetPlayerAtGameEntity(PagRowKey);
         _playerEntity = PlayerEntityService.GetPlayerEntity(_pagEntity.PlayerRowKey);
+        _playerEntityBalance = PlayerEntityService.GetBalanceForPlayerEntity(_pagEntity.PlayerRowKey);
         _gameEntity = GameEntityService.GetGameEntity(_pagEntity.GameRowKey);
-        _pageTitle = $"{@_playerEntity.DefaultRate} at {_gameEntity.Date.Date:dd MMM}";
+        _pageTitle = $"{@_playerEntity.Name} at {_gameEntity.Date.Date:dd MMM}";
     }
 
 }

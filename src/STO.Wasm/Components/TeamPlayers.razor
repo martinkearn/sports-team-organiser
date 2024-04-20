@@ -1,9 +1,25 @@
-<span>@TeamName has @Pags?.Count players and a rating of @Pags?.Select(o => o.PlayerEntity.AdminRating).DefaultIfEmpty(0).Average().ToString("#.##")</span>
+@inject IPlayerEntityService PlayerEntityService
+<span>@TeamName has @Pags?.Count players and a rating of @_teamAverageRating.ToString("#.##")</span>
 
 @code {
     [Parameter]
-    public List<PlayerAtGame>? Pags { get; set; }
+    public List<PlayerAtGameEntity>? Pags { get; set; }
 
     [Parameter]
     public string? TeamName { get; set; }
+    
+    private double _teamAverageRating = default!;
+    
+    protected override void OnInitialized()
+    {
+        RefreshData();
+    }
+    
+    private void RefreshData()
+    {
+        double ratingsSum = 0;
+        if (Pags is null) return;
+        ratingsSum += Pags.Sum(pag => PlayerEntityService.GetRatingForPlayerEntity(pag.PlayerRowKey));
+        _teamAverageRating = ratingsSum / Pags.Count;
+    }
 }

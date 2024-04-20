@@ -3,11 +3,18 @@
 	/// <inheritdoc/>
 	public class GameEntityService(ICachedDataService dataService, IRatingEntityService ratingEntityService, IPlayerEntityService playerEntityService, ITransactionEntityService transactionEntityService) : IGameEntityService
 	{
-		public async Task<List<PlayerAtGame>> CalculateTeamsAsync(List<PlayerAtGame> pags)
+		public async Task<List<PlayerAtGameEntity>> CalculateTeamsAsync(List<PlayerAtGameEntity> pags)
 		{
-            var newPags = new List<PlayerAtGame>();
-            var yesPags = pags
-                .Where(o => o.PlayerAtGameEntity.Forecast.Equals("yes", StringComparison.InvariantCultureIgnoreCase))
+			// Resolve Pags to ExpandedPags
+			List<ExpandedPag> ePags = (from pag in pags 
+				let ge = GetGameEntity(pag.GameRowKey) 
+				let pe = playerEntityService.GetPlayerEntity(pag.PlayerRowKey) 
+				select new ExpandedPag(pag, ge, pe)).ToList();
+
+			// Get Yes pags
+			var newEPags = new List<ExpandedPag>();
+            var yesPags = ePags
+                .Where(o => o.PagEntity.Forecast.Equals("yes", StringComparison.InvariantCultureIgnoreCase))
                 .OrderBy(o => o.PlayerEntity.AdminRating).ToList();
             var nextTeamToGetPag = "A";
 
@@ -20,21 +27,20 @@
                 foreach (var pagInPosition in pagsInPosition)
                 {
                     // Set team for page
-                    pagInPosition.PlayerAtGameEntity.Team = nextTeamToGetPag;
-                    newPags.Add(pagInPosition);
+                    pagInPosition.PagEntity.Team = nextTeamToGetPag;
+                    newEPags.Add(pagInPosition);
 
                     // Update pag in storage
-                    await UpsertPlayerAtGameEntityAsync(pagInPosition.PlayerAtGameEntity);
+                    await UpsertPlayerAtGameEntityAsync(pagInPosition.PagEntity);
 
                     // Set team for next pag
                     nextTeamToGetPag = (nextTeamToGetPag == "A") ? "B" : "A";
                 }
             }
 
-            _ = newPags.OrderBy(o => o.PlayerEntity.Name);
+            newEPags = newEPags.OrderBy(o => o.PlayerEntity.Name).ToList();
 
-            return newPags;
-
+            return newEPags.Select(ep => ep.PagEntity).ToList();
         }
 
 		public async Task DeleteGameEntityAsync(string rowkey)
@@ -81,27 +87,18 @@
 			// Get PlayerAtGame's for GameEntity
 			var playersAtGameEntities = GetPlayerAtGameEntitiesForGame(rowKey);
 
-			// Calculate PlayerAtGame
-			var playersAtGame = playersAtGameEntities.Select(playersAtGameEntity => new PlayerAtGame(playersAtGameEntity)
-			{
-				PlayerEntity = playerEntityService.GetPlayerEntity(playersAtGameEntity.PlayerRowKey), 
-				GameEntity = ge
-			}).ToList();
-
 			// Add teams to PlayerAtGame
-			var teamA = playersAtGame
-				.Where(pag => pag.PlayerAtGameEntity.Team == "A")
-				.OrderBy(o => o.PlayerEntity.Name)
+			var teamA = playersAtGameEntities
+				.Where(pag => pag.Team == "A")
 				.ToList();
-			var teamB = playersAtGame
-				.Where(pag => pag.PlayerAtGameEntity.Team == "B")
-				.OrderBy(o => o.PlayerEntity.Name)
+			var teamB = playersAtGameEntities
+				.Where(pag => pag.Team == "B")
 				.ToList();
 
 			// Construct Game
 			var game = new Game(ge)
 			{
-				PlayersAtGame = [.. playersAtGame.OrderBy(o => o.PlayerEntity.Name)],
+				PlayersAtGame = playersAtGameEntities,
 				TeamA = teamA,
 				TeamB = teamB
 			};
@@ -203,5 +200,14 @@
 		{
 			await dataService.UpsertEntityAsync(pagEntity);
 		}
+	}
+
+	public class ExpandedPag(PlayerAtGameEntity pagEntity, GameEntity gameEntity, PlayerEntity playerEntity)
+	{
+		public PlayerAtGameEntity PagEntity { get; } = pagEntity;
+
+		public PlayerEntity PlayerEntity { get; } = playerEntity;
+
+		public GameEntity GameEntity { get; set; } = gameEntity;
 	}
 }

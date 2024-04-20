@@ -10,9 +10,6 @@
 
 <h1>Tuesday.Football Admin Portal</h1>
 
-<AuthorizeView Policy="IsAdminEmail">
-	<Authorized>
-
 		<h2>Config</h2>
 		<p>SettingsFile: <b>@Configuration["SettingsFile"]</b></p>
 
@@ -24,7 +21,7 @@
 
 		<p>Environment: <b>@Env.Environment</b></p>
 
-		<p>Authentication state: <b>@context.User.Identity?.Name</b></p>
+		@*<p>Authentication state: <b>@context.User.Identity?.Name</b></p>*@
 
 		<p>IsAdminEmail?: <b>Yes</b></p>
 
@@ -64,12 +61,6 @@
 		}
 
 		<BootstrapBreakpoints />
-	</Authorized>
-	<NotAuthorized>
-		<h4>Access Denied!</h4>
-		<a class="btn btn-primary" href="authentication/login"><i class="fa-solid fa-key me-2"></i> Log in</a>
-	</NotAuthorized>
-</AuthorizeView>
 
 
 @code {

@@ -109,3 +109,15 @@ code {
 .pagination {
     flex-wrap: wrap;
 }
+
+.red-text {
+    color: red;
+}
+
+.green-text {
+    color: green;
+}
+
+.black-text {
+    color: black;
+}

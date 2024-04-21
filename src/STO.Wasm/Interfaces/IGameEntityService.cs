@@ -71,7 +71,7 @@ namespace STO.Wasm.Interfaces
 		/// </summary>
 		/// <param name="pag">The PlayerAtGame collection to assign teams to.</param> 
 		/// <returns>List of PlayerAtGame with team details.</returns>   
-		public Task<List<PlayerAtGame>> CalculateTeamsAsync(List<PlayerAtGame> pags);
+		public Task<List<PlayerAtGameEntity>> CalculateTeamsAsync(List<PlayerAtGameEntity> pags);
 
 		/// <summary>
 		/// Marks all PlayerAtGameEntity in a Game as having played.

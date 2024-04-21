@@ -8,14 +8,21 @@ namespace STO.Wasm.Interfaces
         /// <summary>
         /// Gets all TransactionEntities.
         /// </summary>
-        /// <returns>List of TransactionEntities.</returns>
+        /// <returns>List of TransactionEntity.</returns>
         public List<TransactionEntity> GetTransactionEntities();
+
+        /// <summary>
+        /// Gets all TransactionEntities for agiven player by PlayerRoweKey
+        /// </summary>
+        /// <param name="playerRowKey">The PlayerRowKey to match trasnactions for</param>
+        /// <returns>List of TransactionEntity.</returns>
+        public List<TransactionEntity> GetTransactionEntitiesForPlayerEntity(string playerRowKey);
 
         /// <summary>
         /// Gets a specific TransactionEntity based on its RowKey
         /// </summary>
         /// <param name="rowKey"></param>
-        /// <returns>a TransactionEntity</returns>
+        /// <returns>A TransactionEntity</returns>
         public TransactionEntity GetTransactionEntity(string rowKey);
 
         /// <summary>

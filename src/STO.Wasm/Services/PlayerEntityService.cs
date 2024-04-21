@@ -1,7 +1,7 @@
 namespace STO.Wasm.Services
 {
 	/// <inheritdoc/>
-	public class PlayerEntityService(ICachedDataService dataService) : IPlayerEntityService
+	public class PlayerEntityService(ICachedDataService dataService, ITransactionEntityService transactionEntityService) : IPlayerEntityService
 	{
 		public List<PlayerEntity> GetPlayerEntities()
 		{
@@ -22,27 +22,23 @@ namespace STO.Wasm.Services
 			}
 		}
 
-		public Player GetPlayer(string rowKey)
+		public double GetDefaultRateForPlayerEntity(string rowKey)
 		{
-			// Get PlayerEntity
-			var playerEntity = GetPlayerEntity(rowKey);
+			var pe = GetPlayerEntity(rowKey);
+			return pe.DefaultRate;
+		}
 
-			// Get Transactions
-			var playersTransactions = dataService.TransactionEntities.Where(o => o.PlayerRowKey == rowKey)
-				.OrderByDescending(o => o.Date)
-				.ToList();
+		public double GetBalanceForPlayerEntity(string rowKey)
+		{
+			var transactions = transactionEntityService.GetTransactionEntitiesForPlayerEntity(rowKey);
+			return transactions.Sum(o => o.Amount);
+		}
 
-			// Get Balance
-			var playerBalance = playersTransactions.Sum(o => o.Amount);
-
-			// Construct Player
-			var player = new Player(playerEntity)
-			{
-				Transactions = playersTransactions,
-				Balance = playerBalance
-			};
-
-			return player;
+		public double GetRatingForPlayerEntity(string rowKey)
+		{
+			// TO DO: Eventually this will get an average rating based on RatingEntity when we have the data to support that
+			var pe = GetPlayerEntity(rowKey);
+			return pe.AdminRating;
 		}
 
 		public async Task DeletePlayerEntityAsync(string playerRowkey)

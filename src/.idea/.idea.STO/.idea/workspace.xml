@@ -10,9 +10,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="ef6ae7b1-9e78-4afc-80a7-a05ada93088a" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/STO.Wasm/Pages/AddPagToGame.razor" beforeDir="false" afterPath="$PROJECT_DIR$/STO.Wasm/Pages/AddPagToGame.razor" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/STO.Wasm/Pages/CachedAdmin.razor" beforeDir="false" afterPath="$PROJECT_DIR$/STO.Wasm/Pages/CachedAdmin.razor" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/STO.Wasm/Pages/GameAdd.razor" beforeDir="false" afterPath="$PROJECT_DIR$/STO.Wasm/Pages/GameAdd.razor" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.STO/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.STO/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/STO.Models/Player.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/STO.Models/PlayerAtGame.cs" beforeDir="false" afterPath="$PROJECT_DIR$/STO.Models/PlayerAtGame.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/STO.Wasm/Components/PagRowEditButtons.razor" beforeDir="false" afterPath="$PROJECT_DIR$/STO.Wasm/Components/PagRowEditButtons.razor" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/STO.Wasm/Components/RagIcon.razor" beforeDir="false" afterPath="$PROJECT_DIR$/STO.Wasm/Components/RagIcon.razor" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/STO.Wasm/Components/TeamPlayers.razor" beforeDir="false" afterPath="$PROJECT_DIR$/STO.Wasm/Components/TeamPlayers.razor" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/STO.Wasm/Interfaces/IPlayerEntityService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/STO.Wasm/Interfaces/IPlayerEntityService.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/STO.Wasm/Pages/GameDetails.razor" beforeDir="false" afterPath="$PROJECT_DIR$/STO.Wasm/Pages/GameDetails.razor" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/STO.Wasm/Pages/GameDetailsEdit.razor" beforeDir="false" afterPath="$PROJECT_DIR$/STO.Wasm/Pages/GameDetailsEdit.razor" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/STO.Wasm/Pages/Games.razor" beforeDir="false" afterPath="$PROJECT_DIR$/STO.Wasm/Pages/Games.razor" afterDir="false" />

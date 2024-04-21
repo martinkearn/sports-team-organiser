@@ -1,4 +1,5 @@
-<a href="/players/@Pag?.Player.PlayerEntity.RowKey/player">
+@inject IPlayerEntityService PlayerEntityService
+<a href="/players/@PagEntity?.PlayerRowKey/player">
 @if (!string.IsNullOrEmpty(_css))
 {
     <i class="@_css"></i>  
@@ -14,7 +15,7 @@ else
 
 @code {
     [Parameter]
-    public PlayerAtGame? Pag { get; set; }
+    public PlayerAtGameEntity? PagEntity { get; set; }
 
     [Parameter]
     public string? Rag { get; set; }
@@ -33,22 +34,24 @@ else
 
     private void SetCss()
     {
-        if (Pag is not null)
+        if (PagEntity is not null)
         {
             // Work out pag RAG status
             Rag = "red";
-            if (!Pag.PlayerAtGameEntity.Played)
+            var pagBalance = PlayerEntityService.GetBalanceForPlayerEntity(PagEntity.PlayerRowKey);
+            var pagDefaultRate = PlayerEntityService.GetDefaultRateForPlayerEntity(PagEntity.PlayerRowKey);
+            if (!PagEntity.Played)
             {
                 // Not played, so pre-game rag
-                if (Pag.Player.Balance < 0)
+                if (pagBalance < 0)
                 {
                     Rag = "red";
                 }
-                else if ((Pag.Player.Balance >= 0) && (Pag.Player.Balance < Pag.Player.PlayerEntity.DefaultRate))
+                else if ((pagBalance >= 0) && (pagBalance < pagDefaultRate))
                 {
                     Rag = "amber";
                 }
-                else if (Pag.Player.Balance >= Pag.Player.PlayerEntity.DefaultRate)
+                else if (pagBalance >= pagDefaultRate)
                 {
                     Rag = "green";
                 }
@@ -56,11 +59,11 @@ else
             else
             {
                 // Has played so post game rag
-                if (Pag.Player.Balance >= 0)
+                if (pagBalance >= 0)
                 {
                     Rag = "green";
                 }
-                else if ((Pag.Player.Balance == 0) && (Pag.Player.Balance > 0))
+                else if ((pagBalance == 0) && (pagBalance > 0))
                 {
                     Rag = "amber";
                 }

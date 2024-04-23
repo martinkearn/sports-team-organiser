@@ -35,7 +35,7 @@ namespace STO.Wasm.Services
 
             if (httpResponseMessage.IsSuccessStatusCode)
             {
-                using var content = await httpResponseMessage.Content.ReadAsStreamAsync();
+                await using var content = await httpResponseMessage.Content.ReadAsStreamAsync();
                 var result = await JsonSerializer.DeserializeAsync<IEnumerable<T>>(content, _jsonSerializerOptions);
                 if (result is not null)
                 {
@@ -49,7 +49,7 @@ namespace STO.Wasm.Services
         public async Task ApiPostAsync<T>(T entity) where T : class, ITableEntity   
         {
             var apiPath = GetApiPath<T>();
-            using HttpResponseMessage response = await _httpClient.PostAsJsonAsync(
+            using var response = await _httpClient.PostAsJsonAsync(
                 $"{_options.ApiHost}/{apiPath}", 
                 entity);
 
@@ -59,7 +59,7 @@ namespace STO.Wasm.Services
         public async Task ApiDeleteAsync<T>(string rowKey) where T : class, ITableEntity   
         {
             var apiPath = GetApiPath<T>();
-            using HttpResponseMessage response = await _httpClient.DeleteAsync($"{_options.ApiHost}/{apiPath}?rowkey={rowKey}");
+            using var response = await _httpClient.DeleteAsync($"{_options.ApiHost}/{apiPath}?rowkey={rowKey}");
 
             response.EnsureSuccessStatusCode();
         }

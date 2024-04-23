@@ -54,7 +54,7 @@
             var pe = PlayerEntityService.GetPlayerEntity(pag.PlayerRowKey);
             
             <tr>
-                <td>A</td>
+                <td>A - Non-Bibs</td>
                 <td>
                     <a class="d-none d-lg-inline" href="/pags/@pag.RowKey">@pe.Name</a> <span class="d-inline d-lg-none">@pe.Name</span>
                     <PlayingForecastIcon Forecast="@pag.Forecast" /> <PositionIcon Position="pe.Position" /> <RagIcon PagEntity="@pag" />
@@ -93,7 +93,7 @@
             var pe = PlayerEntityService.GetPlayerEntity(pag.PlayerRowKey);
             
             <tr>
-                <td>B</td>
+                <td>B - Bibs</td>
                 <td>
                     <a class="d-none d-lg-inline" href="/pags/@pag.RowKey">@pe.Name</a> <span class="d-inline d-lg-none">@pe.Name</span>
                     <PlayingForecastIcon Forecast="@pag.Forecast" /> <PositionIcon Position="pe.Position" /> <RagIcon PagEntity="@pag" />

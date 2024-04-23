@@ -13,7 +13,7 @@ namespace STO.Wasm.Services
 
 		public async Task DeleteEntityAsync<T>(string rowKey) where T : class, ITableEntity
 		{
-			// Delete Entity
+			// Delete entity in Api
 			await apiService.ApiDeleteAsync<T>(rowKey);
 
 			// Refresh data from storage

@@ -79,41 +79,6 @@
 			return ges.First(o => o.RowKey == rowKey);
 		}
 
-		public Game GetGame(string rowKey)
-		{
-			// Get GameEntity
-			var gameEntity = GetGameEntity(rowKey);
-
-			// Get PlayerAtGame's for GameEntity
-			var playersAtGameEntities = GetPlayerAtGameEntitiesForGame(rowKey);
-			
-			// Resolve Pags to ExpandedPags
-			List<ExpandedPag> ePags = (from pag in playersAtGameEntities 
-				let ge = gameEntity 
-				let pe = playerEntityService.GetPlayerEntity(pag.PlayerRowKey) 
-				select new ExpandedPag(pag, ge, pe)).ToList();
-
-			// Add teams to PlayerAtGame
-			var teamA = ePags
-				.Where(pag => pag.PagEntity.Team == "A")
-				.OrderBy(pag => pag.PlayerEntity.Position)
-				.ToList();
-			var teamB = ePags
-				.Where(pag => pag.PagEntity.Team == "B")
-				.OrderBy(pag => pag.PlayerEntity.Position)
-				.ToList();
-
-			// Construct Game
-			var game = new Game(gameEntity)
-			{
-				PlayersAtGame = playersAtGameEntities,
-				TeamA = teamA.Select(ePag => ePag.PagEntity).ToList(),
-				TeamB = teamB.Select(ePag => ePag.PagEntity).ToList()
-			};
-
-			return game;
-		}
-
 		public GameEntity GetNextGameEntity()
 		{
 			var ges = GetGameEntities();

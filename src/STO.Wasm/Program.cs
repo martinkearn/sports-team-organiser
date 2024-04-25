@@ -3,6 +3,7 @@ global using STO.Wasm.Services;
 global using STO.Wasm.Models;
 global using STO.Wasm.Interfaces;
 global using Blazored.LocalStorage;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 
@@ -35,18 +36,10 @@ public class Program
                     policy.RequireAssertion(context =>
                     {
                         var user = context.User;
-                        if (user.Identity is not null && user.Identity.IsAuthenticated)
-                        {
-                            // User is authenticated
-                            //var email = user.FindFirst(c => c.Type == ClaimTypes.Email)?.Value;
-                            var authName = user.Identity.Name;
-                            if (authName == "Martin Kearn")
-                            {
-                                return true;
-                            }
-                        }
-
-                        return false;
+                        if (user.Identity is null || !user.Identity.IsAuthenticated) return false;
+                        // User is authenticated
+                        var authName = user.Identity.Name;
+                        return authName == "Martin Kearn";
                     })
                 );
             });
@@ -71,6 +64,8 @@ public class Program
 
         // Add Auth
         builder.Services.AddCascadingAuthenticationState();
+        if (builder.HostEnvironment.Environment.Equals("localhost", StringComparison.CurrentCultureIgnoreCase))
+            builder.Services.AddSingleton<IAuthorizationHandler, BypassAuthService>();
 
         // Build
         var host = builder.Build();

@@ -1,26 +1,25 @@
 @page "/games/{GameRowKey}"
 @inject IPlayerEntityService PlayerEntityService
 @inject IGameEntityService GameEntityService
-@inject NavigationManager Navigation
 
 <PageTitle>TNF - @_pageTitle</PageTitle>
 
-<h1><i class="fa-solid fa-people-group me-2"></i> <GameEntityTitle GameEntity="@_game.GameEntity" Link="false" /></h1>
+<h1><i class="fa-solid fa-people-group me-2"></i> <GameEntityTitle GameEntity="@_gameEntity" Link="false" /></h1>
 
-<p>@_game.PlayersAtGame.Count() players. @_game.GameEntity.Date.TimeOfDay.Hours:@_game.GameEntity.Date.TimeOfDay.Minutes kick off.</p>
-<p>@_game.GameEntity.Notes</p>
+<p>@_pags.Count() players. @_gameEntity.Date.TimeOfDay.Hours:@_gameEntity.Date.TimeOfDay.Minutes kick off.</p>
+<p>@_gameEntity.Notes</p>
 
 <div class="row">
     <div class="col">
-        <EditForm Model="@_newPagEntity" OnValidSubmit="AddPagEntity" class="row row-cols-lg-auto g-3 align-items-center" Context="newPagEntity">
+        <EditForm Model="@_newPagEntity" OnValidSubmit="AddPagEntity" class="row row-cols-lg-auto g-3 align-items-center">
             <DataAnnotationsValidator />
             <ValidationSummary />
             <div class="input-group col-12">
                 <InputSelect class="form-select" @bind-Value="_newPagEntity.PlayerRowKey">
                     <option value="">Add player to game ...</option>
-                    @foreach (var pe in _playerEntities)
+                    @foreach (var pe in _allPlayerEntities)
                     {
-                        if (_game.PlayersAtGame.FirstOrDefault(pag => pag.PlayerRowKey == pe.RowKey) == default)
+                        if (_pags.FirstOrDefault(pag => pag.PlayerRowKey == pe.RowKey) == default)
                         {
                             <option value="@pe.RowKey">@pe.Name</option>
                         }
@@ -38,124 +37,120 @@
         <tr>
             <th scope="col">Team</th>
             <th scope="col">Player</th>
-            <AuthorizeView Policy="IsAdminEmail">
-                <Authorized>
-                    @if (!_simpleView)
-                    {
-                        <th scope="col" class="text-end">Edit</th>
-                    }
-                </Authorized>
-            </AuthorizeView>
+            @if (!_simpleView)
+            {
+                <th scope="col" class="text-end">Edit</th>
+            }
         </tr>
     </thead>
     <tbody>
-        @foreach (var pag in _game.TeamA)
-        {
-            var pe = PlayerEntityService.GetPlayerEntity(pag.PlayerRowKey);
-            
-            <tr>
-                <td>A - Non-Bibs</td>
-                <td>
-                    <a class="d-none d-lg-inline" href="/pags/@pag.RowKey">@pe.Name</a> <span class="d-inline d-lg-none">@pe.Name</span>
-                    <PlayingForecastIcon Forecast="@pag.Forecast" /> <PositionIcon Position="pe.Position" /> <RagIcon PagEntity="@pag" />
-                    <AuthorizeView Policy="IsAdminEmail">
-                        <Authorized>
-                            @if (!_simpleView)
-                            {
-                                <RatingNumberIcon Rating=@pe.AdminRating />
-                            }
-                        </Authorized>
-                    </AuthorizeView>
-                </td>
+
+    @{
+        List<PlayerAtGameEntity> teamAPags = _pags.Where(o => o.Team == "A").ToList();
+        double teamAAdminRatingTotal = 0;
+    }
+    @foreach (var pag in teamAPags)
+    {
+        var pe = PlayerEntityService.GetPlayerEntity(pag.PlayerRowKey);
+        teamAAdminRatingTotal += pe.AdminRating;
+        <tr>
+            <td>A - Non-Bibs</td>
+            <td>
+                <a class="d-none d-lg-inline" href="/pags/@pag.RowKey">@pe.Name</a> <span class="d-inline d-lg-none">@pe.Name</span>
+                <PlayingForecastIcon Forecast="@pag.Forecast"/> <PositionIcon Position="pe.Position"/> <RagIcon PagEntity="@pag"/>
                 <AuthorizeView Policy="IsAdminEmail">
                     <Authorized>
-                        <td class="text-end">
-                            @if (!_simpleView)
-                            {
-                                <PagRowEditButtons PagEntity="@pag" RefreshMainPage="RefreshGameData" />
-                            }
-                        </td>
+                        @if (!_simpleView)
+                        {
+                            <RatingNumberIcon Rating=@pe.AdminRating/>
+                        }
                     </Authorized>
                 </AuthorizeView>
-            </tr>
-        }
-        @if (_game.TeamA.Count > 0)
-        {
-            <tr>
-                <td colspan="3">
-                    <TeamPlayers Pags="_game.TeamA" TeamName="Team A" />
-                    <hr>
-                </td>
-            </tr>
-        }
-        @foreach (var pag in _game.TeamB)
-        {
-            var pe = PlayerEntityService.GetPlayerEntity(pag.PlayerRowKey);
-            
-            <tr>
-                <td>B - Bibs</td>
-                <td>
-                    <a class="d-none d-lg-inline" href="/pags/@pag.RowKey">@pe.Name</a> <span class="d-inline d-lg-none">@pe.Name</span>
-                    <PlayingForecastIcon Forecast="@pag.Forecast" /> <PositionIcon Position="pe.Position" /> <RagIcon PagEntity="@pag" />
-                    <AuthorizeView Policy="IsAdminEmail">
-                        <Authorized>
-                            @if (!_simpleView)
-                            {
-                                <RatingNumberIcon Rating=@pe.AdminRating />
-                            }
-                        </Authorized>
-                    </AuthorizeView>
-                </td>
+            </td>
+            <td class="text-end">
+                @if (!_simpleView)
+                {
+                    <PagRowEditButtons PagEntity="@pag" RefreshMainPage="RefreshData"/>
+                }
+            </td>
+        </tr>
+    }
+    @if (teamAPags.Any())
+    {
+        var teamAAverageRating = teamAAdminRatingTotal / teamAPags.Count();
+        <tr>
+            <td colspan="3">
+                <span>Team A has @teamAPags.Count() players and a rating of @teamAAverageRating.ToString("#.##")</span>
+                <hr>
+            </td>
+        </tr>
+    }
+
+    @{
+        List<PlayerAtGameEntity> teamBPags = _pags.Where(o => o.Team == "B").ToList();
+        double teamBAdminRatingTotal = 0;
+    }
+    @foreach (var pag in teamBPags)
+    {
+        var pe = PlayerEntityService.GetPlayerEntity(pag.PlayerRowKey);
+        teamBAdminRatingTotal += pe.AdminRating;
+        <tr>
+            <td>B - Bibs</td>
+            <td>
+                <a class="d-none d-lg-inline" href="/pags/@pag.RowKey">@pe.Name</a> <span class="d-inline d-lg-none">@pe.Name</span>
+                <PlayingForecastIcon Forecast="@pag.Forecast"/> <PositionIcon Position="pe.Position"/> <RagIcon PagEntity="@pag"/>
                 <AuthorizeView Policy="IsAdminEmail">
                     <Authorized>
-                        <td class="text-end">
-                            @if (!_simpleView)
-                            {
-                                <PagRowEditButtons PagEntity="@pag" RefreshMainPage="RefreshGameData" />
-                            }
-                        </td>
+                        @if (!_simpleView)
+                        {
+                            <RatingNumberIcon Rating=@pe.AdminRating/>
+                        }
                     </Authorized>
                 </AuthorizeView>
-            </tr>
-        }
-        @if (_game.TeamB.Count > 0)
-        {
-            <tr>
-                <td colspan="3">
-                    <TeamPlayers Pags="_game.TeamB" TeamName="Team B" />
-                    <hr>
-                </td>
-            </tr>
-        }
-        @foreach (var pag in _game.PlayersAtGame.Where(o => string.IsNullOrEmpty(o.Team)))
-        {
-            var pe = PlayerEntityService.GetPlayerEntity(pag.PlayerRowKey);
-            <tr>
-                <td>None</td>
-                <td>
-                    <a class="d-none d-lg-inline" href="/pags/@pag.RowKey">@pe.Name</a> <span class="d-inline d-lg-none">@pe.Name</span>
-                    <PlayingForecastIcon Forecast="@pag.Forecast" /> <PositionIcon Position="pe.Position" /> <RagIcon PagEntity="@pag" />
-                    <AuthorizeView Policy="IsAdminEmail">
-                        <Authorized>
-                            @if (!_simpleView)
-                            {
-                                <RatingNumberIcon Rating=@pe.AdminRating />
-                            }
-                        </Authorized>
-                    </AuthorizeView>
-                </td>
+            </td>
+            <td class="text-end">
+                @if (!_simpleView)
+                {
+                    <PagRowEditButtons PagEntity="@pag" RefreshMainPage="RefreshData"/>
+                }
+            </td>
+        </tr>
+    }
+    @if (teamBPags.Any())
+    {
+        var teamBAverageRating = teamBAdminRatingTotal / teamBPags.Count();
+        <tr>
+            <td colspan="3">
+                <span>Team B has @teamBPags.Count() players and a rating of @teamBAverageRating.ToString("#.##")</span>
+                <hr>
+            </td>
+        </tr>
+    }
+    @foreach (var pag in _pags.Where(o => string.IsNullOrEmpty(o.Team)))
+    {
+        var pe = PlayerEntityService.GetPlayerEntity(pag.PlayerRowKey);
+        <tr>
+            <td>None</td>
+            <td>
+                <a class="d-none d-lg-inline" href="/pags/@pag.RowKey">@pe.Name</a> <span class="d-inline d-lg-none">@pe.Name</span>
+                <PlayingForecastIcon Forecast="@pag.Forecast"/> <PositionIcon Position="pe.Position"/> <RagIcon PagEntity="@pag"/>
                 <AuthorizeView Policy="IsAdminEmail">
                     <Authorized>
-                        <td class="text-end">
-                            @if (!_simpleView)
-                            {
-                                <PagRowEditButtons PagEntity="@pag" RefreshMainPage="RefreshGameData" />
-                            }
-                        </td>
+                        @if (!_simpleView)
+                        {
+                            <RatingNumberIcon Rating=@pe.AdminRating/>
+                        }
                     </Authorized>
                 </AuthorizeView>
-            </tr>
-        }
+            </td>
+            <td class="text-end">
+                @if (!_simpleView)
+                {
+                    <PagRowEditButtons PagEntity="@pag" RefreshMainPage="RefreshData"/>
+                }
+            </td>
+        </tr>
+    }
     </tbody>
 </table>
 
@@ -172,14 +167,15 @@
 </div>
 
 @code {
-    [Parameter]
-    public string GameRowKey { get; set; } = default!;
+    [Parameter] public string GameRowKey { get; set; } = default!;
 
-    private Game _game = default!;
+    private GameEntity _gameEntity = default!;
 
-    private List<PlayerEntity> _playerEntities = [];
+    private List<PlayerAtGameEntity> _pags = default!;
 
-    private PlayerAtGameEntity _newPagEntity = default!;
+    private List<PlayerEntity> _allPlayerEntities = [];
+
+    private PlayerAtGameEntity _newPagEntity = new();
 
     private string _pageTitle = default!;
 
@@ -193,33 +189,26 @@
 
     protected override void OnInitialized()
     {
-        RefreshGameData();
+        RefreshData();
     }
 
     private async Task AddPagEntity()
     {
         await GameEntityService.UpsertPlayerAtGameEntityAsync(_newPagEntity);
-        RefreshGameData();
+        RefreshData();
     }
 
     private async Task CalculateTeams()
     {
-        var playersAtGameWithTeams = await GameEntityService.CalculateTeamsAsync(_game.PlayersAtGame);
-        _game.TeamA = playersAtGameWithTeams
-        	.Where(pag => pag.Team == "A")
-        	.ToList();
-        _game.TeamB = playersAtGameWithTeams
-        	.Where(pag => pag.Team == "B")
-        	.ToList();
-
-        RefreshGameData();
+        _pags = await GameEntityService.CalculateTeamsAsync(_pags);
+        RefreshData();
     }
 
     private async Task ToggleAllPlayed()
     {
-        var played = MarkAsPLayedOrNotPLayed();
-        await GameEntityService.MarkAllPlayedAsync(_game.GameEntity.RowKey, played);
-        RefreshGameData();
+        var played = MarkAsPlayedOrNotPlayed();
+        await GameEntityService.MarkAllPlayedAsync(GameRowKey, played);
+        RefreshData();
     }
 
     void ToggleSimpleView()
@@ -228,9 +217,9 @@
         SetSimpleViewLabel();
     }
 
-    private bool MarkAsPLayedOrNotPLayed()
+    private bool MarkAsPlayedOrNotPlayed()
     {
-        var playedPagsCount = _game.PlayersAtGame.Count(o => o.Played);
+        var playedPagsCount = _pags.Count(o => o.Played);
         var played = (playedPagsCount == 0);
         return played;
     }
@@ -250,24 +239,26 @@
         }
     }
 
-    private void RefreshGameData()
+    private void RefreshData()
     {
-        _playerEntities = PlayerEntityService.GetPlayerEntities();
-        _game = GameEntityService.GetGame(GameRowKey);
+        _allPlayerEntities = PlayerEntityService.GetPlayerEntities();
+        _gameEntity = GameEntityService.GetGameEntity(GameRowKey);
+        _pags = GameEntityService.GetPlayerAtGameEntitiesForGame(GameRowKey);
         _newPagEntity = new PlayerAtGameEntity()
-            {
-                GameRowKey = _game.GameEntity.RowKey,
-                Played = false,
-                Forecast = PlayingOptions.Yes.ToString(),
-            };
-        _pageTitle = _game.GameEntity.Date.ToString("dd MMM");
+        {
+            GameRowKey = GameRowKey,
+            Played = false,
+            Forecast = PlayingOptions.Yes.ToString(),
+        };
+        _pageTitle = _gameEntity.Date.ToString("dd MMM");
         _simpleView = false;
 
         // Set played button label
-        var played = MarkAsPLayedOrNotPLayed();
+        var played = MarkAsPlayedOrNotPlayed();
         _markAllPlayedLabel = (played) ? "Mark all as played" : "Mark all as not played";
 
         //Set simple view label
         SetSimpleViewLabel();
     }
+
 }

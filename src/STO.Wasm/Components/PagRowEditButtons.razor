@@ -12,7 +12,7 @@ else
 }
 <span></span>
 <button type="button" class="btn btn-outline-secondary btn-sm d-none d-md-inline" @onclick="SwitchPagTeam">@PagEntity.Team <i class="fa-solid fa-repeat"></i></button>
-<button type="button" class="btn btn-outline-secondary btn-sm d-none d-lg-inline" @onclick="() => AddTransactionForPlayer()"><i class="fa-solid fa-plus"></i> @_pagDefaultAmount</button>
+<button type="button" class="btn btn-outline-secondary btn-sm d-none d-lg-inline" @onclick="AddTransactionForPlayer"><i class="fa-solid fa-plus"></i> £@_pagDefaultAmount</button>
 <a type="button" class="btn btn-outline-secondary btn-sm d-inline" href="/pags/@PagEntity.RowKey"><i class="fa-solid fa-edit"></i> Edit</a>
 
 @code {

@@ -17,13 +17,6 @@ namespace STO.Wasm.Interfaces
         /// <returns>GameEntity.</returns>
         public GameEntity GetGameEntity(string rowKey);
 
-		/// <summary>
-		/// Gets a single Game.
-		/// </summary>
-		/// <param name="rowKey">The RowKey of the GameEntity which the Game is based on.</param>
-		/// <returns>A Game.</returns>
-		public Game GetGame(string rowKey);
-
         /// <summary>
         /// Gets the next GameEntity in terms of date.
         /// </summary>
@@ -33,13 +26,13 @@ namespace STO.Wasm.Interfaces
         /// <summary>
         /// Deletes the GameEntity and PlayerAtGameEntity associated with a Game.
         /// </summary>
-        /// <param name="gameRowkey">The RowKey for the GameEntity to delete.</param>
-        public Task DeleteGameEntityAsync(string rowkey);
+        /// <param name="rowKey">The RowKey for the GameEntity to delete.</param>
+        public Task DeleteGameEntityAsync(string rowKey);
 
         /// <summary>
         /// Adds a new GameEntity.
         /// </summary>
-        /// <param name="playerEntity">The GameEntity to upsert.</param>
+        /// <param name="gameEntity">The GameEntity to upsert.</param>
         public Task UpsertGameEntityAsync(GameEntity gameEntity);
 
 		/// <summary>
@@ -69,22 +62,23 @@ namespace STO.Wasm.Interfaces
 		/// <summary>
 		/// Distributes PlayerAtGames into teams
 		/// </summary>
-		/// <param name="pag">The PlayerAtGame collection to assign teams to.</param> 
+		/// <param name="pags">The PlayerAtGame collection to assign teams to.</param> 
 		/// <returns>List of PlayerAtGame with team details.</returns>   
 		public Task<List<PlayerAtGameEntity>> CalculateTeamsAsync(List<PlayerAtGameEntity> pags);
 
 		/// <summary>
 		/// Marks all PlayerAtGameEntity in a Game as having played.
 		/// </summary>
-		/// <param name="gameRowkey">The RowKey for the GameEntities to update PlayerAtGame for.</param>
+		/// <param name="gameRowKey">The RowKey for the GameEntities to update PlayerAtGame for.</param>
 		/// <param name="played">Inidicates whether all PlayerAtGame should have played set to true or false</param>
-		public Task MarkAllPlayedAsync(string gameRowkey, bool played);
+		public Task MarkAllPlayedAsync(string gameRowKey, bool played);
 
-        /// <summary>
-        /// Toggles whether a player has played at a game or not and creates/removes trasnactions.
-        /// </summary>
-        /// <param name="pag">The PlayerAtGame to toggle the Played property for. Not used if null.</param>  
-        public Task TogglePlayerAtGamePlayedAsync(PlayerAtGameEntity pag, bool? played);
+		/// <summary>
+		/// Toggles whether a player has played at a game or not and creates/removes trasnactions.
+		/// </summary>
+		/// <param name="pag">The PlayerAtGame to toggle the Played property for. Not used if null.</param>
+		/// <param name="played">Indicates whether to mark the PlayerAtGameEntity as Played or not</param>  
+		public Task TogglePlayerAtGamePlayedAsync(PlayerAtGameEntity pag, bool? played);
 
 		/// <summary>
 		/// A string which can be used as notes when mapping a transaction to a game

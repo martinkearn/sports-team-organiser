@@ -36,18 +36,10 @@ public class Program
                     policy.RequireAssertion(context =>
                     {
                         var user = context.User;
-                        if (user.Identity is not null && user.Identity.IsAuthenticated)
-                        {
-                            // User is authenticated
-                            //var email = user.FindFirst(c => c.Type == ClaimTypes.Email)?.Value;
-                            var authName = user.Identity.Name;
-                            if (authName == "Martin Kearn")
-                            {
-                                return true;
-                            }
-                        }
-
-                        return false;
+                        if (user.Identity is null || !user.Identity.IsAuthenticated) return false;
+                        // User is authenticated
+                        var authName = user.Identity.Name;
+                        return authName == "Martin Kearn";
                     })
                 );
             });
@@ -72,8 +64,8 @@ public class Program
 
         // Add Auth
         builder.Services.AddCascadingAuthenticationState();
-        if (builder.HostEnvironment.Environment.ToLower() == "localhost")
-            builder.Services.AddSingleton<IAuthorizationHandler, AllowAnonymous>();
+        if (builder.HostEnvironment.Environment.Equals("localhost", StringComparison.CurrentCultureIgnoreCase))
+            builder.Services.AddSingleton<IAuthorizationHandler, BypassAuthService>();
 
         // Build
         var host = builder.Build();
@@ -84,19 +76,5 @@ public class Program
         
         // Run app
 		await host.RunAsync();
-    }
-}
-
-/// <summary>
-/// This authorisation handler will bypass all requirements
-/// </summary>
-public class AllowAnonymous : IAuthorizationHandler
-{
-    public Task HandleAsync(AuthorizationHandlerContext context)
-    {
-        foreach (var requirement in context.PendingRequirements.ToList())
-            context.Succeed(requirement); //Simply pass all requirements
-        
-        return Task.CompletedTask;
     }
 }

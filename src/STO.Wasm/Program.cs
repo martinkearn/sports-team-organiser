@@ -3,6 +3,7 @@ global using STO.Wasm.Services;
 global using STO.Wasm.Models;
 global using STO.Wasm.Interfaces;
 global using Blazored.LocalStorage;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 
@@ -71,6 +72,8 @@ public class Program
 
         // Add Auth
         builder.Services.AddCascadingAuthenticationState();
+        if (builder.HostEnvironment.Environment.ToLower() == "localhost")
+            builder.Services.AddSingleton<IAuthorizationHandler, AllowAnonymous>();
 
         // Build
         var host = builder.Build();
@@ -81,5 +84,19 @@ public class Program
         
         // Run app
 		await host.RunAsync();
+    }
+}
+
+/// <summary>
+/// This authorisation handler will bypass all requirements
+/// </summary>
+public class AllowAnonymous : IAuthorizationHandler
+{
+    public Task HandleAsync(AuthorizationHandlerContext context)
+    {
+        foreach (var requirement in context.PendingRequirements.ToList())
+            context.Succeed(requirement); //Simply pass all requirements
+        
+        return Task.CompletedTask;
     }
 }

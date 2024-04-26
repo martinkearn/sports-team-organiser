@@ -1,0 +1,86 @@
+@page "/ratings/addmultiple"
+@inject IRatingService RatingEntityService
+@inject IPlayerService PlayerService
+@inject NavigationManager Navigation
+
+<PageTitle>TNF - @_pageTitle</PageTitle>
+
+<h1><i class="fa-regular fa-star me-2"></i> @_pageTitle</h1>
+
+<p>Ratings are used to help the system work out balanced teams.</p>
+<p>Players will never be shown individual ratings and only the top-rated players will be visible in terms of leaderboards.</p>
+<p>Try not to allow biases towards a player come into your rating; think only about their performance relative to other players in their position.</p>
+<p>1 is low, 5 is high</p>
+
+<table class="table table-striped">
+	<thead>
+	<tr>
+		<th scope="col">Player</th>
+		<th scope="col">Rating <br/> <small>Leave as "Select Rating" to not give a player a rating</small></th>
+	</tr>
+	</thead>
+	<tbody>
+	@foreach (var re in _ratingEntityAllPlayers)
+	{
+		var pe = PlayerService.GetPlayerEntity(re.PlayerRowKey);
+		<tr>
+			<td><PlayerName PlayerRowKey="@re.PlayerRowKey" Link="false"></PlayerName> <PositionIcon Position="pe.Position"></PositionIcon></td>
+			<td>
+				<InputSelect class="form-select" @bind-Value="@re.Rating">
+					<option value="0">Select Rating ...</option>
+					<option value="1">1</option>
+					<option value="2">2</option>
+					<option value="3">3</option>
+					<option value="4">4</option>
+					<option value="5">5</option>
+				</InputSelect>
+			</td>
+		</tr>
+	}
+	</tbody>
+</table>
+
+<div class="modal-footer">
+	@{
+		var resWithValue = _ratingEntityAllPlayers.Where(o => o.Rating != 0).ToList();
+	}
+	<button class="btn btn-primary" @onclick="Add"><i class="fa-solid fa-plus"></i> Add @resWithValue.Count Ratings</button>
+</div>
+
+@code {
+	private List<PlayerEntity> _playerEntities = [];
+
+	private readonly List<RatingEntity> _ratingEntityAllPlayers = [];
+
+	private string _pageTitle = default!;
+
+	protected override void OnInitialized()
+	{
+		RefreshData();
+	}
+
+	private async Task Add()
+	{
+		var resWithvalue = _ratingEntityAllPlayers.Where(o => o.Rating != 0).ToList();
+		foreach (var reWithValue in resWithvalue)
+		{
+			//TODO: Make this a list of tasks and use .WhenAll
+			await RatingEntityService.UpsertRatingEntityAsync(reWithValue);
+		}
+		Navigation.NavigateTo("/ratings/addthanks");
+	}
+
+	private void RefreshData()
+	{
+		_playerEntities = PlayerService.GetPlayerEntities().OrderBy(o => o.Position).ToList();
+		foreach (var pe in _playerEntities)
+		{
+			_ratingEntityAllPlayers.Add(new RatingEntity
+			{
+				 PlayerRowKey = pe.RowKey,
+				 Rating = 0
+			});
+		}
+		_pageTitle = "Add Ratings";
+	}
+}

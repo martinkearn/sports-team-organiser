@@ -18,8 +18,15 @@ namespace STO.Wasm.Interfaces
 		/// <summary>
 		/// Gets all PlayerEntity objects.
 		/// </summary>
-		/// <returns>List of Players.</returns>
+		/// <returns>List of PlayerEntity.</returns>
 		public List<PlayerEntity> GetPlayerEntities();
+
+		/// <summary>
+		/// Gets a list of PlayerEntity based on a list of PlayerAtGameEntity
+		/// </summary>
+		/// <param name="pags">Lis of PlayerAtGameEntity to turn into PlayerEntity</param>
+		/// <returns>List of PlayerEntity.</returns>
+		public List<PlayerEntity> GetPlayerEntitiesFromPags(List<PlayerAtGameEntity> pags);
 
 		/// <summary>
 		/// Gets a PlayerEntity object

@@ -8,6 +8,13 @@ namespace STO.Wasm.Services
 			return [.. dataService.PlayerEntities.OrderBy(o => o.Name)];
 		}
 
+		public List<PlayerEntity> GetPlayerEntitiesFromPags(List<PlayerAtGameEntity> pags)
+		{
+			var allPes = GetPlayerEntities();
+			var pes = pags.Select(pag => allPes.First(o => o.RowKey == pag.PlayerRowKey)).ToList();
+			return pes;
+		}
+
 		public PlayerEntity GetPlayerEntity(string rowKey)
 		{
 			var pes = dataService.PlayerEntities;

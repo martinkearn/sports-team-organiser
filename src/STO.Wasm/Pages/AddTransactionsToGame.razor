@@ -1,7 +1,7 @@
 @page "/quickaddtransactions"
-@inject IPlayerEntityService PlayerEntityService
-@inject IGameEntityService GameEntityService
-@inject ITransactionEntityService TransactionEntityService
+@inject IPlayerService PlayerService
+@inject IGameService GameService
+@inject ITransactionService TransactionService
 @inject NavigationManager Navigation
 
 <PageTitle>Add Payments to Game</PageTitle>
@@ -70,7 +70,7 @@
 
     private void AddProspectTransaction()
     {
-        var pe = PlayerEntityService.GetPlayerEntity(_selectedProspectPagPlayerRowKey);
+        var pe = PlayerService.GetPlayerEntity(_selectedProspectPagPlayerRowKey);
         var prospectTransaction = new TransactionEntity()
         {
             PlayerRowKey = _selectedProspectPagPlayerRowKey,
@@ -85,7 +85,7 @@
         
         foreach (var prospectTransaction in _prospectTransactions)
         {
-            await TransactionEntityService.UpsertTransactionEntityAsync(prospectTransaction);
+            await TransactionService.UpsertTransactionEntityAsync(prospectTransaction);
         }
 
         var nav = $"/games/{_selectedGameRowKey}";
@@ -102,14 +102,14 @@
         if (string.IsNullOrEmpty(_selectedGameRowKey)) return;
         
         _prospectTransactions.Clear();
-        var pags = GameEntityService.GetPlayerAtGameEntitiesForGame(_selectedGameRowKey);
-        _pagPlayerEntities = PlayerEntityService.GetPlayerEntitiesFromPags(pags);
+        var pags = GameService.GetPlayerAtGameEntitiesForGame(_selectedGameRowKey);
+        _pagPlayerEntities = PlayerService.GetPlayerEntitiesFromPags(pags);
     }
 
     private void RefreshData()
     {
-        _gameEntities = GameEntityService.GetGameEntities();
-        _nextGameEntity = GameEntityService.GetNextGameEntity();
+        _gameEntities = GameService.GetGameEntities();
+        _nextGameEntity = GameService.GetNextGameEntity();
         _selectedGameRowKey = _nextGameEntity.RowKey;
         RefreshGame();
     }

@@ -1,7 +1,7 @@
 ﻿namespace STO.Wasm.Services
 {
 	/// <inheritdoc/>
-	public class RatingEntityService(ICachedDataService dataService) : IRatingEntityService
+	public class RatingService(IDataService dataService) : IRatingService
 	{
 		public async Task DeleteRatingEntityAsync(string rowKey)
 		{

@@ -1,6 +1,6 @@
 @page "/transactions/add"
-@inject ITransactionEntityService TransactionEntityService
-@inject IPlayerEntityService PlayerEntityService
+@inject ITransactionService TransactionService
+@inject IPlayerService PlayerService
 @inject NavigationManager Navigation
 
 
@@ -69,14 +69,14 @@
 
 	protected async Task Add()
 	{
-		await TransactionEntityService.UpsertTransactionEntityAsync(_newTransactionEntity);
+		await TransactionService.UpsertTransactionEntityAsync(_newTransactionEntity);
 		Navigation.NavigateTo("/transactions");
 	}
 
 	private void RefreshData()
 	{
 		_newTransactionEntity = new();
-		_playerEntities = PlayerEntityService.GetPlayerEntities();
+		_playerEntities = PlayerService.GetPlayerEntities();
 		_pageTitle = "Add Transaction";
 	}
 }

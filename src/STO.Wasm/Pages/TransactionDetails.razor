@@ -1,6 +1,6 @@
 @page "/transactions/{TransactionRowKey}"
-@inject ITransactionEntityService TransactionEntityService
-@inject IPlayerEntityService PlayerEntityService
+@inject ITransactionService TransactionService
+@inject IPlayerService PlayerService
 @inject NavigationManager Navigation
 
 
@@ -61,14 +61,14 @@
 
 	private async Task DeleteTransaction()
 	{
-		await TransactionEntityService.DeleteTransactionEntityAsync(TransactionRowKey);
+		await TransactionService.DeleteTransactionEntityAsync(TransactionRowKey);
 		Navigation.NavigateTo("/transactions");
 	}
 
 	private void RefreshData()
 	{
-		_transactionEntity = TransactionEntityService.GetTransactionEntity(TransactionRowKey);
-		var playerEntity = PlayerEntityService.GetPlayerEntity(_transactionEntity.PlayerRowKey);
+		_transactionEntity = TransactionService.GetTransactionEntity(TransactionRowKey);
+		var playerEntity = PlayerService.GetPlayerEntity(_transactionEntity.PlayerRowKey);
 		_pageTitle = $"Transaction for {@playerEntity.Name}, {_transactionEntity.Date.Date.ToShortDateString()}";
 	}
 }

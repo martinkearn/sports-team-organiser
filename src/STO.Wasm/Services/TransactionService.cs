@@ -1,7 +1,7 @@
 namespace STO.Wasm.Services
 {
     /// <inheritdoc/>
-    public class TransactionEntityService(ICachedDataService dataService) : ITransactionEntityService
+    public class TransactionService(IDataService dataService) : ITransactionService
     {
         public List<TransactionEntity> GetTransactionEntities()
         {

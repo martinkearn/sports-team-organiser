@@ -3,7 +3,7 @@ using Azure.Data.Tables;
 namespace STO.Wasm.Services
 {
 	/// <inheritdoc/>
-	public class CachedDataService(IApiService apiService, ILocalStorageService localStorageService) : ICachedDataService
+	public class DataService(IApiService apiService, ILocalStorageService localStorageService) : IDataService
 	{
 		public List<PlayerEntity> PlayerEntities { get; set; } = [];
 		public List<TransactionEntity> TransactionEntities { get; set; } = [];
@@ -135,9 +135,9 @@ namespace STO.Wasm.Services
 				// Check Data Details, set lists from local storage and exit if they are up-to-date
 				var apiDdes = await apiService.ApiGetAsync<DataDetailsEntity>();
 				var localDdes = await localStorageService.GetItemAsync<List<DataDetailsEntity>>(nameof(DataDetailsEntity));
-				if (apiDdes?.Count > 0 && localDdes?.Count > 0)
+				if (apiDdes.Count > 0 && localDdes?.Count > 0)
 				{
-					if (apiDdes.First().LastWriteEpoch == localDdes.First()?.LastWriteEpoch)
+					if (apiDdes.First().LastWriteEpoch == localDdes.First().LastWriteEpoch)
 					{
 						await LoadDataFromLocalStorageAsync();
 						return;
@@ -172,34 +172,31 @@ namespace STO.Wasm.Services
 		private async Task RefreshEntitiesFromApiAsync<T>() where T : class, ITableEntity
 		{
 			var data = await apiService.ApiGetAsync<T>();
-            if (data is not null)
+			await localStorageService.SetItemAsync(typeof(T).Name, data);
+
+			if (typeof(T) == typeof(PlayerEntity))
 			{
-                await localStorageService.SetItemAsync(typeof(T).Name, data);
+				PlayerEntities = (List<PlayerEntity>)Convert.ChangeType(data, typeof(List<T>));
+			}
 
-				if (typeof(T) == typeof(PlayerEntity))
-				{
-					PlayerEntities = (List<PlayerEntity>)Convert.ChangeType(data, typeof(List<T>));
-				}
+			if (typeof(T) == typeof(TransactionEntity))
+			{
+				TransactionEntities = (List<TransactionEntity>)Convert.ChangeType(data, typeof(List<T>));
+			}
 
-				if (typeof(T) == typeof(TransactionEntity))
-				{
-					TransactionEntities = (List<TransactionEntity>)Convert.ChangeType(data, typeof(List<T>));
-				}
+			if (typeof(T) == typeof(RatingEntity))
+			{
+				RatingEntities = (List<RatingEntity>)Convert.ChangeType(data, typeof(List<T>));
+			}
 
-				if (typeof(T) == typeof(RatingEntity))
-				{
-					RatingEntities = (List<RatingEntity>)Convert.ChangeType(data, typeof(List<T>));
-				}
+			if (typeof(T) == typeof(GameEntity))
+			{
+				GameEntities = (List<GameEntity>)Convert.ChangeType(data, typeof(List<T>));
+			}
 
-				if (typeof(T) == typeof(GameEntity))
-				{
-					GameEntities = (List<GameEntity>)Convert.ChangeType(data, typeof(List<T>));
-				}
-
-				if (typeof(T) == typeof(PlayerAtGameEntity))
-				{
-					PlayerAtGameEntities = (List<PlayerAtGameEntity>)Convert.ChangeType(data, typeof(List<T>));
-				}
+			if (typeof(T) == typeof(PlayerAtGameEntity))
+			{
+				PlayerAtGameEntities = (List<PlayerAtGameEntity>)Convert.ChangeType(data, typeof(List<T>));
 			}
 		}
 

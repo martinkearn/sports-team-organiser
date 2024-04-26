@@ -3,7 +3,7 @@ namespace STO.Wasm.Interfaces
     /// <summary>
     /// Service for working with Ratings.
     /// </summary>
-    public interface IRatingEntityService
+    public interface IRatingService
     {
         /// <summary>
         /// Gets all RatingEntities.

@@ -1,7 +1,7 @@
 namespace STO.Wasm.Services
 {
 	/// <inheritdoc/>
-	public class PlayerEntityService(ICachedDataService dataService, ITransactionEntityService transactionEntityService) : IPlayerEntityService
+	public class PlayerService(IDataService dataService, ITransactionService transactionService) : IPlayerService
 	{
 		public List<PlayerEntity> GetPlayerEntities()
 		{
@@ -37,7 +37,7 @@ namespace STO.Wasm.Services
 
 		public double GetBalanceForPlayerEntity(string rowKey)
 		{
-			var transactions = transactionEntityService.GetTransactionEntitiesForPlayerEntity(rowKey);
+			var transactions = transactionService.GetTransactionEntitiesForPlayerEntity(rowKey);
 			return transactions.Sum(o => o.Amount);
 		}
 

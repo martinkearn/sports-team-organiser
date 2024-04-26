@@ -53,11 +53,11 @@ public class Program
 
         // Add custom services
         builder.Services.AddSingleton<IApiService, ApiService>();
-		builder.Services.AddSingleton<ICachedDataService, CachedDataService>();
-		builder.Services.AddSingleton<IPlayerEntityService, PlayerEntityService>();
-		builder.Services.AddSingleton<IGameEntityService, GameEntityService>();
-		builder.Services.AddSingleton<ITransactionEntityService, TransactionEntityService>();
-        builder.Services.AddSingleton<IRatingEntityService, RatingEntityService>();
+		builder.Services.AddSingleton<IDataService, DataService>();
+		builder.Services.AddSingleton<IPlayerService, PlayerService>();
+		builder.Services.AddSingleton<IGameService, GameService>();
+		builder.Services.AddSingleton<ITransactionService, TransactionService>();
+        builder.Services.AddSingleton<IRatingService, RatingService>();
 
         // Add Blazored.LocalStorage
         builder.Services.AddBlazoredLocalStorageAsSingleton();
@@ -71,7 +71,7 @@ public class Program
         var host = builder.Build();
 
         // Initialise data
-		var cachedDataService = host.Services.GetRequiredService<ICachedDataService>();
+		var cachedDataService = host.Services.GetRequiredService<IDataService>();
 		await cachedDataService.LoadDataAsync(false, false);
         
         // Run app

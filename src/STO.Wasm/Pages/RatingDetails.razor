@@ -1,7 +1,7 @@
 @page "/ratings/{RatingRowKey}"
-@inject IRatingEntityService RatingEntityService
-@inject IPlayerEntityService PlayerEntityService
-@inject IGameEntityService GameEntityService
+@inject IRatingService RatingEntityService
+@inject IPlayerService PlayerService
+@inject IGameService GameService
 @inject NavigationManager Navigation
 
 <PageTitle>TNF - @_pageTitle</PageTitle>
@@ -71,8 +71,8 @@
 	private void RefreshData()
 	{
 		_ratingEntity = RatingEntityService.GetRatingEntity(RatingRowKey);
-		_playerEntity = PlayerEntityService.GetPlayerEntity(_ratingEntity.PlayerRowKey);
-		_gameEntity = GameEntityService.GetGameEntity(_ratingEntity.GameRowKey);
+		_playerEntity = PlayerService.GetPlayerEntity(_ratingEntity.PlayerRowKey);
+		_gameEntity = GameService.GetGameEntity(_ratingEntity.GameRowKey);
 		_pageTitle = $"Rating for {_playerEntity.Name}, {_gameEntity.Date.Date.ToShortDateString()}";
 	}
 }

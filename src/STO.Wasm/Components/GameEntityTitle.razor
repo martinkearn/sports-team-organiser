@@ -1,4 +1,4 @@
-@inject IGameEntityService GameEntityService
+@inject IGameService GameService
 
 @if (GameEntity != default)
 {
@@ -37,7 +37,7 @@ else
     {
         if (GameEntityRowKey is not null)
         {
-            GameEntity = GameEntityService.GetGameEntity(GameEntityRowKey);
+            GameEntity = GameService.GetGameEntity(GameEntityRowKey);
         }
     }
 }

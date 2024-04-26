@@ -1,6 +1,6 @@
 @page "/ratings/add"
-@inject IRatingEntityService RatingEntityService
-@inject IGameEntityService GameEntityService
+@inject IRatingService RatingEntityService
+@inject IGameService GameService
 @inject NavigationManager Navigation
 
 <PageTitle>TNF - @_pageTitle</PageTitle>
@@ -34,7 +34,7 @@
 				if (_newRatingEntity.GameRowKey != default)
 				{
 					var game = _gameEntities.Single<GameEntity>(o => o.RowKey == _newRatingEntity.GameRowKey);
-					_playersAtGameEntities = GameEntityService.GetPlayerAtGameEntitiesForGame(game.RowKey);
+					_playersAtGameEntities = GameService.GetPlayerAtGameEntitiesForGame(game.RowKey);
 				}
 			}
 			@foreach (var pag in _playersAtGameEntities)
@@ -92,13 +92,13 @@
 		if (_newRatingEntity.GameRowKey != default)
 		{
 			var game = _gameEntities.Single<GameEntity>(o => o.RowKey == _newRatingEntity.GameRowKey);
-			_playersAtGameEntities = GameEntityService.GetPlayerAtGameEntitiesForGame(game.RowKey);
+			_playersAtGameEntities = GameService.GetPlayerAtGameEntitiesForGame(game.RowKey);
 		}
 	}
 
 	private void RefreshData()
 	{
-		_gameEntities = GameEntityService.GetGameEntities();
+		_gameEntities = GameService.GetGameEntities();
 		_pageTitle = "Add Rating";
 	}
 }

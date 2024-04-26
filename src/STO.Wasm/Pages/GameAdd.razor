@@ -1,5 +1,5 @@
 @page "/games/add"
-@inject IGameEntityService GameEntityService
+@inject IGameService GameService
 @inject NavigationManager Navigation
 
 <PageTitle>TNF - @_pageTitle</PageTitle>
@@ -59,7 +59,7 @@
     {
         var dt = new DateTime(_newGameEntity.Date.Year, _newGameEntity.Date.Month, _newGameEntity.Date.Day, _hour, _minute, 0, DateTimeKind.Utc);
         _newGameEntity.Date = dt;
-        await GameEntityService.UpsertGameEntityAsync(_newGameEntity);
+        await GameService.UpsertGameEntityAsync(_newGameEntity);
         Navigation.NavigateTo("/games");
     }
 

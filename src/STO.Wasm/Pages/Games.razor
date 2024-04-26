@@ -1,5 +1,5 @@
 @page "/games"
-@inject IGameEntityService GameEntityService
+@inject IGameService GameService
 
 <PageTitle>TNF - @_pageTitle</PageTitle>
 
@@ -42,7 +42,7 @@
 
 	private void RefreshData()
 	{
-		_gameEntities = GameEntityService.GetGameEntities();
+		_gameEntities = GameService.GetGameEntities();
 		_pageTitle = "Games";
 	}
 }

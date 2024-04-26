@@ -5,7 +5,7 @@ namespace STO.Wasm.Interfaces
     /// <summary>
     /// Service for working with Azure Storage.
     /// </summary>
-    public interface ICachedDataService
+    public interface IDataService
     {
         public List<PlayerEntity> PlayerEntities { get; set; }
 		public List<TransactionEntity> TransactionEntities { get; set; }

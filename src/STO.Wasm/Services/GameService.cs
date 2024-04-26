@@ -1,14 +1,14 @@
 ﻿namespace STO.Wasm.Services
 {
 	/// <inheritdoc/>
-	public class GameEntityService(ICachedDataService dataService, IRatingEntityService ratingEntityService, IPlayerEntityService playerEntityService, ITransactionEntityService transactionEntityService) : IGameEntityService
+	public class GameService(IDataService dataService, IRatingService ratingEntityService, IPlayerService playerService, ITransactionService transactionService) : IGameService
 	{
 		public async Task<List<PlayerAtGameEntity>> CalculateTeamsAsync(List<PlayerAtGameEntity> pags)
 		{
 			// Resolve Pags to ExpandedPags
 			List<ExpandedPag> ePags = (from pag in pags 
 				let ge = GetGameEntity(pag.GameRowKey) 
-				let pe = playerEntityService.GetPlayerEntity(pag.PlayerRowKey) 
+				let pe = playerService.GetPlayerEntity(pag.PlayerRowKey) 
 				select new ExpandedPag(pag, ge, pe)).ToList();
 
 			// Get Yes pags
@@ -118,7 +118,7 @@
 		public async Task TogglePlayerAtGamePlayedAsync(PlayerAtGameEntity pag, bool? played)
 		{
 			// Get player for pag
-			var playerEntity = playerEntityService.GetPlayerEntity(pag.PlayerRowKey);
+			var playerEntity = playerService.GetPlayerEntity(pag.PlayerRowKey);
 
 			if (played != null)
 			{
@@ -141,21 +141,21 @@
 					Date = DateTimeOffset.UtcNow,
 					Notes = GetNotesForGame(pag.GameRowKey)
 				};
-				if (transactionEntityService is not null)
+				if (transactionService is not null)
                 {
-                    await transactionEntityService.UpsertTransactionEntityAsync(transaction);
+                    await transactionService.UpsertTransactionEntityAsync(transaction);
                 }
 			}
 			else
 			{
 				// Get debit transactions (less than £0) for player and game
-				var teForPe = transactionEntityService.GetTransactionEntities().Where(o => o.PlayerRowKey == playerEntity.RowKey);
+				var teForPe = transactionService.GetTransactionEntities().Where(o => o.PlayerRowKey == playerEntity.RowKey);
 				var pagDebitTransactionEntities = teForPe.Where(o => o.Amount < 0);
-				if (transactionEntityService is not null)
+				if (transactionService is not null)
                 {
                     foreach (var pagDebitTransactionEntity in pagDebitTransactionEntities)
                     {
-                        await transactionEntityService.DeleteTransactionEntityAsync(pagDebitTransactionEntity.RowKey);
+                        await transactionService.DeleteTransactionEntityAsync(pagDebitTransactionEntity.RowKey);
                     }
                 }
 			}

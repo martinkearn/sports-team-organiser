@@ -83,8 +83,15 @@ namespace STO.Wasm.Interfaces
 		/// <summary>
 		/// A string which can be used as notes when mapping a transaction to a game
 		/// </summary>
-		/// <param name="rowKey">The RowKey of teh GameEntity to create notes for.</param>
+		/// <param name="rowKey">The RowKey of the GameEntity to create notes for.</param>
 		/// <returns>A string which can be used as notes for a Game.</returns>
 		public string GetNotesForGame(string rowKey);
+
+		/// <summary>
+		/// Returns a title for the GameEntity based on the game's date, title and note
+		/// </summary>
+		/// <param name="rowKey">The RowKey of the GameEntity to create a title for.</param>
+		/// <returns>A string which represents the label for the GameEntity.</returns>
+		public string GetGameLabel(string rowKey);
     }
 }

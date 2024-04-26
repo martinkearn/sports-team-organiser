@@ -1,16 +1,14 @@
 @inject IGameService GameService
 
-@if (GameEntity != default)
+@if (!string.IsNullOrEmpty(_gameLabel))
 {
-    var gameDateLabel = GameEntity.Date.ToString("dd MMM");
-    var gameLabel = string.IsNullOrEmpty(GameEntity.Title) ? gameDateLabel : $"{gameDateLabel} {GameEntity.Title}";
-    @if (Link)
+    if (Link)
     {
-        <a href="/games/@GameEntity.RowKey">@gameLabel</a>
+        <a href="/games/@GameEntity?.RowKey">@_gameLabel</a>
     }
     else
     {
-        @gameLabel
+        @_gameLabel
     }
 }
 else
@@ -27,6 +25,8 @@ else
     
     [Parameter]
     public string? GameEntityRowKey { get; set; }
+
+    private string _gameLabel = default!;
     
     protected override void OnInitialized()
     {
@@ -39,5 +39,7 @@ else
         {
             GameEntity = GameService.GetGameEntity(GameEntityRowKey);
         }
+
+        _gameLabel = (GameEntity != null) ? GameService.GetGameLabel(GameEntity.RowKey) : string.Empty;
     }
 }

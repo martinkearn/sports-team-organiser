@@ -95,6 +95,16 @@
 
 		}
 
+		public string GetGameLabel(string rowKey)
+		{
+			if (string.IsNullOrEmpty(rowKey)) return string.Empty;
+			
+			var ge = GetGameEntity(rowKey);
+			var gameDateLabel = ge.Date.ToString("dd MMM");
+			var gameLabel = string.IsNullOrEmpty(ge.Title) ? gameDateLabel : $"{gameDateLabel} {ge.Title}";
+			return gameLabel;
+		}
+
 		public List<PlayerAtGameEntity> GetPlayerAtGameEntitiesForGame(string gameRowKey)
 		{
 			var pagsForGame = dataService.PlayerAtGameEntities.Where(o => o.GameRowKey == gameRowKey).ToList();

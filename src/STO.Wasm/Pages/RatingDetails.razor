@@ -70,10 +70,6 @@
 	{
 		_ratingEntity = RatingEntityService.GetRatingEntity(RatingRowKey);
 		_playerEntity = PlayerService.GetPlayerEntity(_ratingEntity.PlayerRowKey);
-
-		var gameTitle = (string.IsNullOrEmpty(_ratingEntity.GameRowKey)) ? string.Empty : GameService.GetGameEntity(_ratingEntity.GameRowKey).Date.ToString("dd MMM");
-		//TODO: Add GetGameTitle to game service and have the component use that too	
-		
-		_pageTitle = $"Rating for {_playerEntity.Name} {gameTitle}";
+		_pageTitle = $"Rating for {_playerEntity.Name} {GameService.GetGameLabel(_ratingEntity.GameRowKey)}";
 	}
 }

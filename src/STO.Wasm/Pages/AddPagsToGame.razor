@@ -1,0 +1,103 @@
+@page "/quickaddpags"
+@inject IPlayerEntityService PlayerEntityService
+@inject IGameEntityService GameEntityService
+@inject NavigationManager Navigation
+
+<PageTitle>Add Multiple Players to Game</PageTitle>
+
+<h1><i class="fa-solid fa-people-group me-2"></i> Add Players to Game</h1>
+
+<div class="mb-3">
+    <label class="form-label">Game</label>
+    <InputSelect class="form-select" @bind-Value="_selectedGameRowKey">
+        <option value="">Select Game ...</option>
+        @foreach (var ge in _gameEntities)
+        {
+            var gameRowKey = ge.RowKey;
+            if (gameRowKey == _nextGameEntity?.RowKey)
+            {
+                <option value="@gameRowKey" selected><GameEntityTitle GameEntity="@ge" Link="false" /></option>
+            }
+            else
+            {
+                <option value="@gameRowKey"><GameEntityTitle GameEntity="@ge" Link="false" /></option>
+            }
+        }
+    </InputSelect>
+</div>
+
+<div class="mb-3">
+    <label class="form-label">Add Prospective Players</label>
+    <InputSelect class="form-select" @bind-Value="_selectedProspectPagPlayerRowKey">
+        <option value="">Add Player ...</option>
+        @foreach (var pe in _playerEntities)
+        {
+            <option value="@pe.RowKey">@pe.Name</option>
+        }
+    </InputSelect>
+    <button class="btn btn-outline-secondary" @onclick="AddProspectPag"><i class="fa-solid fa-plus"></i></button>
+</div>
+
+<div class="mb-3">
+    <label class="form-label">Prospective Players</label>
+    @foreach (var prospectPag in _prospectPags)
+    {
+        <p><PlayerName PlayerRowKey="@prospectPag.PlayerRowKey" Link="true" /></p>
+    }
+</div>
+
+<div class="modal-footer">
+    <button class="btn btn-primary" @onclick="AddProspectPagsToGame"><i class="fa-solid fa-plus"></i> Add @_prospectPags.Count Players to Game</button>
+</div>
+
+@code {
+    private List<GameEntity> _gameEntities = [];
+
+    private List<PlayerEntity> _playerEntities = [];
+
+    private List<PlayerAtGameEntity> _prospectPags = [];
+
+    private string _selectedProspectPagPlayerRowKey = default!;
+
+    private string _selectedGameRowKey = default!;
+
+    private GameEntity _nextGameEntity = default!;
+
+    protected override void OnInitialized()
+    {
+        RefreshData();
+    }
+
+    private void AddProspectPag()
+    {
+        var prospectPag = new PlayerAtGameEntity()
+        {
+            PlayerRowKey = _selectedProspectPagPlayerRowKey,
+            GameRowKey = _selectedGameRowKey,
+            Played = false,
+            Forecast = PlayingOptions.Yes.ToString()
+        };
+        _prospectPags.Add(prospectPag);
+    }
+
+    private async Task AddProspectPagsToGame()
+    {
+        foreach (var prospectPag in _prospectPags)
+        {
+            await GameEntityService.UpsertPlayerAtGameEntityAsync(prospectPag);
+        }
+
+        var nav = $"/games/{_selectedGameRowKey}";
+        Navigation.NavigateTo(nav);
+    }
+
+    private void RefreshData()
+    {
+        _gameEntities = GameEntityService.GetGameEntities();
+        _playerEntities = PlayerEntityService.GetPlayerEntities();
+        _nextGameEntity = GameEntityService.GetNextGameEntity();
+        _selectedGameRowKey = _nextGameEntity.RowKey;
+        _selectedProspectPagPlayerRowKey = _playerEntities.First().RowKey;
+    }
+
+}

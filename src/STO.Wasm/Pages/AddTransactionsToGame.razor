@@ -45,7 +45,7 @@
             <label class="form-label">Prospective Payments</label>
             @foreach (var prospectTransaction in _prospectTransactions)
             {
-                <p><CurrencyDisplay Amount="@prospectTransaction.Amount" BlackText="true"></CurrencyDisplay> for <PlayerName PlayerRowKey="@prospectTransaction.PlayerRowKey" Link="false"></PlayerName> <button class="btn btn-outline-secondary btn-sm d-inline" @onclick="() => RemoveProspectTransaction(prospectTransaction)"> x</button></p>
+                <p><CurrencyDisplay Amount="@prospectTransaction.Amount" BlackText="true"></CurrencyDisplay> for <PlayerName PlayerRowKey="@prospectTransaction.PlayerRowKey" Link="false"></PlayerName> </p>
             }
         </div>
 
@@ -80,6 +80,8 @@
 
     private void AddProspectTransaction()
     {
+        if (string.IsNullOrEmpty(_selectedProspectPagPlayerRowKey)) return;
+
         var pe = PlayerService.GetPlayerEntity(_selectedProspectPagPlayerRowKey);
         var prospectTransaction = new TransactionEntity()
         {
@@ -92,7 +94,7 @@
     private async Task AddProspectTransactionsToGame()
     {
         if (string.IsNullOrEmpty(_selectedProspectPagPlayerRowKey)) return;
-        
+
         foreach (var prospectTransaction in _prospectTransactions)
         {
             await TransactionService.UpsertTransactionEntityAsync(prospectTransaction);
@@ -102,15 +104,10 @@
         Navigation.NavigateTo(nav);
     }
 
-    private void RemoveProspectTransaction(TransactionEntity pt)
-    {
-        _prospectTransactions.Remove(pt);
-    }
-
     private void RefreshGame()
     {
         if (string.IsNullOrEmpty(_selectedGameRowKey)) return;
-        
+
         _prospectTransactions.Clear();
         var pags = GameService.GetPlayerAtGameEntitiesForGame(_selectedGameRowKey);
         _pagPlayerEntities = PlayerService.GetPlayerEntitiesFromPags(pags);

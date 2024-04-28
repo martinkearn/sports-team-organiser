@@ -41,7 +41,7 @@
     <label class="form-label">Prospective Players</label>
     @foreach (var prospectPag in _prospectPags)
     {
-        <p><PlayerName PlayerRowKey="@prospectPag.PlayerRowKey" Link="true" /> <button class="btn btn-outline-secondary btn-sm d-inline" @onclick="() => RemoveProspectPag(prospectPag)"> x</button></p>
+        <p><PlayerName PlayerRowKey="@prospectPag.PlayerRowKey" Link="true" /> </p>
     }
 </div>
 
@@ -89,16 +89,11 @@
         var nav = $"/games/{_selectedGameRowKey}";
         Navigation.NavigateTo(nav);
     }
-    
-    private void RemoveProspectPag(PlayerAtGameEntity pag)
-    {
-        _prospectPags.Remove(pag);
-    }
-    
+
     private void RefreshGame()
     {
         if (string.IsNullOrEmpty(_selectedGameRowKey)) return;
-        
+
         _prospectPags.Clear();
     }
 

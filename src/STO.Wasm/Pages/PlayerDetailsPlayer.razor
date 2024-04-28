@@ -1,5 +1,5 @@
 @page "/players/{PlayerRowKey}/player"
-@inject IPlayerEntityService PlayerEntityService
+@inject IPlayerService PlayerService
 @inject NavigationManager Navigation
 
 <PageTitle>TNF - @_pageTitle</PageTitle>
@@ -86,12 +86,12 @@
 
 	async Task Edit()
 	{
-		await PlayerEntityService.UpsertPlayerEntityAsync(_playerEntity);
+		await PlayerService.UpsertPlayerEntityAsync(_playerEntity);
 	}
 
 	private async Task DeletePlayer()
 	{
-		await PlayerEntityService.DeletePlayerEntityAsync(PlayerRowKey);
+		await PlayerService.DeletePlayerEntityAsync(PlayerRowKey);
 		Navigation.NavigateTo("/players");
 	}
 
@@ -99,8 +99,8 @@
 
 	private void RefreshData()
 	{
-		_playerEntity = PlayerEntityService.GetPlayerEntity(PlayerRowKey);
-		_playerEntityBalance = PlayerEntityService.GetBalanceForPlayerEntity(PlayerRowKey);
+		_playerEntity = PlayerService.GetPlayerEntity(PlayerRowKey);
+		_playerEntityBalance = PlayerService.GetBalanceForPlayerEntity(PlayerRowKey);
 		_pageTitle = $"{_playerEntity.Name}";
 	}
 }

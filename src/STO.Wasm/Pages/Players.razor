@@ -1,5 +1,5 @@
 @page "/players"
-@inject IPlayerEntityService PlayerEntityService
+@inject IPlayerService PlayerService
 
 <PageTitle>TNF - @_pageTitle</PageTitle>
 
@@ -45,6 +45,6 @@
 
 	protected override void OnInitialized()
 	{
-		_playerEntities = PlayerEntityService.GetPlayerEntities();
+		_playerEntities = PlayerService.GetPlayerEntities();
 	}
 }

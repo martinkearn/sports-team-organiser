@@ -1,5 +1,5 @@
 @page "/transactions"
-@inject ITransactionEntityService TransactionEntityService
+@inject ITransactionService TransactionService
 
 <PageTitle>TNF - @_pageTitle</PageTitle>
 
@@ -101,7 +101,7 @@
 
 	private void RefreshData()
 	{
-		_transactionEntities = TransactionEntityService.GetTransactionEntities().OrderByDescending(o => o.Date.Date).ToList();
+		_transactionEntities = TransactionService.GetTransactionEntities().OrderByDescending(o => o.Date.Date).ToList();
 		_pageTitle = "Transactions";
 		SetupPages();
 	}

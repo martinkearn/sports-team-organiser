@@ -9,9 +9,8 @@ namespace STO.Models
         [Required]
         public string PlayerRowKey { get; set; } = default!;
         [Required]
-        public string GameRowKey { get; set; } = default!;
-        [Required]
         public double Rating { get; set; } = 0;
+        public string GameRowKey { get; set; } = default!;
         public string Notes { get; set; } = default!;
         public string PartitionKey { get; set; } = default!;
         public string RowKey { get; set; } = default!;

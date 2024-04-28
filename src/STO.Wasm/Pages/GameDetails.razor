@@ -1,6 +1,6 @@
 @page "/games/{GameRowKey}"
-@inject IPlayerEntityService PlayerEntityService
-@inject IGameEntityService GameEntityService
+@inject IPlayerService PlayerService
+@inject IGameService GameService
 
 <PageTitle>TNF - @_pageTitle</PageTitle>
 
@@ -51,7 +51,7 @@
     }
     @foreach (var pag in teamAPags)
     {
-        var pe = PlayerEntityService.GetPlayerEntity(pag.PlayerRowKey);
+        var pe = PlayerService.GetPlayerEntity(pag.PlayerRowKey);
         teamAAdminRatingTotal += pe.AdminRating;
         <tr>
             <td>A - Non-Bibs</td>
@@ -92,7 +92,7 @@
     }
     @foreach (var pag in teamBPags)
     {
-        var pe = PlayerEntityService.GetPlayerEntity(pag.PlayerRowKey);
+        var pe = PlayerService.GetPlayerEntity(pag.PlayerRowKey);
         teamBAdminRatingTotal += pe.AdminRating;
         <tr>
             <td>B - Bibs</td>
@@ -128,7 +128,7 @@
     }
     @foreach (var pag in _pags.Where(o => string.IsNullOrEmpty(o.Team)))
     {
-        var pe = PlayerEntityService.GetPlayerEntity(pag.PlayerRowKey);
+        var pe = PlayerService.GetPlayerEntity(pag.PlayerRowKey);
         <tr>
             <td>None</td>
             <td>
@@ -194,20 +194,20 @@
 
     private async Task AddPagEntity()
     {
-        await GameEntityService.UpsertPlayerAtGameEntityAsync(_newPagEntity);
+        await GameService.UpsertPlayerAtGameEntityAsync(_newPagEntity);
         RefreshData();
     }
 
     private async Task CalculateTeams()
     {
-        _pags = await GameEntityService.CalculateTeamsAsync(_pags);
+        _pags = await GameService.CalculateTeamsAsync(_pags);
         RefreshData();
     }
 
     private async Task ToggleAllPlayed()
     {
         var played = MarkAsPlayedOrNotPlayed();
-        await GameEntityService.MarkAllPlayedAsync(GameRowKey, played);
+        await GameService.MarkAllPlayedAsync(GameRowKey, played);
         RefreshData();
     }
 
@@ -241,9 +241,9 @@
 
     private void RefreshData()
     {
-        _allPlayerEntities = PlayerEntityService.GetPlayerEntities();
-        _gameEntity = GameEntityService.GetGameEntity(GameRowKey);
-        _pags = GameEntityService.GetPlayerAtGameEntitiesForGame(GameRowKey);
+        _allPlayerEntities = PlayerService.GetPlayerEntities();
+        _gameEntity = GameService.GetGameEntity(GameRowKey);
+        _pags = GameService.GetPlayerAtGameEntitiesForGame(GameRowKey);
         _newPagEntity = new PlayerAtGameEntity()
         {
             GameRowKey = GameRowKey,

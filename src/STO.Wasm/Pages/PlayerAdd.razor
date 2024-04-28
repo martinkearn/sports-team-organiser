@@ -1,5 +1,5 @@
 @page "/players/add"
-@inject IPlayerEntityService PlayerEntityService
+@inject IPlayerService PlayerService
 @inject NavigationManager Navigation
 
 <PageTitle>TNF - @_pageTitle</PageTitle>
@@ -55,7 +55,7 @@
 
 	private async Task Add()
 	{
-		await PlayerEntityService.UpsertPlayerEntityAsync(_newPlayerEntity);
+		await PlayerService.UpsertPlayerEntityAsync(_newPlayerEntity);
 		Navigation.NavigateTo("/players");
 	}
 

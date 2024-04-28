@@ -1,4 +1,4 @@
-﻿@inject IPlayerEntityService PlayerEntityService
+﻿@inject IPlayerService PlayerService
 
 @if (_pe != default)
 {
@@ -29,7 +29,7 @@ else
     {
         if (PlayerRowKey is not null)
         {
-            _pe = PlayerEntityService.GetPlayerEntity(PlayerRowKey);
+            _pe = PlayerService.GetPlayerEntity(PlayerRowKey);
         }
     }
 }

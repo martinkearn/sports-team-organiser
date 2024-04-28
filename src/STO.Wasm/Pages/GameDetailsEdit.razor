@@ -1,5 +1,5 @@
 @page "/games/{GameRowKey}/edit"
-@inject IGameEntityService GameEntityService
+@inject IGameService GameService
 @inject NavigationManager Navigation
 
 <PageTitle>TNF - @_pageTitle</PageTitle>
@@ -66,18 +66,18 @@
     {
         var dt = new DateTime(_gameEntity.Date.Year, _gameEntity.Date.Month, _gameEntity.Date.Day, _hour, _minute, 0, DateTimeKind.Utc);
         _gameEntity.Date = dt;
-        await GameEntityService.UpsertGameEntityAsync(_gameEntity);
+        await GameService.UpsertGameEntityAsync(_gameEntity);
     }
 
     private async Task DeleteGame()
     {
-        await GameEntityService.DeleteGameEntityAsync(GameRowKey);
+        await GameService.DeleteGameEntityAsync(GameRowKey);
         Navigation.NavigateTo("/games");
     }
 
     private void RefreshData()
     {
-        _gameEntity = GameEntityService.GetGameEntity(GameRowKey);
+        _gameEntity = GameService.GetGameEntity(GameRowKey);
         _hour = _gameEntity.Date.Hour;
         _minute = _gameEntity.Date.Minute;
 

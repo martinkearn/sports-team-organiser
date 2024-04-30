@@ -1,4 +1,4 @@
-@page "/cachedadmin"
+@page "/admin"
 @using Microsoft.Extensions.Configuration
 @inject IConfiguration Configuration
 @inject IWebAssemblyHostEnvironment Env
@@ -10,34 +10,34 @@
 
 <h1>Tuesday.Football Admin Portal</h1>
 
+<h2>Config</h2>
+<p>SettingsFile: <b>@Configuration["SettingsFile"]</b></p>
+
+<p>StorageConfiguration:ApiHost: <b>@Configuration["ApiConfiguration:ApiHost"]</b></p>
+
+<p>AzureAdB2C:ClientId: <b>@Configuration["AzureAdB2C:ClientId"]</b></p>
+
+<p>AzureAdB2C:Authority: <b>@Configuration["AzureAdB2C:Authority"]</b></p>
+
+<p>Environment: <b>@Env.Environment</b></p>
+
+@*<p>Authentication state: <b>@context.User.Identity?.Name</b></p>*@
+
+<p>IsAdminEmail?: <b>Yes</b></p>
+
+<p>Claims</p>
+@if (_claims.Any())
+{
+	<ul>
+		@foreach (var claim in _claims)
+		{
+			<li>@claim.Type: @claim.Value</li>
+		}
+	</ul>
+}
+
 <AuthorizeView Policy="IsAdminEmail">
 	<Authorized>
-		<h2>Config</h2>
-		<p>SettingsFile: <b>@Configuration["SettingsFile"]</b></p>
-
-		<p>StorageConfiguration:ApiHost: <b>@Configuration["ApiConfiguration:ApiHost"]</b></p>
-
-		<p>AzureAdB2C:ClientId: <b>@Configuration["AzureAdB2C:ClientId"]</b></p>
-
-		<p>AzureAdB2C:Authority: <b>@Configuration["AzureAdB2C:Authority"]</b></p>
-
-		<p>Environment: <b>@Env.Environment</b></p>
-
-		@*<p>Authentication state: <b>@context.User.Identity?.Name</b></p>*@
-
-		<p>IsAdminEmail?: <b>Yes</b></p>
-
-		<p>Claims</p>
-		@if (_claims.Any())
-		{
-			<ul>
-				@foreach (var claim in _claims)
-				{
-					<li>@claim.Type: @claim.Value</li>
-				}
-			</ul>
-		}
-
 		<h2>Data</h2>
 		<button class="btn btn-primary" @onclick="ClearLocalData">Clear Local Data</button>
 		<button class="btn btn-primary" @onclick="() => RefreshData(true)">Refresh Data</button>

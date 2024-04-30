@@ -37,16 +37,20 @@
         <tr>
             <th scope="col">Team</th>
             <th scope="col">Player</th>
-            @if (!_simpleView)
-            {
-                <th scope="col" class="text-end">Edit</th>
-            }
+            <AuthorizeView Policy="IsAdminEmail">
+                <Authorized>
+                    @if (!_simpleView)
+                    {
+                        <th scope="col" class="text-end">Edit</th>
+                    }
+                </Authorized>
+            </AuthorizeView>
         </tr>
     </thead>
     <tbody>
 
     @{
-        List<PlayerAtGameEntity> teamAPags = _pags.Where(o => o.Team == "A").ToList();
+        var teamAPags = _pags.Where(o => o.Team == "A").ToList();
         double teamAAdminRatingTotal = 0;
     }
     @foreach (var pag in teamAPags)

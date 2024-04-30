@@ -37,10 +37,14 @@
         <tr>
             <th scope="col">Team</th>
             <th scope="col">Player</th>
-            @if (!_simpleView)
-            {
-                <th scope="col" class="text-end">Edit</th>
-            }
+            <AuthorizeView Policy="IsAdminEmail">
+                <Authorized>
+                    @if (!_simpleView)
+                    {
+                        <th scope="col" class="text-end">Edit</th>
+                    }
+                </Authorized>
+            </AuthorizeView>
         </tr>
     </thead>
     <tbody>

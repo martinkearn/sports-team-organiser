@@ -36,11 +36,22 @@
     <script src="_content/Microsoft.Authentication.WebAssembly.Msal/AuthenticationService.js"></script>
     <script src="_framework/blazor.webassembly.js" autostart="false"></script>
     <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        
         if (window.location.hostname.includes("localhost"))
         {
-          Blazor.start({
-            environment: "Localhost"
-          });
+            if (urlParams.has('bypassauth'))
+            {
+                Blazor.start({
+                    environment: "LocalhostBypassAuth"
+                });
+            }
+            else
+            {
+                Blazor.start({
+                    environment: "Localhost"
+                });
+            }
         }
         else if (window.location.hostname.includes("blazorwasm-tnfdev.azurewebsites.net"))
         {

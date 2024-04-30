@@ -11,6 +11,7 @@
     <ProjectReference Include="..\STO.Models\STO.Models.csproj" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.2" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="8.0.0" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.AspNetCore.WebUtilities" />
     <PackageReference Include="Microsoft.Authentication.WebAssembly.Msal" Version="8.0.2" />
     <PackageReference Include="Microsoft.AspNetCore.Components.Authorization" Version="8.0.2" />
     <PackageReference Include="Microsoft.Extensions.Http" Version="2.1.0" />

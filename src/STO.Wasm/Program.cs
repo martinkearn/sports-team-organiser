@@ -59,7 +59,9 @@ builder.Services.AddBlazoredLocalStorageAsSingleton();
 
 // Add Auth
 builder.Services.AddCascadingAuthenticationState();
-if (builder.HostEnvironment.Environment.Equals("localhost", StringComparison.CurrentCultureIgnoreCase))
+
+// Bypass Auth for local host if the "?bypassauth" query string is present
+if (builder.HostEnvironment.Environment.Equals("LocalhostBypassAuth", StringComparison.CurrentCultureIgnoreCase))
     builder.Services.AddSingleton<IAuthorizationHandler, BypassAuthService>();
 
 // Build

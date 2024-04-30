@@ -6,10 +6,7 @@
 		public async Task<List<PlayerAtGameEntity>> CalculateTeamsAsync(List<PlayerAtGameEntity> pags)
 		{
 			// Resolve Pags to ExpandedPags
-			List<ExpandedPag> ePags = (from pag in pags 
-				let ge = GetGameEntity(pag.GameRowKey) 
-				let pe = playerService.GetPlayerEntity(pag.PlayerRowKey) 
-				select new ExpandedPag(pag, ge, pe)).ToList();
+			var ePags = ExpandPags(pags);
 
 			// Get Yes pags
 			var newEPags = new List<ExpandedPag>();
@@ -108,7 +105,17 @@
 		public List<PlayerAtGameEntity> GetPlayerAtGameEntitiesForGame(string gameRowKey)
 		{
 			var pagsForGame = dataService.PlayerAtGameEntities.Where(o => o.GameRowKey == gameRowKey).ToList();
-			return pagsForGame;
+			
+			// Resolve Pags to ExpandedPags
+			var ePags = ExpandPags(pagsForGame);
+			
+			// Sort by position
+			ePags = ePags.OrderBy(o => o.PlayerEntity.Position).ToList();
+			
+			// Re-create list of pags
+			var orderedPags = ePags.Select(epag => epag.PagEntity).ToList();
+
+			return orderedPags;
 		}
 
 		public PlayerAtGameEntity GetPlayerAtGameEntity(string rowKey)
@@ -182,6 +189,15 @@
 		public async Task UpsertPlayerAtGameEntityAsync(PlayerAtGameEntity pagEntity)
 		{
 			await dataService.UpsertEntityAsync(pagEntity);
+		}
+
+		private List<ExpandedPag> ExpandPags(List<PlayerAtGameEntity> pags)
+		{
+			List<ExpandedPag> ePags = (from pag in pags 
+				let ge = GetGameEntity(pag.GameRowKey) 
+				let pe = playerService.GetPlayerEntity(pag.PlayerRowKey) 
+				select new ExpandedPag(pag, ge, pe)).ToList();
+			return ePags;
 		}
 	}
 

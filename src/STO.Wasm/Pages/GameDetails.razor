@@ -50,7 +50,7 @@
     <tbody>
 
     @{
-        List<PlayerAtGameEntity> teamAPags = _pags.Where(o => o.Team == "A").ToList();
+        var teamAPags = _pags.Where(o => o.Team == "A").ToList();
         double teamAAdminRatingTotal = 0;
     }
     @foreach (var pag in teamAPags)

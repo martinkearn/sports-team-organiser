@@ -7,9 +7,9 @@
 
 <AuthorizeView Policy="IsAdminEmail">
 	<Authorized>
-		<div>
-			<a class="btn btn-primary me-3 mb-3" href="/ratings/add"><i class="fa-solid fa-plus"></i> Add Rating</a>
-			<a class="btn btn-primary me-3 mb-3" href="/ratings/addmultiple"><i class="fa-solid fa-plus"></i> Add Multiple Ratings</a>
+		<div class="hstack gap-2">
+			<a class="btn btn-secondary" href="/ratings/add"><i class="fa-solid fa-plus"></i> Add Rating</a>
+			<a class="btn btn-secondary" href="/ratings/addmultiple"><i class="fa-solid fa-plus"></i> Add Multiple Ratings</a>
 		</div>
 
 		<table class="table table-striped">
@@ -54,7 +54,7 @@
 	</Authorized>
 	<NotAuthorized>
 		<h4>Access Denied!</h4>
-		<a class="btn btn-primary" href="authentication/login"><i class="fa-solid fa-key me-2"></i> Log in</a>
+		<a class="btn btn-secondary" href="authentication/login"><i class="fa-solid fa-key me-2"></i> Log in</a>
 	</NotAuthorized>
 </AuthorizeView>
 

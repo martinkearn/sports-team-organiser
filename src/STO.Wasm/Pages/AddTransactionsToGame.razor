@@ -49,14 +49,14 @@
             }
         </div>
 
-        <div class="modal-footer">
-            <button class="btn btn-primary" @onclick="AddProspectTransactionsToGame"><i class="fa-solid fa-plus"></i> Add @_prospectTransactions.Count Payments to Game</button>
+        <div class="hstack gap-2">
+            <button class="btn btn-secondary" @onclick="AddProspectTransactionsToGame"><i class="fa-solid fa-plus"></i> Add @_prospectTransactions.Count Payments to Game</button>
         </div>
 
     </Authorized>
     <NotAuthorized>
         <h4>Access Denied!</h4>
-        <a class="btn btn-primary" href="authentication/login"><i class="fa-solid fa-key me-2"></i> Log in</a>
+        <a class="btn btn-secondary" href="authentication/login"><i class="fa-solid fa-key me-2"></i> Log in</a>
     </NotAuthorized>
 </AuthorizeView>
 

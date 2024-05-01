@@ -32,15 +32,15 @@
     <InputText class="form-control" @bind-Value="_gameEntity.Notes" @bind-Value:after="() => Edit()" />
 </div>
 
-<div class="modal-footer px-0">
-    <a class="btn btn-primary" href="/games/@GameRowKey"><i class="fa-solid fa-arrow-left"></i>Back to Game</a>
+<div class="hstack gap-2">
+    <a class="btn btn-secondary" href="/games/@GameRowKey"><i class="fa-solid fa-arrow-left"></i>Back to Game</a>
 
     <AuthorizeView Policy="IsAdminEmail">
         <Authorized>
             <DeleteButtonWithCheck @rendermode="RenderMode.InteractiveAuto" DeleteWhatLabel="@_pageTitle" ButtonLabel="Delete" ParentPageCallback="DeleteGame" />
         </Authorized>
         <NotAuthorized>
-            <a class="btn btn-primary disabled"><i class="fa-solid fa-trash"></i> Delete</a>
+            <a class="btn btn-secondary disabled"><i class="fa-solid fa-trash"></i> Delete</a>
         </NotAuthorized>
     </AuthorizeView>
 </div>

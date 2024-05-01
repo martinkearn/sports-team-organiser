@@ -34,14 +34,14 @@
 			<p>No Notes</p>
 		}
 
-		<div class="modal-footer">
-			<a class="btn btn-primary" href="/ratings/"><i class="fa-solid fa-arrow-left"></i>All Ratings</a>
+		<div class="hstack gap-2">
+			<a class="btn btn-secondary" href="/ratings/"><i class="fa-solid fa-arrow-left"></i>All Ratings</a>
 			<DeleteButtonWithCheck DeleteWhatLabel="@_pageTitle" ButtonLabel="Delete" ParentPageCallback="DeleteRating" />
 		</div>
 	</Authorized>
 	<NotAuthorized>
 		<h4>Access Denied!</h4>
-		<a class="btn btn-primary" href="authentication/login"><i class="fa-solid fa-key me-2"></i> Log in</a>
+		<a class="btn btn-secondary" href="authentication/login"><i class="fa-solid fa-key me-2"></i> Log in</a>
 	</NotAuthorized>
 </AuthorizeView>
 

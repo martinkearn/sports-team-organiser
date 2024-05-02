@@ -57,15 +57,15 @@
     <span>Balance: <CurrencyDisplay Amount="@_playerEntityBalance" /></span>
 </div>
 
-<div class="modal-footer">
-    <a class="btn btn-primary" href="/games/@_pagEntity.GameRowKey"><i class="fa-solid fa-arrow-left"></i> Back to Game</a>
+<div class="hstack gap-2">
+    <a class="btn btn-secondary" href="/games/@_pagEntity.GameRowKey"><i class="fa-solid fa-arrow-left"></i> Back to Game</a>
 
     <AuthorizeView Policy="IsAdminEmail">
         <Authorized>
             <DeleteButtonWithCheck DeleteWhatLabel="@_pageTitle" ButtonLabel="Delete" ParentPageCallback="DeletePag" />
         </Authorized>
         <NotAuthorized>
-            <a class="btn btn-primary disabled"><i class="fa-solid fa-trash"></i> Delete</a>
+            <a class="btn btn-secondary disabled"><i class="fa-solid fa-trash"></i> Delete</a>
         </NotAuthorized>
     </AuthorizeView>
 </div>

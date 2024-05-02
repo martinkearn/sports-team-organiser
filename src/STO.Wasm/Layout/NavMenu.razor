@@ -9,32 +9,32 @@
 
 <div class="@NavMenuCssClass nav-scrollable" @onclick="ToggleNavMenu">
     <nav class="flex-column">
-        <div class="nav-item px-3">
+        <div class="nav-item">
             <NavLink class="nav-link" href="" Match="NavLinkMatch.All"><i class="fa-solid fa-house me-2"></i>Home</NavLink>
         </div>
-        <div class="nav-item px-3">
+        <div class="nav-item">
             <NavLink class="nav-link" href="games"><i class="fa-solid fa-people-group me-2"></i>Games</NavLink>
         </div>
-        <div class="nav-item px-3">
+        <div class="nav-item">
             <NavLink class="nav-link" href="players"><i class="fa-solid fa-user me-2"></i>Players</NavLink>
         </div>
-        <div class="nav-item px-3">
+        <div class="nav-item">
             <NavLink class="nav-link" href="transactions"><i class="fa-solid fa-coins me-2"></i>Transactions</NavLink>
         </div>
         <AuthorizeView Policy="IsAdminEmail">
             <Authorized>
-                <div class="nav-item px-3">
+                <div class="nav-item">
                     <NavLink class="nav-link" href="ratings"><i class="fa-regular fa-star me-2"></i>Ratings</NavLink>
                 </div>
-                <div class="nav-item px-3">
+                <div class="nav-item">
                     <NavLink class="nav-link" href="admin"><i class="fa-solid fa-key me-2"></i> Admin</NavLink>
                 </div>
             </Authorized>
         </AuthorizeView>
-        <div class="nav-item px-3">
+        <div class="nav-item">
             <NavLink class="nav-link" href="https://github.com/martinkearn/sports-team-organiser/issues"><i class="fa-solid fa-question me-2"></i>Report an issue</NavLink>
         </div>
-        <div class="nav-item px-3">
+        <div class="nav-item">
             <LoginDisplay />
         </div>
     </nav>

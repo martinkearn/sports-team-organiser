@@ -40,11 +40,11 @@
 	</tbody>
 </table>
 
-<div class="modal-footer">
+<div class="hstack gap-2">
 	@{
 		var resWithValue = _ratingEntityAllPlayers.Where(o => o.Rating != 0).ToList();
 	}
-	<button class="btn btn-primary" @onclick="Add"><i class="fa-solid fa-plus"></i> Add @resWithValue.Count Ratings</button>
+	<button class="btn btn-secondary" @onclick="Add"><i class="fa-solid fa-plus"></i> Add @resWithValue.Count Ratings</button>
 </div>
 
 @code {

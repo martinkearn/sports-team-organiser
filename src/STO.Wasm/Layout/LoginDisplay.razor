@@ -3,10 +3,10 @@
 
 <AuthorizeView>
     <Authorized>
-        <a class="nav-link" @onclick="BeginLogOut" href="#"><i class="fa-solid fa-key me-2"></i> Log out @context.User.Identity?.Name</a>
+        <a class="nav-link" @onclick="BeginLogOut" href="#">Logout</a>
     </Authorized>
     <NotAuthorized>
-        <a class="nav-link" href="authentication/login"><i class="fa-solid fa-key me-2"></i> Log in</a>
+        <a class="nav-link" href="authentication/login">Login</a>
     </NotAuthorized>
 </AuthorizeView>
 

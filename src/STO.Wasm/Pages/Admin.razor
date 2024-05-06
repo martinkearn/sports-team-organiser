@@ -6,11 +6,10 @@
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject IDataService DataService
 
-<PageTitle>Tuesday.Football</PageTitle>
+<PageTitle>TNF - @_pageTitle</PageTitle>
 
-<h1>Tuesday.Football Admin Portal</h1>
+<h1><i class="fa-solid fa-key me-2"></i> @_pageTitle</h1>
 
-<h2>Config</h2>
 <p>SettingsFile: <b>@Configuration["SettingsFile"]</b></p>
 
 <p>StorageConfiguration:ApiHost: <b>@Configuration["ApiConfiguration:ApiHost"]</b></p>
@@ -57,7 +56,7 @@
 		}
 		@foreach (var pag in _allPlayerAtGame)
 		{
-			<p><a href="/pags/@pag.RowKey">PlayerAtGame, @pag.RowKey, @pag.PlayerRowKey, @pag.GameRowKey</a></p>
+			<p><a href="/games/pags/@pag.RowKey">PlayerAtGame, @pag.RowKey, @pag.PlayerRowKey, @pag.GameRowKey</a></p>
 		}
 		@foreach (var r in _allRatings)
 		{
@@ -75,6 +74,7 @@
 	private List<PlayerAtGameEntity> _allPlayerAtGame = [];
 	private List<RatingEntity> _allRatings = [];
 	private IEnumerable<Claim> _claims = Enumerable.Empty<Claim>();
+	private string _pageTitle = default!;
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -83,6 +83,7 @@
 
 	private async Task RefreshData(bool forceApi)
 	{
+		_pageTitle = "Admin";
 		var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
 		var user = authState.User;
 		if (user.Identity is not null && user.Identity.IsAuthenticated)
@@ -94,6 +95,7 @@
 		_allGames = await DataService.QueryEntitiesAsync<GameEntity>();
 		_allPlayerAtGame = await DataService.QueryEntitiesAsync<PlayerAtGameEntity>();
 		_allRatings = await DataService.QueryEntitiesAsync<RatingEntity>();
+
 	}
 
 	private async Task ClearLocalData()

@@ -11,14 +11,17 @@
 	<thead>
 		<tr>
 			<th scope="col">Date</th>
+			<th scope="col">Players</th>
 			<th scope="col">Notes</th>
 		</tr>
 	</thead>
 	<tbody>
 		@foreach (var ge in _gameEntities)
 		{
+			var pags = GameService.GetPlayerAtGameEntitiesForGame(ge.RowKey);
 			<tr>
 				<td><GameEntityTitle GameEntity="@ge" Link="true" /></td>
+				<td>@pags.Count</td>
 				<td>@ge.Notes</td>
 			</tr>
 		}

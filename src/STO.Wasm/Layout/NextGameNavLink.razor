@@ -1,0 +1,14 @@
+@inject IGameService GameService
+
+<li><NavLink class="dropdown-item" href="@_nextGameLink" Match="NavLinkMatch.All">Next Game</NavLink></li>
+
+@code {
+    private string _nextGameLink = default!;
+
+    protected override void OnInitialized()
+    {
+        var nextGe = GameService.GetNextGameEntity();
+        _nextGameLink = "/games/" +nextGe.RowKey;
+    }
+
+}

@@ -67,6 +67,13 @@ namespace STO.Wasm.Interfaces
 		public Task<List<PlayerAtGameEntity>> CalculateTeamsAsync(List<PlayerAtGameEntity> pags);
 
 		/// <summary>
+		/// Removes the team assignment for all PlayerAtGame in a Game
+		/// </summary>
+		/// <param name="gameRowKey">The RowKey for the GameEntity to remove team asisgnments for</param>
+		/// <returns>Nothing</returns>
+		public Task ResetTeamsAsync(string gameRowKey);
+
+		/// <summary>
 		/// Marks all PlayerAtGameEntity in a Game as having played.
 		/// </summary>
 		/// <param name="gameRowKey">The RowKey for the GameEntities to update PlayerAtGame for.</param>

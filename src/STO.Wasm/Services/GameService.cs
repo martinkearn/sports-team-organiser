@@ -40,6 +40,20 @@
             return newEPags.Select(ep => ep.PagEntity).ToList();
         }
 
+		public async Task ResetTeamsAsync(string gameRowKey)
+		{
+			var pags = GetPlayerAtGameEntitiesForGame(gameRowKey);
+			
+			// Using a For loop because we are modifying the collection as we go
+			var index = 0;
+			for (; index < pags.Count; index++)
+			{
+				var pag = pags[index];
+				pag.Team = string.Empty;
+				await UpsertPlayerAtGameEntityAsync(pag);
+			}
+		}
+
 		public async Task DeleteGameEntityAsync(string rowkey)
 		{
 			// Delete Ratings

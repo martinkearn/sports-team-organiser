@@ -158,17 +158,25 @@
     </tbody>
 </table>
 
-<div class="hstack gap-2">
-    <a class="btn btn-secondary" href="/games/"><i class="fa-solid fa-arrow-left"></i>All Games</a>
-    <a class="btn btn-secondary" href="/games/@GameRowKey/edit"><i class="fa-solid fa-edit"></i>Edit</a>
-    <AuthorizeView Policy="IsAdminEmail">
-        <Authorized>
-            <button class="btn btn-secondary" @onclick="ToggleSimpleView"><i class=@_simpleViewCss></i> @_simpleViewLabel</button>
-            <button class="btn btn-secondary" @onclick="ToggleAllPlayed"><i class="fa-solid fa-clipboard-list"></i> @_markAllPlayedLabel</button>
-            <button class="btn btn-secondary" @onclick="CalculateTeams"><i class="fa-solid fa-gear"></i> Calculate Teams</button>
-        </Authorized>
-    </AuthorizeView>
-</div>
+@if (_showLongRunning)
+{
+    <LongRunning />
+}
+else
+{
+    <div class="hstack gap-2">
+        <a class="btn btn-secondary" href="/games/"><i class="fa-solid fa-arrow-left"></i> All Games</a>
+        <a class="btn btn-secondary" href="/games/@GameRowKey/edit"><i class="fa-solid fa-edit"></i> Edit</a>
+        <AuthorizeView Policy="IsAdminEmail">
+            <Authorized>
+                <button class="btn btn-secondary" @onclick="ToggleSimpleView"><i class=@_simpleViewCss></i> @_simpleViewLabel</button>
+                <button class="btn btn-secondary" @onclick="ToggleAllPlayed"><i class="fa-solid fa-clipboard-list"></i> @_markAllPlayedLabel</button>
+                <button class="btn btn-secondary" @onclick="CalculateTeams"><i class="fa-solid fa-gear"></i> Calculate Teams</button>
+                <button class="btn btn-secondary" @onclick="ResetTeams"><i class="fa-solid fa-rotate"></i> Reset Teams</button>
+            </Authorized>
+        </AuthorizeView>
+    </div>
+}
 
 @code {
     [Parameter] public string GameRowKey { get; set; } = default!;
@@ -191,6 +199,8 @@
 
     private string _simpleViewCss = "fa-solid fa-eye-slash";
 
+    private bool _showLongRunning;
+
     protected override void OnInitialized()
     {
         RefreshData();
@@ -204,8 +214,18 @@
 
     private async Task CalculateTeams()
     {
+        _showLongRunning = true;
         _pags = await GameService.CalculateTeamsAsync(_pags);
         RefreshData();
+        _showLongRunning = false;
+    }
+
+    private async Task ResetTeams()
+    {
+        _showLongRunning = true;
+        await GameService.ResetTeamsAsync(GameRowKey);
+        RefreshData();
+        _showLongRunning = false;
     }
 
     private async Task ToggleAllPlayed()

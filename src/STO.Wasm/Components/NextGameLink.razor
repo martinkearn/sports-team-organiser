@@ -1,0 +1,24 @@
+@inject IGameService GameService
+
+@if (string.IsNullOrEmpty(IconCss))
+{
+    <a class="@Css" href="/games/@_ge.RowKey">Next Game</a>
+}
+else
+{
+    <a class="@Css" href="/games/@_ge.RowKey"><i class="@IconCss"></i> Next Game</a>
+}
+
+@code {
+    [Parameter] public string? Css { get; set; }
+
+    [Parameter] public string? IconCss { get; set; }
+
+    private GameEntity _ge = default!;
+
+    protected override void OnInitialized()
+    {
+        _ge = GameService.GetNextGameEntity();
+    }
+
+}

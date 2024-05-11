@@ -111,3 +111,7 @@ code {
 .black-text {
     color: black;
 }
+
+.breadcrumb-item{
+    font-size: medium;
+}

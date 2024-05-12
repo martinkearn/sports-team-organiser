@@ -19,7 +19,7 @@
 		@foreach (var pe in _playerEntities)
 		{
 			<tr>
-				<td><a href="/players/@pe.RowKey/player">@pe.Name</a></td>
+				<td><a href="/players/@pe.RowKey">@pe.Name</a></td>
 				<td class="d-none d-lg-table-cell">@pe.Position</td>
 				<AuthorizeView Policy="IsAdminEmail">
 					<Authorized>

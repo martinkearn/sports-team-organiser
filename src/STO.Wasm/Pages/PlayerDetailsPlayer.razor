@@ -1,4 +1,4 @@
-@page "/players/{PlayerRowKey}/player"
+@page "/players/{PlayerRowKey}"
 @inject IPlayerService PlayerService
 @inject NavigationManager Navigation
 
@@ -71,6 +71,7 @@
 
 @code {
 	[CascadingParameter] public MainLayout MainLayout { get; set; } = default!;
+	
 	[Parameter]
 	public string PlayerRowKey { get; set; } = default!;
 

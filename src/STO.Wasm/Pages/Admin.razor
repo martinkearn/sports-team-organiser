@@ -44,7 +44,7 @@
 		</div>
 		@foreach (var p in DataService.PlayerEntities)
 		{
-			<p><a href="/players/@p.RowKey/player">Player, @p.RowKey, @p.Name</a></p>
+			<p><a href="/players/@p.RowKey">Player, @p.RowKey, @p.Name</a></p>
 		}
 		@foreach (var g in _allGames)
 		{

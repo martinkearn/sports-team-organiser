@@ -2,6 +2,8 @@
 @inherits LayoutComponentBase
 @inject NavigationManager NavigationManager
 
+<CascadingValue Value="this">
+
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark" aria-label="Eighth navbar example">
     <div class="container">
         <a class="navbar-brand" href="/">Tuesday.Football</a>
@@ -71,6 +73,7 @@
             @foreach (var segment in _uri.Segments)
             {
                 var segmentDisplay = textInfo.ToTitleCase(segment).TrimEnd('/');
+
                 @if (segment == "/")
                 {
                     <li class="breadcrumb-item "><a href="/"><i class="fa-solid fa-home"></i></a></li>
@@ -83,7 +86,14 @@
                     }
                     else
                     {
-                        <li class="breadcrumb-item active">@segmentDisplay</li>
+                        @if (string.IsNullOrEmpty(_pageTitle))
+                        {
+                            <li class="breadcrumb-item active">@segmentDisplay</li>
+                        }
+                        else
+                        {
+                            <li class="breadcrumb-item active">@_pageTitle</li>
+                        }
                     }
                 }
             }
@@ -95,7 +105,12 @@
     @Body
 </div>
 
+</CascadingValue>
+
+
 @code{
+    private string _pageTitle = default!;
+    
     private bool _showBreadcrumb;
     private Uri _uri = default!;
 
@@ -103,7 +118,15 @@
     {
         _showBreadcrumb = NavigationManager.Uri != NavigationManager.BaseUri;
         _uri = new Uri(NavigationManager.Uri);
+        _pageTitle = string.Empty;
     }
+
+    public void SetPageTitle(string pageTitle)
+    {
+        _pageTitle = pageTitle;
+        StateHasChanged();
+    }
+
 }
 
 

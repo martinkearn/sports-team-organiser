@@ -179,6 +179,9 @@ else
 }
 
 @code {
+    [CascadingParameter]
+    public MainLayout MainLayout { get; set; }
+    
     [Parameter] public string GameRowKey { get; set; } = default!;
 
     private GameEntity _gameEntity = default!;
@@ -189,7 +192,7 @@ else
 
     private PlayerAtGameEntity _newPagEntity = new();
 
-    private string _pageTitle = default!;
+    private string? _pageTitle = default!;
 
     private string _markAllPlayedLabel = default!;
 
@@ -275,6 +278,7 @@ else
             Forecast = PlayingOptions.Yes.ToString(),
         };
         _pageTitle = _gameEntity.Date.ToString("dd MMM");
+        MainLayout.SetPageTitle(_pageTitle);
         _simpleView = false;
 
         // Set played button label

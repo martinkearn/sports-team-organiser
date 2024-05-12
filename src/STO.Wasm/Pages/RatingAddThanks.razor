@@ -1,8 +1,8 @@
 @page "/ratings/addthanks"
 
-<PageTitle>TNF - Thanks for the ratings</PageTitle>
+<PageTitle>@_pageTitle</PageTitle>
 
-<h1><i class="fa-regular fa-star me-2"></i> Thanks for the ratings</h1>
+<h1><i class="fa-regular fa-star me-2"></i> @_pageTitle</h1>
 
 <p>Your rating was submitted, thank you.</p>
 <p>The system does not show leaderboards yet but will show them soon for for the top-rated players only.</p>
@@ -10,3 +10,21 @@
 <div class="hstack gap-2">
     <a class="btn btn-secondary" href="/ratings/addmultiple"><i class="fa-solid fa-arrow-right"></i> Add more ratings</a>
 </div>
+
+@code{
+    [CascadingParameter] public MainLayout MainLayout { get; set; } = default!;
+    
+    private string _pageTitle = default!;
+
+    protected override void OnInitialized()
+    {
+        RefreshData();
+    }
+    
+    private void RefreshData()
+    {
+        _pageTitle = "Thanks for the ratings";
+        MainLayout.SetPageTitle(_pageTitle);
+    }
+
+}

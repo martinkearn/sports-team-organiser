@@ -56,6 +56,7 @@
 
 
 @code {
+	[CascadingParameter] public MainLayout MainLayout { get; set; } = default!;
 	private List<PlayerEntity> _playerEntities = [];
 
 	private TransactionEntity _newTransactionEntity = new();
@@ -78,5 +79,6 @@
 		_newTransactionEntity = new();
 		_playerEntities = PlayerService.GetPlayerEntities();
 		_pageTitle = "Add Transaction";
+		MainLayout.SetPageTitle(_pageTitle);
 	}
 }

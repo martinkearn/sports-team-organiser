@@ -70,6 +70,7 @@
 
 
 @code {
+	[CascadingParameter] public MainLayout MainLayout { get; set; } = default!;
 	private List<GameEntity> _allGames = [];
 	private List<PlayerAtGameEntity> _allPlayerAtGame = [];
 	private List<RatingEntity> _allRatings = [];
@@ -84,6 +85,7 @@
 	private async Task RefreshData(bool forceApi)
 	{
 		_pageTitle = "Admin";
+		MainLayout.SetPageTitle(_pageTitle);
 		var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
 		var user = authState.User;
 		if (user.Identity is not null && user.Identity.IsAuthenticated)

@@ -54,6 +54,7 @@
 </AuthorizeView>
 
 @code {
+	[CascadingParameter] public MainLayout MainLayout { get; set; } = default!;
 	private List<RatingEntity> _ratingEntities = [];
 
 	private List<RatingEntity> _pageOfRatingEntities = [];
@@ -110,6 +111,7 @@
 	{
 		_ratingEntities = RatingEntityService.GetRatingEntities();
 		_pageTitle = "Ratings";
+		MainLayout.SetPageTitle(_pageTitle);
 
 		// Setup paging
 		_pageOfRatingEntities = _ratingEntities.Take(_ratingsPerPage).ToList();

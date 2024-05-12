@@ -48,6 +48,7 @@
 </div>
 
 @code {
+	[CascadingParameter] public MainLayout MainLayout { get; set; } = default!;
 	private List<PlayerEntity> _playerEntities = [];
 
 	private readonly List<RatingEntity> _ratingEntityAllPlayers = [];
@@ -82,5 +83,6 @@
 			});
 		}
 		_pageTitle = "Add Ratings";
+		MainLayout.SetPageTitle(_pageTitle);
 	}
 }

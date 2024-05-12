@@ -42,6 +42,7 @@
 </EditForm>
 
 @code {
+    [CascadingParameter] public MainLayout MainLayout { get; set; } = default!;
     private GameEntity _newGameEntity = new();
 
     private int _hour = default!;
@@ -72,5 +73,6 @@
             Date = DateTimeOffset.UtcNow
         };
         _pageTitle = "Add a Game";
+        MainLayout.SetPageTitle(_pageTitle);
     }
 }

@@ -46,6 +46,7 @@
 </div>
 
 @code {
+    [CascadingParameter] public MainLayout MainLayout { get; set; } = default!;
     [Parameter]
     public string GameRowKey { get; set; } = default!;
 
@@ -83,5 +84,6 @@
 
         var gameDateLabel = _gameEntity.Date.ToString("dd MMM");
         _pageTitle = string.IsNullOrEmpty(_gameEntity.Title) ? gameDateLabel : $"{gameDateLabel} {_gameEntity.Title}";
+        MainLayout.SetPageTitle(_pageTitle);
     }
 }

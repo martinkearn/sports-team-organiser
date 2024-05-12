@@ -42,6 +42,7 @@
 
 
 @code {
+	[CascadingParameter] public MainLayout MainLayout { get; set; } = default!;
 	private List<TransactionEntity> _transactionEntities = [];
 
 	private List<TransactionEntity> _pageOfTransactionEntities = [];
@@ -94,19 +95,20 @@
 		_currentPageNumber = page;
 		_pageOfTransactionEntities = _transactionEntities.Skip((page - 1) * _transactionsPerPage).Take(_transactionsPerPage).ToList();
 	}
-
-	private void RefreshData()
-	{
-		_transactionEntities = TransactionService.GetTransactionEntities().OrderByDescending(o => o.Date.Date).ToList();
-		_pageTitle = "Transactions";
-		SetupPages();
-	}
-
+	
 	private void SetupPages()
 	{
 		_pageOfTransactionEntities = _transactionEntities.Take(_transactionsPerPage).ToList();
 		var pagesDec = (double)_transactionEntities.Count / (double)_transactionsPerPage;
 		_pages = Convert.ToInt16(Math.Ceiling(pagesDec));
 		_currentPageNumber = 1;
+	}
+
+	private void RefreshData()
+	{
+		_transactionEntities = TransactionService.GetTransactionEntities().OrderByDescending(o => o.Date.Date).ToList();
+		_pageTitle = "Transactions";
+		MainLayout.SetPageTitle(_pageTitle);
+		SetupPages();
 	}
 }

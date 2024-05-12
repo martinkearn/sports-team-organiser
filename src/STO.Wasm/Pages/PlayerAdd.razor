@@ -44,9 +44,10 @@
 </EditForm>
 
 @code {
+	[CascadingParameter] public MainLayout MainLayout { get; set; } = default!;
 	private PlayerEntity _newPlayerEntity = new();
 
-	private readonly string _pageTitle = "Add Player";
+	private string _pageTitle = default!;
 
 	protected override void OnInitialized()
 	{
@@ -62,5 +63,7 @@
 	private void RefreshData()
 	{
 		_newPlayerEntity.DefaultRate = 3;
+		_pageTitle = "Add Player";
+		MainLayout.SetPageTitle(_pageTitle);
 	}
 }

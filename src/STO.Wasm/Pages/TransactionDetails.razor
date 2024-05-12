@@ -47,6 +47,7 @@
 
 
 @code {
+	[CascadingParameter] public MainLayout MainLayout { get; set; } = default!;
 	[Parameter]
 	public string TransactionRowKey { get; set; } = default!;
 
@@ -70,5 +71,6 @@
 		_transactionEntity = TransactionService.GetTransactionEntity(TransactionRowKey);
 		var playerEntity = PlayerService.GetPlayerEntity(_transactionEntity.PlayerRowKey);
 		_pageTitle = $"Transaction for {@playerEntity.Name}, {_transactionEntity.Date.Date.ToShortDateString()}";
+		MainLayout.SetPageTitle(_pageTitle);
 	}
 }

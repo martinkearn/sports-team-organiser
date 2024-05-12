@@ -68,6 +68,7 @@
 
 
 @code {
+	[CascadingParameter] public MainLayout MainLayout { get; set; } = default!;
 	private List<GameEntity> _gameEntities = [];
 
 	private List<PlayerAtGameEntity> _playersAtGameEntities = [];
@@ -100,5 +101,6 @@
 	{
 		_gameEntities = GameService.GetGameEntities();
 		_pageTitle = "Add Rating";
+		MainLayout.SetPageTitle(_pageTitle);
 	}
 }

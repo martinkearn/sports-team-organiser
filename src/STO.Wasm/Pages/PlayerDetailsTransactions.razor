@@ -53,6 +53,7 @@
 
 
 @code {
+    [CascadingParameter] public MainLayout MainLayout { get; set; } = default!;
     [Parameter]
     public string PlayerRowKey { get; set; } = default!;
 
@@ -91,5 +92,6 @@
 
         _deleteAllLabel = $"All transactions for {playerEntity?.Name}";
         _pageTitle = $"{playerEntity?.Name}";
+        MainLayout.SetPageTitle(_pageTitle);
     }
 }

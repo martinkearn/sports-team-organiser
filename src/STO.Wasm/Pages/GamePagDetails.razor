@@ -71,6 +71,7 @@
 </div>
 
 @code {
+    [CascadingParameter] public MainLayout MainLayout { get; set; } = default!;
     [Parameter]
     public string PagRowKey { get; set; } = default!;
 
@@ -130,6 +131,7 @@
         _playerEntityBalance = PlayerService.GetBalanceForPlayerEntity(_pagEntity.PlayerRowKey);
         _gameEntity = GameService.GetGameEntity(_pagEntity.GameRowKey);
         _pageTitle = $"{@_playerEntity.Name} at {_gameEntity.Date.Date:dd MMM}";
+        MainLayout.SetPageTitle(_pageTitle);
     }
 
 }

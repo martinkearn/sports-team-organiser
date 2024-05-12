@@ -4,7 +4,7 @@
 @inject ITransactionService TransactionService
 @inject NavigationManager Navigation
 
-<PageTitle>Add Payments to Game</PageTitle>
+<PageTitle>@_pageTitle</PageTitle>
 
 <h1><i class="fa-solid fa-people-group me-2"></i> Add Payments to Game</h1>
 
@@ -61,6 +61,7 @@
 </AuthorizeView>
 
 @code {
+    [CascadingParameter] public MainLayout MainLayout { get; set; } = default!;
     private List<GameEntity> _gameEntities = [];
 
     private List<PlayerEntity> _pagPlayerEntities = [];
@@ -72,6 +73,8 @@
     private string _selectedGameRowKey = default!;
 
     private GameEntity _nextGameEntity = default!;
+    
+    private string _pageTitle = default!;
 
     protected override void OnInitialized()
     {
@@ -118,6 +121,8 @@
         _gameEntities = GameService.GetGameEntities();
         _nextGameEntity = GameService.GetNextGameEntity();
         _selectedGameRowKey = _nextGameEntity.RowKey;
+        _pageTitle = "Add Payments to Game";
+        MainLayout.SetPageTitle(_pageTitle);
         RefreshGame();
     }
 

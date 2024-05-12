@@ -1,4 +1,6 @@
-﻿@inherits LayoutComponentBase
+﻿@using System.Globalization
+@inherits LayoutComponentBase
+@inject NavigationManager NavigationManager
 
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark" aria-label="Eighth navbar example">
     <div class="container">
@@ -53,7 +55,7 @@
                     <a class="nav-link" href="https://github.com/martinkearn/sports-team-organiser/issues">Issue</a>
                 </li>
                 <li class="nav-item">
-                    <LoginDisplay></LoginDisplay>
+                    <LoginDisplay />
                 </li>
             </ul>
         </div>
@@ -62,13 +64,47 @@
 </nav>
 
 <div class="container my-2">
-    <ol class="d-lg-none breadcrumb">
-        <li class="breadcrumb-item"><a href="/">Home</a></li>
-        <li class="breadcrumb-item "><a href="/games">Games</a></li>
-        <li class="breadcrumb-item active" aria-current="page">Data</li>
-    </ol>
+    @if (_showBreadcrumb)
+    {
+        var textInfo = new CultureInfo("en-GB", false).TextInfo;
+        <ol class="d-lg-none breadcrumb">
+            @foreach (var segment in _uri.Segments)
+            {
+                var segmentDisplay = textInfo.ToTitleCase(segment).TrimEnd('/');
+                @if (segment == "/")
+                {
+                    <li class="breadcrumb-item "><a href="/"><i class="fa-solid fa-home"></i></a></li>
+                }
+                else
+                {
+                    @if (segment.EndsWith("/"))
+                    {
+                        <li class="breadcrumb-item"><a href="/@segment">@segmentDisplay</a></li>
+                    }
+                    else
+                    {
+                        <li class="breadcrumb-item active">@segmentDisplay</li>
+                    }
+                }
+            }
+        </ol>
+    }
+</div>
+
+<div class="container my-2">
     @Body
 </div>
+
+@code{
+    private bool _showBreadcrumb;
+    private Uri _uri = default!;
+
+    protected override void OnParametersSet()
+    {
+        _showBreadcrumb = NavigationManager.Uri != NavigationManager.BaseUri;
+        _uri = new Uri(NavigationManager.Uri);
+    }
+}
 
 
 

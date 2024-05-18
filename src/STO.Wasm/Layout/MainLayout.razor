@@ -71,6 +71,14 @@
         {
             var segmentUri = _uri.ToString()[.._uri.ToString().IndexOf(segment, StringComparison.Ordinal)] + segment;
             var segmentDisplay = _textInfo.ToTitleCase(segment).TrimEnd('/');
+            if (_uri.ToString().EndsWith(segment))
+            {
+                if (!string.IsNullOrEmpty(_pageTitle))
+                {
+                    segmentDisplay = _pageTitle;
+                }
+            }
+
             <li class="breadcrumb-item "><a href="@segmentUri">@segmentDisplay</a></li>
         }
     </ol>

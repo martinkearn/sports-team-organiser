@@ -90,6 +90,12 @@
 			return ges.First(o => o.RowKey == rowKey);
 		}
 
+		public GameEntity GetGameEntityByDate(DateTime date)
+		{
+			var ges = GetGameEntities();
+			return ges.First(o => o.Date.Date == date);
+		}
+
 		public GameEntity GetNextGameEntity()
 		{
 			var ges = GetGameEntities();

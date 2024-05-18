@@ -90,10 +90,15 @@
 			return ges.First(o => o.RowKey == rowKey);
 		}
 
-		public GameEntity GetGameEntityByDate(DateTime date)
+		public GameEntity GetGameEntityByDateString(string date)
 		{
+			var dt = GetGameDateFromString(date);
 			var ges = GetGameEntities();
-			return ges.First(o => o.Date.Date == date);
+			var geMatchingDate = ges
+				.Where(o => o.Date.Date.Year == dt.Year)
+				.Where(o => o.Date.Date.Month == dt.Month)
+				.Where(o => o.Date.Date.Day == dt.Day);
+			return geMatchingDate.First();
 		}
 
 		public GameEntity GetNextGameEntity()
@@ -120,6 +125,20 @@
 			var gameDateLabel = ge.Date.ToString("dd MMM");
 			var gameLabel = string.IsNullOrEmpty(ge.Title) ? gameDateLabel : $"{gameDateLabel} {ge.Title}";
 			return gameLabel;
+		}
+
+		public DateTime GetGameDateFromString(string gameDate)
+		{
+			var gameDateSegments = gameDate.Split('-'); // expecting day-month-year i.e. 01-01-24 means 1st January 2024.
+			var day = Convert.ToInt16(gameDateSegments[0]);
+			var month = Convert.ToInt16(gameDateSegments[1]);
+			var year = Convert.ToInt16(gameDateSegments[2]);
+			return new DateTime(year:year, month:month, day:day);
+		}
+
+		public string GetGameDateStringFromDate(DateTime gameDate)
+		{
+			return gameDate.ToString("dd-MM-yy");
 		}
 
 		public List<PlayerAtGameEntity> GetPlayerAtGameEntitiesForGame(string gameRowKey)

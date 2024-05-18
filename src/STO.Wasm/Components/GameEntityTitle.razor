@@ -4,7 +4,7 @@
 {
     if (Link)
     {
-        <a href="/games/@GameEntity?.RowKey">@_gameLabel</a>
+        <a href="/games/@_gameDate">@_gameLabel</a>
     }
     else
     {
@@ -27,6 +27,8 @@ else
     public string? GameEntityRowKey { get; set; }
 
     private string _gameLabel = default!;
+
+    private string _gameDate = default!;
     
     protected override void OnInitialized()
     {
@@ -40,6 +42,9 @@ else
             GameEntity = GameService.GetGameEntity(GameEntityRowKey);
         }
 
-        _gameLabel = (GameEntity != null) ? GameService.GetGameLabel(GameEntity.RowKey) : string.Empty;
+        if (GameEntity is null) return;
+
+        _gameDate = GameService.GetGameDateStringFromDate(GameEntity.Date.Date);
+        _gameLabel = GameService.GetGameLabel(GameEntity.RowKey);
     }
 }

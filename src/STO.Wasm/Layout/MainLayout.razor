@@ -66,38 +66,16 @@
 </nav>
 
 <div class="container my-2">
+    @foreach (var segment in _relativeUri.ToString().Split('/'))
+    {
+        var segmentUri = _uri.ToString()[.._uri.ToString().IndexOf(segment, StringComparison.Ordinal)] + segment;
+        <a href="@segmentUri">@segment</a>
+        <br/>
+    }
+
     @if (_showBreadcrumb)
     {
-        var textInfo = new CultureInfo("en-GB", false).TextInfo;
-        <ol class="d-lg-none breadcrumb">
-            @foreach (var segment in _uri.Segments)
-            {
-                var segmentDisplay = textInfo.ToTitleCase(segment).TrimEnd('/');
 
-                @if (segment == "/")
-                {
-                    <li class="breadcrumb-item "><a href="/"><i class="fa-solid fa-home"></i></a></li>
-                }
-                else
-                {
-                    @if (segment.EndsWith("/"))
-                    {
-                        <li class="breadcrumb-item"><a href="/@segment">@segmentDisplay</a></li>
-                    }
-                    else
-                    {
-                        @if (string.IsNullOrEmpty(_pageTitle))
-                        {
-                            <li class="breadcrumb-item active">@segmentDisplay</li>
-                        }
-                        else
-                        {
-                            <li class="breadcrumb-item active">@_pageTitle</li>
-                        }
-                    }
-                }
-            }
-        </ol>
     }
 </div>
 
@@ -113,11 +91,17 @@
     
     private bool _showBreadcrumb;
     private Uri _uri = default!;
+    private Uri _baseUri = default!;
+    private Uri _relativeUri = default!;
+    private TextInfo _textInfo = default!;
 
     protected override void OnParametersSet()
     {
         _showBreadcrumb = NavigationManager.Uri != NavigationManager.BaseUri;
+        _baseUri = new Uri(NavigationManager.BaseUri);
         _uri = new Uri(NavigationManager.Uri);
+        _relativeUri = _baseUri.MakeRelativeUri(_uri);
+        _textInfo = new CultureInfo("en-GB", false).TextInfo;
         _pageTitle = string.Empty;
     }
 

@@ -67,7 +67,10 @@
 
 <div class="container my-2">
     <ol class="d-lg-none breadcrumb">
-        <li class="breadcrumb-item "><a href="/"><i class="fa-solid fa-home"></i></a></li>
+        @if (_uri != _baseUri)
+        {
+            <li class="breadcrumb-item "><a href="/"><i class="fa-solid fa-home fa-xs"></i></a></li>
+        }
         @foreach (var segment in _relativeUri.ToString().Split('/'))
         {
             var segmentUri = _uri.ToString()[.._uri.ToString().IndexOf(segment, StringComparison.Ordinal)] + segment;
@@ -78,6 +81,7 @@
                 {
                     segmentDisplay = _pageTitle;
                 }
+
                 <li class="breadcrumb-item active"><a href="@segmentUri">@segmentDisplay</a></li>
             }
             else
@@ -85,7 +89,7 @@
                 <li class="breadcrumb-item"><a href="@segmentUri">@segmentDisplay</a></li>
             }
 
-            
+
         }
     </ol>
 </div>

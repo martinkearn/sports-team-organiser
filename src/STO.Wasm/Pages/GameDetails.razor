@@ -276,7 +276,7 @@ else
             Played = false,
             Forecast = PlayingOptions.Yes.ToString(),
         };
-        _pageTitle = _gameEntity.Date.ToString("dd MMM");
+        _pageTitle = GameService.GetGameLabel(GameRowKey);
         MainLayout.SetPageTitle(_pageTitle);
         _simpleView = false;
 

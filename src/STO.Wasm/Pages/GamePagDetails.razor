@@ -1,4 +1,4 @@
-@page "/games/pags/{PagRowKey}"
+@page "/games/{GameRowKey}/{PagRowKey}"
 @inject IGameService GameService
 @inject ITransactionService TransactionService
 @inject IPlayerService PlayerService
@@ -72,8 +72,10 @@
 
 @code {
     [CascadingParameter] public MainLayout MainLayout { get; set; } = default!;
-    [Parameter]
-    public string PagRowKey { get; set; } = default!;
+    
+    [Parameter] public string PagRowKey { get; set; } = default!;
+    
+    [Parameter] public string GameRowKey { get; set; } = default!;
 
     private PlayerAtGameEntity _pagEntity = default!;
 

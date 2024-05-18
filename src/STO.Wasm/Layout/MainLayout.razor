@@ -66,17 +66,13 @@
 </nav>
 
 <div class="container my-2">
-    @foreach (var segment in _relativeUri.ToString().Split('/'))
-    {
-        var segmentUri = _uri.ToString()[.._uri.ToString().IndexOf(segment, StringComparison.Ordinal)] + segment;
-        <a href="@segmentUri">@segment</a>
-        <br/>
-    }
-
-    @if (_showBreadcrumb)
-    {
-
-    }
+    <ol class="d-lg-none breadcrumb">
+        @foreach (var segment in _relativeUri.ToString().Split('/'))
+        {
+            var segmentUri = _uri.ToString()[.._uri.ToString().IndexOf(segment, StringComparison.Ordinal)] + segment;
+            <li class="breadcrumb-item "><a href="@segmentUri">@segment</a></li>
+        }
+    </ol>
 </div>
 
 <div class="container my-2">

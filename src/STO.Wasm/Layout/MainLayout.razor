@@ -70,7 +70,8 @@
         @foreach (var segment in _relativeUri.ToString().Split('/'))
         {
             var segmentUri = _uri.ToString()[.._uri.ToString().IndexOf(segment, StringComparison.Ordinal)] + segment;
-            <li class="breadcrumb-item "><a href="@segmentUri">@segment</a></li>
+            var segmentDisplay = _textInfo.ToTitleCase(segment).TrimEnd('/');
+            <li class="breadcrumb-item "><a href="@segmentUri">@segmentDisplay</a></li>
         }
     </ol>
 </div>

@@ -44,7 +44,7 @@ else
 
         if (GameEntity is null) return;
 
-        _gameDate = GameService.GetGameDateStringFromDate(GameEntity.Date.Date);
+        _gameDate = GameService.GetGameDateLabelFromDate(GameEntity.Date.Date);
         _gameLabel = GameService.GetGameLabel(GameEntity.RowKey);
     }
 }

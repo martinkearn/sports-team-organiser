@@ -1,4 +1,4 @@
-@page "/games/{GameDate}"
+@page "/games/{GameDateLabel}"
 @inject IPlayerService PlayerService
 @inject IGameService GameService
 
@@ -60,7 +60,7 @@
         <tr>
             <td>A - Non-Bibs</td>
             <td>
-                <a class="d-none d-lg-inline" href="/games/@GameDate/@pag.RowKey">@pe.Name</a> <span class="d-inline d-lg-none">@pe.Name</span>
+                <a class="d-none d-lg-inline" href="/games/@GameDateLabel/@pag.RowKey">@pe.Name</a> <span class="d-inline d-lg-none">@pe.Name</span>
                 <PlayingForecastIcon Forecast="@pag.Forecast"/> <PositionIcon Position="pe.Position"/> <RagIcon PagEntity="@pag"/>
                 <AuthorizeView Policy="IsAdminEmail">
                     <Authorized>
@@ -101,7 +101,7 @@
         <tr>
             <td>B - Bibs</td>
             <td>
-                <a class="d-none d-lg-inline" href="/games/@GameDate/@pag.RowKey">@pe.Name</a> <span class="d-inline d-lg-none">@pe.Name</span>
+                <a class="d-none d-lg-inline" href="/games/@GameDateLabel/@pag.RowKey">@pe.Name</a> <span class="d-inline d-lg-none">@pe.Name</span>
                 <PlayingForecastIcon Forecast="@pag.Forecast"/> <PositionIcon Position="pe.Position"/> <RagIcon PagEntity="@pag"/>
                 <AuthorizeView Policy="IsAdminEmail">
                     <Authorized>
@@ -136,7 +136,7 @@
         <tr>
             <td>None</td>
             <td>
-                <a class="d-none d-lg-inline" href="/games/@GameDate/@pag.RowKey">@pe.Name</a> <span class="d-inline d-lg-none">@pe.Name</span>
+                <a class="d-none d-lg-inline" href="/games/@GameDateLabel/@pag.RowKey">@pe.Name</a> <span class="d-inline d-lg-none">@pe.Name</span>
                 <PlayingForecastIcon Forecast="@pag.Forecast"/> <PositionIcon Position="pe.Position"/> <RagIcon PagEntity="@pag"/>
                 <AuthorizeView Policy="IsAdminEmail">
                     <Authorized>
@@ -166,7 +166,7 @@ else
 {
     <div class="hstack gap-2">
         <a class="btn btn-secondary" href="/games/"><i class="fa-solid fa-arrow-left"></i> All Games</a>
-        <a class="btn btn-secondary" href="/games/@GameDate/edit"><i class="fa-solid fa-edit"></i> Edit</a>
+        <a class="btn btn-secondary" href="/games/@GameDateLabel/edit"><i class="fa-solid fa-edit"></i> Edit</a>
         <AuthorizeView Policy="IsAdminEmail">
             <Authorized>
                 <button class="btn btn-secondary" @onclick="ToggleSimpleView"><i class=@_simpleViewCss></i> @_simpleViewLabel</button>
@@ -183,7 +183,7 @@ else
     
     //[Parameter] public string GameRowKey { get; set; } = default!;
     
-    [Parameter] public string GameDate { get; set; } = default!;
+    [Parameter] public string GameDateLabel { get; set; } = default!;
 
     private string _gameRowKey = default!;
 
@@ -271,7 +271,7 @@ else
 
     private void RefreshData()
     {
-        _gameEntity = GameService.GetGameEntityByDateString(GameDate);
+        _gameEntity = GameService.GetGameEntityByGameDateLabel(GameDateLabel);
         _gameRowKey = _gameEntity.RowKey;
         _allPlayerEntities = PlayerService.GetPlayerEntities();
         _pags = GameService.GetPlayerAtGameEntitiesForGame(_gameRowKey);

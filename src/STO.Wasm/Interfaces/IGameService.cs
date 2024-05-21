@@ -21,9 +21,9 @@ namespace STO.Wasm.Interfaces
         /// <summary>
         /// Gets the first GameEntity on a given date.
         /// </summary>
-        /// <param name="date">The dd-mm-yy date string to match the game entity to.</param>
+        /// <param name="date">The dd-mm-yyyy date string to match the game entity to.</param>
         /// <returns>GameEntity.</returns>
-        public GameEntity GetGameEntityByDateString(string date);
+        public GameEntity GetGameEntityByGameDateLabel(string date);
 
         /// <summary>
         /// Gets the next GameEntity in terms of date.
@@ -112,17 +112,17 @@ namespace STO.Wasm.Interfaces
 		public string GetGameLabel(string rowKey);
 
 		/// <summary>
-		/// Gets a DateTime object from a 2-digit game date string which is day-month-year
+		/// Gets a DateTime object from a dd-mm-yyyy game date string (GameDateLabel)
 		/// </summary>
-		/// <param name="gameDate">A DateTime in 2-digit day-month-year format 01-01-24</param>
-		/// <returns>A dateTime object</returns>
-		public DateTime GetGameDateFromString(string gameDate);
+		/// <param name="gameDateLabel">A DateTime in dd-mm-yyyy format 01-01-2024</param>
+		/// <returns>A DateTime object</returns>
+		public DateTime GetDateFromGameDateLabel(string gameDateLabel);
 
 		/// <summary>
-		/// Converts a DateTime into a game date 2-digit string of day-month-year format
+		/// Converts a DateTime into a game date dd-mm-yyyy string
 		/// </summary>
 		/// <param name="gameDate">A DateTime</param>
-		/// <returns>DateTime as 2-digit string of day-month-year format</returns>
-		public string GetGameDateStringFromDate(DateTime gameDate);
+		/// <returns>DateTime as dd-mm-yyyy format</returns>
+		public string GetGameDateLabelFromDate(DateTime gameDate);
     }
 }

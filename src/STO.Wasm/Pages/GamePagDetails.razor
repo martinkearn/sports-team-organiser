@@ -1,4 +1,4 @@
-@page "/games/{GameRowKey}/{PagRowKey}"
+@page "/games/{GameDateLabel}/{PagRowKey}"
 @inject IGameService GameService
 @inject ITransactionService TransactionService
 @inject IPlayerService PlayerService
@@ -75,7 +75,7 @@
     
     [Parameter] public string PagRowKey { get; set; } = default!;
     
-    [Parameter] public string GameRowKey { get; set; } = default!;
+    [Parameter] public string GameDateLabel { get; set; } = default!;
 
     private PlayerAtGameEntity _pagEntity = default!;
 
@@ -123,7 +123,7 @@
     private async Task DeletePag()
     {
         await GameService.DeletePlayerAtGameEntityAsync(PagRowKey);
-        Navigation.NavigateTo($"/games/{_pagEntity.GameRowKey}");
+        Navigation.NavigateTo($"/games/{GameDateLabel}");
     }
 
     private void RefreshData()
@@ -132,7 +132,8 @@
         _playerEntity = PlayerService.GetPlayerEntity(_pagEntity.PlayerRowKey);
         _playerEntityBalance = PlayerService.GetBalanceForPlayerEntity(_pagEntity.PlayerRowKey);
         _gameEntity = GameService.GetGameEntity(_pagEntity.GameRowKey);
-        _pageTitle = $"{@_playerEntity.Name} at {_gameEntity.Date.Date:dd MMM}";
+        var gameLabel = GameService.GetGameLabel(_gameEntity.RowKey);
+        _pageTitle = $"{@_playerEntity.Name} at {gameLabel}";
         MainLayout.SetPageTitle(_pageTitle);
     }
 

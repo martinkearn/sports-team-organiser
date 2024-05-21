@@ -1,4 +1,4 @@
-@page "/games/{GameRowKey}/edit"
+@page "/games/{GameDateLabel}/edit"
 @inject IGameService GameService
 @inject NavigationManager Navigation
 
@@ -33,7 +33,7 @@
 </div>
 
 <div class="hstack gap-2">
-    <a class="btn btn-secondary" href="/games/@GameRowKey"><i class="fa-solid fa-arrow-left"></i>Back to Game</a>
+    <a class="btn btn-secondary" href="/games/@GameDateLabel"><i class="fa-solid fa-arrow-left"></i>Back to Game</a>
 
     <AuthorizeView Policy="IsAdminEmail">
         <Authorized>
@@ -47,8 +47,7 @@
 
 @code {
     [CascadingParameter] public MainLayout MainLayout { get; set; } = default!;
-    [Parameter]
-    public string GameRowKey { get; set; } = default!;
+    [Parameter] public string GameDateLabel { get; set; } = default!;
 
     private GameEntity _gameEntity = default!;
 
@@ -72,17 +71,17 @@
 
     private async Task DeleteGame()
     {
-        await GameService.DeleteGameEntityAsync(GameRowKey);
+        await GameService.DeleteGameEntityAsync(GameDateLabel);
         Navigation.NavigateTo("/games");
     }
 
     private void RefreshData()
     {
-        _gameEntity = GameService.GetGameEntity(GameRowKey);
+        _gameEntity = GameService.GetGameEntityByGameDateLabel(GameDateLabel);
         _hour = _gameEntity.Date.Hour;
         _minute = _gameEntity.Date.Minute;
 
-        var gameDateLabel = _gameEntity.Date.ToString("dd MMM");
+        var gameDateLabel = GameService.GetGameLabel(_gameEntity.RowKey);
         _pageTitle = string.IsNullOrEmpty(_gameEntity.Title) ? gameDateLabel : $"{gameDateLabel} {_gameEntity.Title}";
         MainLayout.SetPageTitle(_pageTitle);
     }

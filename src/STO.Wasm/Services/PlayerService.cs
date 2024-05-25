@@ -18,15 +18,13 @@ namespace STO.Wasm.Services
 		public PlayerEntity GetPlayerEntity(string rowKey)
 		{
 			var pes = dataService.PlayerEntities;
-			try
-			{
-				return pes.First(o => o.RowKey == rowKey);
-			}
-			catch (Exception ex)
-			{
-				var m = ex.Message;
-				return new PlayerEntity();
-			}
+			return pes.First(o => o.RowKey == rowKey);
+		}
+
+		public PlayerEntity GetPlayerEntityFromName(string name)
+		{
+			var pes = dataService.PlayerEntities;
+			return pes.First(o => o.Name == name);
 		}
 
 		public double GetDefaultRateForPlayerEntity(string rowKey)
@@ -83,5 +81,9 @@ namespace STO.Wasm.Services
 			await dataService.UpsertEntityAsync(playerEntity);
 		}
 
+		public string GetPLayerUrl(string name)
+		{
+			return name.Replace(" ", "-").ToLowerInvariant();
+		}
 	}
 }

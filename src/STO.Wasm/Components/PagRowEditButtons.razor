@@ -1,6 +1,6 @@
 @inject IGameService GameService
 @inject ITransactionService TransactionService
-@inject  IPlayerService PlayerService;
+@inject IPlayerService PlayerService;
 
 <AuthorizeView Policy="IsAdminEmail">
     <Authorized>
@@ -15,7 +15,7 @@
         <span></span>
         <button type="button" class="btn btn-outline-secondary btn-sm d-none d-md-inline" @onclick="SwitchPagTeam">@PagEntity.Team <i class="fa-solid fa-repeat"></i></button>
         <button type="button" class="btn btn-outline-secondary btn-sm d-none d-lg-inline" @onclick="AddTransactionForPlayer"><i class="fa-solid fa-plus"></i> £@_pagDefaultAmount</button>
-        <a type="button" class="btn btn-outline-secondary btn-sm d-inline" href="/games/@PagEntity.GameRowKey/@PagEntity.RowKey"><i class="fa-solid fa-edit"></i> Edit</a>
+        <a type="button" class="btn btn-outline-secondary btn-sm d-inline" href="/games/@_gameDateLabel/@PagEntity.RowKey"><i class="fa-solid fa-edit"></i> Edit</a>
     </Authorized>
 </AuthorizeView>
 
@@ -24,7 +24,9 @@
     public PlayerAtGameEntity PagEntity { get; set; } = default!;
 
     [Parameter]
-    public EventCallback RefreshMainPage { get; set; } = default!;
+    public EventCallback RefreshMainPage { get; set; }
+    
+    private string _gameDateLabel = default!;
 
     private double _pagDefaultAmount = default;
 
@@ -75,7 +77,8 @@
 
     private async Task RefreshData()
     {
-        var game = GameService.GetGameEntity(PagEntity.GameRowKey);
+        var ge = GameService.GetGameEntity(PagEntity.GameRowKey);
+        _gameDateLabel = GameService.GetGameDateLabelFromDate(ge.Date.Date);
         _pagDefaultAmount = PlayerService.GetDefaultRateForPlayerEntity(PagEntity.PlayerRowKey);
         await RefreshMainPage.InvokeAsync();
     }

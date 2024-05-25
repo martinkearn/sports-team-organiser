@@ -7,16 +7,16 @@
 <h1><i class="fa-solid fa-people-group me-2"></i> Edit <GameEntityTitle GameEntity="@_gameEntity" Link="false" /></h1>
 
 <div class="mb-3">
-    <label for="addDate" class="form-label">Date</label>
+    <label class="form-label">Date</label>
     <InputDate class="form-control" @bind-Value="_gameEntity.Date" />
 </div>
 <div class="mb-3">
-    <label for="addDate" class="form-label">Time</label>
+    <label class="form-label">Time</label>
     <div class="row">
         <div class="col-auto">
             <div class="input-group">
-                <InputNumber class="form-control" min="0" max="23" @bind-Value="_hour" @bind-Value:after="() => Edit()" />
-                <InputNumber class="form-control" min="0" max="59" @bind-Value="_minute" @bind-Value:after="() => Edit()" />
+                <InputNumber class="form-control" min="0" max="23" @bind-Value="_hour" @bind-Value:after="Edit" />
+                <InputNumber class="form-control" min="0" max="59" @bind-Value="_minute" @bind-Value:after="Edit" />
             </div>
         </div>
     </div>
@@ -24,12 +24,12 @@
 
 <div class="mb-3">
     <label class="form-label">Title</label>
-    <InputText class="form-control" @bind-Value="_gameEntity.Title" @bind-Value:after="() => Edit()" />
+    <InputText class="form-control" @bind-Value="_gameEntity.Title" @bind-Value:after="Edit" />
 </div>
 
 <div class="mb-3">
     <label class="form-label">Notes</label>
-    <InputText class="form-control" @bind-Value="_gameEntity.Notes" @bind-Value:after="() => Edit()" />
+    <InputText class="form-control" @bind-Value="_gameEntity.Notes" @bind-Value:after="Edit" />
 </div>
 
 <div class="hstack gap-2">
@@ -47,6 +47,7 @@
 
 @code {
     [CascadingParameter] public MainLayout MainLayout { get; set; } = default!;
+    
     [Parameter] public string GameDateLabel { get; set; } = default!;
 
     private GameEntity _gameEntity = default!;
@@ -81,8 +82,8 @@
         _hour = _gameEntity.Date.Hour;
         _minute = _gameEntity.Date.Minute;
 
-        var gameDateLabel = GameService.GetGameLabel(_gameEntity.RowKey);
-        _pageTitle = string.IsNullOrEmpty(_gameEntity.Title) ? gameDateLabel : $"{gameDateLabel} {_gameEntity.Title}";
+        var gameLabel = GameService.GetGameLabel(_gameEntity.RowKey);
+        _pageTitle = $"Edit {gameLabel}";
         MainLayout.SetPageTitle(_pageTitle);
     }
 }

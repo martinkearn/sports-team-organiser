@@ -20,7 +20,7 @@
 
 <div class="mb-3">
     <label class="form-label">Playing Forecast</label>
-    <InputSelect class="form-select" @bind-Value=_pagEntity.Forecast @bind-Value:after="() => Edit()">
+    <InputSelect class="form-select" @bind-Value=_pagEntity.Forecast @bind-Value:after="Edit">
         <option value="Yes">Yes</option>
         <option value="Maybe">Maybe</option>
         <option value="Reserve1">Reserve1</option>
@@ -34,7 +34,7 @@
 
 <div class="mb-3">
     <label class="form-label">Played</label>
-    <InputSelect class="form-select" @bind-Value=_pagEntity.Played @bind-Value:after="() => EditPlayed()">
+    <InputSelect class="form-select" @bind-Value=_pagEntity.Played @bind-Value:after="EditPlayed">
         <option value="true">Yes</option>
         <option value="false">No</option>
     </InputSelect>
@@ -42,7 +42,7 @@
 
 <div class="mb-3">
     <label class="form-label">Team</label>
-    <InputSelect class="form-select" @bind-Value=_pagEntity.Team @bind-Value:after="() => Edit()">
+    <InputSelect class="form-select" @bind-Value=_pagEntity.Team @bind-Value:after="Edit">
         <option value="A">Team A</option>
         <option value="B">Team B</option>
         <option value="">No Team</option>
@@ -52,13 +52,13 @@
 <div class="mb-3">
     <label class="form-label">Add Payment</label>
     <br>
-    <button class="btn btn-outline-secondary" @onclick="() => AddTransactionForPlayer()"><i class="fa-solid fa-plus"></i> @_playerEntity.DefaultRate</button>
+    <button class="btn btn-outline-secondary" @onclick="AddTransactionForPlayer"><i class="fa-solid fa-plus"></i> @_playerEntity.DefaultRate</button>
     <br>
     <span>Balance: <CurrencyDisplay Amount="@_playerEntityBalance" /></span>
 </div>
 
 <div class="hstack gap-2">
-    <a class="btn btn-secondary" href="/games/@_pagEntity.GameRowKey"><i class="fa-solid fa-arrow-left"></i> Back to Game</a>
+    <a class="btn btn-secondary" href="/games/@GameDateLabel"><i class="fa-solid fa-arrow-left"></i> Back to Game</a>
 
     <AuthorizeView Policy="IsAdminEmail">
         <Authorized>

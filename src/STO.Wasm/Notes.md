@@ -1,6 +1,10 @@
 # Breadcrumb
-- [ ] PlayerAtGame has /pags in url which is not a valida url
-- [ ] PLayers<player>Transaction doe snot display the breadcrumb properly because it uses guid for player bec
+Last updated Sat 25th May
+- [x] Game navigation by date on everything
+- [ ] Player navigation by name on everything
+- [ ] Transaction navigation by name on everything
+- [ ] Rating navigation by name on everything
+- [ ] PLayers<player>Transaction does not display the breadcrumb properly because it uses guid for player bec
 
         <ol class="d-lg-none breadcrumb">
             @foreach (var segment in _uri.Segments)

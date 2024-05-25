@@ -1,6 +1,7 @@
 @inject IGameService GameService
 @inject ITransactionService TransactionService
-@inject IPlayerService PlayerService;
+@inject IPlayerService PlayerService
+@inject NavigationManager Navigation
 
 <AuthorizeView Policy="IsAdminEmail">
     <Authorized>
@@ -15,7 +16,7 @@
         <span></span>
         <button type="button" class="btn btn-outline-secondary btn-sm d-none d-md-inline" @onclick="SwitchPagTeam">@PagEntity.Team <i class="fa-solid fa-repeat"></i></button>
         <button type="button" class="btn btn-outline-secondary btn-sm d-none d-lg-inline" @onclick="AddTransactionForPlayer"><i class="fa-solid fa-plus"></i> £@_pagDefaultAmount</button>
-        <a type="button" class="btn btn-outline-secondary btn-sm d-inline" href="/games/@_gameDateLabel/@PagEntity.RowKey"><i class="fa-solid fa-edit"></i> Edit</a>
+        <button type="button" class="btn btn-outline-secondary btn-sm d-inline" @onclick="NavigateToPag"><i class="fa-solid fa-edit"></i> Edit</button>
     </Authorized>
 </AuthorizeView>
 
@@ -57,6 +58,11 @@
         }
         await GameService.UpsertPlayerAtGameEntityAsync(PagEntity);
         await RefreshMainPage.InvokeAsync();
+    }
+
+    private void NavigateToPag()
+    {
+        Navigation.NavigateTo($"/games/{_gameDateLabel}/{PagEntity.RowKey}");
     }
 
     private async Task AddTransactionForPlayer()

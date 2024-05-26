@@ -8,8 +8,9 @@ namespace STO.Models
         public string Name { get; set; }
         public string Tags { get; set; }
         public Enums.PlayerPosition Position { get; set; }
-        public double DefaultRate { get; set; } = default!;
-        public int AdminRating { get; set; } = default!;
+        public double DefaultRate { get; set; }
+        public int AdminRating { get; set; }
+        public string UrlSegment { get; set; }
         public string PartitionKey { get; set; } = default!;
         public string RowKey { get; set; } = default!;
         public DateTimeOffset? Timestamp { get; set; } = DateTimeOffset.UtcNow!;

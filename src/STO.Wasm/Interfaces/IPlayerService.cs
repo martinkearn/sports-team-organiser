@@ -19,16 +19,18 @@ namespace STO.Wasm.Interfaces
 		public List<PlayerEntity> GetPlayerEntitiesFromPags(List<PlayerAtGameEntity> pags);
 
 		/// <summary>
-		/// Gets a PlayerEntity object
+		/// Gets a PlayerEntity object from RowKey
 		/// </summary>
+		/// <param name="rowKey">The RowKey for the PlayerEntity to match on</param>
 		/// <returns>A PlayerEntity.</returns>
 		public PlayerEntity GetPlayerEntity(string rowKey);
 		
 		/// <summary>
-		/// Gets a PlayerEntity object from a Name
+		/// Gets a PlayerEntity object from a UrlSegment
 		/// </summary>
+		/// <param name="urlSegment">The UrlSegment for the PlayerEntity to match on</param>
 		/// <returns>A PlayerEntity.</returns>
-		public PlayerEntity GetPlayerEntityFromName(string name);
+		public PlayerEntity GetPlayerEntityFromUrlSegment(string urlSegment);
 
 		/// <summary>
 		/// Returns the default rate for the PlayerEntity associated with the rowKey
@@ -62,12 +64,5 @@ namespace STO.Wasm.Interfaces
 		/// </summary>
 		/// <param name="playerEntity">The PlayerEntity to upsert.</param>
 		public Task UpsertPlayerEntityAsync(PlayerEntity playerEntity);
-
-		/// <summary>
-		/// Converts a player name to a url segment i.e. Martin Kearn becomes martin-kearn
-		/// </summary>
-		/// <param name="name">The Player Name to convert</param>
-		/// <returns>A Url segment for the Player Name</returns>
-		public string GetPLayerUrl(string name);
 	}
 }

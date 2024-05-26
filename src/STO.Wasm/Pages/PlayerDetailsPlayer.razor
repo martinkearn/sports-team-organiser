@@ -1,4 +1,4 @@
-@page "/players/{PlayerRowKey}"
+@page "/players/{PlayerUrlSegment}"
 @inject IPlayerService PlayerService
 @inject NavigationManager Navigation
 
@@ -17,7 +17,13 @@
 
 <div class="mb-3">
 	<label class="form-label">Name</label>
-	<InputText class="form-control" id="addName" @bind-Value="_playerEntity.Name" @bind-Value:after="() => Edit()" />
+	<InputText class="form-control"  @bind-Value="_playerEntity.Name" @bind-Value:after="Edit" />
+</div>
+
+<div class="mb-3">
+	<label class="form-label">Url Segment</label>
+	<InputText class="form-control" @bind-Value="_playerEntity.UrlSegment" disabled="true"  />
+	<div class="form-text">Set automatically.</div>
 </div>
 
 <div class="mb-3">
@@ -34,7 +40,7 @@
 	<Authorized>
 		<div class="mb-3">
 			<label class="form-label">Admin Rating</label>
-			<InputNumber class="form-control" id="addAdminRating" min="1" max="5" @bind-Value="_playerEntity.AdminRating" @bind-Value:after="() => Edit()" />
+			<InputNumber class="form-control" id="addAdminRating" min="1" max="5" @bind-Value="_playerEntity.AdminRating" @bind-Value:after="Edit" />
 			<div class="form-text">1-5 (5 high).</div>
 		</div>
 
@@ -42,19 +48,17 @@
 			<label class="form-label">Default Rate</label>
 			<div class="input-group">
 				<span class="input-group-text">£</span>
-				<InputNumber type="number" min="0" class="form-control" id="addDefaultRate" @bind-Value="_playerEntity.DefaultRate" @bind-Value:after="() => Edit()" />
+				<InputNumber type="number" min="0" class="form-control" id="addDefaultRate" @bind-Value="_playerEntity.DefaultRate" @bind-Value:after="Edit" />
 			</div>
 			<div class="form-text">Default rate per game. Usually £3 or £4.</div>
 		</div>
+
+		<div class="mb-3">
+			<label class="form-label">Balance</label>
+			<span class="form-control-plaintext"><CurrencyDisplay Amount="@_playerEntityBalance" /></span>
+		</div>
 	</Authorized>
 </AuthorizeView>
-
-<div class="mb-3">
-	<label class="form-label">Balance</label>
-	<span class="form-control-plaintext">
-		<CurrencyDisplay Amount="@_playerEntityBalance" />
-	</span>
-</div>
 
 <div class="hstack gap-2">
 	<a class="btn btn-secondary" href="/players/"><i class="fa-solid fa-arrow-left"></i> All Players</a>
@@ -72,12 +76,11 @@
 @code {
 	[CascadingParameter] public MainLayout MainLayout { get; set; } = default!;
 	
-	[Parameter]
-	public string PlayerRowKey { get; set; } = default!;
+	[Parameter] public string PlayerUrlSegment { get; set; } = default!;
 
 	private PlayerEntity _playerEntity = default!;
 
-	private double _playerEntityBalance = default;
+	private double _playerEntityBalance;
 
 	private string _pageTitle = default!;
 
@@ -93,16 +96,16 @@
 
 	private async Task DeletePlayer()
 	{
-		await PlayerService.DeletePlayerEntityAsync(PlayerRowKey);
+		await PlayerService.DeletePlayerEntityAsync(_playerEntity.RowKey);
 		Navigation.NavigateTo("/players");
 	}
 
-	private void SwitchTabTransactions() => Navigation.NavigateTo($"/players/{@PlayerRowKey}/transactions");
+	private void SwitchTabTransactions() => Navigation.NavigateTo($"/players/{@PlayerUrlSegment}/transactions");
 
 	private void RefreshData()
 	{
-		_playerEntity = PlayerService.GetPlayerEntity(PlayerRowKey);
-		_playerEntityBalance = PlayerService.GetBalanceForPlayerEntity(PlayerRowKey);
+		_playerEntity = PlayerService.GetPlayerEntityFromUrlSegment(PlayerUrlSegment);
+		_playerEntityBalance = PlayerService.GetBalanceForPlayerEntity(_playerEntity.RowKey);
 		_pageTitle = $"{_playerEntity.Name}";
 		MainLayout.SetPageTitle(_pageTitle);
 	}

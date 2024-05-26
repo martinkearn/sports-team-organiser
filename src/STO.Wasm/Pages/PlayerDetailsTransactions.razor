@@ -1,4 +1,4 @@
-@page "/players/{PlayerRowKey}/transactions"
+@page "/players/{PlayerUrlSegment}/transactions"
 @inject IDataService DataService
 @inject IPlayerService PlayerService
 @inject ITransactionService TransactionService
@@ -54,8 +54,8 @@
 
 @code {
     [CascadingParameter] public MainLayout MainLayout { get; set; } = default!;
-    [Parameter]
-    public string PlayerRowKey { get; set; } = default!;
+    
+    [Parameter] public string PlayerUrlSegment { get; set; } = default!;
 
     private List<TransactionEntity> _playerTransactions = [];
 
@@ -78,15 +78,15 @@
         Navigation.NavigateTo("/players");
     }
 
-    private void SwitchTabPlayer() => Navigation.NavigateTo($"/players/{@PlayerRowKey}");
+    private void SwitchTabPlayer() => Navigation.NavigateTo($"/players/{@PlayerUrlSegment}");
 
     private void RefreshData()
     {
         // Get Player
-        var playerEntity = PlayerService.GetPlayerEntity(PlayerRowKey);
+        var playerEntity = PlayerService.GetPlayerEntityFromUrlSegment(PlayerUrlSegment);
 
         // Get Transactions
-        _playerTransactions = DataService.TransactionEntities.Where(o => o.PlayerRowKey == PlayerRowKey)
+        _playerTransactions = DataService.TransactionEntities.Where(o => o.PlayerRowKey == playerEntity.RowKey)
             .OrderByDescending(o => o.Date)
             .ToList();
 

@@ -1,19 +1,12 @@
 ﻿@inject IPlayerService PlayerService
 
-@if (_pe != default)
+@if (Link)
 {
-    @if (Link)
-    {
-        <a href="/players/@_pe.RowKey">@_pe.Name</a>
-    }
-    else
-    {
-        @_pe.Name
-    }
+    <a href="/players/@_pe.UrlSegment">@_pe.Name</a>
 }
 else
 {
-    <span>No player</span>
+    @_pe.Name
 }
 
 @code {

@@ -1,7 +1,9 @@
 # Breadcrumb
 Last updated Sat 25th May
 - [x] Game navigation by date on everything
-- [ ] Player navigation by name on everything
+- [x] Player navigation by name on everything
+- [ ] Add public string UrlSegment { get; set; } to all entity models which is used for the url
+- [ ] PAG by somoe pag label on everything
 - [ ] Transaction navigation by name on everything
 - [ ] Rating navigation by name on everything
 - [ ] PLayers<player>Transaction does not display the breadcrumb properly because it uses guid for player bec

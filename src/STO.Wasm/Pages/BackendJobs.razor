@@ -5,51 +5,69 @@
 <PageTitle>TNF - Backend Jobs</PageTitle>
 
 <button class="btn btn-primary" @onclick="SetUrlSegmentGames"> Set UrlSegment for All Games</button>
-<p>@_gameUpdateCount</p>
-<p>@_gameUpdateStatus</p>
+<p>@_gamesUpdateCount</p>
+<p>@_gamesUpdateStatus</p>
 
+<button class="btn btn-primary" @onclick="SetUrlSegmentPlayers"> Set UrlSegment for All Players</button>
+<p>@_playersUpdateCount</p>
+<p>@_playersUpdateStatus</p>
 
 <button class="btn btn-primary" @onclick="SetUrlSegmentPags"> Set UrlSegment for All PAGs</button>
-<p>@_pagUpdateCount</p>
-<p>@_pagUpdateStatus</p>
+<p>@_pagsUpdateCount</p>
+<p>@_pagsUpdateStatus</p>
 
 @code {
-	private int _pagUpdateCount = 0;
-	private string _pagUpdateStatus = default!;
-	private int _gameUpdateCount = 0;
-	private string _gameUpdateStatus = default!;
+	private int _pagsUpdateCount = 0;
+	private string _pagsUpdateStatus = default!;
+	private int _gamesUpdateCount = 0;
+	private string _gamesUpdateStatus = default!;
+	private int _playersUpdateCount = 0;
+	private string _playersUpdateStatus = default!;
 
 	private async Task SetUrlSegmentGames()
 	{
-		_gameUpdateStatus = "Start";
+		_gamesUpdateStatus = "Start";
 		var games = GameService.GetGameEntities();
 		foreach (var game in games)
 		{
 			var gameUrlSegment = game.Date.Date.ToString("dd-MM-yyyy");
 			game.UrlSegment = gameUrlSegment;
 			await GameService.UpsertGameEntityAsync(game);
-			_gameUpdateCount += 1;
+			_gamesUpdateCount += 1;
 		}
-		_gameUpdateStatus = "Finished";
+		_gamesUpdateStatus = "Finished";
+	}
+	
+	private async Task SetUrlSegmentPlayers()
+	{
+		_playersUpdateStatus = "Start";
+		var players = PlayerService.GetPlayerEntities();
+		foreach (var player in players)
+		{
+			player.UrlSegment = player.Name.Replace(" ", "-").ToLowerInvariant();
+			await PlayerService.UpsertPlayerEntityAsync(player);
+			_playersUpdateCount += 1;
+		}
+		_playersUpdateStatus = "Finished";
 	}
 
 	private async Task SetUrlSegmentPags()
 	{
-		_pagUpdateStatus = "Start";
+		_pagsUpdateStatus = "Start";
 		var games = GameService.GetGameEntities();
 		foreach (var game in games)
 		{
-			_pagUpdateStatus = $"Working on {game.Date.Date.ToShortDateString()}";
+			_pagsUpdateStatus = $"Working on {game.Date.Date.ToShortDateString()}";
 			foreach (var pag in GameService.GetPlayerAtGameEntitiesForGame(game.RowKey))
 			{
 				var player = PlayerService.GetPlayerEntity(pag.PlayerRowKey);
 				var pagUrlSegment = $"{player.UrlSegment}-{game.UrlSegment}";
 				pag.UrlSegment = pagUrlSegment;
 				await GameService.UpsertPlayerAtGameEntityAsync(pag);
-				_pagUpdateCount += 1;
+				_pagsUpdateCount += 1;
 			}
 		}
-		_pagUpdateStatus = "Finished";
+		_pagsUpdateStatus = "Finished";
 	}
 
 }

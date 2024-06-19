@@ -2,11 +2,12 @@
 Last updated Sat 25th May
 - [x] Game navigation by date on everything
 - [x] Player navigation by name on everything
-- [ ] Add urlSegment to all games
-- [ ] Add public string UrlSegment { get; set; } to all pags via backend
+- [x] Add UrlSegment to all games
+- [x] Add UrlSegment to all pags
+- [x] Add UrlSegment to all players
 - [ ] Add UrlSegment to all transactions
 - [ ] Add urlSegment to all ratings
-- [ ] PAG by somoe pag label on everything
+- [ ] Refactor game navigate to use UrlSegment
 - [ ] Transaction navigation by name on everything
 - [ ] Rating navigation by name on everything
 - [ ] PLayers<player>Transaction does not display the breadcrumb properly because it uses guid for player bec

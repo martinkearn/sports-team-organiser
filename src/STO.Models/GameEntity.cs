@@ -16,6 +16,8 @@ namespace STO.Models
         public string Title { get; set; }
 
         public string Notes { get; set; }
+        
+        public string UrlSegment { get; set; }
 
         public string PartitionKey { get; set; } = default!;
         public string RowKey { get; set; } = default!;

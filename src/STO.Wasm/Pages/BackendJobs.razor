@@ -1,0 +1,55 @@
+@page "/backendjobs"
+@inject IGameService GameService
+@inject IPlayerService PlayerService
+
+<PageTitle>TNF - Backend Jobs</PageTitle>
+
+<button class="btn btn-primary" @onclick="SetUrlSegmentGames"> Set UrlSegment for All Games</button>
+<p>@_gameUpdateCount</p>
+<p>@_gameUpdateStatus</p>
+
+
+<button class="btn btn-primary" @onclick="SetUrlSegmentPags"> Set UrlSegment for All PAGs</button>
+<p>@_pagUpdateCount</p>
+<p>@_pagUpdateStatus</p>
+
+@code {
+	private int _pagUpdateCount = 0;
+	private string _pagUpdateStatus = default!;
+	private int _gameUpdateCount = 0;
+	private string _gameUpdateStatus = default!;
+
+	private async Task SetUrlSegmentGames()
+	{
+		_gameUpdateStatus = "Start";
+		var games = GameService.GetGameEntities();
+		foreach (var game in games)
+		{
+			var gameUrlSegment = game.Date.Date.ToString("dd-MM-yyyy");
+			game.UrlSegment = gameUrlSegment;
+			await GameService.UpsertGameEntityAsync(game);
+			_gameUpdateCount += 1;
+		}
+		_gameUpdateStatus = "Finished";
+	}
+
+	private async Task SetUrlSegmentPags()
+	{
+		_pagUpdateStatus = "Start";
+		var games = GameService.GetGameEntities();
+		foreach (var game in games)
+		{
+			_pagUpdateStatus = $"Working on {game.Date.Date.ToShortDateString()}";
+			foreach (var pag in GameService.GetPlayerAtGameEntitiesForGame(game.RowKey))
+			{
+				var player = PlayerService.GetPlayerEntity(pag.PlayerRowKey);
+				var pagUrlSegment = $"{player.UrlSegment}-{game.UrlSegment}";
+				pag.UrlSegment = pagUrlSegment;
+				await GameService.UpsertPlayerAtGameEntityAsync(pag);
+				_pagUpdateCount += 1;
+			}
+		}
+		_pagUpdateStatus = "Finished";
+	}
+
+}

@@ -2,7 +2,10 @@
 Last updated Sat 25th May
 - [x] Game navigation by date on everything
 - [x] Player navigation by name on everything
-- [ ] Add public string UrlSegment { get; set; } to all entity models which is used for the url
+- [ ] Add urlSegment to all games
+- [ ] Add public string UrlSegment { get; set; } to all pags via backend
+- [ ] Add UrlSegment to all transactions
+- [ ] Add urlSegment to all ratings
 - [ ] PAG by somoe pag label on everything
 - [ ] Transaction navigation by name on everything
 - [ ] Rating navigation by name on everything

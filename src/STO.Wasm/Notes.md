@@ -1,10 +1,6 @@
 # Breadcrumb
 Last updated Sat 25th May
-- [x] Game navigation by date on everything
-- [x] Player navigation by name on everything
-- [x] Add UrlSegment to all games
 - [x] Add UrlSegment to all pags
-- [x] Add UrlSegment to all players
 - [ ] Add UrlSegment to all transactions
 - [ ] Add urlSegment to all ratings
 - [ ] Refactor game navigate to use UrlSegment

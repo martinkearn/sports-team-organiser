@@ -1,4 +1,4 @@
-@page "/games/{GameDateLabel}/edit"
+@page "/games/{GameUrlSegment}/edit"
 @inject IGameService GameService
 @inject NavigationManager Navigation
 
@@ -39,7 +39,7 @@
 </div>
 
 <div class="hstack gap-2">
-    <a class="btn btn-secondary" href="/games/@GameDateLabel"><i class="fa-solid fa-arrow-left"></i>Back to Game</a>
+    <a class="btn btn-secondary" href="/games/@GameUrlSegment"><i class="fa-solid fa-arrow-left"></i>Back to Game</a>
 
     <AuthorizeView Policy="IsAdminEmail">
         <Authorized>
@@ -54,7 +54,7 @@
 @code {
     [CascadingParameter] public MainLayout MainLayout { get; set; } = default!;
     
-    [Parameter] public string GameDateLabel { get; set; } = default!;
+    [Parameter] public string GameUrlSegment { get; set; } = default!;
 
     private GameEntity _gameEntity = default!;
 
@@ -78,13 +78,13 @@
 
     private async Task DeleteGame()
     {
-        await GameService.DeleteGameEntityAsync(GameDateLabel);
+        await GameService.DeleteGameEntityAsync(_gameEntity.RowKey);
         Navigation.NavigateTo("/games");
     }
 
     private void RefreshData()
     {
-        _gameEntity = GameService.GetGameEntityByGameDateLabel(GameDateLabel);
+        _gameEntity = GameService.GetGameEntityByUrlSegment(GameUrlSegment);
         _hour = _gameEntity.Date.Hour;
         _minute = _gameEntity.Date.Minute;
 

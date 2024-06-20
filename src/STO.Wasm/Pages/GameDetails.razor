@@ -1,4 +1,4 @@
-@page "/games/{GameDateLabel}"
+@page "/games/{GameUrlSegment}"
 @inject IPlayerService PlayerService
 @inject IGameService GameService
 
@@ -60,7 +60,7 @@
         <tr>
             <td>A - Non-Bibs</td>
             <td>
-                <a class="d-none d-lg-inline" href="/games/@GameDateLabel/@pag.RowKey">@pe.Name</a> <span class="d-inline d-lg-none">@pe.Name</span>
+                <a class="d-none d-lg-inline" href="/games/@GameUrlSegment/@pag.RowKey">@pe.Name</a> <span class="d-inline d-lg-none">@pe.Name</span>
                 <PlayingForecastIcon Forecast="@pag.Forecast"/> <PositionIcon Position="pe.Position"/> <RagIcon PagEntity="@pag"/>
                 <AuthorizeView Policy="IsAdminEmail">
                     <Authorized>
@@ -101,7 +101,7 @@
         <tr>
             <td>B - Bibs</td>
             <td>
-                <a class="d-none d-lg-inline" href="/games/@GameDateLabel/@pag.RowKey">@pe.Name</a> <span class="d-inline d-lg-none">@pe.Name</span>
+                <a class="d-none d-lg-inline" href="/games/@GameUrlSegment/@pag.RowKey">@pe.Name</a> <span class="d-inline d-lg-none">@pe.Name</span>
                 <PlayingForecastIcon Forecast="@pag.Forecast"/> <PositionIcon Position="pe.Position"/> <RagIcon PagEntity="@pag"/>
                 <AuthorizeView Policy="IsAdminEmail">
                     <Authorized>
@@ -136,7 +136,7 @@
         <tr>
             <td>None</td>
             <td>
-                <a class="d-none d-lg-inline" href="/games/@GameDateLabel/@pag.RowKey">@pe.Name</a> <span class="d-inline d-lg-none">@pe.Name</span>
+                <a class="d-none d-lg-inline" href="/games/@GameUrlSegment/@pag.RowKey">@pe.Name</a> <span class="d-inline d-lg-none">@pe.Name</span>
                 <PlayingForecastIcon Forecast="@pag.Forecast"/> <PositionIcon Position="pe.Position"/> <RagIcon PagEntity="@pag"/>
                 <AuthorizeView Policy="IsAdminEmail">
                     <Authorized>
@@ -166,7 +166,7 @@ else
 {
     <div class="hstack gap-2">
         <a class="btn btn-secondary" href="/games/"><i class="fa-solid fa-arrow-left"></i> All Games</a>
-        <a class="btn btn-secondary" href="/games/@GameDateLabel/edit"><i class="fa-solid fa-edit"></i> Edit</a>
+        <a class="btn btn-secondary" href="/games/@GameUrlSegment/edit"><i class="fa-solid fa-edit"></i> Edit</a>
         <AuthorizeView Policy="IsAdminEmail">
             <Authorized>
                 <button class="btn btn-secondary" @onclick="ToggleSimpleView"><i class=@_simpleViewCss></i> @_simpleViewLabel</button>
@@ -181,11 +181,7 @@ else
 @code {
     [CascadingParameter] public MainLayout MainLayout { get; set; } = default!;
     
-    //[Parameter] public string GameRowKey { get; set; } = default!;
-    
-    [Parameter] public string GameDateLabel { get; set; } = default!;
-
-    private string _gameRowKey = default!;
+    [Parameter] public string GameUrlSegment { get; set; } = default!;
 
     private GameEntity _gameEntity = default!;
 
@@ -229,7 +225,7 @@ else
     private async Task ResetTeams()
     {
         _showLongRunning = true;
-        await GameService.ResetTeamsAsync(_gameRowKey);
+        await GameService.ResetTeamsAsync(_gameEntity.RowKey);
         RefreshData();
         _showLongRunning = false;
     }
@@ -237,7 +233,7 @@ else
     private async Task ToggleAllPlayed()
     {
         var played = MarkAsPlayedOrNotPlayed();
-        await GameService.MarkAllPlayedAsync(_gameRowKey, played);
+        await GameService.MarkAllPlayedAsync(_gameEntity.RowKey, played);
         RefreshData();
     }
 
@@ -271,17 +267,16 @@ else
 
     private void RefreshData()
     {
-        _gameEntity = GameService.GetGameEntityByGameDateLabel(GameDateLabel);
-        _gameRowKey = _gameEntity.RowKey;
+        _gameEntity = GameService.GetGameEntityByUrlSegment(GameUrlSegment);
         _allPlayerEntities = PlayerService.GetPlayerEntities();
-        _pags = GameService.GetPlayerAtGameEntitiesForGame(_gameRowKey);
+        _pags = GameService.GetPlayerAtGameEntitiesForGame(_gameEntity.RowKey);
         _newPagEntity = new PlayerAtGameEntity()
         {
-            GameRowKey = _gameRowKey,
+            GameRowKey = _gameEntity.RowKey,
             Played = false,
             Forecast = PlayingOptions.Yes.ToString(),
         };
-        _pageTitle = GameService.GetGameLabel(_gameRowKey);
+        _pageTitle = GameService.GetGameLabel(_gameEntity.RowKey);
         MainLayout.SetPageTitle(_pageTitle);
         _simpleView = false;
 

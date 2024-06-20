@@ -4,7 +4,7 @@
 {
     if (Link)
     {
-        <a href="/games/@_gameDate">@_gameLabel</a>
+        <a href="/games/@GameEntity.UrlSegment">@_gameLabel</a>
     }
     else
     {
@@ -20,15 +20,12 @@ else
     [Parameter]
     public bool Link { get; set; }
 
-    [Parameter]
-    public GameEntity? GameEntity { get; set; }
+    [Parameter] public GameEntity GameEntity { get; set; } = default!;
     
     [Parameter]
     public string? GameEntityRowKey { get; set; }
 
     private string _gameLabel = default!;
-
-    private string _gameDate = default!;
     
     protected override void OnInitialized()
     {
@@ -42,9 +39,6 @@ else
             GameEntity = GameService.GetGameEntity(GameEntityRowKey);
         }
 
-        if (GameEntity is null) return;
-
-        _gameDate = GameService.GetGameDateLabelFromDate(GameEntity.Date.Date);
         _gameLabel = GameService.GetGameLabel(GameEntity.RowKey);
     }
 }

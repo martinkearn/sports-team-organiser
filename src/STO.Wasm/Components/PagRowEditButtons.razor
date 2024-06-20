@@ -26,10 +26,10 @@
 
     [Parameter]
     public EventCallback RefreshMainPage { get; set; }
-    
-    private string _gameDateLabel = default!;
 
     private double _pagDefaultAmount = default;
+    
+    private GameEntity _pagGameEntity = default!;
 
     protected override async Task OnInitializedAsync()
     {
@@ -62,7 +62,7 @@
 
     private void NavigateToPag()
     {
-        Navigation.NavigateTo($"/games/{_gameDateLabel}/{PagEntity.RowKey}");
+        Navigation.NavigateTo($"/games/{_pagGameEntity.UrlSegment}/{PagEntity.RowKey}");
     }
 
     private async Task AddTransactionForPlayer()
@@ -83,8 +83,7 @@
 
     private async Task RefreshData()
     {
-        var ge = GameService.GetGameEntity(PagEntity.GameRowKey);
-        _gameDateLabel = GameService.GetGameDateLabelFromDate(ge.Date.Date);
+        _pagGameEntity = GameService.GetGameEntity(PagEntity.GameRowKey);
         _pagDefaultAmount = PlayerService.GetDefaultRateForPlayerEntity(PagEntity.PlayerRowKey);
         await RefreshMainPage.InvokeAsync();
     }

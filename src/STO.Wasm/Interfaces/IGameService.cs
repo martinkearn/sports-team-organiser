@@ -14,16 +14,16 @@ namespace STO.Wasm.Interfaces
         /// <summary>
         /// Gets a single GameEntity.
         /// </summary>
-        /// <param name="rowKey">The RowKey for the GameEntity to delete.</param>
+        /// <param name="rowKey">The RowKey for the GameEntity to get.</param>
         /// <returns>GameEntity.</returns>
         public GameEntity GetGameEntity(string rowKey);
         
         /// <summary>
-        /// Gets the first GameEntity on a given date.
+        /// Gets a single GameEntity.
         /// </summary>
-        /// <param name="date">The dd-mm-yyyy date string to match the game entity to.</param>
+        /// <param name="urlSegment">The UrlSegment for the GameEntity to get.</param>
         /// <returns>GameEntity.</returns>
-        public GameEntity GetGameEntityByGameDateLabel(string date);
+        public GameEntity GetGameEntityByUrlSegment(string urlSegment);
 
         /// <summary>
         /// Gets the next GameEntity in terms of date.
@@ -110,19 +110,5 @@ namespace STO.Wasm.Interfaces
 		/// <param name="rowKey">The RowKey of the GameEntity to create a title for.</param>
 		/// <returns>A string which represents the label for the GameEntity.</returns>
 		public string GetGameLabel(string rowKey);
-
-		/// <summary>
-		/// Gets a DateTime object from a dd-mm-yyyy game date string (GameDateLabel)
-		/// </summary>
-		/// <param name="gameDateLabel">A DateTime in dd-mm-yyyy format 01-01-2024</param>
-		/// <returns>A DateTime object</returns>
-		public DateTime GetDateFromGameDateLabel(string gameDateLabel);
-
-		/// <summary>
-		/// Converts a DateTime into a game date dd-mm-yyyy string
-		/// </summary>
-		/// <param name="gameDate">A DateTime</param>
-		/// <returns>DateTime as dd-mm-yyyy format</returns>
-		public string GetGameDateLabelFromDate(DateTime gameDate);
     }
 }

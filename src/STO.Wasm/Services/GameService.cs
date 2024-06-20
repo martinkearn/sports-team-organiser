@@ -151,6 +151,11 @@
 			return dataService.PlayerAtGameEntities.First(o => o.RowKey == rowKey);
 		}
 
+		public PlayerAtGameEntity GetPlayerAtGameEntityByUrlSegment(string urlSegment)
+		{
+			return dataService.PlayerAtGameEntities.First(o => o.UrlSegment == urlSegment);
+		}
+
 		public async Task MarkAllPlayedAsync(string gameRowkey, bool played)
 		{
 			var pags = GetPlayerAtGameEntitiesForGame(gameRowkey);

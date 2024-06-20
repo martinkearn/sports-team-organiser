@@ -53,9 +53,16 @@ namespace STO.Wasm.Interfaces
 		/// <summary>
 		/// Gets a single Pag (player at game).
 		/// </summary>
-		/// <param name="rowKey">The RowKey for the GameEntity to delete.</param>
+		/// <param name="rowKey">The RowKey for the GameEntity to get.</param>
 		/// <returns>PlayerAtGame.</returns>
 		public PlayerAtGameEntity GetPlayerAtGameEntity(string rowKey);
+		
+		/// <summary>
+		/// Gets a single Pag (player at game).
+		/// </summary>
+		/// <param name="urlSegment">The UrlSegment for the GameEntity to get.</param>
+		/// <returns>PlayerAtGame.</returns>
+		public PlayerAtGameEntity GetPlayerAtGameEntityByUrlSegment(string urlSegment);
 
 		/// <summary>
 		/// Upserts a PlayerAtGameEntity.

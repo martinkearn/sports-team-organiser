@@ -44,25 +44,19 @@
 
     private async Task SwitchPagTeam()
     {
-        if (PagEntity.Team == "A")
+        PagEntity.Team = PagEntity.Team switch
         {
-            PagEntity.Team = "B";
-        }
-        else if (PagEntity.Team == "B")
-        {
-            PagEntity.Team = "";
-        }
-        else
-        {
-            PagEntity.Team = "A";
-        }
+            "A" => "B",
+            "B" => "",
+            _ => "A"
+        };
         await GameService.UpsertPlayerAtGameEntityAsync(PagEntity);
         await RefreshMainPage.InvokeAsync();
     }
 
     private void NavigateToPag()
     {
-        Navigation.NavigateTo($"/games/{_pagGameEntity.UrlSegment}/{PagEntity.RowKey}");
+        Navigation.NavigateTo($"/games/{_pagGameEntity.UrlSegment}/{PagEntity.UrlSegment}");
     }
 
     private async Task AddTransactionForPlayer()

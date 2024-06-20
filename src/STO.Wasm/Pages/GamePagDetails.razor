@@ -1,4 +1,4 @@
-@page "/games/{GameDateLabel}/{PagRowKey}"
+@page "/games/{GameUrlSegment}/{PagUrlSegment}"
 @inject IGameService GameService
 @inject ITransactionService TransactionService
 @inject IPlayerService PlayerService
@@ -64,7 +64,7 @@
 </div>
 
 <div class="hstack gap-2">
-    <a class="btn btn-secondary" href="/games/@GameDateLabel"><i class="fa-solid fa-arrow-left"></i> Back to Game</a>
+    <a class="btn btn-secondary" href="/games/@GameUrlSegment"><i class="fa-solid fa-arrow-left"></i> Back to Game</a>
 
     <AuthorizeView Policy="IsAdminEmail">
         <Authorized>
@@ -79,9 +79,9 @@
 @code {
     [CascadingParameter] public MainLayout MainLayout { get; set; } = default!;
     
-    [Parameter] public string PagRowKey { get; set; } = default!;
+    [Parameter] public string PagUrlSegment { get; set; } = default!;
     
-    [Parameter] public string GameDateLabel { get; set; } = default!;
+    [Parameter] public string GameUrlSegment { get; set; } = default!;
 
     private PlayerAtGameEntity _pagEntity = default!;
 
@@ -128,18 +128,18 @@
 
     private async Task DeletePag()
     {
-        await GameService.DeletePlayerAtGameEntityAsync(PagRowKey);
-        Navigation.NavigateTo($"/games/{GameDateLabel}");
+        await GameService.DeletePlayerAtGameEntityAsync(_pagEntity.RowKey);
+        Navigation.NavigateTo($"/games/{GameUrlSegment}");
     }
 
     private void RefreshData()
     {
-        _pagEntity = GameService.GetPlayerAtGameEntity(PagRowKey);
+        _pagEntity = GameService.GetPlayerAtGameEntityByUrlSegment(PagUrlSegment);
         _playerEntity = PlayerService.GetPlayerEntity(_pagEntity.PlayerRowKey);
         _playerEntityBalance = PlayerService.GetBalanceForPlayerEntity(_pagEntity.PlayerRowKey);
         _gameEntity = GameService.GetGameEntity(_pagEntity.GameRowKey);
         var gameLabel = GameService.GetGameLabel(_gameEntity.RowKey);
-        _pageTitle = $"{@_playerEntity.Name} at {gameLabel}";
+        _pageTitle = $"{@_playerEntity.Name} at {gameLabel} foo";
         MainLayout.SetPageTitle(_pageTitle);
     }
 

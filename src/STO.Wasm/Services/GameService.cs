@@ -216,6 +216,16 @@
 
 		public async Task UpsertPlayerAtGameEntityAsync(PlayerAtGameEntity pagEntity)
 		{
+			if (pagEntity.PlayerRowKey is null) return;
+			if (pagEntity.GameRowKey is null) return;
+			
+			// Set the UrlSegment
+			// Cannot do this as setter for UrlSegment because we cannot resolve the GameEntity and PlayerEntity there
+			var player = playerService.GetPlayerEntity(pagEntity.PlayerRowKey);
+			var game = GetGameEntity(pagEntity.GameRowKey);
+			pagEntity.UrlSegment = $"{player.UrlSegment}-{game.UrlSegment}";
+			
+			// Upsert
 			await dataService.UpsertEntityAsync(pagEntity);
 		}
 

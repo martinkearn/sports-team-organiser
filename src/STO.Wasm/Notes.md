@@ -1,8 +1,11 @@
 # Breadcrumb
 Last updated Sat 25th May
 - [x] Add UrlSegment to all pags
+- [ ] Use UrlSegment for pag navigation
 - [ ] Add UrlSegment to all transactions
+- [ ] Use UrlSegment for transaction navigation
 - [ ] Add urlSegment to all ratings
+- [ ] Use UrlSegment for rating navigation
 - [ ] Refactor game navigate to use UrlSegment
 - [ ] Transaction navigation by name on everything
 - [ ] Rating navigation by name on everything

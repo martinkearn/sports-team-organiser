@@ -30,8 +30,6 @@
 		var games = GameService.GetGameEntities();
 		foreach (var game in games)
 		{
-			var gameUrlSegment = game.Date.Date.ToString("dd-MM-yyyy");
-			game.UrlSegment = gameUrlSegment;
 			await GameService.UpsertGameEntityAsync(game);
 			_gamesUpdateCount += 1;
 		}
@@ -44,7 +42,6 @@
 		var players = PlayerService.GetPlayerEntities();
 		foreach (var player in players)
 		{
-			player.UrlSegment = player.Name.Replace(" ", "-").ToLowerInvariant();
 			await PlayerService.UpsertPlayerEntityAsync(player);
 			_playersUpdateCount += 1;
 		}
@@ -60,9 +57,6 @@
 			_pagsUpdateStatus = $"Working on {game.Date.Date.ToShortDateString()}";
 			foreach (var pag in GameService.GetPlayerAtGameEntitiesForGame(game.RowKey))
 			{
-				var player = PlayerService.GetPlayerEntity(pag.PlayerRowKey);
-				var pagUrlSegment = $"{player.UrlSegment}-{game.UrlSegment}";
-				pag.UrlSegment = pagUrlSegment;
 				await GameService.UpsertPlayerAtGameEntityAsync(pag);
 				_pagsUpdateCount += 1;
 			}

@@ -80,7 +80,7 @@ namespace STO.Wasm.Services
 
 		public async Task UpsertPlayerEntityAsync(PlayerEntity playerEntity)
 		{
-			playerEntity.UrlSegment = playerEntity.Name.Replace(" ", "-").ToLowerInvariant();
+			//playerEntity.UrlSegment = playerEntity.Name.Replace(" ", "-").ToLowerInvariant();
 			await dataService.UpsertEntityAsync(playerEntity);
 		}
 		

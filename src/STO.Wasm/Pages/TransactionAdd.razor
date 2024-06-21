@@ -76,7 +76,7 @@
 
 	private void RefreshData()
 	{
-		_newTransactionEntity = new();
+		_newTransactionEntity = new TransactionEntity();
 		_playerEntities = PlayerService.GetPlayerEntities();
 		_pageTitle = "Add Transaction";
 		MainLayout.SetPageTitle(_pageTitle);

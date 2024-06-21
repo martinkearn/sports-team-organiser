@@ -18,7 +18,7 @@
 		@foreach (var te in _pageOfTransactionEntities)
 		{
 			<tr>
-				<td><a href="/transactions/@te.RowKey">@te.Date.ToString("dd MMM yyyy HH:mm")</a></td>
+				<td><a href="/transactions/@te.UrlSegment">@te.Date.ToString("dd MMM yyyy HH:mm")</a></td>
 				<td><CurrencyDisplay Amount="@te.Amount" /></td>
 				<td class="d-none d-lg-table-cell"><PlayerName Link="true" PlayerRowKey="@te.PlayerRowKey" /></td>
 				<td class="d-none d-lg-table-cell">@te.Notes</td>

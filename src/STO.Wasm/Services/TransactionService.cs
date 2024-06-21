@@ -17,8 +17,13 @@ namespace STO.Wasm.Services
         public TransactionEntity GetTransactionEntity(string rowKey)
         {
             var tes = GetTransactionEntities();
-
             return tes.First(o => o.RowKey == rowKey);
+        }
+
+        public TransactionEntity GetTransactionEntityByUrlSegment(string urlSegment)
+        {
+            var tes = GetTransactionEntities();
+            return tes.First(o => o.UrlSegment == urlSegment);
         }
 
         public async Task DeleteTransactionEntityAsync(string rowKey)

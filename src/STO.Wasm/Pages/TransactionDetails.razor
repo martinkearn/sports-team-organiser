@@ -1,4 +1,4 @@
-@page "/transactions/{TransactionRowKey}"
+@page "/transactions/{TransactionUrlSegment}"
 @inject ITransactionService TransactionService
 @inject IPlayerService PlayerService
 @inject NavigationManager Navigation
@@ -41,8 +41,9 @@ else
 
 @code {
 	[CascadingParameter] public MainLayout MainLayout { get; set; } = default!;
+	
 	[Parameter]
-	public string TransactionRowKey { get; set; } = default!;
+	public string TransactionUrlSegment { get; set; } = default!;
 
 	private TransactionEntity _transactionEntity = default!;
 
@@ -55,13 +56,13 @@ else
 
 	private async Task DeleteTransaction()
 	{
-		await TransactionService.DeleteTransactionEntityAsync(TransactionRowKey);
+		await TransactionService.DeleteTransactionEntityAsync(_transactionEntity.RowKey);
 		Navigation.NavigateTo("/transactions");
 	}
 
 	private void RefreshData()
 	{
-		_transactionEntity = TransactionService.GetTransactionEntity(TransactionRowKey);
+		_transactionEntity = TransactionService.GetTransactionEntityByUrlSegment(TransactionUrlSegment);
 		var playerEntity = PlayerService.GetPlayerEntity(_transactionEntity.PlayerRowKey);
 		_pageTitle = $"Transaction for {@playerEntity.Name}, {_transactionEntity.Date.Date.ToShortDateString()}";
 		MainLayout.SetPageTitle(_pageTitle);

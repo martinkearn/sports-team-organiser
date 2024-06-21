@@ -5,6 +5,10 @@
 @using System.Security.Claims
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject IDataService DataService
+@inject IGameService GameService
+@inject IPlayerService PlayerService
+@inject ITransactionService TransactionService
+@inject IRatingService RatingService
 
 <PageTitle>TNF - @_pageTitle</PageTitle>
 
@@ -37,6 +41,19 @@
 
 <AuthorizeView Policy="IsAdminEmail">
 	<Authorized>
+		<h2>Backend Jobs</h2>
+		<p>@_updateStatus</p>
+
+		<button class="btn btn-primary" @onclick="SetUrlSegmentGames"> Set UrlSegment for All Games</button>
+
+		<button class="btn btn-primary" @onclick="SetUrlSegmentPlayers"> Set UrlSegment for All Players</button>
+
+		<button class="btn btn-primary" @onclick="SetUrlSegmentPags"> Set UrlSegment for All PAGs</button>
+
+		<button class="btn btn-primary" @onclick="SetUrlSegmentTransactions"> Set UrlSegment for All Transactions</button>
+
+		<button class="btn btn-primary" @onclick="SetUrlSegmentRatings"> Set UrlSegment for All Ratings</button>
+		
 		<h2>Data</h2>
 		<div class="hstack gap-2">
 			<button class="btn btn-secondary" @onclick="ClearLocalData">Clear Local Data</button>
@@ -63,7 +80,7 @@
 			<p><a href="/ratings/@r.RowKey">Rating, @r.RowKey, @r.PlayerRowKey, @r.GameRowKey, @r.Rating</a></p>
 		}
 
-		<BootstrapBreakpoints />
+		<BootstrapBreakpoints/>
 
 	</Authorized>
 </AuthorizeView>
@@ -76,6 +93,76 @@
 	private List<RatingEntity> _allRatings = [];
 	private IEnumerable<Claim> _claims = Enumerable.Empty<Claim>();
 	private string _pageTitle = default!;
+	private int _updateCount = 0;
+	private string _updateStatus = default!;
+
+	private async Task SetUrlSegmentGames()
+	{
+		_updateCount = 0;
+		_updateStatus = "Start Games";
+		var games = GameService.GetGameEntities();
+		foreach (var game in games)
+		{
+			await GameService.UpsertGameEntityAsync(game);
+			_updateCount += 1;
+		}
+		_updateStatus = $"Updated {_updateCount} Games";
+	}
+	
+	private async Task SetUrlSegmentPlayers()
+	{
+		_updateCount = 0;
+		_updateStatus = "Start Players";
+		var players = PlayerService.GetPlayerEntities();
+		foreach (var player in players)
+		{
+			await PlayerService.UpsertPlayerEntityAsync(player);
+			_updateCount += 1;
+		}
+		_updateStatus = $"Updated {_updateCount} Players";
+	}
+
+	private async Task SetUrlSegmentPags()
+	{
+		_updateCount = 0;
+		_updateStatus = "Start Pags";
+		var games = GameService.GetGameEntities();
+		foreach (var game in games)
+		{
+			foreach (var pag in GameService.GetPlayerAtGameEntitiesForGame(game.RowKey))
+			{
+				await GameService.UpsertPlayerAtGameEntityAsync(pag);
+				_updateCount += 1;
+			}
+		}
+		_updateStatus = $"Updated {_updateCount} Pags";
+	}
+	
+	private async Task SetUrlSegmentTransactions()
+	{
+		_updateCount = 0;
+		_updateStatus = "Start Transactions";
+		var transactions = TransactionService.GetTransactionEntities();
+		foreach (var te in transactions)
+		{
+			await TransactionService.UpsertTransactionEntityAsync(te);
+			_updateCount += 1;
+		}
+		_updateStatus = $"Updated {_updateCount} Trasnactions";
+	}
+	
+	private async Task SetUrlSegmentRatings()
+	{
+		_updateCount = 0;
+		_updateStatus = "Start Ratings";
+		var ratings = RatingService.GetRatingEntities();
+		foreach (var re in ratings)
+		{
+			await RatingService.UpsertRatingEntityAsync(re);
+			_updateCount += 1;
+		}
+		_updateStatus = $"Updated {_updateCount} Ratings";
+	}
 
 	protected override async Task OnInitializedAsync()
 	{

@@ -35,7 +35,7 @@ namespace STO.Wasm.Services
             // Cannot use PlayerService due to circular dependency. need to work with data service directly to get player details
             var pes = dataService.PlayerEntities;
             var player = pes.First(o => o.RowKey == transactionEntity.PlayerRowKey);
-            transactionEntity.UrlSegment = $"{player.UrlSegment}-{transactionEntity.Date.Date:dd-MM-yyyy}";
+            transactionEntity.UrlSegment = $"{player.UrlSegment}-{transactionEntity.Date.DateTime:dd-MM-yyyy-HH-mm-ss}";
             
             await dataService.UpsertEntityAsync(transactionEntity);
         }

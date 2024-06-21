@@ -1,15 +1,5 @@
 namespace STO.Wasm.Interfaces
 {
-	public class InClassName
-	{
-		public InClassName(string rowKey)
-		{
-			RowKey = rowKey;
-		}
-
-		public string RowKey { get; private set; }
-	}
-
 	/// <summary>
 	/// Service for working with Players, PlayerEntities.
 	/// </summary>
@@ -24,15 +14,23 @@ namespace STO.Wasm.Interfaces
 		/// <summary>
 		/// Gets a list of PlayerEntity based on a list of PlayerAtGameEntity
 		/// </summary>
-		/// <param name="pags">Lis of PlayerAtGameEntity to turn into PlayerEntity</param>
+		/// <param name="pags">List of PlayerAtGameEntity to turn into PlayerEntity</param>
 		/// <returns>List of PlayerEntity.</returns>
 		public List<PlayerEntity> GetPlayerEntitiesFromPags(List<PlayerAtGameEntity> pags);
 
 		/// <summary>
-		/// Gets a PlayerEntity object
+		/// Gets a PlayerEntity object from RowKey
 		/// </summary>
+		/// <param name="rowKey">The RowKey for the PlayerEntity to match on</param>
 		/// <returns>A PlayerEntity.</returns>
 		public PlayerEntity GetPlayerEntity(string rowKey);
+		
+		/// <summary>
+		/// Gets a PlayerEntity object from a UrlSegment
+		/// </summary>
+		/// <param name="urlSegment">The UrlSegment for the PlayerEntity to match on</param>
+		/// <returns>A PlayerEntity.</returns>
+		public PlayerEntity GetPlayerEntityFromUrlSegment(string urlSegment);
 
 		/// <summary>
 		/// Returns the default rate for the PlayerEntity associated with the rowKey

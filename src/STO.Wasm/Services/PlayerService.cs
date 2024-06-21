@@ -1,3 +1,5 @@
+using System.Globalization;
+
 namespace STO.Wasm.Services
 {
 	/// <inheritdoc/>
@@ -18,15 +20,13 @@ namespace STO.Wasm.Services
 		public PlayerEntity GetPlayerEntity(string rowKey)
 		{
 			var pes = dataService.PlayerEntities;
-			try
-			{
-				return pes.First(o => o.RowKey == rowKey);
-			}
-			catch (Exception ex)
-			{
-				var m = ex.Message;
-				return new PlayerEntity();
-			}
+			return pes.First(o => o.RowKey == rowKey);
+		}
+
+		public PlayerEntity GetPlayerEntityFromUrlSegment(string urlSegment)
+		{
+			var pes = dataService.PlayerEntities;
+			return pes.First(o => o.UrlSegment.ToLowerInvariant().Equals(urlSegment, StringComparison.InvariantCultureIgnoreCase));
 		}
 
 		public double GetDefaultRateForPlayerEntity(string rowKey)
@@ -80,8 +80,9 @@ namespace STO.Wasm.Services
 
 		public async Task UpsertPlayerEntityAsync(PlayerEntity playerEntity)
 		{
+			//playerEntity.UrlSegment = playerEntity.Name.Replace(" ", "-").ToLowerInvariant();
 			await dataService.UpsertEntityAsync(playerEntity);
 		}
-
+		
 	}
 }

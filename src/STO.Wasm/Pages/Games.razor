@@ -29,6 +29,7 @@
 </table>
 
 @code {
+	[CascadingParameter] public MainLayout MainLayout { get; set; } = default!;
 	private List<GameEntity> _gameEntities = [];
 
 	private string _pageTitle = default!;
@@ -42,5 +43,6 @@
 	{
 		_gameEntities = GameService.GetGameEntities();
 		_pageTitle = "Games";
+		MainLayout.SetPageTitle(_pageTitle);
 	}
 }

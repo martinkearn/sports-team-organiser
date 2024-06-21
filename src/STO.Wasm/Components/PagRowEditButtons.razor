@@ -1,6 +1,7 @@
 @inject IGameService GameService
 @inject ITransactionService TransactionService
-@inject  IPlayerService PlayerService;
+@inject IPlayerService PlayerService
+@inject NavigationManager Navigation
 
 <AuthorizeView Policy="IsAdminEmail">
     <Authorized>
@@ -15,7 +16,7 @@
         <span></span>
         <button type="button" class="btn btn-outline-secondary btn-sm d-none d-md-inline" @onclick="SwitchPagTeam">@PagEntity.Team <i class="fa-solid fa-repeat"></i></button>
         <button type="button" class="btn btn-outline-secondary btn-sm d-none d-lg-inline" @onclick="AddTransactionForPlayer"><i class="fa-solid fa-plus"></i> £@_pagDefaultAmount</button>
-        <a type="button" class="btn btn-outline-secondary btn-sm d-inline" href="/games/pags/@PagEntity.RowKey"><i class="fa-solid fa-edit"></i> Edit</a>
+        <button type="button" class="btn btn-outline-secondary btn-sm d-inline" @onclick="NavigateToPag"><i class="fa-solid fa-edit"></i> Edit</button>
     </Authorized>
 </AuthorizeView>
 
@@ -24,9 +25,11 @@
     public PlayerAtGameEntity PagEntity { get; set; } = default!;
 
     [Parameter]
-    public EventCallback RefreshMainPage { get; set; } = default!;
+    public EventCallback RefreshMainPage { get; set; }
 
     private double _pagDefaultAmount = default;
+    
+    private GameEntity _pagGameEntity = default!;
 
     protected override async Task OnInitializedAsync()
     {
@@ -41,20 +44,19 @@
 
     private async Task SwitchPagTeam()
     {
-        if (PagEntity.Team == "A")
+        PagEntity.Team = PagEntity.Team switch
         {
-            PagEntity.Team = "B";
-        }
-        else if (PagEntity.Team == "B")
-        {
-            PagEntity.Team = "";
-        }
-        else
-        {
-            PagEntity.Team = "A";
-        }
+            "A" => "B",
+            "B" => "",
+            _ => "A"
+        };
         await GameService.UpsertPlayerAtGameEntityAsync(PagEntity);
         await RefreshMainPage.InvokeAsync();
+    }
+
+    private void NavigateToPag()
+    {
+        Navigation.NavigateTo($"/games/{_pagGameEntity.UrlSegment}/{PagEntity.UrlSegment}");
     }
 
     private async Task AddTransactionForPlayer()
@@ -75,7 +77,7 @@
 
     private async Task RefreshData()
     {
-        var game = GameService.GetGameEntity(PagEntity.GameRowKey);
+        _pagGameEntity = GameService.GetGameEntity(PagEntity.GameRowKey);
         _pagDefaultAmount = PlayerService.GetDefaultRateForPlayerEntity(PagEntity.PlayerRowKey);
         await RefreshMainPage.InvokeAsync();
     }

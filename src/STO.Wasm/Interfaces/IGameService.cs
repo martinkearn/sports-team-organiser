@@ -14,8 +14,16 @@ namespace STO.Wasm.Interfaces
         /// <summary>
         /// Gets a single GameEntity.
         /// </summary>
+        /// <param name="rowKey">The RowKey for the GameEntity to get.</param>
         /// <returns>GameEntity.</returns>
         public GameEntity GetGameEntity(string rowKey);
+        
+        /// <summary>
+        /// Gets a single GameEntity.
+        /// </summary>
+        /// <param name="urlSegment">The UrlSegment for the GameEntity to get.</param>
+        /// <returns>GameEntity.</returns>
+        public GameEntity GetGameEntityByUrlSegment(string urlSegment);
 
         /// <summary>
         /// Gets the next GameEntity in terms of date.
@@ -38,14 +46,23 @@ namespace STO.Wasm.Interfaces
 		/// <summary>
 		/// Gets a list of PlayerAtGame for a given Game
 		/// </summary>
+		/// <param name="gameRowKey">The RowKey for the GameEntity to delete.</param>
 		/// <returns>List of PlayerAtGame.</returns>
 		public List<PlayerAtGameEntity> GetPlayerAtGameEntitiesForGame(string gameRowKey);
 
 		/// <summary>
 		/// Gets a single Pag (player at game).
 		/// </summary>
+		/// <param name="rowKey">The RowKey for the GameEntity to get.</param>
 		/// <returns>PlayerAtGame.</returns>
 		public PlayerAtGameEntity GetPlayerAtGameEntity(string rowKey);
+		
+		/// <summary>
+		/// Gets a single Pag (player at game).
+		/// </summary>
+		/// <param name="urlSegment">The UrlSegment for the GameEntity to get.</param>
+		/// <returns>PlayerAtGame.</returns>
+		public PlayerAtGameEntity GetPlayerAtGameEntityByUrlSegment(string urlSegment);
 
 		/// <summary>
 		/// Upserts a PlayerAtGameEntity.
@@ -77,7 +94,7 @@ namespace STO.Wasm.Interfaces
 		/// Marks all PlayerAtGameEntity in a Game as having played.
 		/// </summary>
 		/// <param name="gameRowKey">The RowKey for the GameEntities to update PlayerAtGame for.</param>
-		/// <param name="played">Inidicates whether all PlayerAtGame should have played set to true or false</param>
+		/// <param name="played">Indicates whether all PlayerAtGame should have played set to true or false</param>
 		public Task MarkAllPlayedAsync(string gameRowKey, bool played);
 
 		/// <summary>

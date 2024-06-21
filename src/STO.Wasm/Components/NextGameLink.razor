@@ -2,11 +2,11 @@
 
 @if (string.IsNullOrEmpty(IconCss))
 {
-    <a class="@Css" href="/games/@_ge.RowKey">Next Game</a>
+    <a class="@Css" href="/games/@_nextGameEntity.UrlSegment">Next Game</a>
 }
 else
 {
-    <a class="@Css" href="/games/@_ge.RowKey"><i class="@IconCss"></i> Next Game</a>
+    <a class="@Css" href="/games/@_nextGameEntity.UrlSegment"><i class="@IconCss"></i> Next Game</a>
 }
 
 @code {
@@ -14,11 +14,11 @@ else
 
     [Parameter] public string? IconCss { get; set; }
 
-    private GameEntity _ge = default!;
+    private GameEntity _nextGameEntity = default!;
 
     protected override void OnInitialized()
     {
-        _ge = GameService.GetNextGameEntity();
+        _nextGameEntity = GameService.GetNextGameEntity();
     }
 
 }

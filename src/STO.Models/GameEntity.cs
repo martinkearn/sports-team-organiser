@@ -7,7 +7,17 @@ namespace STO.Models
     public class GameEntity : ITableEntity
     {
         [Required]
-        public DateTimeOffset Date { get; set; } = DateTimeOffset.UtcNow!;
+        public DateTimeOffset Date
+        {
+            get => _date;
+            set
+            {
+                _date = value;
+                UrlSegment = value.Date.ToString("dd-MM-yyyy");
+            }
+        }
+
+        private DateTimeOffset _date;
 
         public int TeamAGoals { get; set; }
 
@@ -16,6 +26,8 @@ namespace STO.Models
         public string Title { get; set; }
 
         public string Notes { get; set; }
+        
+        public string UrlSegment { get; set; }
 
         public string PartitionKey { get; set; } = default!;
         public string RowKey { get; set; } = default!;

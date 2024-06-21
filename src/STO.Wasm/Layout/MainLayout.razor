@@ -1,8 +1,13 @@
-﻿@inherits LayoutComponentBase
+﻿@using System.Globalization
+@inherits LayoutComponentBase
+@inject NavigationManager NavigationManager
+
+<CascadingValue Value="this">
 
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark" aria-label="Eighth navbar example">
     <div class="container">
         <a class="navbar-brand" href="/">Tuesday.Football</a>
+        
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsExample07" aria-controls="navbarsExample07" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -52,16 +57,91 @@
                     <a class="nav-link" href="https://github.com/martinkearn/sports-team-organiser/issues">Issue</a>
                 </li>
                 <li class="nav-item">
-                    <LoginDisplay></LoginDisplay>
+                    <LoginDisplay />
                 </li>
             </ul>
         </div>
+        
     </div>
 </nav>
 
 <div class="container my-2">
+    <ol class="breadcrumb">
+        @if (_uri != _baseUri)
+        {
+            <li class="breadcrumb-item "><a href="/"><i class="fa-solid fa-home fa-xs"></i></a></li>
+        }
+        @foreach (var segment in _relativeUri.ToString().Split('/'))
+        {
+            if (string.IsNullOrEmpty(segment))
+            {
+                continue;
+            }
+
+            if (segment.Contains("authentication"))
+            {
+                continue;
+            }
+
+            var uriString = _uri.ToString();
+            var segmentIndex = uriString.IndexOf(segment, StringComparison.Ordinal);
+            if (segmentIndex <= 0)
+            {
+                continue;
+            }
+
+            var segmentUri = uriString[..segmentIndex] + segment;
+            var segmentDisplay = _textInfo.ToTitleCase(segment).TrimEnd('/');
+            if (_uri.ToString().EndsWith($"/{segment}"))
+            {
+                if (!string.IsNullOrEmpty(_pageTitle))
+                {
+                    segmentDisplay = _pageTitle;
+                }
+
+                <li class="breadcrumb-item active">@segmentDisplay</li>
+            }
+            else
+            {
+                <li class="breadcrumb-item"><a href="@segmentUri">@segmentDisplay</a></li>
+            }
+        }
+    </ol>
+</div>
+
+<div class="container my-2">
     @Body
 </div>
+
+</CascadingValue>
+
+
+@code{
+    private string _pageTitle = default!;
+    
+    private bool _showBreadcrumb;
+    private Uri _uri = default!;
+    private Uri _baseUri = default!;
+    private Uri _relativeUri = default!;
+    private TextInfo _textInfo = default!;
+
+    protected override void OnParametersSet()
+    {
+        _showBreadcrumb = NavigationManager.Uri != NavigationManager.BaseUri;
+        _baseUri = new Uri(NavigationManager.BaseUri);
+        _uri = new Uri(NavigationManager.Uri);
+        _relativeUri = _baseUri.MakeRelativeUri(_uri);
+        _textInfo = new CultureInfo("en-GB", false).TextInfo;
+        _pageTitle = string.Empty;
+    }
+
+    public void SetPageTitle(string pageTitle)
+    {
+        _pageTitle = pageTitle;
+        StateHasChanged();
+    }
+
+}
 
 
 

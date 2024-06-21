@@ -1,4 +1,4 @@
-@page "/games/pags/{PagRowKey}"
+@page "/games/{GameUrlSegment}/{PagUrlSegment}"
 @inject IGameService GameService
 @inject ITransactionService TransactionService
 @inject IPlayerService PlayerService
@@ -14,13 +14,19 @@
 </div>
 
 <div class="mb-3">
+    <label class="form-label">Url Segment</label>
+    <span class="form-control-plaintext" disabled="true">@_pagEntity.UrlSegment</span>
+    <div class="form-text">Set automatically.</div>
+</div>
+
+<div class="mb-3">
     <label class="form-label">Game</label>
     <span class="form-control-plaintext"><GameEntityTitle GameEntity="@_gameEntity" Link="true" /></span>
 </div>
 
 <div class="mb-3">
     <label class="form-label">Playing Forecast</label>
-    <InputSelect class="form-select" @bind-Value=_pagEntity.Forecast @bind-Value:after="() => Edit()">
+    <InputSelect class="form-select" @bind-Value=_pagEntity.Forecast @bind-Value:after="Edit">
         <option value="Yes">Yes</option>
         <option value="Maybe">Maybe</option>
         <option value="Reserve1">Reserve1</option>
@@ -34,7 +40,7 @@
 
 <div class="mb-3">
     <label class="form-label">Played</label>
-    <InputSelect class="form-select" @bind-Value=_pagEntity.Played @bind-Value:after="() => EditPlayed()">
+    <InputSelect class="form-select" @bind-Value=_pagEntity.Played @bind-Value:after="EditPlayed">
         <option value="true">Yes</option>
         <option value="false">No</option>
     </InputSelect>
@@ -42,7 +48,7 @@
 
 <div class="mb-3">
     <label class="form-label">Team</label>
-    <InputSelect class="form-select" @bind-Value=_pagEntity.Team @bind-Value:after="() => Edit()">
+    <InputSelect class="form-select" @bind-Value=_pagEntity.Team @bind-Value:after="Edit">
         <option value="A">Team A</option>
         <option value="B">Team B</option>
         <option value="">No Team</option>
@@ -52,13 +58,13 @@
 <div class="mb-3">
     <label class="form-label">Add Payment</label>
     <br>
-    <button class="btn btn-outline-secondary" @onclick="() => AddTransactionForPlayer()"><i class="fa-solid fa-plus"></i> @_playerEntity.DefaultRate</button>
+    <button class="btn btn-outline-secondary" @onclick="AddTransactionForPlayer"><i class="fa-solid fa-plus"></i> @_playerEntity.DefaultRate</button>
     <br>
     <span>Balance: <CurrencyDisplay Amount="@_playerEntityBalance" /></span>
 </div>
 
 <div class="hstack gap-2">
-    <a class="btn btn-secondary" href="/games/@_pagEntity.GameRowKey"><i class="fa-solid fa-arrow-left"></i> Back to Game</a>
+    <a class="btn btn-secondary" href="/games/@GameUrlSegment"><i class="fa-solid fa-arrow-left"></i> Back to Game</a>
 
     <AuthorizeView Policy="IsAdminEmail">
         <Authorized>
@@ -71,8 +77,11 @@
 </div>
 
 @code {
-    [Parameter]
-    public string PagRowKey { get; set; } = default!;
+    [CascadingParameter] public MainLayout MainLayout { get; set; } = default!;
+    
+    [Parameter] public string PagUrlSegment { get; set; } = default!;
+    
+    [Parameter] public string GameUrlSegment { get; set; } = default!;
 
     private PlayerAtGameEntity _pagEntity = default!;
 
@@ -119,17 +128,19 @@
 
     private async Task DeletePag()
     {
-        await GameService.DeletePlayerAtGameEntityAsync(PagRowKey);
-        Navigation.NavigateTo($"/games/{_pagEntity.GameRowKey}");
+        await GameService.DeletePlayerAtGameEntityAsync(_pagEntity.RowKey);
+        Navigation.NavigateTo($"/games/{GameUrlSegment}");
     }
 
     private void RefreshData()
     {
-        _pagEntity = GameService.GetPlayerAtGameEntity(PagRowKey);
+        _pagEntity = GameService.GetPlayerAtGameEntityByUrlSegment(PagUrlSegment);
         _playerEntity = PlayerService.GetPlayerEntity(_pagEntity.PlayerRowKey);
         _playerEntityBalance = PlayerService.GetBalanceForPlayerEntity(_pagEntity.PlayerRowKey);
         _gameEntity = GameService.GetGameEntity(_pagEntity.GameRowKey);
-        _pageTitle = $"{@_playerEntity.Name} at {_gameEntity.Date.Date:dd MMM}";
+        var gameLabel = GameService.GetGameLabel(_gameEntity.RowKey);
+        _pageTitle = $"{@_playerEntity.Name} at {gameLabel} foo";
+        MainLayout.SetPageTitle(_pageTitle);
     }
 
 }

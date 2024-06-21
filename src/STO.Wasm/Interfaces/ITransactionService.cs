@@ -21,9 +21,16 @@ namespace STO.Wasm.Interfaces
         /// <summary>
         /// Gets a specific TransactionEntity based on its RowKey
         /// </summary>
-        /// <param name="rowKey"></param>
+        /// <param name="rowKey">The RowKey for the Transaction to get</param>
         /// <returns>A TransactionEntity</returns>
         public TransactionEntity GetTransactionEntity(string rowKey);
+        
+        /// <summary>
+        /// Gets a specific TransactionEntity based on its UrlSegment
+        /// </summary>
+        /// <param name="urlSegment">The UrlSegment for the Transaction to get</param>
+        /// <returns>A TransactionEntity</returns>
+        public TransactionEntity GetTransactionEntityByUrlSegment(string urlSegment);
 
         /// <summary>
         /// Deletes a TransactionEntity.

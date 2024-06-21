@@ -1,54 +1,49 @@
-@page "/transactions/{TransactionRowKey}"
+@page "/transactions/{TransactionUrlSegment}"
 @inject ITransactionService TransactionService
 @inject IPlayerService PlayerService
 @inject NavigationManager Navigation
-
 
 <PageTitle>TNF - @_pageTitle</PageTitle>
 
 <h1><i class="fa-solid fa-coins me-2"></i> @_pageTitle</h1>
 
-<AuthorizeView Policy="IsAdminEmail">
-	<Authorized>
-		<p>Transactions cannot be edited, only deleted</p>
+<p>Transactions cannot be edited, only deleted</p>
 
-		<h5>Row Key</h5>
-		<p>@_transactionEntity.RowKey</p>
+<h5>Row Key</h5>
+<p>@_transactionEntity.RowKey</p>
 
-		<h5>Date</h5>
-		<p>@_transactionEntity.Date.ToString("dd MMM yyyy HH:mm")</p>
+<h5>UrlSegment</h5>
+<p>@_transactionEntity.UrlSegment</p>
 
-		<h5>Amount</h5>
-		<p><CurrencyDisplay Amount="@_transactionEntity.Amount"></CurrencyDisplay></p>
+<h5>Date</h5>
+<p>@_transactionEntity.Date.ToString("dd MMM yyyy HH:mm")</p>
 
-		<h5>Notes</h5>
-		@if (_transactionEntity.Notes is not null)
-		{
-			<p>@_transactionEntity.Notes</p>
-		}
-		else
-		{
-			<p>No Notes</p>
-		}
+<h5>Amount</h5>
+<p><CurrencyDisplay Amount="@_transactionEntity.Amount"></CurrencyDisplay></p>
 
-		<h5>Player</h5>
-		<p><PlayerName Link="true" PlayerRowKey="@_transactionEntity.PlayerRowKey" /></p>
+<h5>Notes</h5>
+@if (_transactionEntity.Notes is not null)
+{
+	<p>@_transactionEntity.Notes</p>
+}
+else
+{
+	<p>No Notes</p>
+}
 
-		<div class="hstack gap-2">
-			<a class="btn btn-secondary" href="/transactions/"><i class="fa-solid fa-arrow-left"></i> All Transactions</a>
-			<DeleteButtonWithCheck DeleteWhatLabel="@_pageTitle" ButtonLabel="Delete" ParentPageCallback="DeleteTransaction" />
-		</div>
-	</Authorized>
-	<NotAuthorized>
-		<h4>Access Denied!</h4>
-		<a class="btn btn-secondary" href="authentication/login"><i class="fa-solid fa-key me-2"></i> Log in</a>
-	</NotAuthorized>
-</AuthorizeView>
+<h5>Player</h5>
+<p><PlayerName Link="true" PlayerRowKey="@_transactionEntity.PlayerRowKey" /></p>
 
+<div class="hstack gap-2">
+	<a class="btn btn-secondary" href="/transactions/"><i class="fa-solid fa-arrow-left"></i> All Transactions</a>
+	<DeleteButtonWithCheck DeleteWhatLabel="@_pageTitle" ButtonLabel="Delete" ParentPageCallback="DeleteTransaction" />
+</div>
 
 @code {
+	[CascadingParameter] public MainLayout MainLayout { get; set; } = default!;
+	
 	[Parameter]
-	public string TransactionRowKey { get; set; } = default!;
+	public string TransactionUrlSegment { get; set; } = default!;
 
 	private TransactionEntity _transactionEntity = default!;
 
@@ -61,14 +56,15 @@
 
 	private async Task DeleteTransaction()
 	{
-		await TransactionService.DeleteTransactionEntityAsync(TransactionRowKey);
+		await TransactionService.DeleteTransactionEntityAsync(_transactionEntity.RowKey);
 		Navigation.NavigateTo("/transactions");
 	}
 
 	private void RefreshData()
 	{
-		_transactionEntity = TransactionService.GetTransactionEntity(TransactionRowKey);
+		_transactionEntity = TransactionService.GetTransactionEntityByUrlSegment(TransactionUrlSegment);
 		var playerEntity = PlayerService.GetPlayerEntity(_transactionEntity.PlayerRowKey);
 		_pageTitle = $"Transaction for {@playerEntity.Name}, {_transactionEntity.Date.Date.ToShortDateString()}";
+		MainLayout.SetPageTitle(_pageTitle);
 	}
 }

@@ -4,7 +4,7 @@
 {
     if (Link)
     {
-        <a href="/games/@GameEntity?.RowKey">@_gameLabel</a>
+        <a href="/games/@GameEntity.UrlSegment">@_gameLabel</a>
     }
     else
     {
@@ -20,8 +20,7 @@ else
     [Parameter]
     public bool Link { get; set; }
 
-    [Parameter]
-    public GameEntity? GameEntity { get; set; }
+    [Parameter] public GameEntity GameEntity { get; set; } = default!;
     
     [Parameter]
     public string? GameEntityRowKey { get; set; }
@@ -40,6 +39,6 @@ else
             GameEntity = GameService.GetGameEntity(GameEntityRowKey);
         }
 
-        _gameLabel = (GameEntity != null) ? GameService.GetGameLabel(GameEntity.RowKey) : string.Empty;
+        _gameLabel = GameService.GetGameLabel(GameEntity.RowKey);
     }
 }

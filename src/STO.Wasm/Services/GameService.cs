@@ -90,6 +90,12 @@
 			return ges.First(o => o.RowKey == rowKey);
 		}
 
+		public GameEntity GetGameEntityByUrlSegment(string urlSegment)
+		{
+			var ges = GetGameEntities();
+			return ges.First(o => o.UrlSegment == urlSegment);
+		}
+
 		public GameEntity GetNextGameEntity()
 		{
 			var ges = GetGameEntities();
@@ -103,7 +109,6 @@
 			if (ge is null) return string.Empty;
 			var notes = $"For game {ge.Date.Date:dd MMM yyyy}";
 			return notes;
-
 		}
 
 		public string GetGameLabel(string rowKey)
@@ -114,6 +119,15 @@
 			var gameDateLabel = ge.Date.ToString("dd MMM");
 			var gameLabel = string.IsNullOrEmpty(ge.Title) ? gameDateLabel : $"{gameDateLabel} {ge.Title}";
 			return gameLabel;
+		}
+
+		public DateTime GetDateFromGameDateLabel(string gameDateLabel)
+		{
+			var gameDateSegments = gameDateLabel.Split('-'); // expecting dd-mm-yyyy i.e. 01-01-2024 means 1st January 2024.
+			var day = Convert.ToInt16(gameDateSegments[0]);
+			var month = Convert.ToInt16(gameDateSegments[1]);
+			var year = Convert.ToInt16(gameDateSegments[2]);
+			return new DateTime(year:year, month:month, day:day);
 		}
 
 		public List<PlayerAtGameEntity> GetPlayerAtGameEntitiesForGame(string gameRowKey)
@@ -135,6 +149,11 @@
 		public PlayerAtGameEntity GetPlayerAtGameEntity(string rowKey)
 		{
 			return dataService.PlayerAtGameEntities.First(o => o.RowKey == rowKey);
+		}
+
+		public PlayerAtGameEntity GetPlayerAtGameEntityByUrlSegment(string urlSegment)
+		{
+			return dataService.PlayerAtGameEntities.First(o => o.UrlSegment == urlSegment);
 		}
 
 		public async Task MarkAllPlayedAsync(string gameRowkey, bool played)
@@ -202,6 +221,16 @@
 
 		public async Task UpsertPlayerAtGameEntityAsync(PlayerAtGameEntity pagEntity)
 		{
+			if (pagEntity.PlayerRowKey is null) return;
+			if (pagEntity.GameRowKey is null) return;
+			
+			// Set the UrlSegment
+			// Cannot do this as setter for UrlSegment because we cannot resolve the GameEntity and PlayerEntity there
+			var player = playerService.GetPlayerEntity(pagEntity.PlayerRowKey);
+			var game = GetGameEntity(pagEntity.GameRowKey);
+			pagEntity.UrlSegment = $"{player.UrlSegment}-{game.UrlSegment}";
+			
+			// Upsert
 			await dataService.UpsertEntityAsync(pagEntity);
 		}
 

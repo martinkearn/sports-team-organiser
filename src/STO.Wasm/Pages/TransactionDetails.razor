@@ -3,7 +3,6 @@
 @inject IPlayerService PlayerService
 @inject NavigationManager Navigation
 
-
 <PageTitle>TNF - @_pageTitle</PageTitle>
 
 <h1><i class="fa-solid fa-coins me-2"></i> @_pageTitle</h1>
@@ -14,6 +13,9 @@
 
 		<h5>Row Key</h5>
 		<p>@_transactionEntity.RowKey</p>
+
+		<h5>UrlSegment</h5>
+		<p>@_transactionEntity.UrlSegment</p>
 
 		<h5>Date</h5>
 		<p>@_transactionEntity.Date.ToString("dd MMM yyyy HH:mm")</p>

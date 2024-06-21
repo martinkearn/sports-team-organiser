@@ -1,7 +1,5 @@
 # Breadcrumb
-Last updated Sat 25th May
-- [x] Add UrlSegment to all pags
-- [x] Use UrlSegment for pag navigation
+
 - [ ] Add UrlSegment to all transactions
 - [ ] Use UrlSegment for transaction navigation
 - [ ] Add urlSegment to all ratings

@@ -28,6 +28,15 @@ namespace STO.Wasm.Services
 
         public async Task UpsertTransactionEntityAsync(TransactionEntity transactionEntity)
         {
+            if (transactionEntity.PlayerRowKey is null) return;
+			
+            // Set the UrlSegment
+            // Cannot do this as setter for UrlSegment because we cannot resolve the GameEntity and PlayerEntity there
+            // Cannot use PlayerService due to circular dependency. need to work with data service directly to get player details
+            var pes = dataService.PlayerEntities;
+            var player = pes.First(o => o.RowKey == transactionEntity.PlayerRowKey);
+            transactionEntity.UrlSegment = $"{player.UrlSegment}-{transactionEntity.Date.Date:dd-MM-yyyy}";
+            
             await dataService.UpsertEntityAsync(transactionEntity);
         }
     }

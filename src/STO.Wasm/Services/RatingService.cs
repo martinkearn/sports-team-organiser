@@ -43,6 +43,12 @@
 			var res = GetRatingEntities();
 			return res.First(o => o.RowKey == rowKey);
 		}
+		
+		public RatingEntity GetRatingEntityByUrlSegment(string urlSegment)
+		{
+			var res = GetRatingEntities();
+			return res.First(o => o.UrlSegment == urlSegment);
+		}
 
 		public async Task UpsertRatingEntityAsync(RatingEntity ratingEntity)
 		{

@@ -1,4 +1,4 @@
-@page "/ratings/{RatingRowKey}"
+@page "/ratings/{RatingUrlSegment}"
 @inject IRatingService RatingEntityService
 @inject IPlayerService PlayerService
 @inject  IGameService GameService
@@ -15,8 +15,11 @@
 		<h5>Date & Time</h5>
 		<p>@RatingEntityService.FormatRatingTime(_ratingEntity.RowKey)</p>
 
+		<h5>Url Segment</h5>
+		<p>@_ratingEntity.UrlSegment</p>
+
 		<h5>Player</h5>
-		<p><a href="players/@_ratingEntity.PlayerRowKey/player">@_playerEntity.Name</a></p>
+		<p><a href="players/@_ratingEntity.UrlSegment/player">@_playerEntity.Name</a></p>
 
 		<h5>Game</h5>
 		<p><GameEntityTitle GameEntityRowKey="@_ratingEntity.GameRowKey" Link="true" /></p>
@@ -47,8 +50,9 @@
 
 @code {
 	[CascadingParameter] public MainLayout MainLayout { get; set; } = default!;
+	
 	[Parameter]
-	public string RatingRowKey { get; set; } = default!;
+	public string RatingUrlSegment { get; set; } = default!;
 
 	private RatingEntity _ratingEntity = default!;
 
@@ -63,13 +67,13 @@
 
 	private async Task DeleteRating()
 	{
-		await RatingEntityService.DeleteRatingEntityAsync(RatingRowKey);
+		await RatingEntityService.DeleteRatingEntityAsync(_ratingEntity.RowKey);
 		Navigation.NavigateTo("/ratings");
 	}
 
 	private void RefreshData()
 	{
-		_ratingEntity = RatingEntityService.GetRatingEntity(RatingRowKey);
+		_ratingEntity = RatingEntityService.GetRatingEntityByUrlSegment(RatingUrlSegment);
 		_playerEntity = PlayerService.GetPlayerEntity(_ratingEntity.PlayerRowKey);
 		_pageTitle = $"Rating for {_playerEntity.Name} {GameService.GetGameLabel(_ratingEntity.GameRowKey)}";
 		MainLayout.SetPageTitle(_pageTitle);

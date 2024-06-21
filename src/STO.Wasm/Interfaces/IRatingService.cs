@@ -17,6 +17,13 @@ namespace STO.Wasm.Interfaces
         /// <param name="rowKey">The RowKey for the RatingEntity to get.</param>
         /// <returns>A RatingEntity.</returns>
         public RatingEntity GetRatingEntity(string rowKey);
+        
+        /// <summary>
+        /// Gets a single RatingEntity by UrlSegment.
+        /// </summary>
+        /// <param name="urlSegment">The UrlSegment for the RatingEntity to get.</param>
+        /// <returns>A RatingEntity.</returns>
+        public RatingEntity GetRatingEntityByUrlSegment(string urlSegment);
 
 		/// <summary>
 		/// Gets all RatingEntities for a PlayerEntity.

@@ -73,7 +73,24 @@
         }
         @foreach (var segment in _relativeUri.ToString().Split('/'))
         {
-            var segmentUri = _uri.ToString()[.._uri.ToString().IndexOf(segment, StringComparison.Ordinal)] + segment;
+            if (string.IsNullOrEmpty(segment))
+            {
+                continue;
+            }
+
+            if (segment.Contains("authentication"))
+            {
+                continue;
+            }
+
+            var uriString = _uri.ToString();
+            var segmentIndex = uriString.IndexOf(segment, StringComparison.Ordinal);
+            if (segmentIndex <= 0)
+            {
+                continue;
+            }
+
+            var segmentUri = uriString[..segmentIndex] + segment;
             var segmentDisplay = _textInfo.ToTitleCase(segment).TrimEnd('/');
             if (_uri.ToString().EndsWith($"/{segment}"))
             {

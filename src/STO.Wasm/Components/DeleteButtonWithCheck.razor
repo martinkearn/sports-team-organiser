@@ -1,6 +1,13 @@
 @inject NavigationManager Navigation
 
-<button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#confirmationModal"><i class="fa-solid fa-trash"></i> @ButtonLabel</button>
+<AuthorizeView Policy="IsAdminEmail">
+  <Authorized>
+    <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#confirmationModal"><i class="fa-solid fa-trash"></i> @ButtonLabel</button>
+  </Authorized>
+  <NotAuthorized>
+    <button class="btn btn-danger" disabled><i class="fa-solid fa-trash"></i> @ButtonLabel</button>
+  </NotAuthorized>
+</AuthorizeView>
 
 <!-- Modal -->
 <div class="modal" id="confirmationModal" tabindex="-1" aria-labelledby="confirmationModalLabel" aria-hidden="true">

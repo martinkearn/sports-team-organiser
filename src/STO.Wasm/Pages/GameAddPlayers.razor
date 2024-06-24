@@ -16,11 +16,11 @@
             var gameRowKey = ge.RowKey;
             if (gameRowKey == _nextGameEntity?.RowKey)
             {
-                <option value="@gameRowKey" selected><GameEntityTitle GameEntity="@ge" Link="false" /></option>
+                <option value="@gameRowKey" selected><EntityTitleLink RowKey="@ge.RowKey" EntityType="Enums.EntityType.GameEntity" Link="false" /></option>
             }
             else
             {
-                <option value="@gameRowKey"><GameEntityTitle GameEntity="@ge" Link="false" /></option>
+                <option value="@gameRowKey"><EntityTitleLink RowKey="@ge.RowKey" EntityType="Enums.EntityType.GameEntity" Link="false" /></option>
             }
         }
     </InputSelect>

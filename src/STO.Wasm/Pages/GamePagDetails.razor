@@ -65,15 +65,7 @@
 
 <div class="hstack gap-2">
     <a class="btn btn-secondary" href="/games/@GameUrlSegment"><i class="fa-solid fa-arrow-left"></i> Back to Game</a>
-
-    <AuthorizeView Policy="IsAdminEmail">
-        <Authorized>
-            <DeleteButtonWithCheck DeleteWhatLabel="@_pageTitle" ButtonLabel="Delete" ParentPageCallback="DeletePag" />
-        </Authorized>
-        <NotAuthorized>
-            <a class="btn btn-secondary disabled"><i class="fa-solid fa-trash"></i> Delete</a>
-        </NotAuthorized>
-    </AuthorizeView>
+    <DeleteButtonWithCheck DeleteWhatLabel="@_pageTitle" ButtonLabel="Delete" ParentPageCallback="DeletePag" />
 </div>
 
 @code {
@@ -139,7 +131,7 @@
         _playerEntityBalance = PlayerService.GetBalanceForPlayerEntity(_pagEntity.PlayerRowKey);
         _gameEntity = GameService.GetGameEntity(_pagEntity.GameRowKey);
         var gameLabel = GameService.GetGameLabel(_gameEntity.RowKey);
-        _pageTitle = $"{@_playerEntity.Name} at {gameLabel} foo";
+        _pageTitle = $"{@_playerEntity.Name} at {gameLabel}";
         MainLayout.SetPageTitle(_pageTitle);
     }
 

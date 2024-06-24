@@ -111,23 +111,26 @@
 			return notes;
 		}
 
-		public string GetGameLabel(string rowKey)
+		public string GetGameLabel(string rowKey, Enums.TitleLength length)
 		{
 			if (string.IsNullOrEmpty(rowKey)) return string.Empty;
 			
 			var ge = GetGameEntity(rowKey);
-			var gameDateLabel = ge.Date.ToString("dd MMM");
+			string gameDateLabel;
+			switch (length)
+			{
+				case Enums.TitleLength.Short:
+					gameDateLabel = ge.Date.ToString("dd MMM");
+					break;
+				case Enums.TitleLength.Long:
+					gameDateLabel = ge.Date.DateTime.ToLongDateString();
+					break;
+				default:
+					throw new ArgumentOutOfRangeException(nameof(length), length, null);
+			}
+			
 			var gameLabel = string.IsNullOrEmpty(ge.Title) ? gameDateLabel : $"{gameDateLabel} {ge.Title}";
 			return gameLabel;
-		}
-
-		public DateTime GetDateFromGameDateLabel(string gameDateLabel)
-		{
-			var gameDateSegments = gameDateLabel.Split('-'); // expecting dd-mm-yyyy i.e. 01-01-2024 means 1st January 2024.
-			var day = Convert.ToInt16(gameDateSegments[0]);
-			var month = Convert.ToInt16(gameDateSegments[1]);
-			var year = Convert.ToInt16(gameDateSegments[2]);
-			return new DateTime(year:year, month:month, day:day);
 		}
 
 		public List<PlayerAtGameEntity> GetPlayerAtGameEntitiesForGame(string gameRowKey)

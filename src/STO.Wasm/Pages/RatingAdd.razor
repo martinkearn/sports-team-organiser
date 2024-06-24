@@ -21,7 +21,7 @@
 			<option value="">Select Game ...</option>
 			@foreach (var ge in _gameEntities)
 			{
-				<option value="@ge.RowKey"><GameEntityTitle GameEntity="@ge" Link="false" /></option>
+				<option value="@ge.RowKey"><EntityTitleLink RowKey="@ge.RowKey" EntityType="Enums.EntityType.GameEntity" Link="true" /></option>
 			}
 		</InputSelect>
 	</div>

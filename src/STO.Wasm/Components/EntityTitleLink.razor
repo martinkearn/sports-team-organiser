@@ -1,0 +1,67 @@
+@inject IGameService GameService
+
+@if (EntityType == Enums.EntityType.GameEntity)
+{
+    if (Link)
+    {
+        <a href="/games/@_gameEntity.UrlSegment">@Label</a>
+    }
+    else
+    {
+        @Label
+    }
+}
+
+@code {
+    [Parameter] public string RowKey { get; set; } = default!;
+
+    [Parameter] public string Label { get; set; } = default!;
+
+    [Parameter] public bool Link { get; set; } = true;
+
+    [Parameter] public Enums.EntityType EntityType { get; set; }
+
+    [Parameter] public Enums.TitleLength Length { get; set; }
+
+    private GameEntity _gameEntity = default!;
+
+    private PlayerEntity _playerEntity = default!;
+
+    private PlayerAtGameEntity _playerAtGameEntity = default!;
+
+    private TransactionEntity _transactionEntity = default!;
+
+    private RatingEntity _ratingEntity = default!;
+
+    protected override void OnInitialized()
+    {
+        RefreshData();
+    }
+    
+    private void RefreshData()
+    {
+        if (RowKey is null) throw new ArgumentException();
+
+        switch (EntityType)
+        {
+            case Enums.EntityType.PlayerEntity:
+                break;
+            case Enums.EntityType.GameEntity:
+                _gameEntity = GameService.GetGameEntity(RowKey);
+                if (string.IsNullOrEmpty(Label))
+                {
+                    Label = GameService.GetGameLabel(RowKey, Length);
+                }
+
+                break;
+            case Enums.EntityType.PlayerAtGameEntity:
+                break;
+            case Enums.EntityType.TransactionEntity:
+                break;
+            case Enums.EntityType.RatingEntity:
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+    }
+}

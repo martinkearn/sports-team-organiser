@@ -1,10 +1,23 @@
 @inject IGameService GameService
+@inject IPlayerService PlayerService
 
 @if (EntityType == Enums.EntityType.GameEntity)
 {
     if (Link)
     {
         <a href="/games/@_gameEntity.UrlSegment">@Label</a>
+    }
+    else
+    {
+        @Label
+    }
+}
+
+@if (EntityType == Enums.EntityType.PlayerEntity)
+{
+    @if (Link)
+    {
+        <a href="/players/@_playerEntity.UrlSegment">@Label</a>
     }
     else
     {
@@ -21,7 +34,7 @@
 
     [Parameter] public Enums.EntityType EntityType { get; set; }
 
-    [Parameter] public Enums.TitleLength Length { get; set; }
+    [Parameter] public Enums.TitleLength Length { get; set; } = Enums.TitleLength.Short;
 
     private GameEntity _gameEntity = default!;
 
@@ -45,6 +58,15 @@
         switch (EntityType)
         {
             case Enums.EntityType.PlayerEntity:
+                _playerEntity = PlayerService.GetPlayerEntity(RowKey);
+
+                Label = Length switch
+                {
+                    Enums.TitleLength.Short => _playerEntity.Name,
+                    Enums.TitleLength.Long => $"{_playerEntity.Name}, {_playerEntity.Position}",
+                    _ => _playerEntity.Name
+                };
+
                 break;
             case Enums.EntityType.GameEntity:
                 _gameEntity = GameService.GetGameEntity(RowKey);

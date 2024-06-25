@@ -39,7 +39,7 @@
 			}
 			@foreach (var pag in _playersAtGameEntities)
 			{
-				<option value="@pag.PlayerRowKey">@pag.PlayerRowKey - TO DO make this player name and position</option>
+				<option value="@pag.PlayerRowKey"><EntityTitleLink EntityType="Enums.EntityType.PlayerEntity" RowKey="@pag.PlayerRowKey" Link="false" Length="Enums.TitleLength.Long" /></option>
 			}
 		</InputSelect>
 	</div>

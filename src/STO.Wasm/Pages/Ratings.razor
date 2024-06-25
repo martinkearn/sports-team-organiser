@@ -22,7 +22,7 @@
 				{
 					<tr>
 						<td><a href="/ratings/@re.UrlSegment">@RatingEntityService.FormatRatingTime(re.RowKey)</a></td>
-						<td><PlayerName Link="true" PlayerRowKey="@re.PlayerRowKey" /></td>
+						<td><EntityTitleLink EntityType="Enums.EntityType.PlayerEntity" RowKey="@re.PlayerRowKey" Link="true" /></td>
 						<td><EntityTitleLink RowKey="@re.GameRowKey" EntityType="Enums.EntityType.GameEntity" Link="false" /></td>
 						<td>@re.Rating</td>
 						<td class="d-none d-lg-table-cell">@re.Notes</td>

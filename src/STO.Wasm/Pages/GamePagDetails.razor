@@ -10,7 +10,7 @@
 
 <div class="mb-3">
     <label class="form-label">Player Name</label>
-    <span class="form-control-plaintext"><PlayerName PlayerRowKey="@_playerEntity.RowKey" Link="true" /></span>
+    <span class="form-control-plaintext"><EntityTitleLink EntityType="Enums.EntityType.PlayerEntity" RowKey="@_playerEntity.RowKey" Link="true" /></span>
 </div>
 
 <div class="mb-3">
@@ -21,7 +21,7 @@
 
 <div class="mb-3">
     <label class="form-label">Game</label>
-    <span class="form-control-plaintext"><GameEntityTitle GameEntity="@_gameEntity" Link="true" /></span>
+    <span class="form-control-plaintext"><EntityTitleLink RowKey="@_gameEntity.RowKey" EntityType="Enums.EntityType.GameEntity" Link="true" /></span>
 </div>
 
 <div class="mb-3">
@@ -65,15 +65,7 @@
 
 <div class="hstack gap-2">
     <a class="btn btn-secondary" href="/games/@GameUrlSegment"><i class="fa-solid fa-arrow-left"></i> Back to Game</a>
-
-    <AuthorizeView Policy="IsAdminEmail">
-        <Authorized>
-            <DeleteButtonWithCheck DeleteWhatLabel="@_pageTitle" ButtonLabel="Delete" ParentPageCallback="DeletePag" />
-        </Authorized>
-        <NotAuthorized>
-            <a class="btn btn-secondary disabled"><i class="fa-solid fa-trash"></i> Delete</a>
-        </NotAuthorized>
-    </AuthorizeView>
+    <DeleteButtonWithCheck DeleteWhatLabel="@_pageTitle" ButtonLabel="Delete" ParentPageCallback="DeletePag" />
 </div>
 
 @code {
@@ -139,7 +131,7 @@
         _playerEntityBalance = PlayerService.GetBalanceForPlayerEntity(_pagEntity.PlayerRowKey);
         _gameEntity = GameService.GetGameEntity(_pagEntity.GameRowKey);
         var gameLabel = GameService.GetGameLabel(_gameEntity.RowKey);
-        _pageTitle = $"{@_playerEntity.Name} at {gameLabel} foo";
+        _pageTitle = $"{@_playerEntity.Name} at {gameLabel}";
         MainLayout.SetPageTitle(_pageTitle);
     }
 

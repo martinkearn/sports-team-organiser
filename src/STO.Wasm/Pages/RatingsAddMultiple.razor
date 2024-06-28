@@ -24,7 +24,7 @@
 	{
 		var pe = PlayerService.GetPlayerEntity(re.PlayerRowKey);
 		<tr>
-			<td><PlayerName PlayerRowKey="@re.PlayerRowKey" Link="false"></PlayerName> <PositionIcon Position="pe.Position"></PositionIcon></td>
+			<td><EntityTitleLink EntityType="Enums.EntityType.PlayerEntity" RowKey="@re.PlayerRowKey" Link="false" /> <PositionIcon Position="pe.Position"></PositionIcon></td>
 			<td>
 				<InputSelect class="form-select" @bind-Value="@re.Rating">
 					<option value="0">Select Rating ...</option>

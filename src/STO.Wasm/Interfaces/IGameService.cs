@@ -115,7 +115,16 @@ namespace STO.Wasm.Interfaces
 		/// Returns a title for the GameEntity based on the game's date, title and note
 		/// </summary>
 		/// <param name="rowKey">The RowKey of the GameEntity to create a title for.</param>
+		/// <param name="length">Should the label be short or long.</param>
 		/// <returns>A string which represents the label for the GameEntity.</returns>
-		public string GetGameLabel(string rowKey);
+		public string GetGameLabel(string rowKey, Enums.TitleLength length = Enums.TitleLength.Short);
+		
+		/// <summary>
+		/// Returns a label for the PlayerAtGameEntity based on the player name and game's label
+		/// </summary>
+		/// <param name="rowKey">The RowKey of the PlayerAtGameEntity to create a label for.</param>
+		/// <param name="length">Should the label be short or long.</param>
+		/// <returns>A string which represents the label for the PlayerAtGameEntity.</returns>
+		public string GetPlayerAtGameLabel(string rowKey, Enums.TitleLength length = Enums.TitleLength.Short);
     }
 }

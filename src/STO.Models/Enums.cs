@@ -6,5 +6,20 @@ namespace STO.Models
         public enum Team { A, B };
         public enum PlayerPosition { Goalie,Defender,PlayMaker,BoxToBox,Midfielder,Forward }
         public enum SortRatingsBy { Rating, Player, Game };
+
+        public enum EntityType
+        {
+            PlayerEntity,
+            GameEntity,
+            PlayerAtGameEntity,
+            TransactionEntity,
+            RatingEntity
+        };
+
+        public enum TitleLength
+        {
+            Short,
+            Long
+        };
     }
 }

@@ -19,7 +19,7 @@
 		@foreach (var pe in _playerEntities)
 		{
 			<tr>
-				<td><a href="/players/@pe.UrlSegment">@pe.Name</a></td>
+				<td><EntityTitleLink EntityType="Enums.EntityType.PlayerEntity" RowKey="@pe.RowKey" Length="Enums.TitleLength.Short" Link="true" /></td>
 				<td class="d-none d-lg-table-cell">@pe.Position</td>
 				<AuthorizeView Policy="IsAdminEmail">
 					<Authorized>

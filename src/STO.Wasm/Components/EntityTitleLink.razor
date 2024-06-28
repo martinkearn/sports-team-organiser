@@ -17,7 +17,7 @@
 {
     @if (Link)
     {
-        <a href="/games/@_gameEntity.UrlSegment/@_playerAtGameEntity.UrlSegment">@Label</a>
+        <a href="/players/@_playerEntity.UrlSegment">@Label</a>
     }
     else
     {
@@ -29,7 +29,7 @@
 {
     if (Link)
     {
-        <a href="/games/@_gameEntity.UrlSegment">@Label</a>
+        <a href="/games/@_gameEntity.UrlSegment/@_playerAtGameEntity.UrlSegment">@Label</a>
     }
     else
     {
@@ -93,7 +93,7 @@
                 _gameEntity = GameService.GetGameEntity(_playerAtGameEntity.GameRowKey);
                 if (string.IsNullOrEmpty(Label))
                 {
-                    Label = GameService.GetPlayerAtGameLabel(_playerEntity.RowKey, Length);
+                    Label = GameService.GetPlayerAtGameLabel(_playerAtGameEntity.RowKey, Length);
                 }
                 
                 break;

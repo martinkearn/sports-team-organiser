@@ -116,7 +116,7 @@
 			if (string.IsNullOrEmpty(rowKey)) return string.Empty;
 			
 			var ge = GetGameEntity(rowKey);
-			string gameDateLabel = length switch
+			var gameDateLabel = length switch
 			{
 				Enums.TitleLength.Short => ge.Date.ToString("dd MMM"),
 				Enums.TitleLength.Long => ge.Date.DateTime.ToLongDateString(),
@@ -136,9 +136,14 @@
 			var expandedPag = expandedPags.First();
 			
 			// Construct label
-			var gameLabel = GetGameLabel(pag.GameRowKey, length);
-			var pagLabel = $"{expandedPag.PlayerEntity.Name} at {gameLabel}";
-
+			var gameLabel = GetGameLabel(pag.GameRowKey, Enums.TitleLength.Short);
+			var pagLabel = length switch
+			{
+				Enums.TitleLength.Short => expandedPag.PlayerEntity.Name,
+				Enums.TitleLength.Long => $"{expandedPag.PlayerEntity.Name} at {gameLabel}",
+				_ => throw new ArgumentOutOfRangeException(nameof(length), length, null)
+			};
+			
 			return pagLabel;
 		}
 

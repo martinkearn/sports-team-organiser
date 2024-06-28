@@ -17,7 +17,19 @@
 {
     @if (Link)
     {
-        <a href="/players/@_playerEntity.UrlSegment">@Label</a>
+        <a href="/games/@_gameEntity.UrlSegment/@_playerAtGameEntity.UrlSegment">@Label</a>
+    }
+    else
+    {
+        @Label
+    }
+}
+
+@if (EntityType == Enums.EntityType.PlayerAtGameEntity)
+{
+    if (Link)
+    {
+        <a href="/games/@_gameEntity.UrlSegment">@Label</a>
     }
     else
     {
@@ -77,6 +89,13 @@
 
                 break;
             case Enums.EntityType.PlayerAtGameEntity:
+                _playerAtGameEntity = GameService.GetPlayerAtGameEntity(RowKey);
+                _gameEntity = GameService.GetGameEntity(_playerAtGameEntity.GameRowKey);
+                if (string.IsNullOrEmpty(Label))
+                {
+                    Label = GameService.GetPlayerAtGameLabel(_playerEntity.RowKey, Length);
+                }
+                
                 break;
             case Enums.EntityType.TransactionEntity:
                 break;

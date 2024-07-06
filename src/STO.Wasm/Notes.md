@@ -1,14 +1,2 @@
-# Entity Label Component Implementation
-
-Ratings
-- [x] component
-- [x] Ratings
-- [x] RatingDetails
-- [x] Long support in service
-
-Transaction
-- [x] Component
-- [x] Long support in service
-- [x] Transactions
-- [x] TransactionDetails
-- [ ] PlayerDetailsTransactions
+# Development Notes
+Use to track work in progress and/or as a scratch pad.

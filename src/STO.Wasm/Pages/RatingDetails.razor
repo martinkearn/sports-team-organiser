@@ -13,7 +13,7 @@
 		<p>Ratings cannot be edited, only deleted</p>
 
 		<h5>Date & Time</h5>
-		<p>@RatingEntityService.FormatRatingTime(_ratingEntity.RowKey)</p>
+		<p><EntityTitleLink EntityType="Enums.EntityType.RatingEntity" RowKey="@_ratingEntity.RowKey" Link="false" Length="Enums.TitleLength.Long" /></p>
 
 		<h5>Url Segment</h5>
 		<p>@_ratingEntity.UrlSegment</p>

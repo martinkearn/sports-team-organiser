@@ -16,7 +16,7 @@
 <p>@_transactionEntity.UrlSegment</p>
 
 <h5>Date</h5>
-<p>@_transactionEntity.Date.ToString("dd MMM yyyy HH:mm")</p>
+<p><EntityTitleLink EntityType="Enums.EntityType.TransactionEntity" RowKey="@_transactionEntity.RowKey" Length="Enums.TitleLength.Long" Link="false" /></p>
 
 <h5>Amount</h5>
 <p><CurrencyDisplay Amount="@_transactionEntity.Amount"></CurrencyDisplay></p>

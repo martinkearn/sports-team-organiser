@@ -3,64 +3,33 @@
 @inject IRatingService RatingService
 @inject ITransactionService TransactionService
 
-@if (EntityType == Enums.EntityType.GameEntity)
+@if (Link)
 {
-    if (Link)
+    @switch (EntityType)
     {
-        <a href="/games/@_gameEntity.UrlSegment">@Label</a>
-    }
-    else
-    {
-        @Label
+        case Enums.EntityType.PlayerEntity:
+            <a href="/players/@_playerEntity.UrlSegment">@Label</a>
+            break;
+        case Enums.EntityType.GameEntity:
+            <a href="/games/@_gameEntity.UrlSegment">@Label</a>
+            break;
+        case Enums.EntityType.PlayerAtGameEntity:
+            <a href="/games/@_gameEntity.UrlSegment/@_playerAtGameEntity.UrlSegment">@Label</a>
+            break;
+        case Enums.EntityType.TransactionEntity:
+            <a href="/transactions/@_transactionEntity.UrlSegment">@Label</a>
+            break;
+        case Enums.EntityType.RatingEntity:
+            <a href="/ratings/@_ratingEntity.UrlSegment">@Label</a>
+            break;
+        default:
+            @Label
+            break;
     }
 }
-
-@if (EntityType == Enums.EntityType.PlayerEntity)
+else
 {
-    @if (Link)
-    {
-        <a href="/players/@_playerEntity.UrlSegment">@Label</a>
-    }
-    else
-    {
-        @Label
-    }
-}
-
-@if (EntityType == Enums.EntityType.PlayerAtGameEntity)
-{
-    if (Link)
-    {
-        <a href="/games/@_gameEntity.UrlSegment/@_playerAtGameEntity.UrlSegment">@Label</a>
-    }
-    else
-    {
-        @Label
-    }
-}
-
-@if (EntityType == Enums.EntityType.TransactionEntity)
-{
-    if (Link)
-    {
-        <a href="/ratings/@_transactionEntity.UrlSegment">@Label</a>
-    }
-    else
-    {
-        @Label
-    }
-}
-
-@if (EntityType == Enums.EntityType.RatingEntity)
-{
-    if (Link)
-    {
-        <a href="/transactions/@_transactionEntity.UrlSegment">@Label</a>
-    }
-    else
-    {
-        @Label
-    }
+    @Label
 }
 
 @code {

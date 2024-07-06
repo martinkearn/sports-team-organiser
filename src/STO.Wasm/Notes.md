@@ -10,5 +10,5 @@ Transaction
 - [x] Component
 - [x] Long support in service
 - [x] Transactions
-- [ ] TransactionDetails
+- [x] TransactionDetails
 - [ ] PlayerDetailsTransactions

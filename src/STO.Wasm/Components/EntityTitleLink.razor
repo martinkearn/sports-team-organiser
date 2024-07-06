@@ -39,11 +39,23 @@
     }
 }
 
+@if (EntityType == Enums.EntityType.TransactionEntity)
+{
+    if (Link)
+    {
+        <a href="/ratings/@_transactionEntity.UrlSegment">@Label</a>
+    }
+    else
+    {
+        @Label
+    }
+}
+
 @if (EntityType == Enums.EntityType.RatingEntity)
 {
     if (Link)
     {
-        <a href="/ratings/@_ratingEntity.UrlSegment">@Label</a>
+        <a href="/transactions/@_transactionEntity.UrlSegment">@Label</a>
     }
     else
     {
@@ -112,6 +124,17 @@
                 
                 break;
             case Enums.EntityType.TransactionEntity:
+                _transactionEntity = TransactionService.GetTransactionEntity(RowKey);
+                if (string.IsNullOrEmpty(Label))
+                {
+                    Label = Length switch
+                    {
+                        Enums.TitleLength.Short => _transactionEntity.Date.ToString("dd-MM-yy"),
+                        Enums.TitleLength.Long => _transactionEntity.Date.ToString("dd MMM yyyy HH:mm"),
+                        _ => _transactionEntity.Date.ToString("dd-MM-yy")
+                    };
+                }
+                
                 break;
             case Enums.EntityType.RatingEntity:
                 _ratingEntity = RatingService.GetRatingEntity(RowKey);
@@ -119,6 +142,7 @@
                 {
                     Label = RatingService.FormatRatingTime(_ratingEntity.RowKey, Length);
                 }
+                
                 break;
             default:
                 throw new ArgumentOutOfRangeException();

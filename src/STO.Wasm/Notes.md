@@ -7,8 +7,8 @@ Ratings
 - [x] Long support in service
 
 Transaction
-- [ ] Component
-- [ ] Long support in service
-- [ ] Transactions
+- [x] Component
+- [x] Long support in service
+- [x] Transactions
 - [ ] TransactionDetails
 - [ ] PlayerDetailsTransactions

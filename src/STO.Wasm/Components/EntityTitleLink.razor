@@ -1,5 +1,7 @@
 @inject IGameService GameService
 @inject IPlayerService PlayerService
+@inject IRatingService RatingService
+@inject ITransactionService TransactionService
 
 @if (EntityType == Enums.EntityType.GameEntity)
 {
@@ -30,6 +32,18 @@
     if (Link)
     {
         <a href="/games/@_gameEntity.UrlSegment/@_playerAtGameEntity.UrlSegment">@Label</a>
+    }
+    else
+    {
+        @Label
+    }
+}
+
+@if (EntityType == Enums.EntityType.RatingEntity)
+{
+    if (Link)
+    {
+        <a href="/ratings/@_ratingEntity.UrlSegment">@Label</a>
     }
     else
     {
@@ -100,6 +114,11 @@
             case Enums.EntityType.TransactionEntity:
                 break;
             case Enums.EntityType.RatingEntity:
+                _ratingEntity = RatingService.GetRatingEntity(RowKey);
+                if (string.IsNullOrEmpty(Label))
+                {
+                    Label = RatingService.FormatRatingTime(_ratingEntity.RowKey);
+                }
                 break;
             default:
                 throw new ArgumentOutOfRangeException();

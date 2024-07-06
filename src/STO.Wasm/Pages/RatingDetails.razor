@@ -13,16 +13,16 @@
 		<p>Ratings cannot be edited, only deleted</p>
 
 		<h5>Date & Time</h5>
-		<p>@RatingEntityService.FormatRatingTime(_ratingEntity.RowKey)</p>
+		<p><EntityTitleLink EntityType="Enums.EntityType.RatingEntity" RowKey="@_ratingEntity.RowKey" Link="false" Length="Enums.TitleLength.Long" /></p>
 
 		<h5>Url Segment</h5>
 		<p>@_ratingEntity.UrlSegment</p>
 
 		<h5>Player</h5>
-		<p><PlayerName PlayerRowKey="@_ratingEntity.PlayerRowKey" Link="true" /></p>
+		<p><EntityTitleLink EntityType="Enums.EntityType.PlayerEntity" RowKey="@_ratingEntity.PlayerRowKey" Link="true" /></p>
 
 		<h5>Game</h5>
-		<p><GameEntityTitle GameEntityRowKey="@_ratingEntity.GameRowKey" Link="true" /></p>
+		<p><EntityTitleLink RowKey="@_ratingEntity.GameRowKey" EntityType="Enums.EntityType.GameEntity" Link="true" /></p>
 
 		<h5>Rating</h5>
 		<p>@_ratingEntity.Rating</p>

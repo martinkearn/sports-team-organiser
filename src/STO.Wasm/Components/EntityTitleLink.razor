@@ -1,0 +1,120 @@
+@inject IGameService GameService
+@inject IPlayerService PlayerService
+@inject IRatingService RatingService
+@inject ITransactionService TransactionService
+
+@if (Link)
+{
+    @switch (EntityType)
+    {
+        case Enums.EntityType.PlayerEntity:
+            <a href="/players/@_playerEntity.UrlSegment">@Label</a>
+            break;
+        case Enums.EntityType.GameEntity:
+            <a href="/games/@_gameEntity.UrlSegment">@Label</a>
+            break;
+        case Enums.EntityType.PlayerAtGameEntity:
+            <a href="/games/@_gameEntity.UrlSegment/@_playerAtGameEntity.UrlSegment">@Label</a>
+            break;
+        case Enums.EntityType.TransactionEntity:
+            <a href="/transactions/@_transactionEntity.UrlSegment">@Label</a>
+            break;
+        case Enums.EntityType.RatingEntity:
+            <a href="/ratings/@_ratingEntity.UrlSegment">@Label</a>
+            break;
+        default:
+            @Label
+            break;
+    }
+}
+else
+{
+    @Label
+}
+
+@code {
+    [Parameter] public string RowKey { get; set; } = default!;
+
+    [Parameter] public string Label { get; set; } = default!;
+
+    [Parameter] public bool Link { get; set; } = true;
+
+    [Parameter] public Enums.EntityType EntityType { get; set; }
+
+    [Parameter] public Enums.TitleLength Length { get; set; } = Enums.TitleLength.Short;
+
+    private GameEntity _gameEntity = default!;
+
+    private PlayerEntity _playerEntity = default!;
+
+    private PlayerAtGameEntity _playerAtGameEntity = default!;
+
+    private TransactionEntity _transactionEntity = default!;
+
+    private RatingEntity _ratingEntity = default!;
+
+    protected override void OnInitialized()
+    {
+        RefreshData();
+    }
+    
+    private void RefreshData()
+    {
+        if (RowKey is null) throw new ArgumentException();
+
+        switch (EntityType)
+        {
+            case Enums.EntityType.PlayerEntity:
+                _playerEntity = PlayerService.GetPlayerEntity(RowKey);
+
+                Label = Length switch
+                {
+                    Enums.TitleLength.Short => _playerEntity.Name,
+                    Enums.TitleLength.Long => $"{_playerEntity.Name}, {_playerEntity.Position}",
+                    _ => _playerEntity.Name
+                };
+
+                break;
+            case Enums.EntityType.GameEntity:
+                _gameEntity = GameService.GetGameEntity(RowKey);
+                if (string.IsNullOrEmpty(Label))
+                {
+                    Label = GameService.GetGameLabel(RowKey, Length);
+                }
+
+                break;
+            case Enums.EntityType.PlayerAtGameEntity:
+                _playerAtGameEntity = GameService.GetPlayerAtGameEntity(RowKey);
+                _gameEntity = GameService.GetGameEntity(_playerAtGameEntity.GameRowKey);
+                if (string.IsNullOrEmpty(Label))
+                {
+                    Label = GameService.GetPlayerAtGameLabel(_playerAtGameEntity.RowKey, Length);
+                }
+                
+                break;
+            case Enums.EntityType.TransactionEntity:
+                _transactionEntity = TransactionService.GetTransactionEntity(RowKey);
+                if (string.IsNullOrEmpty(Label))
+                {
+                    Label = Length switch
+                    {
+                        Enums.TitleLength.Short => _transactionEntity.Date.ToString("dd-MM-yy"),
+                        Enums.TitleLength.Long => _transactionEntity.Date.ToString("dd MMM yyyy HH:mm"),
+                        _ => _transactionEntity.Date.ToString("dd-MM-yy")
+                    };
+                }
+                
+                break;
+            case Enums.EntityType.RatingEntity:
+                _ratingEntity = RatingService.GetRatingEntity(RowKey);
+                if (string.IsNullOrEmpty(Label))
+                {
+                    Label = RatingService.FormatRatingTime(_ratingEntity.RowKey, Length);
+                }
+                
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+    }
+}

@@ -20,7 +20,7 @@
 		{
 			var pags = GameService.GetPlayerAtGameEntitiesForGame(ge.RowKey);
 			<tr>
-				<td><GameEntityTitle GameEntity="@ge" Link="true" /></td>
+				<td><EntityTitleLink RowKey="@ge.RowKey" EntityType="Enums.EntityType.GameEntity" Length="Enums.TitleLength.Short" Link="true" Label="" /></td>
 				<td>@pags.Count</td>
 				<td>@ge.Notes</td>
 			</tr>

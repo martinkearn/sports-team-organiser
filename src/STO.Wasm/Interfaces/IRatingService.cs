@@ -51,11 +51,12 @@ namespace STO.Wasm.Interfaces
         /// <param name="ratingEntity">The RatingEntity to upsert.</param>
         public Task UpsertRatingEntityAsync(RatingEntity ratingEntity);
 
-		/// <summary>
-		/// Formats RatingEntity time in a consistent way.
-		/// </summary>
-		/// <param name="rowKey">The RowKey for the RatingEntity to format the time for</param>
-		/// <returns>A formated time string.</returns>
-		public string FormatRatingTime(string rowKey);
+        /// <summary>
+        /// Formats RatingEntity time in a consistent way.
+        /// </summary>
+        /// <param name="rowKey">The RowKey for the RatingEntity to format the time for</param>
+        /// <param name="length">Should the date time label be short or long.</param>
+        /// <returns>A formated time string.</returns>
+        public string FormatRatingTime(string rowKey, Enums.TitleLength length);
     }
 }

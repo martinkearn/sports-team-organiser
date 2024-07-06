@@ -18,9 +18,9 @@
 		@foreach (var te in _pageOfTransactionEntities)
 		{
 			<tr>
-				<td><a href="/transactions/@te.UrlSegment">@te.Date.ToString("dd MMM yyyy HH:mm")</a></td>
+				<td><EntityTitleLink EntityType="Enums.EntityType.TransactionEntity" RowKey="@te.RowKey" Length="Enums.TitleLength.Long" Link="true" /></td>
 				<td><CurrencyDisplay Amount="@te.Amount" /></td>
-				<td class="d-none d-lg-table-cell"><PlayerName Link="true" PlayerRowKey="@te.PlayerRowKey" /></td>
+				<td class="d-none d-lg-table-cell"><EntityTitleLink EntityType="Enums.EntityType.PlayerEntity" RowKey="@te.PlayerRowKey" Link="true" /></td>
 				<td class="d-none d-lg-table-cell">@te.Notes</td>
 			</tr>
 		}

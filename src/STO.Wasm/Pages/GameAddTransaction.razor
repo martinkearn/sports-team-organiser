@@ -20,11 +20,11 @@
                     var gameRowKey = ge.RowKey;
                     if (gameRowKey == _nextGameEntity?.RowKey)
                     {
-                        <option value="@gameRowKey" selected><GameEntityTitle GameEntity="@ge" Link="false" /></option>
+                        <option value="@gameRowKey" selected><EntityTitleLink RowKey="@ge.RowKey" EntityType="Enums.EntityType.GameEntity" Link="false" /></option>
                     }
                     else
                     {
-                        <option value="@gameRowKey"><GameEntityTitle GameEntity="@ge" Link="false" /></option>
+                        <option value="@gameRowKey"><EntityTitleLink RowKey="@ge.RowKey" EntityType="Enums.EntityType.GameEntity" Link="false" /></option>
                     }
                 }
             </InputSelect>
@@ -36,7 +36,7 @@
                 <option value="" selected>Choose Player ...</option>
                 @foreach (var pe in _pagPlayerEntities)
                 {
-                    <option value="@pe.RowKey">@pe.Name</option>
+                    <option value="@pe.RowKey"><EntityTitleLink RowKey="@pe.RowKey" EntityType="Enums.EntityType.PlayerEntity" Link="false" /></option>
                 }
             </InputSelect>
         </div>
@@ -45,7 +45,7 @@
             <label class="form-label">Prospective Payments</label>
             @foreach (var prospectTransaction in _prospectTransactions)
             {
-                <p><CurrencyDisplay Amount="@prospectTransaction.Amount" BlackText="true"></CurrencyDisplay> for <PlayerName PlayerRowKey="@prospectTransaction.PlayerRowKey" Link="false"></PlayerName> </p>
+                <p><CurrencyDisplay Amount="@prospectTransaction.Amount" BlackText="true"></CurrencyDisplay> for <EntityTitleLink EntityType="Enums.EntityType.PlayerEntity" RowKey="@prospectTransaction.PlayerRowKey" Link="false" /> </p>
             }
         </div>
 

@@ -111,23 +111,40 @@
 			return notes;
 		}
 
-		public string GetGameLabel(string rowKey)
+		public string GetGameLabel(string rowKey, Enums.TitleLength length)
 		{
 			if (string.IsNullOrEmpty(rowKey)) return string.Empty;
 			
 			var ge = GetGameEntity(rowKey);
-			var gameDateLabel = ge.Date.ToString("dd MMM");
+			var gameDateLabel = length switch
+			{
+				Enums.TitleLength.Short => ge.Date.ToString("dd MMM"),
+				Enums.TitleLength.Long => ge.Date.DateTime.ToLongDateString(),
+				_ => throw new ArgumentOutOfRangeException(nameof(length), length, null)
+			};
+
 			var gameLabel = string.IsNullOrEmpty(ge.Title) ? gameDateLabel : $"{gameDateLabel} {ge.Title}";
 			return gameLabel;
 		}
 
-		public DateTime GetDateFromGameDateLabel(string gameDateLabel)
+		public string GetPlayerAtGameLabel(string rowKey, Enums.TitleLength length = Enums.TitleLength.Short)
 		{
-			var gameDateSegments = gameDateLabel.Split('-'); // expecting dd-mm-yyyy i.e. 01-01-2024 means 1st January 2024.
-			var day = Convert.ToInt16(gameDateSegments[0]);
-			var month = Convert.ToInt16(gameDateSegments[1]);
-			var year = Convert.ToInt16(gameDateSegments[2]);
-			return new DateTime(year:year, month:month, day:day);
+			// Get expanded PAG
+			var pag = GetPlayerAtGameEntity(rowKey);
+			var pagInList = new List<PlayerAtGameEntity> { pag };
+			var expandedPags = ExpandPags(pagInList);
+			var expandedPag = expandedPags.First();
+			
+			// Construct label
+			var gameLabel = GetGameLabel(pag.GameRowKey, Enums.TitleLength.Short);
+			var pagLabel = length switch
+			{
+				Enums.TitleLength.Short => expandedPag.PlayerEntity.Name,
+				Enums.TitleLength.Long => $"{expandedPag.PlayerEntity.Name} at {gameLabel}",
+				_ => throw new ArgumentOutOfRangeException(nameof(length), length, null)
+			};
+			
+			return pagLabel;
 		}
 
 		public List<PlayerAtGameEntity> GetPlayerAtGameEntitiesForGame(string gameRowKey)

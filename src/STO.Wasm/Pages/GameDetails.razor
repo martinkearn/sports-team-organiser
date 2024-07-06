@@ -4,7 +4,7 @@
 
 <PageTitle>TNF - @_pageTitle</PageTitle>
 
-<h1><i class="fa-solid fa-people-group me-2"></i> <GameEntityTitle GameEntity="@_gameEntity" Link="false" /></h1>
+<h1><i class="fa-solid fa-people-group me-2"></i> <EntityTitleLink RowKey="@_gameEntity.RowKey" EntityType="Enums.EntityType.GameEntity" Link="false" /></h1>
 
 <p>@_pags.Count() players. @_gameEntity.Date.TimeOfDay.Hours:@_gameEntity.Date.TimeOfDay.Minutes kick off.</p>
 <p>@_gameEntity.Notes</p>
@@ -60,7 +60,7 @@
         <tr>
             <td>A - Non-Bibs</td>
             <td>
-                <a class="d-none d-lg-inline" href="/games/@GameUrlSegment/@pag.UrlSegment">@pe.Name</a> <span class="d-inline d-lg-none">@pe.Name</span>
+                <EntityTitleLink EntityType="Enums.EntityType.PlayerAtGameEntity" RowKey="@pag.RowKey" Link="true" Length="Enums.TitleLength.Short" />
                 <PlayingForecastIcon Forecast="@pag.Forecast"/> <PositionIcon Position="pe.Position"/> <RagIcon PagEntity="@pag"/>
                 <AuthorizeView Policy="IsAdminEmail">
                     <Authorized>
@@ -101,7 +101,7 @@
         <tr>
             <td>B - Bibs</td>
             <td>
-                <a class="d-none d-lg-inline" href="/games/@GameUrlSegment/@pag.UrlSegment">@pe.Name</a> <span class="d-inline d-lg-none">@pe.Name</span>
+                <EntityTitleLink EntityType="Enums.EntityType.PlayerAtGameEntity" RowKey="@pag.RowKey" Link="true" Length="Enums.TitleLength.Short" />
                 <PlayingForecastIcon Forecast="@pag.Forecast"/> <PositionIcon Position="pe.Position"/> <RagIcon PagEntity="@pag"/>
                 <AuthorizeView Policy="IsAdminEmail">
                     <Authorized>
@@ -136,7 +136,7 @@
         <tr>
             <td>None</td>
             <td>
-                <a class="d-none d-lg-inline" href="/games/@GameUrlSegment/@pag.UrlSegment">@pe.Name</a> <span class="d-inline d-lg-none">@pe.Name</span>
+                <EntityTitleLink EntityType="Enums.EntityType.PlayerAtGameEntity" RowKey="@pag.RowKey" Link="true" Length="Enums.TitleLength.Short" />
                 <PlayingForecastIcon Forecast="@pag.Forecast"/> <PositionIcon Position="pe.Position"/> <RagIcon PagEntity="@pag"/>
                 <AuthorizeView Policy="IsAdminEmail">
                     <Authorized>

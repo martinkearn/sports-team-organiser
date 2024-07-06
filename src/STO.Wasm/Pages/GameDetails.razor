@@ -165,14 +165,14 @@
 else
 {
     <div class="hstack gap-2">
-        <a class="btn btn-secondary" href="/games/"><i class="fa-solid fa-arrow-left"></i> <span class="d-none d-md-inline">All Games</span></a>
-        <a class="btn btn-secondary" href="/games/@GameUrlSegment/edit"><i class="fa-solid fa-edit"></i> <span class="d-none d-md-inline">Edit</span></a>
+        <a class="btn btn-secondary" href="/games/" title="All Games"><i class="fa-solid fa-arrow-left"></i> <span class="d-none d-md-inline">All Games</span></a>
+        <a class="btn btn-secondary" href="/games/@GameUrlSegment/edit" title="Edit"><i class="fa-solid fa-edit"></i> <span class="d-none d-md-inline">Edit</span></a>
         <AuthorizeView Policy="IsAdminEmail">
             <Authorized>
-                <button class="btn btn-secondary" @onclick="ToggleSimpleView"><i class=@_simpleViewCss></i> <span class="d-none d-md-inline">@_simpleViewLabel</span></button>
-                <button class="btn btn-secondary" @onclick="ToggleAllPlayed"><i class="fa-solid fa-clipboard-list"></i> <span class="d-none d-md-inline">@_markAllPlayedLabel</span></button>
-                <button class="btn btn-secondary" @onclick="CalculateTeams"><i class="fa-solid fa-gear"></i> <span class="d-none d-md-inline">Calculate Teams</span></button>
-                <button class="btn btn-secondary" @onclick="ResetTeams"><i class="fa-solid fa-rotate"></i> <span class="d-none d-md-inline">Reset Teams</span></button>
+                <button class="btn btn-secondary" @onclick="ToggleSimpleView" title="@_simpleViewLabel"><i class=@_simpleViewCss></i> <span class="d-none d-md-inline">@_simpleViewLabel</span></button>
+                <button class="btn btn-secondary" @onclick="ToggleAllPlayed" title="@_markAllPlayedLabel"><i class="fa-solid fa-clipboard-list"></i> <span class="d-none d-md-inline">@_markAllPlayedLabel</span></button>
+                <button class="btn btn-secondary" @onclick="CalculateTeams" title="Calculate Teams"><i class="fa-solid fa-gear"></i> <span class="d-none d-md-inline">Calculate Teams</span></button>
+                <button class="btn btn-secondary" @onclick="ResetTeams" title="Reset Teams"><i class="fa-solid fa-rotate"></i> <span class="d-none d-md-inline">Reset Teams</span></button>
             </Authorized>
         </AuthorizeView>
     </div>

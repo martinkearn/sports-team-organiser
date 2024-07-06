@@ -8,14 +8,18 @@
 			await dataService.DeleteEntityAsync<RatingEntity>(rowKey);
 		}
 
-		public string FormatRatingTime(string rowKey)
+		public string FormatRatingTime(string rowKey, Enums.TitleLength length)
 		{
 			var re = GetRatingEntity(rowKey);
-			if (re is null) return string.Empty;
 			var timestamp = re.Timestamp;
 			if (timestamp is not null)
 			{
-				return timestamp.Value.ToString("dd MMM yyyy HH:mm") ?? "N/A";
+				return length switch
+				{
+					Enums.TitleLength.Short => timestamp.Value.ToString("dd-MM-yy HH:mm") ?? "N/A",
+					Enums.TitleLength.Long => timestamp.Value.ToString("ddd MMM yyyy HH:mm") ?? "N/A",
+					_ => throw new ArgumentOutOfRangeException(nameof(length), length, null)
+				};
 			}
 
 			return string.Empty;

@@ -3,10 +3,12 @@
 Ratings
 - [x] component
 - [x] Ratings
-- [ ] RatingDetails
+- [x] RatingDetails
+- [x] Long support in service
 
 Transaction
-- [ ] component
+- [ ] Component
+- [ ] Long support in service
 - [ ] Transactions
 - [ ] TransactionDetails
 - [ ] PlayerDetailsTransactions

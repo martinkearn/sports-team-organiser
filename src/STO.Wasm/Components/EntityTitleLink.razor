@@ -117,7 +117,7 @@
                 _ratingEntity = RatingService.GetRatingEntity(RowKey);
                 if (string.IsNullOrEmpty(Label))
                 {
-                    Label = RatingService.FormatRatingTime(_ratingEntity.RowKey);
+                    Label = RatingService.FormatRatingTime(_ratingEntity.RowKey, Length);
                 }
                 break;
             default:

@@ -36,7 +36,7 @@
                 <option value="" selected>Choose Player ...</option>
                 @foreach (var pe in _pagPlayerEntities)
                 {
-                    <option value="@pe.RowKey">@pe.Name</option>
+                    <option value="@pe.RowKey"><EntityTitleLink RowKey="@pe.RowKey" EntityType="Enums.EntityType.PlayerEntity" Link="false" /></option>
                 }
             </InputSelect>
         </div>

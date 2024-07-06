@@ -29,7 +29,7 @@
 <div class="mb-3">
 	<label fclass="form-label">Position</label>
 	<InputSelect class="form-select" @bind-Value="_playerEntity.Position" @bind-Value:after="() => Edit()">
-		@foreach (string option in Enum.GetNames(typeof(Enums.PlayerPosition)))
+		@foreach (var option in Enum.GetNames(typeof(Enums.PlayerPosition)))
 		{
 			<option value="@option">@option</option>
 		}

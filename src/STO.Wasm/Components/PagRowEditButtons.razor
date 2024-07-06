@@ -7,16 +7,16 @@
     <Authorized>
         @if (PagEntity.Played)
         {
-            <button type="button" class="btn btn-outline-secondary btn-sm active d-none d-md-inline" @onclick="TogglePlayed"> Played</button>
+            <button type="button" class="btn btn-outline-secondary btn-sm active d-inline" @onclick="TogglePlayed"> Played</button>
         }
         else
         {
-            <button type="button" class="btn btn-outline-secondary btn-sm d-none d-md-inline" @onclick="TogglePlayed"> Not Played</button>
+            <button type="button" class="btn btn-outline-secondary btn-sm d-inline" @onclick="TogglePlayed"> Not Played</button>
         }
         <span></span>
         <button type="button" class="btn btn-outline-secondary btn-sm d-none d-md-inline" @onclick="SwitchPagTeam">@PagEntity.Team <i class="fa-solid fa-repeat"></i></button>
-        <button type="button" class="btn btn-outline-secondary btn-sm d-none d-lg-inline" @onclick="AddTransactionForPlayer"><i class="fa-solid fa-plus"></i> £@_pagDefaultAmount</button>
-        <button type="button" class="btn btn-outline-secondary btn-sm d-inline" @onclick="NavigateToPag"><i class="fa-solid fa-edit"></i> Edit</button>
+        <button type="button" class="btn btn-outline-secondary btn-sm d-none d-md-inline" @onclick="AddTransactionForPlayer"><i class="fa-solid fa-plus"></i> £@_pagDefaultAmount</button>
+        <button type="button" class="btn btn-outline-secondary btn-sm d-none d-lg-inline" @onclick="NavigateToPag"><i class="fa-solid fa-edit"></i> Edit</button>
     </Authorized>
 </AuthorizeView>
 

@@ -58,7 +58,7 @@
         var pe = PlayerService.GetPlayerEntity(pag.PlayerRowKey);
         teamAAdminRatingTotal += pe.AdminRating;
         <tr>
-            <td>A - Non-Bibs</td>
+            <td>A</td>
             <td>
                 <EntityTitleLink EntityType="Enums.EntityType.PlayerAtGameEntity" RowKey="@pag.RowKey" Link="true" Length="Enums.TitleLength.Short" />
                 <PlayingForecastIcon Forecast="@pag.Forecast"/> <PositionIcon Position="pe.Position"/> <RagIcon PagEntity="@pag"/>
@@ -99,7 +99,7 @@
         var pe = PlayerService.GetPlayerEntity(pag.PlayerRowKey);
         teamBAdminRatingTotal += pe.AdminRating;
         <tr>
-            <td>B - Bibs</td>
+            <td>B</td>
             <td>
                 <EntityTitleLink EntityType="Enums.EntityType.PlayerAtGameEntity" RowKey="@pag.RowKey" Link="true" Length="Enums.TitleLength.Short" />
                 <PlayingForecastIcon Forecast="@pag.Forecast"/> <PositionIcon Position="pe.Position"/> <RagIcon PagEntity="@pag"/>

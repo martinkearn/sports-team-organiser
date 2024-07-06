@@ -30,7 +30,7 @@
         @foreach (var transactionEntity in _playerTransactions)
         {
             <tr>
-                <td><a href="/transactions/@transactionEntity.UrlSegment">@transactionEntity.Date.ToString("dd MMM")</a></td>
+                <td><EntityTitleLink EntityType="Enums.EntityType.TransactionEntity" RowKey="@transactionEntity.RowKey" Length="Enums.TitleLength.Long" Link="true" /></td>
                 <td><CurrencyDisplay Amount="@transactionEntity.Amount" /></td>
                 <td class="d-none d-lg-table-cell">@transactionEntity.Notes</td>
             </tr>

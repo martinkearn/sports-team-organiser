@@ -208,23 +208,23 @@
 					Date = DateTimeOffset.UtcNow,
 					Notes = GetNotesForGame(pag.GameRowKey)
 				};
-				if (transactionService is not null)
-                {
-                    await transactionService.UpsertTransactionEntityAsync(transaction);
-                }
+
+                await transactionService.UpsertTransactionEntityAsync(transaction);
 			}
 			else
 			{
 				// Get debit transactions (less than £0) for player and game
-				var teForPe = transactionService.GetTransactionEntities().Where(o => o.PlayerRowKey == playerEntity.RowKey);
-				var pagDebitTransactionEntities = teForPe.Where(o => o.Amount < 0);
-				if (transactionService is not null)
-                {
-                    foreach (var pagDebitTransactionEntity in pagDebitTransactionEntities)
-                    {
-                        await transactionService.DeleteTransactionEntityAsync(pagDebitTransactionEntity.RowKey);
-                    }
-                }
+				var teForPe = transactionService.GetTransactionEntities()
+					.Where(o => o.PlayerRowKey == playerEntity.RowKey)
+					.OrderByDescending(o => o.Date);
+				var firstPagDebitTransactionEntities = teForPe.FirstOrDefault(o => o.Amount < 0);
+				
+				// Delete the newest zero or less transaction
+				if (firstPagDebitTransactionEntities != default)
+				{
+					// TO DO: This is a hacky way to do this. Need to re-add game association so that we can remove for the specific game.
+					await transactionService.DeleteTransactionEntityAsync(firstPagDebitTransactionEntities.RowKey);
+				}
 			}
 
 			// Upsert pag

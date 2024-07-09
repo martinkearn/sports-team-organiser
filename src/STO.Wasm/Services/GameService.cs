@@ -173,15 +173,6 @@
 			return dataService.PlayerAtGameEntities.First(o => o.UrlSegment == urlSegment);
 		}
 
-		public async Task MarkAllPlayedAsync(string gameRowkey, bool played)
-		{
-			var pags = GetPlayerAtGameEntitiesForGame(gameRowkey);
-			foreach (var pag in pags)
-			{
-				await TogglePlayerAtGamePlayedAsync(pag, played);
-			}
-		}
-
 		public async Task TogglePlayerAtGamePlayedAsync(PlayerAtGameEntity pag, bool? played)
 		{
 			// Get player for pag

@@ -91,13 +91,6 @@ namespace STO.Wasm.Interfaces
 		public Task ResetTeamsAsync(string gameRowKey);
 
 		/// <summary>
-		/// Marks all PlayerAtGameEntity in a Game as having played.
-		/// </summary>
-		/// <param name="gameRowKey">The RowKey for the GameEntities to update PlayerAtGame for.</param>
-		/// <param name="played">Indicates whether all PlayerAtGame should have played set to true or false</param>
-		public Task MarkAllPlayedAsync(string gameRowKey, bool played);
-
-		/// <summary>
 		/// Toggles whether a player has played at a game or not and creates/removes trasnactions.
 		/// </summary>
 		/// <param name="pag">The PlayerAtGame to toggle the Played property for. Not used if null.</param>

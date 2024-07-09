@@ -13,19 +13,23 @@
 			<th scope="col">Name</th>
 			<th scope="col" class="d-none d-lg-table-cell">Position</th>
 			<th scope="col" class="d-none d-lg-table-cell">Admin Rating</th>
+			<th scope="col" class="d-none d-lg-table-cell">Balance</th>
 		</tr>
 	</thead>
 	<tbody>
 		@foreach (var pe in _playerEntities)
 		{
+			var peBalance = PlayerService.GetBalanceForPlayerEntity(pe.RowKey);
 			<tr>
 				<td><EntityTitleLink EntityType="Enums.EntityType.PlayerEntity" RowKey="@pe.RowKey" Length="Enums.TitleLength.Short" Link="true" /></td>
 				<td class="d-none d-lg-table-cell">@pe.Position</td>
 				<AuthorizeView Policy="IsAdminEmail">
 					<Authorized>
 						<td class="d-none d-lg-table-cell">@pe.AdminRating</td>
+						<td class="d-none d-lg-table-cell"><CurrencyDisplay Amount="@peBalance" /></td>
 					</Authorized>
 					<NotAuthorized>
+						<td class="d-none d-lg-table-cell"><i class="fa-solid fa-key grey"></i></td>
 						<td class="d-none d-lg-table-cell"><i class="fa-solid fa-key grey"></i></td>
 					</NotAuthorized>
 				</AuthorizeView>

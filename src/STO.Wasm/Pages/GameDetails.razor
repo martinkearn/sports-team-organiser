@@ -170,7 +170,6 @@ else
         <AuthorizeView Policy="IsAdminEmail">
             <Authorized>
                 <button class="btn btn-secondary" @onclick="ToggleSimpleView" title="@_simpleViewLabel"><i class=@_simpleViewCss></i> <span class="d-none d-md-inline">@_simpleViewLabel</span></button>
-                <button class="btn btn-secondary" @onclick="ToggleAllPlayed" title="@_markAllPlayedLabel"><i class="fa-solid fa-clipboard-list"></i> <span class="d-none d-md-inline">@_markAllPlayedLabel</span></button>
                 <button class="btn btn-secondary" @onclick="CalculateTeams" title="Calculate Teams"><i class="fa-solid fa-gear"></i> <span class="d-none d-md-inline">Calculate Teams</span></button>
                 <button class="btn btn-secondary" @onclick="ResetTeams" title="Reset Teams"><i class="fa-solid fa-rotate"></i> <span class="d-none d-md-inline">Reset Teams</span></button>
             </Authorized>
@@ -192,8 +191,6 @@ else
     private PlayerAtGameEntity _newPagEntity = new();
 
     private string? _pageTitle = default!;
-
-    private string _markAllPlayedLabel = default!;
 
     private string _simpleViewLabel = default!;
 
@@ -230,24 +227,10 @@ else
         _showLongRunning = false;
     }
 
-    private async Task ToggleAllPlayed()
-    {
-        var played = MarkAsPlayedOrNotPlayed();
-        await GameService.MarkAllPlayedAsync(_gameEntity.RowKey, played);
-        RefreshData();
-    }
-
     void ToggleSimpleView()
     {
         _simpleView = !_simpleView;
         SetSimpleViewLabel();
-    }
-
-    private bool MarkAsPlayedOrNotPlayed()
-    {
-        var playedPagsCount = _pags.Count(o => o.Played);
-        var played = (playedPagsCount == 0);
-        return played;
     }
 
     private void SetSimpleViewLabel()
@@ -279,10 +262,6 @@ else
         _pageTitle = GameService.GetGameLabel(_gameEntity.RowKey);
         MainLayout.SetPageTitle(_pageTitle);
         _simpleView = false;
-
-        // Set played button label
-        var played = MarkAsPlayedOrNotPlayed();
-        _markAllPlayedLabel = (played) ? "Mark all as played" : "Mark all as not played";
 
         //Set simple view label
         SetSimpleViewLabel();

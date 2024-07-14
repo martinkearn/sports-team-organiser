@@ -17,12 +17,9 @@
             <div class="input-group col-12">
                 <InputSelect class="form-select" @bind-Value="_newPagEntity.PlayerRowKey">
                     <option value="">Add player to game ...</option>
-                    @foreach (var pe in _allPlayerEntities)
+                    @foreach (var pe in _allPlayerEntities.Where(pe => _pags.FirstOrDefault(pag => pag.PlayerRowKey == pe.RowKey) == default))
                     {
-                        if (_pags.FirstOrDefault(pag => pag.PlayerRowKey == pe.RowKey) == default)
-                        {
-                            <option value="@pe.RowKey">@pe.Name</option>
-                        }
+                        <option value="@pe.RowKey">@pe.Name</option>
                     }
                 </InputSelect>
                 <button class="btn btn-outline-secondary" type="submit"><i class="fa-solid fa-plus"></i></button>
@@ -60,8 +57,10 @@
         <tr>
             <td>A</td>
             <td>
-                <EntityTitleLink EntityType="Enums.EntityType.PlayerAtGameEntity" RowKey="@pag.RowKey" Link="true" Length="Enums.TitleLength.Short" />
-                <PlayingForecastIcon Forecast="@pag.Forecast"/> <PositionIcon Position="pe.Position"/> <RagIcon PagEntity="@pag"/>
+                <a href="/games/@_gameEntity.UrlSegment/@pag.UrlSegment">@pe.Name</a>
+                <PlayingForecastIcon Forecast="@pag.Forecast"/>
+                <PositionIcon Position="pe.Position"/>
+                <RagIcon PagEntity="@pag"/>
                 <AuthorizeView Policy="IsAdminEmail">
                     <Authorized>
                         @if (!_simpleView)
@@ -101,8 +100,10 @@
         <tr>
             <td>B</td>
             <td>
-                <EntityTitleLink EntityType="Enums.EntityType.PlayerAtGameEntity" RowKey="@pag.RowKey" Link="true" Length="Enums.TitleLength.Short" />
-                <PlayingForecastIcon Forecast="@pag.Forecast"/> <PositionIcon Position="pe.Position"/> <RagIcon PagEntity="@pag"/>
+                <a href="/games/@_gameEntity.UrlSegment/@pag.UrlSegment">@pe.Name</a>
+                <PlayingForecastIcon Forecast="@pag.Forecast"/>
+                <PositionIcon Position="pe.Position"/>
+                <RagIcon PagEntity="@pag"/>
                 <AuthorizeView Policy="IsAdminEmail">
                     <Authorized>
                         @if (!_simpleView)
@@ -136,8 +137,10 @@
         <tr>
             <td>None</td>
             <td>
-                <EntityTitleLink EntityType="Enums.EntityType.PlayerAtGameEntity" RowKey="@pag.RowKey" Link="true" Length="Enums.TitleLength.Short" />
-                <PlayingForecastIcon Forecast="@pag.Forecast"/> <PositionIcon Position="pe.Position"/> <RagIcon PagEntity="@pag"/>
+                <a href="/games/@_gameEntity.UrlSegment/@pag.UrlSegment">@pe.Name</a>
+                <PlayingForecastIcon Forecast="@pag.Forecast"/>
+                <PositionIcon Position="pe.Position"/>
+                <RagIcon PagEntity="@pag"/>
                 <AuthorizeView Policy="IsAdminEmail">
                     <Authorized>
                         @if (!_simpleView)

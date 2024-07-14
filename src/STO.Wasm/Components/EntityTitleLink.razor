@@ -94,14 +94,16 @@ else
                 break;
             case Enums.EntityType.TransactionEntity:
                 _transactionEntity = TransactionService.GetTransactionEntity(RowKey);
+                _playerEntity = PlayerService.GetPlayerEntity(_transactionEntity.PlayerRowKey);
                 if (string.IsNullOrEmpty(Label))
                 {
-                    Label = Length switch
+                    var transactionLabel = Length switch
                     {
                         Enums.TitleLength.Short => _transactionEntity.Date.ToString("dd-MM-yy"),
                         Enums.TitleLength.Long => _transactionEntity.Date.ToString("dd MMM yyyy HH:mm"),
                         _ => _transactionEntity.Date.ToString("dd-MM-yy")
                     };
+                    Label = $"{transactionLabel} for {_playerEntity.Name}";
                 }
                 
                 break;

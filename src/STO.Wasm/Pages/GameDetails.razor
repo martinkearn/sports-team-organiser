@@ -7,7 +7,11 @@
 <h1><i class="fa-solid fa-people-group me-2"></i> <EntityTitleLink RowKey="@_gameEntity.RowKey" EntityType="Enums.EntityType.GameEntity" Link="false" /></h1>
 
 <p>@_pags.Count() players. @_gameEntity.Date.TimeOfDay.Hours:@_gameEntity.Date.TimeOfDay.Minutes kick off.</p>
-<p>@_gameEntity.Notes @{ if (!string.IsNullOrEmpty(_gameEntity.LastPagAdded.ToLongTimeString())) _gameEntity.LastPagAdded.ToLongTimeString(); }</p>
+<p>@_gameEntity.Notes</p>
+@if (DateTime.MinValue != _gameEntity.LastPagAdded)
+{
+    <p>@_gameEntity.LastPagAdded.ToLongTimeString()</p>
+}
 
 <div class="row">
     <div class="col">

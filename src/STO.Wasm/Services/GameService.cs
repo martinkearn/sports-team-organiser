@@ -234,12 +234,19 @@
 			
 			// Set the UrlSegment
 			// Cannot do this as setter for UrlSegment because we cannot resolve the GameEntity and PlayerEntity there
-			var player = playerService.GetPlayerEntity(pagEntity.PlayerRowKey);
-			var game = GetGameEntity(pagEntity.GameRowKey);
-			pagEntity.UrlSegment = $"{player.UrlSegment}-{game.UrlSegment}";
+			var playerEntity = playerService.GetPlayerEntity(pagEntity.PlayerRowKey);
+			var gameEntity = GetGameEntity(pagEntity.GameRowKey);
+			pagEntity.UrlSegment = $"{playerEntity.UrlSegment}-{gameEntity.UrlSegment}";
 			
-			// Upsert
+			// Upsert pag
 			await dataService.UpsertEntityAsync(pagEntity);
+			
+			// Update GameEntity LastPagAdded
+			if (pagEntity.Timestamp != null)
+			{
+				gameEntity.LastPagAdded = pagEntity.Timestamp.Value.DateTime;
+				await UpsertGameEntityAsync(gameEntity);
+			}
 		}
 
 		private List<ExpandedPag> ExpandPags(List<PlayerAtGameEntity> pags)

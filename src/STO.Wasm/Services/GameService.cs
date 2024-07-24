@@ -147,6 +147,13 @@
 			return pagLabel;
 		}
 
+		public PlayerAtGameEntity? GetMostRecentPlayerAtGameForGame(string rowKey)
+		{
+			var pags = GetPlayerAtGameEntitiesForGame(rowKey);
+			var orderedPags = pags.OrderByDescending(o => o.Timestamp);
+			return orderedPags.FirstOrDefault();
+		}
+
 		public List<PlayerAtGameEntity> GetPlayerAtGameEntitiesForGame(string gameRowKey)
 		{
 			var pagsForGame = dataService.PlayerAtGameEntities.Where(o => o.GameRowKey == gameRowKey).ToList();
@@ -240,13 +247,6 @@
 			
 			// Upsert pag
 			await dataService.UpsertEntityAsync(pagEntity);
-			
-			// Update GameEntity LastPagAdded
-			if (pagEntity.Timestamp != null)
-			{
-				gameEntity.LastPagAdded = pagEntity.Timestamp.Value.DateTime;
-				await UpsertGameEntityAsync(gameEntity);
-			}
 		}
 
 		private List<ExpandedPag> ExpandPags(List<PlayerAtGameEntity> pags)

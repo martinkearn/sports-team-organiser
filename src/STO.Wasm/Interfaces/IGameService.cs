@@ -119,5 +119,12 @@ namespace STO.Wasm.Interfaces
 		/// <param name="length">Should the label be short or long.</param>
 		/// <returns>A string which represents the label for the PlayerAtGameEntity.</returns>
 		public string GetPlayerAtGameLabel(string rowKey, Enums.TitleLength length = Enums.TitleLength.Short);
+
+		/// <summary>
+		/// Returns the most recent PlayerAtGameEntity to be added to a game
+		/// </summary>
+		/// <param name="rowKey">The RowKey of the GameEntity to get the most recent PlayerAtGameEntity for.</param>
+		/// <returns>Most recent PlayerAtGameEntity in a GameEntity</returns>
+		public PlayerAtGameEntity? GetMostRecentPlayerAtGameForGame(string rowKey);
     }
 }

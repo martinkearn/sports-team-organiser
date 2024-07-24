@@ -1,12 +1,7 @@
-global using STO.Models;
-global using STO.Wasm.Services;
-global using STO.Wasm.Models;
-global using STO.Wasm.Interfaces;
-global using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
-using STO.Wasm;
+
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");

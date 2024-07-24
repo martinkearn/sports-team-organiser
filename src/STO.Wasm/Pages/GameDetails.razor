@@ -10,7 +10,8 @@
     @_pags.Count() players. @_gameEntity.Date.TimeOfDay.Hours:@_gameEntity.Date.TimeOfDay.Minutes kick off.
     @if (_mostRecentPag != default)
     {
-        <span>Last player added at @_mostRecentPag.Timestamp?.ToString("ddd MM mmm HH:mm")</span>
+        var localTime = _mostRecentPag.Timestamp?.ToLocalTime();
+        <span>Last player added @localTime?.ToString("ddd HH:mm")</span>
     }
 </p>
 @if (!string.IsNullOrEmpty(_gameEntity.Notes))

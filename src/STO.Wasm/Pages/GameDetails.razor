@@ -6,8 +6,18 @@
 
 <h1><i class="fa-solid fa-people-group me-2"></i> <EntityTitleLink RowKey="@_gameEntity.RowKey" EntityType="Enums.EntityType.GameEntity" Link="false" /></h1>
 
-<p>@_pags.Count() players. @_gameEntity.Date.TimeOfDay.Hours:@_gameEntity.Date.TimeOfDay.Minutes kick off.</p>
-<p>@_gameEntity.Notes</p>
+<p>
+    @_pags.Count() players. @_gameEntity.Date.TimeOfDay.Hours:@_gameEntity.Date.TimeOfDay.Minutes kick off.
+    @if (_mostRecentPag != default)
+    {
+        var localTime = _mostRecentPag.Timestamp?.ToLocalTime();
+        <span>Last player added @localTime?.ToString("ddd HH:mm")</span>
+    }
+</p>
+@if (!string.IsNullOrEmpty(_gameEntity.Notes))
+{
+    <p>@_gameEntity.Notes</p>
+}
 
 <div class="row">
     <div class="col">
@@ -182,7 +192,7 @@ else
 
 @code {
     [CascadingParameter] public MainLayout MainLayout { get; set; } = default!;
-    
+
     [Parameter] public string GameUrlSegment { get; set; } = default!;
 
     private GameEntity _gameEntity = default!;
@@ -193,7 +203,9 @@ else
 
     private PlayerAtGameEntity _newPagEntity = new();
 
-    private string? _pageTitle = default!;
+    private PlayerAtGameEntity? _mostRecentPag;
+
+    private string? _pageTitle;
 
     private string _simpleViewLabel = default!;
 
@@ -265,6 +277,7 @@ else
         _pageTitle = GameService.GetGameLabel(_gameEntity.RowKey);
         MainLayout.SetPageTitle(_pageTitle);
         _simpleView = false;
+        _mostRecentPag = GameService.GetMostRecentPlayerAtGameForGame(_gameEntity.RowKey);
 
         //Set simple view label
         SetSimpleViewLabel();

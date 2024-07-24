@@ -147,6 +147,13 @@
 			return pagLabel;
 		}
 
+		public PlayerAtGameEntity? GetMostRecentPlayerAtGameForGame(string rowKey)
+		{
+			var pags = GetPlayerAtGameEntitiesForGame(rowKey);
+			var orderedPags = pags.OrderByDescending(o => o.Timestamp);
+			return orderedPags.FirstOrDefault();
+		}
+
 		public List<PlayerAtGameEntity> GetPlayerAtGameEntitiesForGame(string gameRowKey)
 		{
 			var pagsForGame = dataService.PlayerAtGameEntities.Where(o => o.GameRowKey == gameRowKey).ToList();
@@ -234,11 +241,11 @@
 			
 			// Set the UrlSegment
 			// Cannot do this as setter for UrlSegment because we cannot resolve the GameEntity and PlayerEntity there
-			var player = playerService.GetPlayerEntity(pagEntity.PlayerRowKey);
-			var game = GetGameEntity(pagEntity.GameRowKey);
-			pagEntity.UrlSegment = $"{player.UrlSegment}-{game.UrlSegment}";
+			var playerEntity = playerService.GetPlayerEntity(pagEntity.PlayerRowKey);
+			var gameEntity = GetGameEntity(pagEntity.GameRowKey);
+			pagEntity.UrlSegment = $"{playerEntity.UrlSegment}-{gameEntity.UrlSegment}";
 			
-			// Upsert
+			// Upsert pag
 			await dataService.UpsertEntityAsync(pagEntity);
 		}
 

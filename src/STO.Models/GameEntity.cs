@@ -19,7 +19,7 @@ namespace STO.Models
 
         private DateTimeOffset _date;
 
-        public DateTime LastPagAdded { get; set; }
+        public DateTimeOffset LastPagAdded { get; set; }
 
         public int TeamAGoals { get; set; }
 

@@ -1,7 +1,33 @@
 ﻿@page "/authentication/{action}"
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
-<RemoteAuthenticatorView Action="@Action" />
+@inject NavigationManager Navigation
 
-@code{
-    [Parameter] public string? Action { get; set; }
+<RemoteAuthenticatorView Action="@Action" >
+    <LoggingIn>
+        Redirecting to the login page...
+    </LoggingIn>
+    <LogInFailed>
+        There was an error logging in.
+    </LogInFailed>
+    <LogOut>
+        Logging out...
+    </LogOut>
+</RemoteAuthenticatorView>
+
+@code {
+    [Parameter]
+    public string Action { get; set; }
+
+    private void LoginCompleted()
+    {
+        var returnUrl = Navigation.ToBaseRelativePath(Navigation.Uri);
+        if (!string.IsNullOrEmpty(returnUrl))
+        {
+            Navigation.NavigateTo(returnUrl);
+        }
+        else
+        {
+            Navigation.NavigateTo("/foo");
+        }
+    }
 }

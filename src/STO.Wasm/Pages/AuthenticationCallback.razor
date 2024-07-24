@@ -1,0 +1,21 @@
+@page "/authentication/login-callback"
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@inject NavigationManager Navigation
+
+<RemoteAuthenticatorView Action="login-callback" OnLogInSucceeded="OnInitialized">
+    <CompletingLoggingIn>
+        Completing login...
+    </CompletingLoggingIn>
+    <LogInFailed>
+        There was an error completing the login.
+    </LogInFailed>
+</RemoteAuthenticatorView>
+
+@code {
+
+    protected override void OnInitialized()
+    {
+        Navigation.NavigateTo("/admin");
+    } 
+
+}

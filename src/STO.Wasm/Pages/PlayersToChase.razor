@@ -1,0 +1,36 @@
+@page "/playerstochase"
+@using NuGet.Packaging.Signing
+@inject IPlayerService PlayerService
+@inject IGameService GameService
+
+<PageTitle>TNF - @_pageTitle</PageTitle>
+
+<h1><i class="fa-solid fa-user me-2"></i> @_pageTitle</h1>
+
+<p>Times players have played in the last @_tenWeeks.TotalDays days</p>
+@foreach (var recentPagsForPlayer in _recentPags)
+{
+    var player = PlayerService.GetPlayerEntity(recentPagsForPlayer.Key);
+    <p>@player.Name has played @recentPagsForPlayer.Count() times.</p>
+}
+
+@code {
+    [CascadingParameter] public MainLayout MainLayout { get; set; } = default!;
+    private List<IGrouping<string, PlayerAtGameEntity>> _recentPags = default!;
+    private string _pageTitle = default!;
+    private TimeSpan _tenWeeks = new TimeSpan(70, 0, 0, 0);
+
+    protected override void OnInitialized()
+    {
+        var allPags = GameService.GetPlayerAtGameEntities()
+            .Where(o => o.Timestamp!.Value.Date < DateTime.UtcNow.Subtract(_tenWeeks));
+        
+        _recentPags = allPags
+            .GroupBy(p => p.PlayerRowKey)   // Group by the PlayerRowKey property
+            .OrderByDescending(g => g.Count())  // Sort by the volume of occurrences (group count)
+            .ToList();
+        
+        _pageTitle = "Players to chase";
+        MainLayout.SetPageTitle(_pageTitle);
+    }
+}

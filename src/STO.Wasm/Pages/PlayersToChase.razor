@@ -12,6 +12,10 @@
 {
     var player = PlayerService.GetPlayerEntity(recentPagsForPlayer.Key);
     <p>@player.Name has played @recentPagsForPlayer.Count() times.</p>
+    foreach (var pag in recentPagsForPlayer)
+    {
+        <p>Pag:@pag.RowKey, Player:@pag.PlayerRowKey, Game:@pag.GameRowKey, Timestamp:@pag.Timestamp</p>
+    }
 }
 
 @code {

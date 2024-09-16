@@ -7,9 +7,21 @@
 <h1><i class="fa-solid fa-user me-2"></i> @_pageTitle</h1>
 
 <h2>Recent Games</h2>
-@foreach (var game in _recentGames)
+
+        <InputSelect class="form-select" @bind-Value="_selectedGameKey" @bind-Value:after="GameSelected">
+            <option value="">Select Game ...</option>
+            @foreach (var game in _recentGames)
+            {
+                <option value="@game.RowKey">
+                    <EntityTitleLink EntityType="Enums.EntityType.GameEntity" RowKey="@game.RowKey" Link="false" />
+                </option>
+            }
+        </InputSelect>
+
+<p>@_selectedGameKey</p>
+@if (_selectedGameEntity?.RowKey != default)
 {
-    <p><EntityTitleLink EntityType="Enums.EntityType.GameEntity" RowKey="@game.RowKey" /></p>
+    <p><EntityTitleLink EntityType="Enums.EntityType.GameEntity" RowKey="@_selectedGameEntity.RowKey" Link="true" /></p>
 }
 
 <h2>Recent Players</h2>
@@ -25,6 +37,8 @@
     private List<IGrouping<string, PlayerAtGameEntity>> _recentPags = default!;
     private string _pageTitle = default!;
     private List<GameEntity> _recentGames = default!;
+    private string _selectedGameKey = default!;
+    private GameEntity _selectedGameEntity = default!;
 
     protected override void OnInitialized()
     {
@@ -44,4 +58,10 @@
         _pageTitle = "Players to chase";
         MainLayout.SetPageTitle(_pageTitle);
     }
+
+    private void GameSelected()
+    {
+        _selectedGameEntity = _recentGames.Single(g => g.RowKey == _selectedGameKey);
+    }
+
 }

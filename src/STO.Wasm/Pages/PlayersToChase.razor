@@ -8,60 +8,60 @@
 
 <h2>Recent Games</h2>
 
-        <InputSelect class="form-select" @bind-Value="_selectedGameKey" @bind-Value:after="GameSelected">
-            <option value="">Select Game ...</option>
-            @foreach (var game in _recentGames)
-            {
-                <option value="@game.RowKey">
-                    <EntityTitleLink EntityType="Enums.EntityType.GameEntity" RowKey="@game.RowKey" Link="false" />
-                </option>
-            }
-        </InputSelect>
+<InputSelect class="form-select" @bind-Value="_selectedGameRowKey" @bind-Value:after="GameSelected">
+    <option value="">Select Game ...</option>
+    @foreach (var game in _recentGames)
+    {
+        <option value="@game.RowKey">
+            <EntityTitleLink EntityType="Enums.EntityType.GameEntity" RowKey="@game.RowKey" Link="false" />
+        </option>
+    }
+</InputSelect>
 
-<p>@_selectedGameKey</p>
-@if (_selectedGameEntity?.RowKey != default)
-{
-    <p><EntityTitleLink EntityType="Enums.EntityType.GameEntity" RowKey="@_selectedGameEntity.RowKey" Link="true" /></p>
-}
+<p>@_selectedGameRowKey</p>
 
-<h2>Recent Players</h2>
-<p>Times players have played in the last @_recentGames.Count() games</p>
-@foreach (var recentPagsForPlayer in _recentPags)
+<p>Players who have played in the past @_recentGames.Count games but are not in the selected game.</p>
+@foreach (var player in _recentPlayersNotAtSelectedGame)
 {
-    var player = PlayerService.GetPlayerEntity(recentPagsForPlayer.Key);
-    <p><EntityTitleLink EntityType="Enums.EntityType.PlayerEntity" RowKey="@player.RowKey" /> has played @recentPagsForPlayer.Count() times.</p>
+    <p>@player.Name</p>
 }
 
 @code {
     [CascadingParameter] public MainLayout MainLayout { get; set; } = default!;
-    private List<IGrouping<string, PlayerAtGameEntity>> _recentPags = default!;
     private string _pageTitle = default!;
     private List<GameEntity> _recentGames = default!;
-    private string _selectedGameKey = default!;
-    private GameEntity _selectedGameEntity = default!;
+    private string _selectedGameRowKey = default!;
+    private List<PlayerEntity> _recentPlayersNotAtSelectedGame = [];
 
     protected override void OnInitialized()
     {
-        _recentGames = GameService.GetGameEntities()
-            .OrderByDescending(g => g.Date)
-            .Take(10)
-            .ToList();
-  
-        var pagsInRecentGames = GameService.GetPlayerAtGameEntities()
-            .Where(o => _recentGames.Select(g => g.RowKey).Contains(o.GameRowKey));
-        
-        _recentPags = pagsInRecentGames
-            .GroupBy(p => p.PlayerRowKey)   // Group by the PlayerRowKey property
-            .OrderByDescending(g => g.Count())  // Sort by the volume of occurrences (group count)
-            .ToList();
-        
-        _pageTitle = "Players to chase";
-        MainLayout.SetPageTitle(_pageTitle);
+        RefreshData();
     }
 
     private void GameSelected()
     {
-        _selectedGameEntity = _recentGames.Single(g => g.RowKey == _selectedGameKey);
+        var pagsInRecentGamesNotSelectedGame = GameService.GetPlayerAtGameEntities()
+            .Where(o => _recentGames.Select(g => g.RowKey).Contains(o.GameRowKey) && o.GameRowKey != _selectedGameRowKey)
+            .ToList();
+
+        _recentPlayersNotAtSelectedGame.Clear();
+        _recentPlayersNotAtSelectedGame = PlayerService.GetPlayerEntitiesFromPags(pagsInRecentGamesNotSelectedGame);
+    }
+    
+    private void RefreshData()
+    {
+        _recentGames = GameService.GetGameEntities()
+            .OrderByDescending(g => g.Date)
+            .Take(2)
+            .ToList();
+        
+        // Set next game as default
+        var nextGameEntity = GameService.GetNextGameEntity();
+        _selectedGameRowKey = nextGameEntity.RowKey;
+        GameSelected();
+        
+        _pageTitle = "Players to chase";
+        MainLayout.SetPageTitle(_pageTitle);
     }
 
 }

@@ -17,6 +17,14 @@ namespace STO.Wasm.Interfaces
 		/// <param name="pags">List of PlayerAtGameEntity to turn into PlayerEntity</param>
 		/// <returns>List of PlayerEntity.</returns>
 		public List<PlayerEntity> GetPlayerEntitiesFromPags(List<PlayerAtGameEntity> pags);
+		
+		/// <summary>
+		/// Gets all PlayerEntity objects which have played within a given timeframe. Returns with a list of games where the PlayerEntity features.
+		/// </summary>
+		/// <param name="dateRangeStart">DateTime for the start of the date range to return players from.</param>
+		/// <param name="dateRangeEnd">DateTime for the end of the date range to return players from.</param>
+		/// <returns>List of Tuple with PlayerEntity and List of GameEntities where the player features.</returns>
+		public List<(PlayerEntity, int)> GetRecentPlayerEntities(DateTime dateRangeStart, DateTime dateRangeEnd);
 
 		/// <summary>
 		/// Gets a PlayerEntity object from RowKey

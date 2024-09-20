@@ -20,18 +20,19 @@
 
 <p>@_selectedGameRowKey</p>
 
-<p>Players who have played in the past @_recentGames.Count games but are not in the selected game.</p>
-@foreach (var player in _recentPlayersNotAtSelectedGame)
+<h2>Recent Players</h2>
+@foreach (var rp in _recentPlayers)
 {
-    <p>@player.Name</p>
+    <p>@rp.Item1.Name has played @rp.Item2 times.</p>
 }
+
 
 @code {
     [CascadingParameter] public MainLayout MainLayout { get; set; } = default!;
     private string _pageTitle = default!;
     private List<GameEntity> _recentGames = default!;
     private string _selectedGameRowKey = default!;
-    private List<PlayerEntity> _recentPlayersNotAtSelectedGame = [];
+    private List<(PlayerEntity, int)> _recentPlayers = default!;
 
     protected override void OnInitialized()
     {
@@ -40,16 +41,15 @@
 
     private void GameSelected()
     {
-        var pagsInRecentGamesNotSelectedGame = GameService.GetPlayerAtGameEntities()
-            .Where(o => _recentGames.Select(g => g.RowKey).Contains(o.GameRowKey) && o.GameRowKey != _selectedGameRowKey)
-            .ToList();
 
-        _recentPlayersNotAtSelectedGame.Clear();
-        _recentPlayersNotAtSelectedGame = PlayerService.GetPlayerEntitiesFromPags(pagsInRecentGamesNotSelectedGame);
     }
     
     private void RefreshData()
     {
+        var startDate = DateTime.UtcNow.Subtract(new TimeSpan(30, 0, 0, 0));
+        _recentPlayers = PlayerService.GetRecentPlayerEntities(startDate, DateTime.UtcNow);
+        
+        //TO DO: Make this match the date span above
         _recentGames = GameService.GetGameEntities()
             .OrderByDescending(g => g.Date)
             .Take(2)

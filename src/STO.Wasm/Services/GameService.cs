@@ -175,6 +175,11 @@
 			return dataService.PlayerAtGameEntities.First(o => o.RowKey == rowKey);
 		}
 
+		public List<PlayerAtGameEntity> GetPlayerAtGameEntities()
+		{
+			return dataService.PlayerAtGameEntities.OrderByDescending(o => o.Timestamp!.Value.DateTime).ToList();
+		}
+
 		public PlayerAtGameEntity GetPlayerAtGameEntityByUrlSegment(string urlSegment)
 		{
 			return dataService.PlayerAtGameEntities.First(o => o.UrlSegment == urlSegment);

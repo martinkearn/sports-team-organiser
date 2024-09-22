@@ -58,6 +58,12 @@ namespace STO.Wasm.Interfaces
 		public PlayerAtGameEntity GetPlayerAtGameEntity(string rowKey);
 		
 		/// <summary>
+		/// Gets a all PlayerAtGame entities
+		/// </summary>
+		/// <returns>List of PlayerAtGameEntity.</returns>
+		public List<PlayerAtGameEntity> GetPlayerAtGameEntities();		
+		
+		/// <summary>
 		/// Gets a single Pag (player at game).
 		/// </summary>
 		/// <param name="urlSegment">The UrlSegment for the GameEntity to get.</param>

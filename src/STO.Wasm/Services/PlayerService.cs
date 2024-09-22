@@ -17,6 +17,38 @@ namespace STO.Wasm.Services
 			return pes;
 		}
 
+		public List<(PlayerEntity, int)> GetRecentPlayerEntities(DateTime dateRangeStart, DateTime dateRangeEnd)
+		{
+			// Get all players
+			var allPlayers = GetPlayerEntities();
+			
+			// Get all games within range
+			var recentGames = dataService.GameEntities
+				.Where(g => g.Date.DateTime > dateRangeStart)
+				.Where(g => g.Date.DateTime < dateRangeEnd)
+				.ToList();
+			
+			// Get all players at recent games
+			var recentPags = dataService.PlayerAtGameEntities
+				.Where(pag => recentGames.Select(g => g.RowKey).Contains(pag.GameRowKey))
+				.ToList();
+			
+			// Get PlayerEntity with count
+			List<(PlayerEntity PlayerEntity, int GameCount)> recentPlayers = [];
+			foreach (var recentPag in recentPags)
+			{
+				if (recentPlayers.Any(p => p.PlayerEntity.RowKey == recentPag.PlayerRowKey)) continue;
+				{
+					var player = allPlayers.First(p => p.RowKey == recentPag.PlayerRowKey);
+					var gameCount = recentPags.Count(pag => pag.PlayerRowKey == recentPag.PlayerRowKey);
+					var t = (PlayerEntity:player, GameCount:gameCount);
+					recentPlayers.Add(t);
+				}
+			}
+
+			return recentPlayers.OrderByDescending(tuple => tuple.GameCount).ToList();
+		}
+
 		public PlayerEntity GetPlayerEntity(string rowKey)
 		{
 			var pes = dataService.PlayerEntities;

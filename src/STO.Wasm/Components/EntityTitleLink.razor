@@ -58,6 +58,12 @@ else
         RefreshData();
     }
     
+    protected override void OnParametersSet()
+    {
+        // Refresh the data every time the component's parameters are set (e.g., when navigated to)
+        RefreshData();
+    }
+    
     private void RefreshData()
     {
         if (RowKey is null) throw new ArgumentException();

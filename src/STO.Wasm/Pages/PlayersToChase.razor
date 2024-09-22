@@ -1,0 +1,98 @@
+@page "/playerstochase"
+@inject IPlayerService PlayerService
+@inject IGameService GameService
+
+<PageTitle>TNF - @_pageTitle</PageTitle>
+
+<h1><i class="fa-solid fa-user me-2"></i> @_pageTitle</h1>
+
+<p>Search back to @_startDate.Date.ToShortDateString() for recent games and players.</p>
+
+<InputSelect class="form-select" @bind-Value="_selectedGameRowKey" @bind-Value:after="GameSelected">
+    <option value="all">Select Game ...</option>
+    @foreach (var game in _recentGames)
+    {
+        <option value="@game.RowKey">
+            <EntityTitleLink EntityType="Enums.EntityType.GameEntity" RowKey="@game.RowKey" Link="false" />
+        </option>
+    }
+</InputSelect>
+
+<br/>
+@if (string.IsNullOrEmpty(_selectedGameLabel))
+{
+    <p>All recent players:</p>
+}
+else
+{
+    <p>Recent players not playing at @_selectedGameLabel:</p>
+}
+
+@foreach (var rp in _recentPlayersNotAtSelectedGame)
+{
+    <p><EntityTitleLink EntityType="Enums.EntityType.PlayerEntity" RowKey="@rp.Item1.RowKey" Length="Enums.TitleLength.Short" Link="true" /> has played @rp.Item2 times</p>
+}
+
+@code {
+    [CascadingParameter] public MainLayout MainLayout { get; set; } = default!;
+    private string _pageTitle = default!;
+    private List<GameEntity> _recentGames = default!;
+    private string _selectedGameRowKey = default!;
+    private string _selectedGameLabel = default!;
+    private List<(PlayerEntity, int)> _recentPlayers = default!;
+    private List<(PlayerEntity, int)> _recentPlayersNotAtSelectedGame = default!;
+    private DateTime _startDate = default!;
+
+    protected override void OnInitialized()
+    {
+        RefreshData();
+    }
+
+    private void GameSelected()
+    {
+        if (_selectedGameRowKey == "all")
+        {
+            _selectedGameLabel = string.Empty;
+            _recentPlayersNotAtSelectedGame = _recentPlayers;
+        }
+        else
+        {
+            _selectedGameLabel = GameService.GetGameLabel(_selectedGameRowKey); //TO DO: This should be built into the GameEntity object as a property which is set every time the date or Title properties change
+            var pagsForSelectedGame = GameService.GetPlayerAtGameEntities().Where(p => p.GameRowKey == _selectedGameRowKey).ToList();
+        
+            // Look for recent players which are not Pags
+            _recentPlayersNotAtSelectedGame = []; //Reset list to all players
+            foreach (var recentPlayer in _recentPlayers)
+            {
+                if (pagsForSelectedGame.All(p => p.PlayerRowKey != recentPlayer.Item1.RowKey))
+                {
+                    _recentPlayersNotAtSelectedGame.Add(recentPlayer);
+                }
+            }
+        }
+    }
+    
+    private void RefreshData()
+    {
+        // Set start date
+        _startDate = DateTime.UtcNow.Subtract(new TimeSpan(30, 0, 0, 0));
+        
+        // Get recent players
+        _recentPlayers = PlayerService.GetRecentPlayerEntities(_startDate, DateTime.UtcNow);
+        
+        // Get recent games
+        _recentGames = GameService.GetGameEntities()
+            .Where(g => g.Date > _startDate)
+            .OrderByDescending(g => g.Date)
+            .ToList();
+        
+        // Set next game as default
+        var nextGameEntity = GameService.GetNextGameEntity();
+        _selectedGameRowKey = nextGameEntity.RowKey;
+        GameSelected();
+        
+        _pageTitle = "Players to chase";
+        MainLayout.SetPageTitle(_pageTitle);
+    }
+
+}

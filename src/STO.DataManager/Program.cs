@@ -41,7 +41,7 @@ class Program
         {
             // Check if the property exists and update it
             if (!entity.ContainsKey("Forecast")) continue;
-            entity["Forecast"] = 0;
+            entity["Forecast"] = "Yes";
                 
             // Alternatively, add a new property if it doesn't exist
             // entity["NewProperty"] = "NewValue";

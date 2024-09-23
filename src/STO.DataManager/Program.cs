@@ -1,12 +1,12 @@
-﻿using System;
-using Microsoft.Extensions.Configuration;
-using System.IO;
+﻿using Microsoft.Extensions.Configuration;
+using Azure;
+using Azure.Data.Tables;
 
 namespace STO.DataManager;
 
 class Program
 {
-    static void Main(string[] args)
+    public static async Task Main(string[] args)
     {
         // Setup configuration to read from appsettings.Development.json
         var builder = new ConfigurationBuilder()
@@ -25,8 +25,33 @@ class Program
         Console.WriteLine($"{connectionString}");
         Console.WriteLine($"{dataTable}");
         
+        // Setup Table
+        // -----------
+        var tableClient = new TableClient(connectionString, dataTable);
+        await tableClient.CreateIfNotExistsAsync();
         
-        
-        
+        // Replace values
+        // --------------
+        // Query all entities from the table
+        var entities = tableClient.Query<TableEntity>();
+
+        // Iterate over each entity
+        foreach (var entity in entities)
+        {
+            // Check if the property exists and update it
+            if (entity.ContainsKey("Forecast"))
+            {
+                if ((string)entity["Forecast"] == "Yes")
+                {
+                    entity["Forecast"] = 1;
+                }
+            }
+
+            // Alternatively, add a new property if it doesn't exist
+            // entity["NewProperty"] = "NewValue";
+
+            // Update the entity in the table
+            await tableClient.UpdateEntityAsync(entity, ETag.All, TableUpdateMode.Replace);
+        }
     }
 }

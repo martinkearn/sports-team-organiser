@@ -36,22 +36,24 @@ class Program
         var entities = tableClient.Query<TableEntity>();
 
         // Iterate over each entity
+        var updateCount = 0;
         foreach (var entity in entities)
         {
             // Check if the property exists and update it
-            if (entity.ContainsKey("Forecast"))
-            {
-                if ((string)entity["Forecast"] == "Yes")
-                {
-                    entity["Forecast"] = 1;
-                }
-            }
-
+            if (!entity.ContainsKey("Forecast")) continue;
+            entity["Forecast"] = 0;
+                
             // Alternatively, add a new property if it doesn't exist
             // entity["NewProperty"] = "NewValue";
 
             // Update the entity in the table
             await tableClient.UpdateEntityAsync(entity, ETag.All, TableUpdateMode.Replace);
+            
+            Console.WriteLine($"Updated {entity.RowKey}");
+            updateCount += 1;
         }
+        
+        
+        Console.WriteLine($"Updated {updateCount} entities.");
     }
 }

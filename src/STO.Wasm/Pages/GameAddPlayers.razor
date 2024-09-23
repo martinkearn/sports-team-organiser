@@ -27,17 +27,6 @@
 </div>
 
 <div class="mb-3">
-    <label class="form-label">Add Prospective Players</label>
-    <InputSelect class="form-select" @bind-Value="_selectedProspectPagPlayerRowKey" @bind-Value:after="AddProspectPag">
-        <option value="" selected>Choose Player ...</option>
-        @foreach (var pe in _playerEntities)
-        {
-            <option value="@pe.RowKey">@pe.Name</option>
-        }
-    </InputSelect>
-</div>
-
-<div class="mb-3">
     <label class="form-label">Playing status for prospective players</label>
     <InputSelect class="form-select" @bind-Value="_selectedPlayingStatus" >
         @foreach (var playingStatus in Enum.GetValues<Enums.PlayingStatus>())
@@ -48,16 +37,30 @@
 </div>
 
 <div class="mb-3">
-    <label class="form-label">Prospective players</label>
-    @foreach (var prospectPag in _prospectPags)
-    {
-    <p><EntityTitleLink EntityType="Enums.EntityType.PlayerEntity" RowKey="@prospectPag.PlayerRowKey" Link="true" /> as @prospectPag.Forecast.ToString()</p>
-    }
+    <label class="form-label">Add prospective players</label>
+    <InputSelect class="form-select" @bind-Value="_selectedProspectPagPlayerRowKey" @bind-Value:after="AddProspectPag">
+        <option value="" selected>Choose Player ...</option>
+        @foreach (var pe in _playerEntities)
+        {
+            <option value="@pe.RowKey">@pe.Name</option>
+        }
+    </InputSelect>
 </div>
 
-<div class="hstack gap-2">
-    <button class="btn btn-secondary" @onclick="AddProspectPagsToGame"><i class="fa-solid fa-plus"></i> Add @_prospectPags.Count Players to Game</button>
-</div>
+@if (_prospectPags.Count > 0)
+{
+    <div class="mb-3">
+        <label class="form-label">Prospective players</label>
+        @foreach (var prospectPag in _prospectPags)
+        {
+            <p><EntityTitleLink EntityType="Enums.EntityType.PlayerEntity" RowKey="@prospectPag.PlayerRowKey" Link="true" /> as @prospectPag.Forecast.ToString()</p>
+        }
+    </div>
+
+    <div class="hstack gap-2">
+        <button class="btn btn-secondary" @onclick="AddProspectPagsToGame"><i class="fa-solid fa-plus"></i> Add @_prospectPags.Count Players to Game</button>
+    </div>   
+}
 
 @code {
     [CascadingParameter] public MainLayout MainLayout { get; set; } = default!;

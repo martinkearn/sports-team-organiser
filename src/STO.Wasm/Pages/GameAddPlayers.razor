@@ -38,22 +38,21 @@
 </div>
 
 <div class="mb-3">
-    <label class="form-label">Prospective Players</label>
-    @foreach (var prospectPag in _prospectPags)
-    {
-        <p><EntityTitleLink EntityType="Enums.EntityType.PlayerEntity" RowKey="@prospectPag.PlayerRowKey" Link="true" /> </p>
-    }
+    <label class="form-label">Playing status for prospective players</label>
+    <InputSelect class="form-select" @bind-Value="_selectedPlayingStatus" >
+        @foreach (var playingStatus in Enum.GetValues<Enums.PlayingStatus>())
+        {
+            <option value="@playingStatus">@playingStatus</option>
+        }
+    </InputSelect>
 </div>
 
 <div class="mb-3">
-    <label class="form-label">Playing status for prospoective players</label>
-    <InputSelect class="form-select" @bind-Value="_selectedProspectPagPlayerRowKey" >
-        <option value="" selected>Choose Player ...</option>
-        @foreach (var pe in _playerEntities)
-        {
-        <option value="@pe.RowKey">@pe.Name</option>
-        }
-    </InputSelect>
+    <label class="form-label">Prospective players</label>
+    @foreach (var prospectPag in _prospectPags)
+    {
+    <p><EntityTitleLink EntityType="Enums.EntityType.PlayerEntity" RowKey="@prospectPag.PlayerRowKey" Link="true" /> as @prospectPag.Forecast.ToString()</p>
+    }
 </div>
 
 <div class="hstack gap-2">
@@ -75,6 +74,8 @@
     private GameEntity _selectedGame = default!;
 
     private GameEntity _nextGameEntity = default!;
+
+    private Enums.PlayingStatus _selectedPlayingStatus = default!;
     
     private string _pageTitle = default!;
 
@@ -90,7 +91,7 @@
             PlayerRowKey = _selectedProspectPagPlayerRowKey,
             GameRowKey = _selectedGameRowKey,
             Played = false,
-            Forecast = Enums.PlayingStatus.Yes
+            Forecast = _selectedPlayingStatus
         };
         _prospectPags.Add(prospectPag);
     }

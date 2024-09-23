@@ -11,7 +11,7 @@
 			// Get Yes pags
 			var newEPags = new List<ExpandedPag>();
             var yesPags = ePags
-                .Where(o => o.PagEntity.Forecast.Equals("yes", StringComparison.InvariantCultureIgnoreCase))
+                .Where(o => o.PagEntity.Forecast == Enums.PlayingStatus.Yes)
                 .OrderBy(o => o.PlayerEntity.AdminRating).ToList();
             var nextTeamToGetPag = "A";
 

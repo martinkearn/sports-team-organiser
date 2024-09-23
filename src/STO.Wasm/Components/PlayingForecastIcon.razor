@@ -5,7 +5,7 @@
 
 @code {
     [Parameter]
-    public string? Forecast { get; set; }
+    public Enums.PlayingStatus Forecast { get; set; }
 
     private string? _css;
 
@@ -21,8 +21,6 @@
 
     private void SetCss()
     {
-        Forecast ??= "no";
-
         var forecastCssMap = new Dictionary<string, string>
         {
             ["maybe"] = "fa-solid fa-question",
@@ -34,7 +32,7 @@
             ["reserve5"] = "fa-solid fa-5"
         };
 
-        _css = forecastCssMap.GetValueOrDefault(Forecast.ToLowerInvariant(), string.Empty);
+        _css = forecastCssMap.GetValueOrDefault(Forecast.ToString().ToLowerInvariant(), string.Empty);
     }
 
 }

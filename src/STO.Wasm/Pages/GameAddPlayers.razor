@@ -45,6 +45,17 @@
     }
 </div>
 
+<div class="mb-3">
+    <label class="form-label">Playing status for prospoective players</label>
+    <InputSelect class="form-select" @bind-Value="_selectedProspectPagPlayerRowKey" >
+        <option value="" selected>Choose Player ...</option>
+        @foreach (var pe in _playerEntities)
+        {
+        <option value="@pe.RowKey">@pe.Name</option>
+        }
+    </InputSelect>
+</div>
+
 <div class="hstack gap-2">
     <button class="btn btn-secondary" @onclick="AddProspectPagsToGame"><i class="fa-solid fa-plus"></i> Add @_prospectPags.Count Players to Game</button>
 </div>
@@ -79,7 +90,7 @@
             PlayerRowKey = _selectedProspectPagPlayerRowKey,
             GameRowKey = _selectedGameRowKey,
             Played = false,
-            Forecast = PlayingOptions.Yes.ToString()
+            Forecast = Enums.PlayingStatus.Yes
         };
         _prospectPags.Add(prospectPag);
     }

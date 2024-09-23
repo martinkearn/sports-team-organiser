@@ -18,8 +18,8 @@ class Program
         IConfiguration configuration = builder.Build();
 
         // Access values from appsettings.Development.json
-        var connectionString = configuration["ConnectionString"];
-        var dataTable = configuration["DataTable"];
+        var connectionString = configuration["StorageConfiguration:ConnectionString"];
+        var dataTable = configuration["StorageConfiguration:DataTable"];
 
         // Output the values
         Console.WriteLine($"{connectionString}");

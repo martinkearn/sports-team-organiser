@@ -21,5 +21,17 @@ namespace STO.Models
             Short,
             Long
         };
+
+        public enum PlayingStatus
+        {
+            Yes,
+            Maybe,
+            Reserve1,
+            Reserve2,
+            Reserve3,
+            Reserve4,
+            Reserve5,
+            No
+        }
     }
 }

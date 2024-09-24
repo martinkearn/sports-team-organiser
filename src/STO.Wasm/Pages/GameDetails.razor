@@ -272,7 +272,7 @@ else
         {
             GameRowKey = _gameEntity.RowKey,
             Played = false,
-            Forecast = PlayingOptions.Yes.ToString(),
+            Forecast = Enums.PlayingStatus.Yes
         };
         _pageTitle = GameService.GetGameLabel(_gameEntity.RowKey);
         MainLayout.SetPageTitle(_pageTitle);

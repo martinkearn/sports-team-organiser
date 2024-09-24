@@ -11,7 +11,7 @@ namespace STO.Models
         [Required]
         public string GameRowKey { get; set; } = default!;
         [Required]
-        public string Forecast { get; set; } = "unstated";
+        public Enums.PlayingStatus Forecast { get; set; }
         [Required]
         public bool Played { get; set;} = false;
         public string Team { get; set; } = default!;

@@ -1,4 +1,4 @@
-@inject IPlayerService PlayerService
+@inject IPlayerEntityService PlayerEntityService
 <a href="/players/@PagEntity?.PlayerRowKey">
 @if (!string.IsNullOrEmpty(_css))
 {
@@ -38,8 +38,8 @@ else
         {
             // Work out pag RAG status
             Rag = "red";
-            var pagBalance = PlayerService.GetBalanceForPlayerEntity(PagEntity.PlayerRowKey);
-            var pagDefaultRate = PlayerService.GetDefaultRateForPlayerEntity(PagEntity.PlayerRowKey);
+            var pagBalance = PlayerEntityService.GetBalanceForPlayerEntity(PagEntity.PlayerRowKey);
+            var pagDefaultRate = PlayerEntityService.GetDefaultRateForPlayerEntity(PagEntity.PlayerRowKey);
             if (!PagEntity.Played)
             {
                 // Not played, so pre-game rag

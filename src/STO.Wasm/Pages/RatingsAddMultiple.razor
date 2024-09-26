@@ -1,6 +1,6 @@
 @page "/ratings/addmultiple"
-@inject IRatingService RatingEntityService
-@inject IPlayerService PlayerService
+@inject IRatingEntityService RatingEntityEntityService
+@inject IPlayerEntityService PlayerEntityService
 @inject NavigationManager Navigation
 
 <PageTitle>TNF - @_pageTitle</PageTitle>
@@ -22,7 +22,7 @@
 	<tbody>
 	@foreach (var re in _ratingEntityAllPlayers)
 	{
-		var pe = PlayerService.GetPlayerEntity(re.PlayerRowKey);
+		var pe = PlayerEntityService.GetPlayerEntity(re.PlayerRowKey);
 		<tr>
 			<td><EntityTitleLink EntityType="Enums.EntityType.PlayerEntity" RowKey="@re.PlayerRowKey" Link="false" /> <PositionIcon Position="pe.Position"></PositionIcon></td>
 			<td>
@@ -66,14 +66,14 @@
 		foreach (var reWithValue in resWithvalue)
 		{
 			//TODO: Make this a list of tasks and use .WhenAll
-			await RatingEntityService.UpsertRatingEntityAsync(reWithValue);
+			await RatingEntityEntityService.UpsertRatingEntityAsync(reWithValue);
 		}
 		Navigation.NavigateTo("/ratings/addthanks");
 	}
 
 	private void RefreshData()
 	{
-		_playerEntities = PlayerService.GetPlayerEntities().OrderBy(o => o.Position).ToList();
+		_playerEntities = PlayerEntityService.GetPlayerEntities().OrderBy(o => o.Position).ToList();
 		foreach (var pe in _playerEntities)
 		{
 			_ratingEntityAllPlayers.Add(new RatingEntity

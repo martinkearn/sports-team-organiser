@@ -44,10 +44,10 @@ builder.Services.AddOptions<ApiConfiguration>()
 // Add custom services
 builder.Services.AddSingleton<IApiService, ApiService>();
 builder.Services.AddSingleton<IDataService, DataService>();
-builder.Services.AddSingleton<IPlayerService, PlayerService>();
-builder.Services.AddSingleton<IGameService, GameService>();
-builder.Services.AddSingleton<ITransactionService, TransactionService>();
-builder.Services.AddSingleton<IRatingService, RatingService>();
+builder.Services.AddSingleton<IPlayerEntityService, PlayerEntityService>();
+builder.Services.AddSingleton<IGameEntityService, GameEntityService>();
+builder.Services.AddSingleton<ITransactionEntityService, TransactionEntityService>();
+builder.Services.AddSingleton<IRatingEntityService, RatingEntityService>();
 
 // Add Blazored.LocalStorage
 builder.Services.AddBlazoredLocalStorageAsSingleton();

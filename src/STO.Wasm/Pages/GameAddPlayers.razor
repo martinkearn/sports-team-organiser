@@ -1,6 +1,6 @@
 @page "/games/addplayerstogame"
-@inject IPlayerService PlayerService
-@inject IGameService GameService
+@inject IPlayerEntityService PlayerEntityService
+@inject IGameEntityService GameEntityService
 @inject NavigationManager Navigation
 
 <PageTitle>@_pageTitle</PageTitle>
@@ -103,7 +103,7 @@
     {
         foreach (var prospectPag in _prospectPags)
         {
-            await GameService.UpsertPlayerAtGameEntityAsync(prospectPag);
+            await GameEntityService.UpsertPlayerAtGameEntityAsync(prospectPag);
         }
 
         var nav = $"/games/{_selectedGame.UrlSegment}";
@@ -113,15 +113,15 @@
     private void RefreshGame()
     {
         if (string.IsNullOrEmpty(_selectedGameRowKey)) return;
-        _selectedGame = GameService.GetGameEntity(_selectedGameRowKey);
+        _selectedGame = GameEntityService.GetGameEntity(_selectedGameRowKey);
         _prospectPags.Clear();
     }
 
     private void RefreshData()
     {
-        _gameEntities = GameService.GetGameEntities();
-        _playerEntities = PlayerService.GetPlayerEntities();
-        _nextGameEntity = GameService.GetNextGameEntity();
+        _gameEntities = GameEntityService.GetGameEntities();
+        _playerEntities = PlayerEntityService.GetPlayerEntities();
+        _nextGameEntity = GameEntityService.GetNextGameEntity();
         _selectedGameRowKey = _nextGameEntity.RowKey;
         _selectedGame = _nextGameEntity;
         _pageTitle = "Add Players to Game";

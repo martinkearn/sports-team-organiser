@@ -1,4 +1,4 @@
-@inject IGameService GameService
+@inject IGameEntityService GameEntityService
 
 @if (string.IsNullOrEmpty(IconCss))
 {
@@ -18,7 +18,7 @@ else
 
     protected override void OnInitialized()
     {
-        _nextGameEntity = GameService.GetNextGameEntity();
+        _nextGameEntity = GameEntityService.GetNextGameEntity();
     }
 
 }

@@ -1,7 +1,7 @@
 namespace STO.Wasm.Services
 {
     /// <inheritdoc/>
-    public class TransactionService(IDataService dataService) : ITransactionService
+    public class TransactionEntityService(IDataService dataService) : ITransactionEntityService
     {
         public List<TransactionEntity> GetTransactionEntities()
         {
@@ -36,8 +36,8 @@ namespace STO.Wasm.Services
             if (transactionEntity.PlayerRowKey is null) return;
 			
             // Set the UrlSegment
-            // Cannot do this as setter for UrlSegment because we cannot resolve the GameEntity and PlayerEntity there
-            // Cannot use PlayerService due to circular dependency. need to work with data service directly to get player details
+            // Cannot do this as setter for UrlSegment because we cannot resolve the PlayerEntity there
+            // Cannot use PlayerEntityService due to circular dependency. need to work with data service directly to get player details
             var pes = dataService.PlayerEntities;
             var player = pes.First(o => o.RowKey == transactionEntity.PlayerRowKey);
             transactionEntity.UrlSegment = $"{player.UrlSegment}-{transactionEntity.Date.DateTime:dd-MM-yyyy-HH-mm-ss}";

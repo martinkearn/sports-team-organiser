@@ -1,5 +1,5 @@
 @page "/players"
-@inject IPlayerService PlayerService
+@inject IPlayerEntityService PlayerEntityService
 
 <PageTitle>TNF - @_pageTitle</PageTitle>
 
@@ -19,7 +19,7 @@
 	<tbody>
 		@foreach (var pe in _playerEntities)
 		{
-			var peBalance = PlayerService.GetBalanceForPlayerEntity(pe.RowKey);
+			var peBalance = PlayerEntityService.GetBalanceForPlayerEntity(pe.RowKey);
 			<tr>
 				<td><EntityTitleLink EntityType="Enums.EntityType.PlayerEntity" RowKey="@pe.RowKey" Length="Enums.TitleLength.Short" Link="true" /></td>
 				<td class="d-none d-lg-table-cell">@pe.Position</td>
@@ -46,7 +46,7 @@
 
 	protected override void OnInitialized()
 	{
-		_playerEntities = PlayerService.GetPlayerEntities();
+		_playerEntities = PlayerEntityService.GetPlayerEntities();
 		_pageTitle = "Players";
 		MainLayout.SetPageTitle(_pageTitle);
 	}

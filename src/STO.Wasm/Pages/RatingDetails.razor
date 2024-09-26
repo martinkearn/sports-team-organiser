@@ -1,7 +1,7 @@
 @page "/ratings/{RatingUrlSegment}"
-@inject IRatingService RatingEntityService
-@inject IPlayerService PlayerService
-@inject  IGameService GameService
+@inject IRatingEntityService RatingEntityEntityService
+@inject IPlayerEntityService PlayerEntityService
+@inject  IGameEntityService GameEntityService
 @inject NavigationManager Navigation
 
 <PageTitle>TNF - @_pageTitle</PageTitle>
@@ -67,15 +67,15 @@
 
 	private async Task DeleteRating()
 	{
-		await RatingEntityService.DeleteRatingEntityAsync(_ratingEntity.RowKey);
+		await RatingEntityEntityService.DeleteRatingEntityAsync(_ratingEntity.RowKey);
 		Navigation.NavigateTo("/ratings");
 	}
 
 	private void RefreshData()
 	{
-		_ratingEntity = RatingEntityService.GetRatingEntityByUrlSegment(RatingUrlSegment);
-		_playerEntity = PlayerService.GetPlayerEntity(_ratingEntity.PlayerRowKey);
-		_pageTitle = $"Rating for {_playerEntity.Name} {GameService.GetGameLabel(_ratingEntity.GameRowKey)}";
+		_ratingEntity = RatingEntityEntityService.GetRatingEntityByUrlSegment(RatingUrlSegment);
+		_playerEntity = PlayerEntityService.GetPlayerEntity(_ratingEntity.PlayerRowKey);
+		_pageTitle = $"Rating for {_playerEntity.Name} {GameEntityService.GetGameLabel(_ratingEntity.GameRowKey)}";
 		MainLayout.SetPageTitle(_pageTitle);
 	}
 }

@@ -3,7 +3,7 @@ namespace STO.Wasm.Interfaces
 	/// <summary>
 	/// Service for working with Players, PlayerEntities.
 	/// </summary>
-	public interface IPlayerService
+	public interface IPlayerEntityService
 	{
 		/// <summary>
 		/// Gets all PlayerEntity objects.

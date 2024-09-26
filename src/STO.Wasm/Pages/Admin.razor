@@ -5,10 +5,10 @@
 @using System.Security.Claims
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject IDataService DataService
-@inject IGameService GameService
-@inject IPlayerService PlayerService
-@inject ITransactionService TransactionService
-@inject IRatingService RatingService
+@inject IGameEntityService GameEntityService
+@inject IPlayerEntityService PlayerEntityService
+@inject ITransactionEntityService TransactionEntityService
+@inject IRatingEntityService RatingEntityService
 
 <PageTitle>TNF - @_pageTitle</PageTitle>
 
@@ -100,10 +100,10 @@
 	{
 		_updateCount = 0;
 		_updateStatus = "Start Games";
-		var games = GameService.GetGameEntities();
+		var games = GameEntityService.GetGameEntities();
 		foreach (var game in games)
 		{
-			await GameService.UpsertGameEntityAsync(game);
+			await GameEntityService.UpsertGameEntityAsync(game);
 			_updateCount += 1;
 		}
 		_updateStatus = $"Updated {_updateCount} Games";
@@ -113,10 +113,10 @@
 	{
 		_updateCount = 0;
 		_updateStatus = "Start Players";
-		var players = PlayerService.GetPlayerEntities();
+		var players = PlayerEntityService.GetPlayerEntities();
 		foreach (var player in players)
 		{
-			await PlayerService.UpsertPlayerEntityAsync(player);
+			await PlayerEntityService.UpsertPlayerEntityAsync(player);
 			_updateCount += 1;
 		}
 		_updateStatus = $"Updated {_updateCount} Players";
@@ -126,12 +126,12 @@
 	{
 		_updateCount = 0;
 		_updateStatus = "Start Pags";
-		var games = GameService.GetGameEntities();
+		var games = GameEntityService.GetGameEntities();
 		foreach (var game in games)
 		{
-			foreach (var pag in GameService.GetPlayerAtGameEntitiesForGame(game.RowKey))
+			foreach (var pag in GameEntityService.GetPlayerAtGameEntitiesForGame(game.RowKey))
 			{
-				await GameService.UpsertPlayerAtGameEntityAsync(pag);
+				await GameEntityService.UpsertPlayerAtGameEntityAsync(pag);
 				_updateCount += 1;
 			}
 		}
@@ -142,10 +142,10 @@
 	{
 		_updateCount = 0;
 		_updateStatus = "Start Transactions";
-		var transactions = TransactionService.GetTransactionEntities();
+		var transactions = TransactionEntityService.GetTransactionEntities();
 		foreach (var te in transactions)
 		{
-			await TransactionService.UpsertTransactionEntityAsync(te);
+			await TransactionEntityService.UpsertTransactionEntityAsync(te);
 			_updateCount += 1;
 		}
 		_updateStatus = $"Updated {_updateCount} Trasnactions";
@@ -155,10 +155,10 @@
 	{
 		_updateCount = 0;
 		_updateStatus = "Start Ratings";
-		var ratings = RatingService.GetRatingEntities();
+		var ratings = RatingEntityService.GetRatingEntities();
 		foreach (var re in ratings)
 		{
-			await RatingService.UpsertRatingEntityAsync(re);
+			await RatingEntityService.UpsertRatingEntityAsync(re);
 			_updateCount += 1;
 		}
 		_updateStatus = $"Updated {_updateCount} Ratings";

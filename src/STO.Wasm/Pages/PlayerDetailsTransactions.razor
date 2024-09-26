@@ -1,7 +1,7 @@
 @page "/players/{PlayerUrlSegment}/transactions"
 @inject IDataService DataService
-@inject IPlayerService PlayerService
-@inject ITransactionService TransactionService
+@inject IPlayerEntityService PlayerEntityService
+@inject ITransactionEntityService TransactionEntityService
 @inject NavigationManager Navigation
 
 
@@ -63,7 +63,7 @@
     {
         foreach (var te in _playerTransactions)
         {
-            await TransactionService.DeleteTransactionEntityAsync(te.RowKey);
+            await TransactionEntityService.DeleteTransactionEntityAsync(te.RowKey);
         }
 
         Navigation.NavigateTo("/players");
@@ -74,7 +74,7 @@
     private void RefreshData()
     {
         // Get Player
-        var playerEntity = PlayerService.GetPlayerEntityFromUrlSegment(PlayerUrlSegment);
+        var playerEntity = PlayerEntityService.GetPlayerEntityFromUrlSegment(PlayerUrlSegment);
 
         // Get Transactions
         _playerTransactions = DataService.TransactionEntities.Where(o => o.PlayerRowKey == playerEntity.RowKey)

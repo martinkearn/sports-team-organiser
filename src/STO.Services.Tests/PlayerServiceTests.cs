@@ -1,119 +1,21 @@
 namespace STO.Services.Tests
 {
-    public class PlayerServiceTests
+    public class PlayerServiceTests : IClassFixture<TestDataFixture>
     {
-        private readonly Mock<IDataService> _mockDataService;
         private readonly PlayerService _playerService;
+        private readonly Mock<IDataService> _mockDataService;
 
-        public PlayerServiceTests()
+        public PlayerServiceTests(TestDataFixture fixture)
         {
+            // Mocking IDataService with data from Fixture
             _mockDataService = new Mock<IDataService>();
-            List<PlayerEntity> mockPlayerEntities = [];
-            List<RatingEntity> mockRatingEntities = [];
-            List<TransactionEntity> mockTransactionEntities = [];
-            List<PlayerAtGameEntity> mockPlayerAtGameEntities = [];
-            List<GameEntity> mockGameEntities = [];
+            _mockDataService.Setup(ds => ds.PlayerEntities).Returns(fixture.MockPlayerEntities);
+            _mockDataService.Setup(ds => ds.RatingEntities).Returns(fixture.MockRatingEntities);
+            _mockDataService.Setup(ds => ds.TransactionEntities).Returns(fixture.MockTransactionEntities);
+            _mockDataService.Setup(ds => ds.GameEntities).Returns(fixture.MockGameEntities);
+            _mockDataService.Setup(ds => ds.PlayerAtGameEntities).Returns(fixture.MockPlayerAtGameEntities);
 
-            // Initialize mock data for Ollie Watkins
-            mockPlayerEntities.Add(
-                new PlayerEntity
-                {
-                    RowKey = "1",
-                    Name = "Ollie Watkins",
-                    Tags = "",
-                    Position = Enums.PlayerPosition.Forward,
-                    DefaultRate = 3,
-                    AdminRating = 5
-                }
-            );
-            // Average 4.25
-            mockRatingEntities.Add(new RatingEntity { PlayerRowKey = "1", Rating = 4 });
-            mockRatingEntities.Add(new RatingEntity { PlayerRowKey = "1", Rating = 5 });
-            mockRatingEntities.Add(new RatingEntity { PlayerRowKey = "1", Rating = 3 });
-            mockRatingEntities.Add(new RatingEntity { PlayerRowKey = "1", Rating = 5 });
-            // Total £3
-            mockTransactionEntities.Add(new TransactionEntity { PlayerRowKey = "1", Amount = 3 });
-            mockTransactionEntities.Add(new TransactionEntity { PlayerRowKey = "1", Amount = -3 });
-            mockTransactionEntities.Add(new TransactionEntity { PlayerRowKey = "1", Amount = 3 });
-            
-            // Initialize mock data for Morgan Rogers
-            mockPlayerEntities.Add(
-                new PlayerEntity
-                {
-                    RowKey = "2",
-                    Name = "Morgan Rogers",
-                    Tags = "",
-                    Position = Enums.PlayerPosition.BoxToBox,
-                    DefaultRate = 3,
-                    AdminRating = 4
-                }
-            );
-            // Average 3.5
-            mockRatingEntities.Add(new RatingEntity { PlayerRowKey = "2", Rating = 4 });
-            mockRatingEntities.Add(new RatingEntity { PlayerRowKey = "2", Rating = 4 });
-            mockRatingEntities.Add(new RatingEntity { PlayerRowKey = "2", Rating = 3 });
-            mockRatingEntities.Add(new RatingEntity { PlayerRowKey = "2", Rating = 3 });
-            // Total £0
-            mockTransactionEntities.Add(new TransactionEntity { PlayerRowKey = "2", Amount = 3 });
-            mockTransactionEntities.Add(new TransactionEntity { PlayerRowKey = "2", Amount = -3 });
-            
-            // Initialize mock data for Leon Baily
-            mockPlayerEntities.Add(
-                new PlayerEntity
-                {
-                    RowKey = "3",
-                    Name = "Leon Bailey",
-                    Tags = "",
-                    Position = Enums.PlayerPosition.Forward,
-                    DefaultRate = 3,
-                    AdminRating = 4
-                }
-            );
-            // Average 3.5
-            mockRatingEntities.Add(new RatingEntity { PlayerRowKey = "3", Rating = 5 });
-            // Total £0
-            mockTransactionEntities.Add(new TransactionEntity { PlayerRowKey = "3", Amount = 3 });
-            
-            // Initialise mock Game data
-            mockGameEntities.Add(new GameEntity()
-            {
-                RowKey = "G1",
-                Date = new DateTimeOffset(2024, 1, 1, 12, 0, 0, TimeSpan.Zero),
-                Notes = "Test game",
-                TeamAGoals = 2,
-                TeamBGoals = 1,
-                Title = "Foo",
-                UrlSegment = "01-01-2024"
-            });
-            
-            // Initialise mock PLayerAtGame data
-            mockPlayerAtGameEntities.Add(new PlayerAtGameEntity()
-            {
-                GameRowKey = "G1",
-                PlayerRowKey = "1",
-                Forecast = Enums.PlayingStatus.Yes,
-                Team = "A",
-                Played = true,
-                UrlSegment = "ollie-watkins-01-01-2024"
-            });
-            mockPlayerAtGameEntities.Add(new PlayerAtGameEntity()
-            {
-                GameRowKey = "G1",
-                PlayerRowKey = "2",
-                Forecast = Enums.PlayingStatus.Yes,
-                Team = "B",
-                Played = false,
-                UrlSegment = "morgan-rogers-01-01-2024"
-            });
-            // Leon Bailey not in Game
-
-            // Mocking IDataService properties
-            _mockDataService.Setup(ds => ds.PlayerEntities).Returns(mockPlayerEntities);
-            _mockDataService.Setup(ds => ds.RatingEntities).Returns(mockRatingEntities);
-            _mockDataService.Setup(ds => ds.TransactionEntities).Returns(mockTransactionEntities);
-            _mockDataService.Setup(ds => ds.GameEntities).Returns(mockGameEntities);
-            _mockDataService.Setup(ds => ds.PlayerAtGameEntities).Returns(mockPlayerAtGameEntities);
-
+            // Create PlayerService with mocked IDataService
             _playerService = new PlayerService(_mockDataService.Object);
         }
 

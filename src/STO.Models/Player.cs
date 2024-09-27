@@ -26,7 +26,7 @@ public class Player
     
     // Calculated properties
     public string Label { get; set; }
-    public int Rating { get; set; }
+    public double Rating { get; set; }
     public string UrlSegment { get; set; }
     public double Balance { get; set; }
     

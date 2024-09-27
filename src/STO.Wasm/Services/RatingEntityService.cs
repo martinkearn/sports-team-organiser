@@ -1,4 +1,6 @@
-﻿namespace STO.Wasm.Services
+﻿using STO.Models.Interfaces;
+
+namespace STO.Wasm.Services
 {
 	/// <inheritdoc/>
 	public class RatingEntityService(IDataService dataService) : IRatingEntityService

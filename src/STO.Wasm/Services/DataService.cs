@@ -1,4 +1,5 @@
 using Azure.Data.Tables;
+using STO.Models.Interfaces;
 
 namespace STO.Wasm.Services
 {

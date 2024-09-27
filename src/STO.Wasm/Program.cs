@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+using STO.Models.Interfaces;
 
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);

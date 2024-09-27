@@ -1,4 +1,4 @@
-namespace STO.Wasm.Models;
+namespace STO.Models;
 
 public class Player
 {
@@ -6,6 +6,7 @@ public class Player
     private string _name;
     
     // Properties from PLayerEntity
+    public string Id { get; set; }
     public string Name
     {
         get => _name;

@@ -1,3 +1,5 @@
+using NuGet.Frameworks;
+
 namespace STO.Services.Tests
 {
     public class PlayerServiceTests
@@ -8,9 +10,12 @@ namespace STO.Services.Tests
         public PlayerServiceTests()
         {
             _mockDataService = new Mock<IDataService>();
+            List<PlayerEntity> mockPlayerEntities = [];
+            List<RatingEntity> mockRatingEntities = [];
+            List<TransactionEntity> mockTransactionEntities = [];
 
-            // Initialize mock data
-            List<PlayerEntity> mockPlayerEntities = [
+            // Initialize mock data for Ollie Watkins
+            mockPlayerEntities.Add(
                 new PlayerEntity
                 {
                     RowKey = "1",
@@ -20,20 +25,37 @@ namespace STO.Services.Tests
                     DefaultRate = 3,
                     AdminRating = 5
                 }
-            ];
-
-            List<RatingEntity> mockRatingEntities = [
-                new RatingEntity { PlayerRowKey = "1", Rating = 4 },
-                new RatingEntity { PlayerRowKey = "1", Rating = 5 },
-                new RatingEntity { PlayerRowKey = "1", Rating = 3 },
-                new RatingEntity { PlayerRowKey = "1", Rating = 5 },
-            ];
-
-            List<TransactionEntity> mockTransactionEntities = [
-                new TransactionEntity { PlayerRowKey = "1", Amount = 3 },
-                new TransactionEntity { PlayerRowKey = "1", Amount = -3 },
-                new TransactionEntity { PlayerRowKey = "1", Amount = 3 },
-            ];
+            );
+            // Average 4.25
+            mockRatingEntities.Add(new RatingEntity { PlayerRowKey = "1", Rating = 4 });
+            mockRatingEntities.Add(new RatingEntity { PlayerRowKey = "1", Rating = 5 });
+            mockRatingEntities.Add(new RatingEntity { PlayerRowKey = "1", Rating = 3 });
+            mockRatingEntities.Add(new RatingEntity { PlayerRowKey = "1", Rating = 5 });
+            // Total £3
+            mockTransactionEntities.Add(new TransactionEntity { PlayerRowKey = "1", Amount = 3 });
+            mockTransactionEntities.Add(new TransactionEntity { PlayerRowKey = "1", Amount = -3 });
+            mockTransactionEntities.Add(new TransactionEntity { PlayerRowKey = "1", Amount = 3 });
+            
+            // Initialize mock data for Morgan Rogers
+            mockPlayerEntities.Add(
+                new PlayerEntity
+                {
+                    RowKey = "2",
+                    Name = "Morgan Rogers",
+                    Tags = "",
+                    Position = Enums.PlayerPosition.BoxToBox,
+                    DefaultRate = 3,
+                    AdminRating = 4
+                }
+            );
+            // Average 3.5
+            mockRatingEntities.Add(new RatingEntity { PlayerRowKey = "2", Rating = 4 });
+            mockRatingEntities.Add(new RatingEntity { PlayerRowKey = "2", Rating = 4 });
+            mockRatingEntities.Add(new RatingEntity { PlayerRowKey = "2", Rating = 3 });
+            mockRatingEntities.Add(new RatingEntity { PlayerRowKey = "2", Rating = 3 });
+            // Total £0
+            mockTransactionEntities.Add(new TransactionEntity { PlayerRowKey = "2", Amount = 3 });
+            mockTransactionEntities.Add(new TransactionEntity { PlayerRowKey = "2", Amount = -3 });
 
             // Mocking IDataService properties
             _mockDataService.Setup(ds => ds.PlayerEntities).Returns(mockPlayerEntities);
@@ -70,17 +92,17 @@ namespace STO.Services.Tests
         public void GetPlayer_ShouldThrowExceptionIfPlayerNotFound()
         {
             // Arrange
-            var nonExistentPlayerId = "999";
+            const string nonExistentPlayerId = "999";
 
             // Act & Assert
-            Assert.Throws<InvalidOperationException>(() => _playerService.GetPlayer(nonExistentPlayerId));
+            Assert.Throws<KeyNotFoundException>(() => _playerService.GetPlayer(nonExistentPlayerId));
         }
         
         [Fact]
         public void GetPlayer_ShouldReturnCorrectBalanceEvenWithNoTransactions()
         {
             // Arrange
-            var playerId = "1";
+            const string playerId = "1";
             _mockDataService.Setup(ds => ds.TransactionEntities)
                 .Returns([]);  // No transactions
 
@@ -95,7 +117,7 @@ namespace STO.Services.Tests
         public void GetPlayer_ShouldReturnZeroRatingIfNoRatingsExist()
         {
             // Arrange
-            var playerId = "1";
+            const string playerId = "1";
             _mockDataService.Setup(ds => ds.RatingEntities)
                 .Returns([]);  // No ratings
 

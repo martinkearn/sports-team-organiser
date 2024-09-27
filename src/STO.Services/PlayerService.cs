@@ -22,8 +22,13 @@ public class PlayerService : IPlayerService
     private Player ConstructPlayer(string playerId)
     {
         // PlayerEntity
-        var playerEntity = GetPlayerEntities().First(pe => pe.RowKey == playerId);
-        
+        var playerEntity = GetPlayerEntities().FirstOrDefault(pe => pe.RowKey == playerId);
+
+        if (playerEntity == default)
+        {
+            throw new KeyNotFoundException($"The object with ID {playerId} was not found.");
+        }
+
         // RatingEntities
         var playerRatingEntities = _dataService.RatingEntities.Where(r => r.PlayerRowKey == playerId);
         var playerRatingEntitiesList = playerRatingEntities.ToList();
@@ -58,5 +63,8 @@ public class PlayerService : IPlayerService
         return player;
     }
 
-    public Player GetPlayer(string id) => ConstructPlayer(id);
+    public Player GetPlayer(string id)
+    {
+        return ConstructPlayer(id);
+    }
 }

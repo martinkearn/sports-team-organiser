@@ -6,6 +6,12 @@ namespace STO.Models.Interfaces;
 public interface IPlayerService
 {
     /// <summary>
+    /// Gets all Player objects.
+    /// </summary>
+    /// <returns>List of Player.</returns>
+    public List<Player> GetPlayers();
+    
+    /// <summary>
     /// Gets a Player based on Id
     /// </summary>
     /// <param name="id">The Id to match on</param>

@@ -127,6 +127,57 @@ namespace STO.Services.Tests
             // Assert
             Assert.Equal(0, result.Rating);  // Rating should be 0 without ratings
         }
+        
+        [Fact]
+        public void GetPlayers_ShouldReturnEmptyList_WhenNoPlayersExist()
+        {
+            // Arrange
+            _mockDataService.Setup(ds => ds.PlayerEntities)
+                .Returns([]); // No PLayers
+        
+            // Act
+            var result = _playerService.GetPlayers();
+
+            // Assert
+            Assert.Empty(result);
+        }
+        
+        [Fact]
+        public void GetPlayers_ShouldReturnPlayersList_WhenPlayersExist()
+        {
+            // Act
+            var result = _playerService.GetPlayers();
+
+            // Assert
+            Assert.NotEmpty(result);
+            Assert.Equal(2, result.Count);
+            Assert.Contains(result, p => p.Id == "1");
+            Assert.Contains(result, p => p.Id == "2");
+        }
+        
+        [Fact]
+        public void GetPlayers_ShouldReturnPlayersListOrderedByName_WhenPlayersExist()
+        {
+            // Act
+            var result = _playerService.GetPlayers();
+
+            // Assert
+            Assert.NotEmpty(result);
+            Assert.Equal(2, result.Count);
+            Assert.Equal("2", result[0].Id); // Morgan Rogers (ID 2) before Ollie Watkins (ID 1)
+            Assert.Equal("1", result[1].Id); 
+        }
+
+        [Fact]
+        public void GetPlayers_ShouldReturnFullPlayerObject_ForEachEntity()
+        {
+            // Act
+            var result = _playerService.GetPlayers();
+
+            // Assert
+            Assert.Equal("Ollie Watkins", result.Single(p => p.Id == "1").Name);
+            Assert.Equal("Morgan Rogers", result.Single(p => p.Id == "2").Name);
+        }
     }
     
 }

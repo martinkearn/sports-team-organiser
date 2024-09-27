@@ -63,6 +63,13 @@ public class PlayerService : IPlayerService
         return player;
     }
 
+    public List<Player> GetPlayers()
+    {
+        var playerEntities = GetPlayerEntities();
+        var players = playerEntities.Select(pe => ConstructPlayer(pe.RowKey)).ToList();
+        return players.OrderBy(p => p.Name).ToList();
+    }
+
     public Player GetPlayer(string id)
     {
         return ConstructPlayer(id);

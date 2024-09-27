@@ -22,15 +22,13 @@ public class TestDataFixture
                 AdminRating = 5
             }
         );
-        // Average 4.25
         MockRatingEntities.Add(new RatingEntity { PlayerRowKey = "1", Rating = 4 });
         MockRatingEntities.Add(new RatingEntity { PlayerRowKey = "1", Rating = 5 });
         MockRatingEntities.Add(new RatingEntity { PlayerRowKey = "1", Rating = 3 });
-        MockRatingEntities.Add(new RatingEntity { PlayerRowKey = "1", Rating = 5 });
-        // Total £3
+        MockRatingEntities.Add(new RatingEntity { PlayerRowKey = "1", Rating = 5 });// Average 4.25
         MockTransactionEntities.Add(new TransactionEntity { PlayerRowKey = "1", Amount = 3 });
         MockTransactionEntities.Add(new TransactionEntity { PlayerRowKey = "1", Amount = -3 });
-        MockTransactionEntities.Add(new TransactionEntity { PlayerRowKey = "1", Amount = 3 });
+        MockTransactionEntities.Add(new TransactionEntity { PlayerRowKey = "1", Amount = 3 });// Total £3
         
         // Initialize mock data for Morgan Rogers
         MockPlayerEntities.Add(
@@ -44,14 +42,12 @@ public class TestDataFixture
                 AdminRating = 4
             }
         );
-        // Average 3.5
         MockRatingEntities.Add(new RatingEntity { PlayerRowKey = "2", Rating = 4 });
         MockRatingEntities.Add(new RatingEntity { PlayerRowKey = "2", Rating = 4 });
         MockRatingEntities.Add(new RatingEntity { PlayerRowKey = "2", Rating = 3 });
-        MockRatingEntities.Add(new RatingEntity { PlayerRowKey = "2", Rating = 3 });
-        // Total £0
+        MockRatingEntities.Add(new RatingEntity { PlayerRowKey = "2", Rating = 3 });// Average 3.5
         MockTransactionEntities.Add(new TransactionEntity { PlayerRowKey = "2", Amount = 3 });
-        MockTransactionEntities.Add(new TransactionEntity { PlayerRowKey = "2", Amount = -3 });
+        MockTransactionEntities.Add(new TransactionEntity { PlayerRowKey = "2", Amount = -3 });// Total £0
             
         // Initialize mock data for Leon Baily
         MockPlayerEntities.Add(
@@ -65,10 +61,8 @@ public class TestDataFixture
                 AdminRating = 4
             }
         );
-        // Average 3.5
-        MockRatingEntities.Add(new RatingEntity { PlayerRowKey = "3", Rating = 5 });
-        // Total £0
-        MockTransactionEntities.Add(new TransactionEntity { PlayerRowKey = "3", Amount = 3 });
+        MockRatingEntities.Add(new RatingEntity { PlayerRowKey = "3", Rating = 5 });// Average 3.5
+        MockTransactionEntities.Add(new TransactionEntity { PlayerRowKey = "3", Amount = 3 });// Total £0
             
         // Initialise mock Game data
         MockGameEntities.Add(new GameEntity()
@@ -101,6 +95,6 @@ public class TestDataFixture
             Played = false,
             UrlSegment = "morgan-rogers-01-01-2024"
         });
-        // Leon Bailey not in Game
+        // Leon Bailey not in Game so not PlayerAtGame
     }
 }

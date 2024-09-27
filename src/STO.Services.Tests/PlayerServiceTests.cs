@@ -59,7 +59,7 @@ namespace STO.Services.Tests
             // Arrange
             const string playerId = "1";
             _mockDataService.Setup(ds => ds.TransactionEntities)
-                .Returns([]);  // No transactions
+                .Returns([]);  // Override fixture to have no transactions
 
             // Act
             var result = _playerService.GetPlayer(playerId);
@@ -74,7 +74,7 @@ namespace STO.Services.Tests
             // Arrange
             const string playerId = "1";
             _mockDataService.Setup(ds => ds.RatingEntities)
-                .Returns([]);  // No ratings
+                .Returns([]);  // Override fixture to have no ratings
 
             // Act
             var result = _playerService.GetPlayer(playerId);

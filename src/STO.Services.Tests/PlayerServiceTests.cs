@@ -93,7 +93,7 @@ namespace STO.Services.Tests
                 PlayerRowKey = "1",
                 Forecast = Enums.PlayingStatus.Yes,
                 Team = "A",
-                Played = false,
+                Played = true,
                 UrlSegment = "ollie-watkins-01-01-2024"
             });
             mockPlayerAtGameEntities.Add(new PlayerAtGameEntity()
@@ -138,6 +138,7 @@ namespace STO.Services.Tests
             Assert.Equal(4.25, result.Rating); // Average of 4,5,3,5
             Assert.Equal("ollie-watkins", result.UrlSegment);
             Assert.Equal(3, result.Balance); // +3 -3, +3
+            Assert.Equal(1, result.GamesCount);
         }
         
         [Fact]

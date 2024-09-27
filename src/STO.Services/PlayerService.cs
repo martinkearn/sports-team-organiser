@@ -38,6 +38,12 @@ public class PlayerService : IPlayerService
         var playerTransactionEntities = _dataService.TransactionEntities.Where(t => t.PlayerRowKey == playerId);
         var balance = playerTransactionEntities.Sum(o => o.Amount);
         
+        // PlayerAtGameEntities
+        var pagEntities = _dataService.PlayerAtGameEntities
+            .Where(p => p.PlayerRowKey == playerId)
+            .Where(p => p.Played == true);
+        var pagCount = pagEntities.Count();
+        
         // Label
         var textInfo = new CultureInfo("en-GB", false).TextInfo;
         var label = textInfo.ToTitleCase(playerEntity.Name);
@@ -57,7 +63,8 @@ public class PlayerService : IPlayerService
             Rating = rating,
             Balance = balance,
             Label = label,
-            UrlSegment= urlSegment
+            UrlSegment= urlSegment,
+            GamesCount = pagCount
         };
 
         return player;

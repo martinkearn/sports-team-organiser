@@ -29,5 +29,7 @@ public class Player
     public double Rating { get; set; }
     public string UrlSegment { get; set; }
     public double Balance { get; set; }
+
+    public int GamesCount { get; set; }    
     
 }

@@ -26,7 +26,8 @@ public class PlayerService : IPlayerService
         
         // RatingEntities
         var playerRatingEntities = _dataService.RatingEntities.Where(r => r.PlayerRowKey == playerId);
-        var rating = playerRatingEntities.Average(r => r.Rating);
+        var playerRatingEntitiesList = playerRatingEntities.ToList();
+        var rating = (playerRatingEntitiesList.Any()) ? playerRatingEntitiesList.Average(r => r.Rating) : 0;
         
         // TransactionEntities
         var playerTransactionEntities = _dataService.TransactionEntities.Where(t => t.PlayerRowKey == playerId);

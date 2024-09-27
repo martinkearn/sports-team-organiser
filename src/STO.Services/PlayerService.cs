@@ -70,6 +70,15 @@ public class PlayerService : IPlayerService
         return players.OrderBy(p => p.Name).ToList();
     }
 
+    public List<Player> GetPlayers(string gameId)
+    {
+        var pagEntities = _dataService.PlayerAtGameEntities;
+        var pags = pagEntities
+            .Where(page => page.GameRowKey == gameId)
+            .Select(page => ConstructPlayer(page.PlayerRowKey)).ToList();
+        return pags.OrderBy(p => p.Name).ToList();
+    }
+
     public Player GetPlayer(string id)
     {
         return ConstructPlayer(id);

@@ -6,7 +6,7 @@ namespace STO.Services;
 
 public class PlayerService(IDataService dataService) : IPlayerService
 {
-    /// <inheritdoc />
+    /// <inheritdoc cref="IPlayerService" />
     private IEnumerable<PlayerEntity> GetPlayerEntities()
     {
         return [.. dataService.PlayerEntities.OrderBy(o => o.Name)];

@@ -1,5 +1,3 @@
-using NuGet.Frameworks;
-
 namespace STO.Services.Tests
 {
     public class PlayerServiceTests

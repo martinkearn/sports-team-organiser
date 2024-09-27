@@ -2,11 +2,12 @@ namespace STO.Services.Tests
 {
     public class PlayerServiceTests
     {
+        private readonly Mock<IDataService> _mockDataService;
         private readonly PlayerService _playerService;
 
         public PlayerServiceTests()
         {
-            var mockDataService = new Mock<IDataService>();
+            _mockDataService = new Mock<IDataService>();
 
             // Initialize mock data
             List<PlayerEntity> mockPlayerEntities = [
@@ -35,11 +36,11 @@ namespace STO.Services.Tests
             ];
 
             // Mocking IDataService properties
-            mockDataService.Setup(ds => ds.PlayerEntities).Returns(mockPlayerEntities);
-            mockDataService.Setup(ds => ds.RatingEntities).Returns(mockRatingEntities);
-            mockDataService.Setup(ds => ds.TransactionEntities).Returns(mockTransactionEntities);
+            _mockDataService.Setup(ds => ds.PlayerEntities).Returns(mockPlayerEntities);
+            _mockDataService.Setup(ds => ds.RatingEntities).Returns(mockRatingEntities);
+            _mockDataService.Setup(ds => ds.TransactionEntities).Returns(mockTransactionEntities);
 
-            _playerService = new PlayerService(mockDataService.Object);
+            _playerService = new PlayerService(_mockDataService.Object);
         }
 
         [Fact]
@@ -63,6 +64,46 @@ namespace STO.Services.Tests
             Assert.Equal(4.25, result.Rating); // Average of 4,5,3,5
             Assert.Equal("ollie-watkins", result.UrlSegment);
             Assert.Equal(3, result.Balance); // +3 -3, +3
+        }
+        
+        [Fact]
+        public void GetPlayer_ShouldThrowExceptionIfPlayerNotFound()
+        {
+            // Arrange
+            var nonExistentPlayerId = "999";
+
+            // Act & Assert
+            Assert.Throws<InvalidOperationException>(() => _playerService.GetPlayer(nonExistentPlayerId));
+        }
+        
+        [Fact]
+        public void GetPlayer_ShouldReturnCorrectBalanceEvenWithNoTransactions()
+        {
+            // Arrange
+            var playerId = "1";
+            _mockDataService.Setup(ds => ds.TransactionEntities)
+                .Returns([]);  // No transactions
+
+            // Act
+            var result = _playerService.GetPlayer(playerId);
+
+            // Assert
+            Assert.Equal(0, result.Balance);  // Balance should be 0 without transactions
+        }
+        
+        [Fact]
+        public void GetPlayer_ShouldReturnZeroRatingIfNoRatingsExist()
+        {
+            // Arrange
+            var playerId = "1";
+            _mockDataService.Setup(ds => ds.RatingEntities)
+                .Returns([]);  // No ratings
+
+            // Act
+            var result = _playerService.GetPlayer(playerId);
+
+            // Assert
+            Assert.Equal(0, result.Rating);  // Rating should be 0 without ratings
         }
     }
     

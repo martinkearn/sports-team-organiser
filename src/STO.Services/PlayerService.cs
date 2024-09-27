@@ -4,12 +4,19 @@ using STO.Models.Interfaces;
 
 namespace STO.Services;
 
-public class PlayerService(IDataService dataService) : IPlayerService
+public class PlayerService : IPlayerService
 {
+    private readonly IDataService _dataService;
+
+    public PlayerService(IDataService dataService)
+    {
+        _dataService = dataService;
+    }
+
     /// <inheritdoc cref="IPlayerService" />
     private IEnumerable<PlayerEntity> GetPlayerEntities()
     {
-        return [.. dataService.PlayerEntities.OrderBy(o => o.Name)];
+        return [.. _dataService.PlayerEntities.OrderBy(o => o.Name)];
     }
 
     private Player ConstructPlayer(string playerId)
@@ -18,11 +25,11 @@ public class PlayerService(IDataService dataService) : IPlayerService
         var playerEntity = GetPlayerEntities().First(pe => pe.RowKey == playerId);
         
         // RatingEntities
-        var playerRatingEntities = dataService.RatingEntities.Where(r => r.PlayerRowKey == playerId);
+        var playerRatingEntities = _dataService.RatingEntities.Where(r => r.PlayerRowKey == playerId);
         var rating = playerRatingEntities.Average(r => r.Rating);
         
         // TransactionEntities
-        var playerTransactionEntities = dataService.TransactionEntities.Where(t => t.PlayerRowKey == playerId);
+        var playerTransactionEntities = _dataService.TransactionEntities.Where(t => t.PlayerRowKey == playerId);
         var balance = playerTransactionEntities.Sum(o => o.Amount);
         
         // Label
@@ -41,7 +48,7 @@ public class PlayerService(IDataService dataService) : IPlayerService
             Position = playerEntity.Position,
             DefaultRate = playerEntity.DefaultRate,
             AdminRating = playerEntity.AdminRating,
-            Rating = (int)rating,
+            Rating = rating,
             Balance = balance,
             Label = label,
             UrlSegment= urlSegment

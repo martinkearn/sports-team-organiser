@@ -101,6 +101,32 @@ public class PlayerService : IPlayerService
         return pags.OrderBy(p => p.Name).ToList();
     }
 
+    public List<Player> GetPlayers(DateTime dateRangeStart, DateTime dateRangeEnd)
+    {
+        // Get all games within range
+        var gameEntitiesInRange = _dataService.GameEntities
+            .Where(g => g.Date.DateTime > dateRangeStart)
+            .Where(g => g.Date.DateTime < dateRangeEnd)
+            .ToList();
+        
+        // Get all players at recent games
+        var pagEntitiesInRange = _dataService.PlayerAtGameEntities
+            .Where(pag => gameEntitiesInRange.Select(g => g.RowKey).Contains(pag.GameRowKey))
+            .ToList();
+        
+        // Get PlayerEntity with count
+        List<Player> players = [];
+        foreach (var pag in pagEntitiesInRange)
+        {
+            if (players.Any(p => p.Id == pag.PlayerRowKey)) continue;
+            {
+                players.Add(ConstructPlayer(pag.PlayerRowKey));
+            }
+        }
+
+        return players;
+    }
+
     public Player GetPlayer(string id)
     {
         return ConstructPlayer(id);

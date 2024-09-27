@@ -19,6 +19,14 @@ public interface IPlayerService
     public List<Player> GetPlayers(string gameId);
     
     /// <summary>
+    /// Gets all Player objects which have played within a given timeframe.
+    /// </summary>
+    /// <param name="dateRangeStart">DateTime for the start of the date range to return Players from.</param>
+    /// <param name="dateRangeEnd">DateTime for the end of the date range to return Players from.</param>
+    /// <returns>List of Player.</returns>
+    public List<Player> GetPlayers(DateTime dateRangeStart, DateTime dateRangeEnd);
+    
+    /// <summary>
     /// Gets a Player based on Id
     /// </summary>
     /// <param name="id">The Id to match on</param>

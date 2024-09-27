@@ -63,6 +63,21 @@ public class PlayerService : IPlayerService
         return player;
     }
 
+    private PlayerEntity DeconstructPlayer(Player player)
+    {
+        var pe = new PlayerEntity
+        {
+            DefaultRate = player.DefaultRate,
+            AdminRating = player.AdminRating,
+            Position = player.Position,
+            Name = player.Name,
+            RowKey = player.Id,
+            Tags = player.Tags,
+            UrlSegment = player.UrlSegment
+        };
+        return pe;
+    }
+
     public List<Player> GetPlayers()
     {
         var playerEntities = GetPlayerEntities();
@@ -82,5 +97,41 @@ public class PlayerService : IPlayerService
     public Player GetPlayer(string id)
     {
         return ConstructPlayer(id);
+    }
+
+    public async Task DeletePlayerAsync(string id)
+    {
+        // Delete Ratings
+        var allRatingEntities = await _dataService.QueryEntitiesAsync<RatingEntity>();
+        var ratingsForPlayer = allRatingEntities.Where(o => o.PlayerRowKey == id).ToList();
+        foreach (var rating in ratingsForPlayer)
+        {
+            await _dataService.DeleteEntityAsync<RatingEntity>(rating.RowKey);
+        }
+
+        // Delete TransactionEntity
+        var transactionsResult = await _dataService.QueryEntitiesAsync<TransactionEntity>();
+        var transactions = transactionsResult.Where(t => t.PlayerRowKey == id);
+        foreach (var transaction in transactions)
+        {
+            await _dataService.DeleteEntityAsync<TransactionEntity>(transaction.RowKey);
+        }
+
+        // Delete PlayerAtGameEntity
+        var pagsResult = await _dataService.QueryEntitiesAsync<PlayerAtGameEntity>();
+        var pags = pagsResult.Where(pag => pag.PlayerRowKey == id);
+        foreach (var pag in pags)
+        {
+            await _dataService.DeleteEntityAsync<PlayerAtGameEntity>(pag.RowKey);
+        }
+
+        // Delete PlayerEntity
+        await _dataService.DeleteEntityAsync<PlayerEntity>(id);
+    }
+
+    public async Task UpsertPlayerAsync(Player player)
+    {
+        var pe = DeconstructPlayer(player);
+        await _dataService.UpsertEntityAsync(pe);
     }
 }

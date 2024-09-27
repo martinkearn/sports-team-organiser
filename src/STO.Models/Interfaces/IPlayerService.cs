@@ -24,4 +24,16 @@ public interface IPlayerService
     /// <param name="id">The Id to match on</param>
     /// <returns>A Player.</returns>
     public Player GetPlayer(string id);
+    
+    /// <summary>
+    /// Deletes the Player, Transaction(s) and PlayerAtGame(s) associated with a Player.
+    /// </summary>
+    /// <param name="id">The Id for the Player to delete.</param>
+    public Task DeletePlayerAsync(string id);
+
+    /// <summary>
+    /// Adds a new Player or updates and existing Player.
+    /// </summary>
+    /// <param name="player">The Player to upsert.</param>
+    public Task UpsertPlayerAsync(Player player);
 }

@@ -135,24 +135,21 @@ public class PlayerService : IPlayerService
     public async Task DeletePlayerAsync(string id)
     {
         // Delete Ratings
-        var allRatingEntities = await _dataService.QueryEntitiesAsync<RatingEntity>();
-        var ratingsForPlayer = allRatingEntities.Where(o => o.PlayerRowKey == id).ToList();
+        var ratingsForPlayer = _dataService.RatingEntities.Where(o => o.PlayerRowKey == id).ToList();
         foreach (var rating in ratingsForPlayer)
         {
             await _dataService.DeleteEntityAsync<RatingEntity>(rating.RowKey);
         }
 
         // Delete TransactionEntity
-        var transactionsResult = await _dataService.QueryEntitiesAsync<TransactionEntity>();
-        var transactions = transactionsResult.Where(t => t.PlayerRowKey == id);
+        var transactions = _dataService.TransactionEntities.Where(t => t.PlayerRowKey == id);
         foreach (var transaction in transactions)
         {
             await _dataService.DeleteEntityAsync<TransactionEntity>(transaction.RowKey);
         }
 
         // Delete PlayerAtGameEntity
-        var pagsResult = await _dataService.QueryEntitiesAsync<PlayerAtGameEntity>();
-        var pags = pagsResult.Where(pag => pag.PlayerRowKey == id);
+        var pags = _dataService.PlayerAtGameEntities.Where(pag => pag.PlayerRowKey == id);
         foreach (var pag in pags)
         {
             await _dataService.DeleteEntityAsync<PlayerAtGameEntity>(pag.RowKey);

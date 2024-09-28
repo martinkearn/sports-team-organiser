@@ -23,13 +23,13 @@ public class TestDataFixture
                 AdminRating = 5
             }
         );
-        MockRatingEntities.Add(new RatingEntity { PlayerRowKey = "1", Rating = 4 });
-        MockRatingEntities.Add(new RatingEntity { PlayerRowKey = "1", Rating = 5 });
-        MockRatingEntities.Add(new RatingEntity { PlayerRowKey = "1", Rating = 3 });
-        MockRatingEntities.Add(new RatingEntity { PlayerRowKey = "1", Rating = 5 });// Average 4.25
-        MockTransactionEntities.Add(new TransactionEntity { PlayerRowKey = "1", Amount = 3 });
-        MockTransactionEntities.Add(new TransactionEntity { PlayerRowKey = "1", Amount = -3 });
-        MockTransactionEntities.Add(new TransactionEntity { PlayerRowKey = "1", Amount = 3 });// Total £3
+        MockRatingEntities.Add(new RatingEntity { RowKey = "R1", PlayerRowKey = "1", Rating = 4 });
+        MockRatingEntities.Add(new RatingEntity { RowKey = "R2", PlayerRowKey = "1", Rating = 5 });
+        MockRatingEntities.Add(new RatingEntity { RowKey = "R3", PlayerRowKey = "1", Rating = 3 });
+        MockRatingEntities.Add(new RatingEntity { RowKey = "R4", PlayerRowKey = "1", Rating = 5 });// Average 4.25
+        MockTransactionEntities.Add(new TransactionEntity { RowKey = "T1", PlayerRowKey = "1", Amount = 3 });
+        MockTransactionEntities.Add(new TransactionEntity { RowKey = "T2", PlayerRowKey = "1", Amount = -3 });
+        MockTransactionEntities.Add(new TransactionEntity { RowKey = "T3", PlayerRowKey = "1", Amount = 3 });// Total £3
         
         // Initialise mock data for updated Ollie Watkins to test update methods
         PlayerWollyWatkins = new Player()
@@ -59,12 +59,12 @@ public class TestDataFixture
                 AdminRating = 4
             }
         );
-        MockRatingEntities.Add(new RatingEntity { PlayerRowKey = "2", Rating = 4 });
-        MockRatingEntities.Add(new RatingEntity { PlayerRowKey = "2", Rating = 4 });
-        MockRatingEntities.Add(new RatingEntity { PlayerRowKey = "2", Rating = 3 });
-        MockRatingEntities.Add(new RatingEntity { PlayerRowKey = "2", Rating = 3 });// Average 3.5
-        MockTransactionEntities.Add(new TransactionEntity { PlayerRowKey = "2", Amount = 3 });
-        MockTransactionEntities.Add(new TransactionEntity { PlayerRowKey = "2", Amount = -3 });// Total £0
+        MockRatingEntities.Add(new RatingEntity { RowKey = "R5", PlayerRowKey = "2", Rating = 4 });
+        MockRatingEntities.Add(new RatingEntity { RowKey = "R6", PlayerRowKey = "2", Rating = 4 });
+        MockRatingEntities.Add(new RatingEntity { RowKey = "R7", PlayerRowKey = "2", Rating = 3 });
+        MockRatingEntities.Add(new RatingEntity { RowKey = "R8", PlayerRowKey = "2", Rating = 3 });// Average 3.5
+        MockTransactionEntities.Add(new TransactionEntity { RowKey = "T4", PlayerRowKey = "2", Amount = 3 });
+        MockTransactionEntities.Add(new TransactionEntity { RowKey = "T5", PlayerRowKey = "2", Amount = -3 });// Total £0
             
         // Initialize mock data for Leon Baily
         MockPlayerEntities.Add(
@@ -78,8 +78,8 @@ public class TestDataFixture
                 AdminRating = 4
             }
         );
-        MockRatingEntities.Add(new RatingEntity { PlayerRowKey = "3", Rating = 5 });// Average 3.5
-        MockTransactionEntities.Add(new TransactionEntity { PlayerRowKey = "3", Amount = 3 });// Total £0
+        MockRatingEntities.Add(new RatingEntity { RowKey = "R9", PlayerRowKey = "3", Rating = 5 });// Average 3.5
+        MockTransactionEntities.Add(new TransactionEntity { RowKey = "T6", PlayerRowKey = "3", Amount = 3 });// Total £0
             
         // Initialise mock Game data
         MockGameEntities.Add(new GameEntity()

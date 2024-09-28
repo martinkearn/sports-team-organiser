@@ -96,6 +96,7 @@ public class TestDataFixture
         // Initialise mock PLayerAtGame data
         MockPlayerAtGameEntities.Add(new PlayerAtGameEntity()
         {
+            RowKey = "PAG1",
             GameRowKey = "G1",
             PlayerRowKey = "1",
             Forecast = Enums.PlayingStatus.Yes,
@@ -105,6 +106,7 @@ public class TestDataFixture
         });
         MockPlayerAtGameEntities.Add(new PlayerAtGameEntity()
         {
+            RowKey = "PAG2",
             GameRowKey = "G1",
             PlayerRowKey = "2",
             Forecast = Enums.PlayingStatus.Yes,

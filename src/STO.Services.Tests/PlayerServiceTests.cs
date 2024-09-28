@@ -21,6 +21,8 @@ namespace STO.Services.Tests
             // Create PlayerService with mocked IDataService
             _playerService = new PlayerService(_mockDataService.Object);
         }
+        
+        #region GetPlayer
 
         [Fact]
         public void GetPlayer_ShouldReturnPlayerWithCorrectDetails()
@@ -84,6 +86,10 @@ namespace STO.Services.Tests
             Assert.Equal(0, result.Rating);  // Rating should be 0 without ratings
         }
         
+        #endregion
+        
+        #region GetPlayers
+        
         [Fact]
         public void GetPlayers_ShouldReturnEmptyList_WhenNoPlayersExist()
         {
@@ -136,6 +142,10 @@ namespace STO.Services.Tests
             Assert.Equal("Leon Bailey", result.Single(p => p.Id == "3").Name);
         }
         
+        #endregion
+        
+        #region GetPlayers_WithGameId
+        
         [Fact]
         public void GetPlayers_WithGameId_ShouldReturnOnlyPLayersInGame()
         {
@@ -170,6 +180,10 @@ namespace STO.Services.Tests
             // Assert
             Assert.Empty(result);
         }
+        
+        #endregion
+        
+        #region UpsertPlayerAsync
         
         [Fact]
         public async Task UpsertPlayerAsync_ShouldCallUpsertEntityAsyncWithCorrectEntity()
@@ -207,6 +221,8 @@ namespace STO.Services.Tests
             Assert.Equal("Wolly Watkins", resultingPlayer.Name);
             Assert.Equal(Enums.PlayerPosition.Defender, resultingPlayer.Position);
         }
+        
+        #endregion
 
     }
     

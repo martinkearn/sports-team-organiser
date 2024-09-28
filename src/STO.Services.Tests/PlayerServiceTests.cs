@@ -233,7 +233,41 @@ namespace STO.Services.Tests
             _mockDataService.Verify(ds => ds.DeleteEntityAsync<PlayerEntity>(playerId), Times.Once);
         }
         
-        
+        [Fact]
+        public async Task DeletePlayerAsync_ShouldHandleNoEntitiesToDelete()
+        {
+            // Arrange
+            const string playerId = "1";
+
+            // Mock all entity collections to be empty
+            _mockDataService.Setup(ds => ds.RatingEntities).Returns([]);
+            _mockDataService.Setup(ds => ds.TransactionEntities).Returns([]);
+            _mockDataService.Setup(ds => ds.PlayerAtGameEntities).Returns([]);
+
+            // Act
+            await _playerService.DeletePlayerAsync(playerId);
+
+            // Assert
+            // Verify that no DeleteEntityAsync calls are made for non-existent entities
+            _mockDataService.Verify(ds => ds.DeleteEntityAsync<RatingEntity>(It.IsAny<string>()), Times.Never);
+            _mockDataService.Verify(ds => ds.DeleteEntityAsync<TransactionEntity>(It.IsAny<string>()), Times.Never);
+            _mockDataService.Verify(ds => ds.DeleteEntityAsync<PlayerAtGameEntity>(It.IsAny<string>()), Times.Never);
+
+            // Verify that DeleteEntityAsync was still called for PlayerEntity
+            _mockDataService.Verify(ds => ds.DeleteEntityAsync<PlayerEntity>(playerId), Times.Once);
+        }
+
+        [Fact]
+        public async Task DeletePlayerAsync_ShouldThrowExceptionIfPlayerNotFound()
+        {
+            // Arrange
+            const string nonExistentPlayerId = "999";
+
+            // Act & Assert
+            await Assert.ThrowsAsync<KeyNotFoundException>(() => _playerService.DeletePlayerAsync(nonExistentPlayerId));
+        }
+
+
         #endregion
         
         #region UpsertPlayerAsync

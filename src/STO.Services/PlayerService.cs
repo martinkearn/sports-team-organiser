@@ -21,13 +21,11 @@ public class PlayerService : IPlayerService
 
     private Player ConstructPlayer(string playerId)
     {
+        // Verify PLayer
+        if (VerifyPlayerExists(playerId));
+        
         // PlayerEntity
         var playerEntity = GetPlayerEntities().FirstOrDefault(pe => pe.RowKey == playerId);
-
-        if (playerEntity == default)
-        {
-            throw new KeyNotFoundException($"The object with ID {playerId} was not found.");
-        }
 
         // RatingEntities
         var playerRatingEntities = _dataService.RatingEntities.Where(r => r.PlayerRowKey == playerId);
@@ -85,6 +83,17 @@ public class PlayerService : IPlayerService
         return pe;
     }
 
+    private bool VerifyPlayerExists(string playerId)
+    {
+        var playerEntity = GetPlayerEntities().FirstOrDefault(pe => pe.RowKey == playerId);
+        if (playerEntity == default)
+        {
+            throw new KeyNotFoundException($"The PlayerEntity with ID {playerId} was not found.");
+        }
+
+        return true;
+    }
+
     public List<Player> GetPlayers()
     {
         var playerEntities = GetPlayerEntities();
@@ -127,36 +136,39 @@ public class PlayerService : IPlayerService
         return players;
     }
 
-    public Player GetPlayer(string id)
+    public Player GetPlayer(string playerId)
     {
-        return ConstructPlayer(id);
+        return ConstructPlayer(playerId);
     }
 
-    public async Task DeletePlayerAsync(string id)
+    public async Task DeletePlayerAsync(string playerId)
     {
+        // Verify PLayer
+        if (VerifyPlayerExists(playerId));
+
         // Delete Ratings
-        var ratingsForPlayer = _dataService.RatingEntities.Where(o => o.PlayerRowKey == id).ToList();
+        var ratingsForPlayer = _dataService.RatingEntities.Where(o => o.PlayerRowKey == playerId).ToList();
         foreach (var rating in ratingsForPlayer)
         {
             await _dataService.DeleteEntityAsync<RatingEntity>(rating.RowKey);
         }
 
         // Delete TransactionEntity
-        var transactions = _dataService.TransactionEntities.Where(t => t.PlayerRowKey == id);
+        var transactions = _dataService.TransactionEntities.Where(t => t.PlayerRowKey == playerId);
         foreach (var transaction in transactions)
         {
             await _dataService.DeleteEntityAsync<TransactionEntity>(transaction.RowKey);
         }
 
         // Delete PlayerAtGameEntity
-        var pags = _dataService.PlayerAtGameEntities.Where(pag => pag.PlayerRowKey == id);
+        var pags = _dataService.PlayerAtGameEntities.Where(pag => pag.PlayerRowKey == playerId);
         foreach (var pag in pags)
         {
             await _dataService.DeleteEntityAsync<PlayerAtGameEntity>(pag.RowKey);
         }
 
         // Delete PlayerEntity
-        await _dataService.DeleteEntityAsync<PlayerEntity>(id);
+        await _dataService.DeleteEntityAsync<PlayerEntity>(playerId);
     }
 
     public async Task UpsertPlayerAsync(Player player)

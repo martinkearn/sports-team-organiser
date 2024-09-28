@@ -7,6 +7,7 @@ public class TestDataFixture
     public readonly List<TransactionEntity> MockTransactionEntities = [];
     public readonly List<PlayerAtGameEntity> MockPlayerAtGameEntities = [];
     public readonly List<GameEntity> MockGameEntities = [];
+    public readonly Player PlayerWollyWatkins;
 
     public TestDataFixture()
     {
@@ -29,6 +30,22 @@ public class TestDataFixture
         MockTransactionEntities.Add(new TransactionEntity { PlayerRowKey = "1", Amount = 3 });
         MockTransactionEntities.Add(new TransactionEntity { PlayerRowKey = "1", Amount = -3 });
         MockTransactionEntities.Add(new TransactionEntity { PlayerRowKey = "1", Amount = 3 });// Total £3
+        
+        // Initialise mock data for updated Ollie Watkins to test update methods
+        PlayerWollyWatkins = new Player()
+        {
+            Id = "1",
+            Name = "Wolly Watkins",
+            Tags = "",
+            Position = Enums.PlayerPosition.Defender,
+            DefaultRate = 3,
+            AdminRating = 2,
+            Label = "Wolly Watkins",
+            Rating = 2,
+            UrlSegment = "wolly-watkins",
+            Balance = 3,
+            GamesCount = 1
+        };
         
         // Initialize mock data for Morgan Rogers
         MockPlayerEntities.Add(

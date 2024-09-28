@@ -4,16 +4,19 @@ namespace STO.Services.Tests
     {
         private readonly PlayerService _playerService;
         private readonly Mock<IDataService> _mockDataService;
+        private readonly TestDataFixture _fixture;
 
         public PlayerServiceTests(TestDataFixture fixture)
         {
+            _fixture = fixture;
+            
             // Mocking IDataService with data from Fixture
             _mockDataService = new Mock<IDataService>();
-            _mockDataService.Setup(ds => ds.PlayerEntities).Returns(fixture.MockPlayerEntities);
-            _mockDataService.Setup(ds => ds.RatingEntities).Returns(fixture.MockRatingEntities);
-            _mockDataService.Setup(ds => ds.TransactionEntities).Returns(fixture.MockTransactionEntities);
-            _mockDataService.Setup(ds => ds.GameEntities).Returns(fixture.MockGameEntities);
-            _mockDataService.Setup(ds => ds.PlayerAtGameEntities).Returns(fixture.MockPlayerAtGameEntities);
+            _mockDataService.Setup(ds => ds.PlayerEntities).Returns(_fixture.MockPlayerEntities);
+            _mockDataService.Setup(ds => ds.RatingEntities).Returns(_fixture.MockRatingEntities);
+            _mockDataService.Setup(ds => ds.TransactionEntities).Returns(_fixture.MockTransactionEntities);
+            _mockDataService.Setup(ds => ds.GameEntities).Returns(_fixture.MockGameEntities);
+            _mockDataService.Setup(ds => ds.PlayerAtGameEntities).Returns(_fixture.MockPlayerAtGameEntities);
 
             // Create PlayerService with mocked IDataService
             _playerService = new PlayerService(_mockDataService.Object);
@@ -58,8 +61,7 @@ namespace STO.Services.Tests
         {
             // Arrange
             const string playerId = "1";
-            _mockDataService.Setup(ds => ds.TransactionEntities)
-                .Returns([]);  // Override fixture to have no transactions
+            _mockDataService.Setup(ds => ds.TransactionEntities).Returns([]);  // Override fixture to have no transactions
 
             // Act
             var result = _playerService.GetPlayer(playerId);
@@ -73,8 +75,7 @@ namespace STO.Services.Tests
         {
             // Arrange
             const string playerId = "1";
-            _mockDataService.Setup(ds => ds.RatingEntities)
-                .Returns([]);  // Override fixture to have no ratings
+            _mockDataService.Setup(ds => ds.RatingEntities).Returns([]);  // Override fixture to have no ratings
 
             // Act
             var result = _playerService.GetPlayer(playerId);
@@ -87,8 +88,7 @@ namespace STO.Services.Tests
         public void GetPlayers_ShouldReturnEmptyList_WhenNoPlayersExist()
         {
             // Arrange
-            _mockDataService.Setup(ds => ds.PlayerEntities)
-                .Returns([]); // No PLayers
+            _mockDataService.Setup(ds => ds.PlayerEntities).Returns([]); // Override fixture to have no PLayers
         
             // Act
             var result = _playerService.GetPlayers();
@@ -170,6 +170,44 @@ namespace STO.Services.Tests
             // Assert
             Assert.Empty(result);
         }
+        
+        [Fact]
+        public async Task UpsertPlayerAsync_ShouldCallUpsertEntityAsyncWithCorrectEntity()
+        {
+            // Arrange
+            var expectedPlayer = _fixture.PlayerWollyWatkins;
+
+            // Act
+            await _playerService.UpsertPlayerAsync(expectedPlayer);
+
+            // Assert
+            // Verify that UpsertEntityAsync was called with the correct transformed PlayerEntity
+            _mockDataService.Verify(ds => ds.UpsertEntityAsync(It.Is<PlayerEntity>(pe => pe.RowKey == "1" && pe.Name == "Wolly Watkins")), Times.Once);
+        }
+      
+        [Fact]
+        public async Task UpsertPlayerAsync_ShouldResultInUpdatedPlayerInGetPlayer()
+        {
+            // Arrange
+            _mockDataService.Setup(service => service.PlayerEntities)
+                .Returns(_fixture.MockPlayerEntities)
+                .Callback(() => {
+                    // Mock behavior for a specific item in the list
+                    var specificPlayer = _fixture.MockPlayerEntities.First(p => p.RowKey == _fixture.PlayerWollyWatkins.Id);
+                    specificPlayer.Name = _fixture.PlayerWollyWatkins.Name;
+                    specificPlayer.Position = _fixture.PlayerWollyWatkins.Position;
+                });
+            var player = _fixture.PlayerWollyWatkins;
+
+            // Act
+            await _playerService.UpsertPlayerAsync(player);
+            var resultingPlayer = _playerService.GetPlayer("1");
+
+            // Assert
+            Assert.Equal("Wolly Watkins", resultingPlayer.Name);
+            Assert.Equal(Enums.PlayerPosition.Defender, resultingPlayer.Position);
+        }
+
     }
     
 }

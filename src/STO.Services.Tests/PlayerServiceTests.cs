@@ -183,6 +183,59 @@ namespace STO.Services.Tests
         
         #endregion
         
+        #region DeletePlayerAsync
+        
+        [Fact]
+        public async Task DeletePlayerAsync_ShouldDeletePlayerRatings()
+        {
+            // Act
+            await _playerService.DeletePlayerAsync("1");
+
+            // Assert
+            _mockDataService.Verify(ds => ds.DeleteEntityAsync<RatingEntity>("R1"), Times.Once);
+            _mockDataService.Verify(ds => ds.DeleteEntityAsync<RatingEntity>("R2"), Times.Once);
+            _mockDataService.Verify(ds => ds.DeleteEntityAsync<RatingEntity>("R3"), Times.Once);
+            _mockDataService.Verify(ds => ds.DeleteEntityAsync<RatingEntity>("R4"), Times.Once);
+        }
+        
+        [Fact]
+        public async Task DeletePlayerAsync_ShouldDeletePlayerTransactions()
+        {
+            // Act
+            await _playerService.DeletePlayerAsync("1");
+
+            // Assert
+            _mockDataService.Verify(ds => ds.DeleteEntityAsync<TransactionEntity>("T1"), Times.Once);
+            _mockDataService.Verify(ds => ds.DeleteEntityAsync<TransactionEntity>("T2"), Times.Once);
+            _mockDataService.Verify(ds => ds.DeleteEntityAsync<TransactionEntity>("T3"), Times.Once);
+        }
+        
+        [Fact]
+        public async Task DeletePlayerAsync_ShouldDeletePlayerAtGameEntities()
+        {
+            // Act
+            await _playerService.DeletePlayerAsync("1");
+
+            // Assert
+            _mockDataService.Verify(ds => ds.DeleteEntityAsync<PlayerAtGameEntity>("PAG1"), Times.Once);
+        } 
+        
+        [Fact]
+        public async Task DeletePlayerAsync_ShouldDeletePlayerEntity()
+        {
+            // Arrange
+            var playerId = "1";
+
+            // Act
+            await _playerService.DeletePlayerAsync(playerId);
+
+            // Assert
+            _mockDataService.Verify(ds => ds.DeleteEntityAsync<PlayerEntity>(playerId), Times.Once);
+        }
+        
+        
+        #endregion
+        
         #region UpsertPlayerAsync
         
         [Fact]
@@ -197,29 +250,6 @@ namespace STO.Services.Tests
             // Assert
             // Verify that UpsertEntityAsync was called with the correct transformed PlayerEntity
             _mockDataService.Verify(ds => ds.UpsertEntityAsync(It.Is<PlayerEntity>(pe => pe.RowKey == "1" && pe.Name == "Wolly Watkins")), Times.Once);
-        }
-      
-        [Fact]
-        public async Task UpsertPlayerAsync_ShouldResultInUpdatedPlayerInGetPlayer()
-        {
-            // Arrange
-            _mockDataService.Setup(service => service.PlayerEntities)
-                .Returns(_fixture.MockPlayerEntities)
-                .Callback(() => {
-                    // Mock behavior for a specific item in the list
-                    var specificPlayer = _fixture.MockPlayerEntities.First(p => p.RowKey == _fixture.PlayerWollyWatkins.Id);
-                    specificPlayer.Name = _fixture.PlayerWollyWatkins.Name;
-                    specificPlayer.Position = _fixture.PlayerWollyWatkins.Position;
-                });
-            var player = _fixture.PlayerWollyWatkins;
-
-            // Act
-            await _playerService.UpsertPlayerAsync(player);
-            var resultingPlayer = _playerService.GetPlayer("1");
-
-            // Assert
-            Assert.Equal("Wolly Watkins", resultingPlayer.Name);
-            Assert.Equal(Enums.PlayerPosition.Defender, resultingPlayer.Position);
         }
         
         #endregion

@@ -211,6 +211,21 @@ namespace STO.Services.Tests
             Assert.DoesNotContain(result, p => p.Id == "4");
         }
         
+        [Fact]
+        public void GetPlayers_WithDate_ShouldReturnEmptyList_WhenNoGamesWithinDateRange()
+        {
+            // Arrange
+            // Set range to include no games in the fixture
+            var dateRangeStart = new DateTime(2024, 1, 1);
+            var dateRangeEnd = new DateTime(2024, 2, 1);
+            
+            // Act
+            var result = _playerService.GetPlayers(dateRangeStart, dateRangeEnd);
+
+            // Assert
+            Assert.Empty(result);
+        }
+        
         #endregion
         
         #region DeletePlayerAsync

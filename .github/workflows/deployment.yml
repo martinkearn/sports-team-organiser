@@ -53,10 +53,10 @@ jobs:
         
 # Run unit tests
     - name: tests-restore-dependencies
-      run: dotnet restore
+      run: dotnet restore ${{ inputs.servicestestscsprojpath }}
 
     - name: tests-build-solution
-      run: dotnet build --no-restore
+      run: dotnet build ${{ inputs.servicestestscsprojpath }} --no-restore
 
     - name: tests-run-tests-with-coverage
       run: |

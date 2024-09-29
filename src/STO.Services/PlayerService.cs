@@ -4,19 +4,12 @@ using STO.Models.Interfaces;
 
 namespace STO.Services;
 
-public class PlayerService : IPlayerService
+public class PlayerService(IDataService dataService) : IPlayerService
 {
-    private readonly IDataService _dataService;
-
-    public PlayerService(IDataService dataService)
-    {
-        _dataService = dataService;
-    }
-
     /// <inheritdoc cref="IPlayerService" />
     private IEnumerable<PlayerEntity> GetPlayerEntities()
     {
-        return [.. _dataService.PlayerEntities.OrderBy(o => o.Name)];
+        return [.. dataService.PlayerEntities.OrderBy(o => o.Name)];
     }
 
     private Player ConstructPlayer(string playerId)
@@ -28,16 +21,16 @@ public class PlayerService : IPlayerService
         var playerEntity = GetPlayerEntities().FirstOrDefault(pe => pe.RowKey == playerId);
 
         // RatingEntities
-        var playerRatingEntities = _dataService.RatingEntities.Where(r => r.PlayerRowKey == playerId);
+        var playerRatingEntities = dataService.RatingEntities.Where(r => r.PlayerRowKey == playerId);
         var playerRatingEntitiesList = playerRatingEntities.ToList();
         var rating = (playerRatingEntitiesList.Any()) ? playerRatingEntitiesList.Average(r => r.Rating) : 0;
         
         // TransactionEntities
-        var playerTransactionEntities = _dataService.TransactionEntities.Where(t => t.PlayerRowKey == playerId);
+        var playerTransactionEntities = dataService.TransactionEntities.Where(t => t.PlayerRowKey == playerId);
         var balance = playerTransactionEntities.Sum(o => o.Amount);
         
         // PlayerAtGameEntities
-        var pagEntities = _dataService.PlayerAtGameEntities
+        var pagEntities = dataService.PlayerAtGameEntities
             .Where(p => p.PlayerRowKey == playerId)
             .Where(p => p.Played == true);
         var pagCount = pagEntities.Count();
@@ -68,7 +61,7 @@ public class PlayerService : IPlayerService
         return player;
     }
 
-    private PlayerEntity DeconstructPlayer(Player player)
+    private static PlayerEntity DeconstructPlayer(Player player)
     {
         var pe = new PlayerEntity
         {
@@ -103,7 +96,7 @@ public class PlayerService : IPlayerService
 
     public List<Player> GetPlayers(string gameId)
     {
-        var pagEntities = _dataService.PlayerAtGameEntities;
+        var pagEntities = dataService.PlayerAtGameEntities;
         var pags = pagEntities
             .Where(page => page.GameRowKey == gameId)
             .Select(page => ConstructPlayer(page.PlayerRowKey)).ToList();
@@ -113,24 +106,21 @@ public class PlayerService : IPlayerService
     public List<Player> GetPlayers(DateTime dateRangeStart, DateTime dateRangeEnd)
     {
         // Get all games within range
-        var gameEntitiesInRange = _dataService.GameEntities
+        var gameEntitiesInRange = dataService.GameEntities
             .Where(g => g.Date.DateTime > dateRangeStart)
             .Where(g => g.Date.DateTime < dateRangeEnd)
             .ToList();
         
         // Get all players at recent games
-        var pagEntitiesInRange = _dataService.PlayerAtGameEntities
+        var pagEntitiesInRange = dataService.PlayerAtGameEntities
             .Where(pag => gameEntitiesInRange.Select(g => g.RowKey).Contains(pag.GameRowKey))
             .ToList();
         
         // Get PlayerEntity with count
         List<Player> players = [];
-        foreach (var pag in pagEntitiesInRange)
+        foreach (var pag in pagEntitiesInRange.Where(pag => players.All(p => p.Id != pag.PlayerRowKey)))
         {
-            if (players.Any(p => p.Id == pag.PlayerRowKey)) continue;
-            {
-                players.Add(ConstructPlayer(pag.PlayerRowKey));
-            }
+            players.Add(ConstructPlayer(pag.PlayerRowKey));
         }
 
         return players;
@@ -147,33 +137,33 @@ public class PlayerService : IPlayerService
         if (VerifyPlayerExists(playerId));
 
         // Delete Ratings
-        var ratingsForPlayer = _dataService.RatingEntities.Where(o => o.PlayerRowKey == playerId).ToList();
+        var ratingsForPlayer = dataService.RatingEntities.Where(o => o.PlayerRowKey == playerId).ToList();
         foreach (var rating in ratingsForPlayer)
         {
-            await _dataService.DeleteEntityAsync<RatingEntity>(rating.RowKey);
+            await dataService.DeleteEntityAsync<RatingEntity>(rating.RowKey);
         }
 
         // Delete TransactionEntity
-        var transactions = _dataService.TransactionEntities.Where(t => t.PlayerRowKey == playerId);
+        var transactions = dataService.TransactionEntities.Where(t => t.PlayerRowKey == playerId);
         foreach (var transaction in transactions)
         {
-            await _dataService.DeleteEntityAsync<TransactionEntity>(transaction.RowKey);
+            await dataService.DeleteEntityAsync<TransactionEntity>(transaction.RowKey);
         }
 
         // Delete PlayerAtGameEntity
-        var pags = _dataService.PlayerAtGameEntities.Where(pag => pag.PlayerRowKey == playerId);
+        var pags = dataService.PlayerAtGameEntities.Where(pag => pag.PlayerRowKey == playerId);
         foreach (var pag in pags)
         {
-            await _dataService.DeleteEntityAsync<PlayerAtGameEntity>(pag.RowKey);
+            await dataService.DeleteEntityAsync<PlayerAtGameEntity>(pag.RowKey);
         }
 
         // Delete PlayerEntity
-        await _dataService.DeleteEntityAsync<PlayerEntity>(playerId);
+        await dataService.DeleteEntityAsync<PlayerEntity>(playerId);
     }
 
     public async Task UpsertPlayerAsync(Player player)
     {
         var pe = DeconstructPlayer(player);
-        await _dataService.UpsertEntityAsync(pe);
+        await dataService.UpsertEntityAsync(pe);
     }
 }

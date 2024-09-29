@@ -13,7 +13,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "STO.DataManager", "STO.Data
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "STO.Services", "STO.Services\STO.Services.csproj", "{3ECCC708-0629-499B-9B64-2BFB0F2A101B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "STO.Services.Tests", "STO.Services.Tests\STO.Services.Tests.csproj", "{77B0BC60-2325-415A-B655-BA4BAA0E5BD8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "STO.Tests", "STO.Tests\STO.Tests.csproj", "{77B0BC60-2325-415A-B655-BA4BAA0E5BD8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

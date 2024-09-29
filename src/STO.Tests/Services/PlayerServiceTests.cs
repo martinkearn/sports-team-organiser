@@ -1,4 +1,4 @@
-namespace STO.Services.Tests
+namespace STO.Tests.Services
 {
     public class PlayerServiceTests : IClassFixture<PlayerServiceFixture>
     {

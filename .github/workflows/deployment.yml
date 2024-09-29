@@ -70,7 +70,7 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: code-coverage-report
-        path: TestResults/coverage.cobertura.xml
+        path: TestResults/**/coverage.cobertura.xml
 
     - name: tests-install-reportgenerator
       run: dotnet tool install --global dotnet-reportgenerator-globaltool

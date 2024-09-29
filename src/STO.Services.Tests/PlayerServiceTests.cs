@@ -1,12 +1,12 @@
 namespace STO.Services.Tests
 {
-    public class PlayerServiceTests : IClassFixture<TestDataFixture>
+    public class PlayerServiceTests : IClassFixture<PlayerServiceFixture>
     {
         private readonly PlayerService _playerService;
         private readonly Mock<IDataService> _mockDataService;
-        private readonly TestDataFixture _fixture;
+        private readonly PlayerServiceFixture _fixture;
 
-        public PlayerServiceTests(TestDataFixture fixture)
+        public PlayerServiceTests(PlayerServiceFixture fixture)
         {
             _fixture = fixture;
             
@@ -52,6 +52,7 @@ namespace STO.Services.Tests
         public void GetPlayer_ShouldThrowExceptionIfPlayerNotFound()
         {
             // Arrange
+            // Player 999 does not exist in the fixture
             const string nonExistentPlayerId = "999";
 
             // Act & Assert
@@ -111,10 +112,11 @@ namespace STO.Services.Tests
 
             // Assert
             Assert.NotEmpty(result);
-            Assert.Equal(3, result.Count);
+            Assert.Equal(4, result.Count);
             Assert.Contains(result, p => p.Id == "1");
             Assert.Contains(result, p => p.Id == "2");
             Assert.Contains(result, p => p.Id == "3");
+            Assert.Contains(result, p => p.Id == "4");
         }
         
         [Fact]
@@ -125,9 +127,10 @@ namespace STO.Services.Tests
 
             // Assert
             Assert.NotEmpty(result);
-            Assert.Equal("3", result[0].Id); // Leon Bailey (ID 3), then Morgan Rogers (ID 2), then Ollie Watkins (ID 1)
-            Assert.Equal("2", result[1].Id); 
-            Assert.Equal("1", result[2].Id);
+            Assert.Equal("4", result[0].Id); // Jacob Ramsey (ID 4)
+            Assert.Equal("3", result[1].Id); // Leon Bailey (ID 3)
+            Assert.Equal("2", result[2].Id); // Morgan Rogers (ID 2)
+            Assert.Equal("1", result[3].Id); // Ollie Watkins (ID 1)
         }
 
         [Fact]
@@ -137,9 +140,11 @@ namespace STO.Services.Tests
             var result = _playerService.GetPlayers();
 
             // Assert
+            Assert.NotEmpty(result);
             Assert.Equal("Ollie Watkins", result.Single(p => p.Id == "1").Name);
             Assert.Equal("Morgan Rogers", result.Single(p => p.Id == "2").Name);
             Assert.Equal("Leon Bailey", result.Single(p => p.Id == "3").Name);
+            Assert.Equal("Jacob Ramsey", result.Single(p => p.Id == "4").Name);
         }
         
         #endregion
@@ -175,10 +180,35 @@ namespace STO.Services.Tests
         public void GetPlayers_WithGameId_ShouldReturnEmptyList_WhenNoEntitiesExist()
         {
             // Act
-            var result = _playerService.GetPlayers("G2");
+            // Game G999 does not exist in fixture
+            var result = _playerService.GetPlayers("G999");
 
             // Assert
             Assert.Empty(result);
+        }
+        
+        #endregion
+        
+        #region GetPlayer_WithDate
+        
+        [Fact]
+        public void GetPlayers_WithDate_ShouldReturnPlayersWithinDateRange()
+        {
+            // Arrange
+            // Set range to include games G1 (10-06-2024) and G2 (10-05-2024) in the fixture
+            // This will include Ollie Watkins & Morgans Rogers (G1) and Leon bailey (G2)
+            var dateRangeStart = new DateTime(2024, 5, 1);
+            var dateRangeEnd = new DateTime(2024, 6, 20);
+
+            // Act
+            var result = _playerService.GetPlayers(dateRangeStart, dateRangeEnd);
+
+            // Assert
+            Assert.Equal(3, result.Count);
+            Assert.Contains(result, p => p.Id == "1");
+            Assert.Contains(result, p => p.Id == "2");
+            Assert.Contains(result, p => p.Id == "3");
+            Assert.DoesNotContain(result, p => p.Id == "4");
         }
         
         #endregion

@@ -27,6 +27,9 @@ namespace STO.Models
 
         public string Notes { get; set; }
         
+        /// <summary>
+        /// Format dd-MM-yyyy
+        /// </summary>
         public string UrlSegment { get; set; }
 
         public string PartitionKey { get; set; } = default!;

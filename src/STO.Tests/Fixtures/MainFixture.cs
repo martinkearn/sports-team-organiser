@@ -1,18 +1,18 @@
-namespace STO.Tests.Services;
+namespace STO.Tests.Fixtures;
 
-public class PlayerServiceFixture
+public class MainFixture
 {
-    public readonly List<PlayerEntity> MockPlayerEntities = [];
-    public readonly List<RatingEntity> MockRatingEntities = [];
-    public readonly List<TransactionEntity> MockTransactionEntities = [];
-    public readonly List<PlayerAtGameEntity> MockPlayerAtGameEntities = [];
-    public readonly List<GameEntity> MockGameEntities = [];
+    public readonly List<PlayerEntity> PlayerEntities = [];
+    public readonly List<RatingEntity> RatingEntities = [];
+    public readonly List<TransactionEntity> TransactionEntities = [];
+    public readonly List<PlayerAtGameEntity> PlayerAtGameEntities = [];
+    public readonly List<GameEntity> GameEntities = [];
     public readonly Player PlayerWollyWatkins;
 
-    public PlayerServiceFixture()
+    public MainFixture()
     {
         // Initialize mock data for Ollie Watkins
-        MockPlayerEntities.Add(
+        PlayerEntities.Add(
             new PlayerEntity
             {
                 RowKey = "1",
@@ -23,13 +23,13 @@ public class PlayerServiceFixture
                 AdminRating = 5
             }
         );
-        MockRatingEntities.Add(new RatingEntity { RowKey = "R1", PlayerRowKey = "1", Rating = 4 });
-        MockRatingEntities.Add(new RatingEntity { RowKey = "R2", PlayerRowKey = "1", Rating = 5 });
-        MockRatingEntities.Add(new RatingEntity { RowKey = "R3", PlayerRowKey = "1", Rating = 3 });
-        MockRatingEntities.Add(new RatingEntity { RowKey = "R4", PlayerRowKey = "1", Rating = 5 });// Average 4.25
-        MockTransactionEntities.Add(new TransactionEntity { RowKey = "T1", PlayerRowKey = "1", Amount = 3 });
-        MockTransactionEntities.Add(new TransactionEntity { RowKey = "T2", PlayerRowKey = "1", Amount = -3 });
-        MockTransactionEntities.Add(new TransactionEntity { RowKey = "T3", PlayerRowKey = "1", Amount = 3 });// Total £3
+        RatingEntities.Add(new RatingEntity { RowKey = "R1", PlayerRowKey = "1", Rating = 4 });
+        RatingEntities.Add(new RatingEntity { RowKey = "R2", PlayerRowKey = "1", Rating = 5 });
+        RatingEntities.Add(new RatingEntity { RowKey = "R3", PlayerRowKey = "1", Rating = 3 });
+        RatingEntities.Add(new RatingEntity { RowKey = "R4", PlayerRowKey = "1", Rating = 5 });// Average 4.25
+        TransactionEntities.Add(new TransactionEntity { RowKey = "T1", PlayerRowKey = "1", Amount = 3 });
+        TransactionEntities.Add(new TransactionEntity { RowKey = "T2", PlayerRowKey = "1", Amount = -3 });
+        TransactionEntities.Add(new TransactionEntity { RowKey = "T3", PlayerRowKey = "1", Amount = 3 });// Total £3
         
         // Initialise mock data for updated Ollie Watkins to test update methods
         PlayerWollyWatkins = new Player()
@@ -48,7 +48,7 @@ public class PlayerServiceFixture
         };
         
         // Initialize mock data for Morgan Rogers
-        MockPlayerEntities.Add(
+        PlayerEntities.Add(
             new PlayerEntity
             {
                 RowKey = "2",
@@ -59,15 +59,15 @@ public class PlayerServiceFixture
                 AdminRating = 4
             }
         );
-        MockRatingEntities.Add(new RatingEntity { RowKey = "R5", PlayerRowKey = "2", Rating = 4 });
-        MockRatingEntities.Add(new RatingEntity { RowKey = "R6", PlayerRowKey = "2", Rating = 4 });
-        MockRatingEntities.Add(new RatingEntity { RowKey = "R7", PlayerRowKey = "2", Rating = 3 });
-        MockRatingEntities.Add(new RatingEntity { RowKey = "R8", PlayerRowKey = "2", Rating = 3 });// Average 3.5
-        MockTransactionEntities.Add(new TransactionEntity { RowKey = "T4", PlayerRowKey = "2", Amount = 3 });
-        MockTransactionEntities.Add(new TransactionEntity { RowKey = "T5", PlayerRowKey = "2", Amount = -3 });// Total £0
+        RatingEntities.Add(new RatingEntity { RowKey = "R5", PlayerRowKey = "2", Rating = 4 });
+        RatingEntities.Add(new RatingEntity { RowKey = "R6", PlayerRowKey = "2", Rating = 4 });
+        RatingEntities.Add(new RatingEntity { RowKey = "R7", PlayerRowKey = "2", Rating = 3 });
+        RatingEntities.Add(new RatingEntity { RowKey = "R8", PlayerRowKey = "2", Rating = 3 });// Average 3.5
+        TransactionEntities.Add(new TransactionEntity { RowKey = "T4", PlayerRowKey = "2", Amount = 3 });
+        TransactionEntities.Add(new TransactionEntity { RowKey = "T5", PlayerRowKey = "2", Amount = -3 });// Total £0
             
         // Initialize mock data for Leon Baily
-        MockPlayerEntities.Add(
+        PlayerEntities.Add(
             new PlayerEntity
             {
                 RowKey = "3",
@@ -78,11 +78,11 @@ public class PlayerServiceFixture
                 AdminRating = 4
             }
         );
-        MockRatingEntities.Add(new RatingEntity { RowKey = "R9", PlayerRowKey = "3", Rating = 5 });// Average 3.5
-        MockTransactionEntities.Add(new TransactionEntity { RowKey = "T6", PlayerRowKey = "3", Amount = 3 });// Total £0
+        RatingEntities.Add(new RatingEntity { RowKey = "R9", PlayerRowKey = "3", Rating = 5 });// Average 3.5
+        TransactionEntities.Add(new TransactionEntity { RowKey = "T6", PlayerRowKey = "3", Amount = 3 });// Total £0
            
         // Initialize mock data for Jacob Ramsey
-        MockPlayerEntities.Add(
+        PlayerEntities.Add(
             new PlayerEntity
             {
                 RowKey = "4",
@@ -95,7 +95,7 @@ public class PlayerServiceFixture
         );
         
         // Initialise mock Game data
-        MockGameEntities.Add(new GameEntity()
+        GameEntities.Add(new GameEntity()
         {
             RowKey = "G1",
             Date = new DateTimeOffset(2024, 6, 10, 18, 30, 0, TimeSpan.Zero),
@@ -105,7 +105,7 @@ public class PlayerServiceFixture
             Title = "Foo",
             UrlSegment = "10-06-2024"
         });
-        MockGameEntities.Add(new GameEntity()
+        GameEntities.Add(new GameEntity()
         {
             RowKey = "G2",
             Date = new DateTimeOffset(2024, 5, 10, 18, 30, 0, TimeSpan.Zero),
@@ -113,7 +113,7 @@ public class PlayerServiceFixture
             Title = "",
             UrlSegment = "10-05-2024"
         });
-        MockGameEntities.Add(new GameEntity()
+        GameEntities.Add(new GameEntity()
         {
             RowKey = "G3",
             Date = new DateTimeOffset(2024, 4, 10, 18, 30, 0, TimeSpan.Zero),
@@ -123,7 +123,7 @@ public class PlayerServiceFixture
             Title = "",
             UrlSegment = "10-04-2024"
         });
-        MockGameEntities.Add(new GameEntity()
+        GameEntities.Add(new GameEntity()
         {
             RowKey = "G4",
             Date = new DateTimeOffset(2024, 3, 10, 18, 30, 0, TimeSpan.Zero),
@@ -135,7 +135,7 @@ public class PlayerServiceFixture
         });
             
         // Initialise mock PLayerAtGame data
-        MockPlayerAtGameEntities.Add(new PlayerAtGameEntity()
+        PlayerAtGameEntities.Add(new PlayerAtGameEntity()
         {
             RowKey = "PAG1",
             GameRowKey = "G1",
@@ -145,7 +145,7 @@ public class PlayerServiceFixture
             Played = true,
             UrlSegment = "ollie-watkins-10-06-2024"
         });
-        MockPlayerAtGameEntities.Add(new PlayerAtGameEntity()
+        PlayerAtGameEntities.Add(new PlayerAtGameEntity()
         {
             RowKey = "PAG2",
             GameRowKey = "G1",
@@ -155,7 +155,7 @@ public class PlayerServiceFixture
             Played = false,
             UrlSegment = "morgan-rogers-10-06-2024"
         });        
-        MockPlayerAtGameEntities.Add(new PlayerAtGameEntity()
+        PlayerAtGameEntities.Add(new PlayerAtGameEntity()
         {
             RowKey = "PAG3",
             GameRowKey = "G2",
@@ -164,7 +164,7 @@ public class PlayerServiceFixture
             Played = false,
             UrlSegment = "leon-bailey-10-05-2024"
         });     
-        MockPlayerAtGameEntities.Add(new PlayerAtGameEntity()
+        PlayerAtGameEntities.Add(new PlayerAtGameEntity()
         {
             RowKey = "PAG4",
             GameRowKey = "G3",

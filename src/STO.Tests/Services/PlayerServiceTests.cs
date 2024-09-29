@@ -1,22 +1,24 @@
+using STO.Tests.Fixtures;
+
 namespace STO.Tests.Services
 {
-    public class PlayerServiceTests : IClassFixture<PlayerServiceFixture>
+    public class PlayerServiceTests : IClassFixture<MainFixture>
     {
         private readonly PlayerService _playerService;
         private readonly Mock<IDataService> _mockDataService;
-        private readonly PlayerServiceFixture _fixture;
+        private readonly MainFixture _fixture;
 
-        public PlayerServiceTests(PlayerServiceFixture fixture)
+        public PlayerServiceTests(MainFixture fixture)
         {
             _fixture = fixture;
             
             // Mocking IDataService with data from Fixture
             _mockDataService = new Mock<IDataService>();
-            _mockDataService.Setup(ds => ds.PlayerEntities).Returns(_fixture.MockPlayerEntities);
-            _mockDataService.Setup(ds => ds.RatingEntities).Returns(_fixture.MockRatingEntities);
-            _mockDataService.Setup(ds => ds.TransactionEntities).Returns(_fixture.MockTransactionEntities);
-            _mockDataService.Setup(ds => ds.GameEntities).Returns(_fixture.MockGameEntities);
-            _mockDataService.Setup(ds => ds.PlayerAtGameEntities).Returns(_fixture.MockPlayerAtGameEntities);
+            _mockDataService.Setup(ds => ds.PlayerEntities).Returns(_fixture.PlayerEntities);
+            _mockDataService.Setup(ds => ds.RatingEntities).Returns(_fixture.RatingEntities);
+            _mockDataService.Setup(ds => ds.TransactionEntities).Returns(_fixture.TransactionEntities);
+            _mockDataService.Setup(ds => ds.GameEntities).Returns(_fixture.GameEntities);
+            _mockDataService.Setup(ds => ds.PlayerAtGameEntities).Returns(_fixture.PlayerAtGameEntities);
 
             // Create PlayerService with mocked IDataService
             _playerService = new PlayerService(_mockDataService.Object);

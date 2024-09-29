@@ -189,7 +189,7 @@ namespace STO.Services.Tests
         
         #endregion
         
-        #region GetPlayer_WithDate
+        #region GetPlayers_WithDate
         
         [Fact]
         public void GetPlayers_WithDate_ShouldReturnPlayersWithinDateRange()

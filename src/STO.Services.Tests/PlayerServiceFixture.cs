@@ -1,6 +1,6 @@
 namespace STO.Services.Tests;
 
-public class TestDataFixture
+public class PlayerServiceFixture
 {
     public readonly List<PlayerEntity> MockPlayerEntities = [];
     public readonly List<RatingEntity> MockRatingEntities = [];
@@ -9,7 +9,7 @@ public class TestDataFixture
     public readonly List<GameEntity> MockGameEntities = [];
     public readonly Player PlayerWollyWatkins;
 
-    public TestDataFixture()
+    public PlayerServiceFixture()
     {
         // Initialize mock data for Ollie Watkins
         MockPlayerEntities.Add(
@@ -80,17 +80,48 @@ public class TestDataFixture
         );
         MockRatingEntities.Add(new RatingEntity { RowKey = "R9", PlayerRowKey = "3", Rating = 5 });// Average 3.5
         MockTransactionEntities.Add(new TransactionEntity { RowKey = "T6", PlayerRowKey = "3", Amount = 3 });// Total £0
-            
+           
+        // Initialize mock data for Jacob Ramsey
+        MockPlayerEntities.Add(
+            new PlayerEntity
+            {
+                RowKey = "4",
+                Name = "Jacob Ramsey",
+                Tags = "",
+                Position = Enums.PlayerPosition.BoxToBox,
+                DefaultRate = 3,
+                AdminRating = 3
+            }
+        );
+        
         // Initialise mock Game data
         MockGameEntities.Add(new GameEntity()
         {
             RowKey = "G1",
-            Date = new DateTimeOffset(2024, 1, 1, 12, 0, 0, TimeSpan.Zero),
-            Notes = "Test game",
+            Date = new DateTimeOffset(2024, 6, 10, 18, 30, 0, TimeSpan.Zero),
+            Notes = "Test game G1",
             TeamAGoals = 2,
             TeamBGoals = 1,
             Title = "Foo",
-            UrlSegment = "01-01-2024"
+            UrlSegment = "10-06-2024"
+        });
+        MockGameEntities.Add(new GameEntity()
+        {
+            RowKey = "G2",
+            Date = new DateTimeOffset(2024, 5, 10, 18, 30, 0, TimeSpan.Zero),
+            Notes = "Test game G2",
+            Title = "",
+            UrlSegment = "10-05-2024"
+        });
+        MockGameEntities.Add(new GameEntity()
+        {
+            RowKey = "G3",
+            Date = new DateTimeOffset(2024, 4, 10, 18, 30, 0, TimeSpan.Zero),
+            Notes = "Test game G3",
+            TeamAGoals = 0,
+            TeamBGoals = 0,
+            Title = "",
+            UrlSegment = "10-04-2024"
         });
             
         // Initialise mock PLayerAtGame data
@@ -102,7 +133,7 @@ public class TestDataFixture
             Forecast = Enums.PlayingStatus.Yes,
             Team = "A",
             Played = true,
-            UrlSegment = "ollie-watkins-01-01-2024"
+            UrlSegment = "ollie-watkins-10-06-2024"
         });
         MockPlayerAtGameEntities.Add(new PlayerAtGameEntity()
         {
@@ -112,8 +143,25 @@ public class TestDataFixture
             Forecast = Enums.PlayingStatus.Yes,
             Team = "B",
             Played = false,
-            UrlSegment = "morgan-rogers-01-01-2024"
+            UrlSegment = "morgan-rogers-10-06-2024"
+        });        
+        MockPlayerAtGameEntities.Add(new PlayerAtGameEntity()
+        {
+            RowKey = "PAG3",
+            GameRowKey = "G2",
+            PlayerRowKey = "3",
+            Forecast = Enums.PlayingStatus.Yes,
+            Played = false,
+            UrlSegment = "leon-bailey-10-05-2024"
+        });     
+        MockPlayerAtGameEntities.Add(new PlayerAtGameEntity()
+        {
+            RowKey = "PAG4",
+            GameRowKey = "G3",
+            PlayerRowKey = "4",
+            Forecast = Enums.PlayingStatus.Yes,
+            Played = false,
+            UrlSegment = "jacob-ramsey-10-04-2024"
         });
-        // Leon Bailey not in Game so not PlayerAtGame
     }
 }

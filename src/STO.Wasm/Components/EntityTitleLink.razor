@@ -1,7 +1,7 @@
-@inject IGameService GameService
-@inject IPlayerService PlayerService
-@inject IRatingService RatingService
-@inject ITransactionService TransactionService
+@inject IGameEntityService GameEntityService
+@inject IPlayerEntityService PlayerEntityService
+@inject IRatingEntityService RatingEntityService
+@inject ITransactionEntityService TransactionEntityService
 
 @if (Link)
 {
@@ -71,7 +71,7 @@ else
         switch (EntityType)
         {
             case Enums.EntityType.PlayerEntity:
-                _playerEntity = PlayerService.GetPlayerEntity(RowKey);
+                _playerEntity = PlayerEntityService.GetPlayerEntity(RowKey);
 
                 Label = Length switch
                 {
@@ -82,25 +82,25 @@ else
 
                 break;
             case Enums.EntityType.GameEntity:
-                _gameEntity = GameService.GetGameEntity(RowKey);
+                _gameEntity = GameEntityService.GetGameEntity(RowKey);
                 if (string.IsNullOrEmpty(Label))
                 {
-                    Label = GameService.GetGameLabel(RowKey, Length);
+                    Label = GameEntityService.GetGameLabel(RowKey, Length);
                 }
 
                 break;
             case Enums.EntityType.PlayerAtGameEntity:
-                _playerAtGameEntity = GameService.GetPlayerAtGameEntity(RowKey);
-                _gameEntity = GameService.GetGameEntity(_playerAtGameEntity.GameRowKey);
+                _playerAtGameEntity = GameEntityService.GetPlayerAtGameEntity(RowKey);
+                _gameEntity = GameEntityService.GetGameEntity(_playerAtGameEntity.GameRowKey);
                 if (string.IsNullOrEmpty(Label))
                 {
-                    Label = GameService.GetPlayerAtGameLabel(_playerAtGameEntity.RowKey, Length);
+                    Label = GameEntityService.GetPlayerAtGameLabel(_playerAtGameEntity.RowKey, Length);
                 }
                 
                 break;
             case Enums.EntityType.TransactionEntity:
-                _transactionEntity = TransactionService.GetTransactionEntity(RowKey);
-                _playerEntity = PlayerService.GetPlayerEntity(_transactionEntity.PlayerRowKey);
+                _transactionEntity = TransactionEntityService.GetTransactionEntity(RowKey);
+                _playerEntity = PlayerEntityService.GetPlayerEntity(_transactionEntity.PlayerRowKey);
                 if (string.IsNullOrEmpty(Label))
                 {
                     var transactionLabel = Length switch
@@ -114,10 +114,10 @@ else
                 
                 break;
             case Enums.EntityType.RatingEntity:
-                _ratingEntity = RatingService.GetRatingEntity(RowKey);
+                _ratingEntity = RatingEntityService.GetRatingEntity(RowKey);
                 if (string.IsNullOrEmpty(Label))
                 {
-                    Label = RatingService.FormatRatingTime(_ratingEntity.RowKey, Length);
+                    Label = RatingEntityService.FormatRatingTime(_ratingEntity.RowKey, Length);
                 }
                 
                 break;

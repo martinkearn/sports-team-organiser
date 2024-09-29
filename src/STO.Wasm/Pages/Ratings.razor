@@ -1,5 +1,5 @@
 @page "/ratings"
-@inject IRatingService RatingEntityService
+@inject IRatingEntityService RatingEntityEntityService
 
 <PageTitle>TNF - @_pageTitle</PageTitle>
 
@@ -106,7 +106,7 @@
 
 	private void RefreshData()
 	{
-		_ratingEntities = RatingEntityService.GetRatingEntities();
+		_ratingEntities = RatingEntityEntityService.GetRatingEntities();
 		_pageTitle = "Ratings";
 		MainLayout.SetPageTitle(_pageTitle);
 

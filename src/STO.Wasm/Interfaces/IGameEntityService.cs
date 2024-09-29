@@ -3,7 +3,7 @@ namespace STO.Wasm.Interfaces
 	/// <summary>
 	/// Service for working with GameEntity and PlayerAtGame.
 	/// </summary>
-	public interface IGameService
+	public interface IGameEntityService
     {
         /// <summary>
         /// Gets all GameEntities.

@@ -1,6 +1,6 @@
 @page "/ratings/add"
-@inject IRatingService RatingEntityService
-@inject IGameService GameService
+@inject IRatingEntityService RatingEntityEntityService
+@inject IGameEntityService GameEntityService
 @inject NavigationManager Navigation
 
 <PageTitle>TNF - @_pageTitle</PageTitle>
@@ -34,7 +34,7 @@
 				if (_newRatingEntity.GameRowKey != default)
 				{
 					var game = _gameEntities.Single<GameEntity>(o => o.RowKey == _newRatingEntity.GameRowKey);
-					_playersAtGameEntities = GameService.GetPlayerAtGameEntitiesForGame(game.RowKey);
+					_playersAtGameEntities = GameEntityService.GetPlayerAtGameEntitiesForGame(game.RowKey);
 				}
 			}
 			@foreach (var pag in _playersAtGameEntities)
@@ -84,7 +84,7 @@
 
 	protected async Task Add()
 	{
-		await RatingEntityService.UpsertRatingEntityAsync(_newRatingEntity);
+		await RatingEntityEntityService.UpsertRatingEntityAsync(_newRatingEntity);
 		Navigation.NavigateTo("/ratings/addthanks");
 	}
 
@@ -93,13 +93,13 @@
 		if (_newRatingEntity.GameRowKey != default)
 		{
 			var game = _gameEntities.Single<GameEntity>(o => o.RowKey == _newRatingEntity.GameRowKey);
-			_playersAtGameEntities = GameService.GetPlayerAtGameEntitiesForGame(game.RowKey);
+			_playersAtGameEntities = GameEntityService.GetPlayerAtGameEntitiesForGame(game.RowKey);
 		}
 	}
 
 	private void RefreshData()
 	{
-		_gameEntities = GameService.GetGameEntities();
+		_gameEntities = GameEntityService.GetGameEntities();
 		_pageTitle = "Add Rating";
 		MainLayout.SetPageTitle(_pageTitle);
 	}

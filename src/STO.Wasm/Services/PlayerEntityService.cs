@@ -1,9 +1,10 @@
 using System.Globalization;
+using STO.Models.Interfaces;
 
 namespace STO.Wasm.Services
 {
 	/// <inheritdoc/>
-	public class PlayerService(IDataService dataService, ITransactionService transactionService) : IPlayerService
+	public class PlayerEntityService(IDataService dataService, ITransactionEntityService transactionEntityService) : IPlayerEntityService
 	{
 		public List<PlayerEntity> GetPlayerEntities()
 		{
@@ -69,7 +70,7 @@ namespace STO.Wasm.Services
 
 		public double GetBalanceForPlayerEntity(string rowKey)
 		{
-			var transactions = transactionService.GetTransactionEntitiesForPlayerEntity(rowKey);
+			var transactions = transactionEntityService.GetTransactionEntitiesForPlayerEntity(rowKey);
 			return transactions.Sum(o => o.Amount);
 		}
 

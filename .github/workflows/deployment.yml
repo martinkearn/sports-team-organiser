@@ -20,6 +20,12 @@ on:
         blazorwasmcsprojpath:
           type: string
           required: true
+        testscsprojpath:
+          type: string
+          required: true
+        testspath:
+          type: string
+          required: true
         blazorwasmdotnetoutputpath:
           type: string
           required: true
@@ -47,6 +53,39 @@ jobs:
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: '8.0.x'
+        
+# Run unit tests
+    - name: tests-restore-dependencies
+      run: dotnet restore ${{ inputs.testscsprojpath }}
+
+    - name: tests-build-solution
+      run: dotnet build ${{ inputs.testscsprojpath }} --no-restore
+
+    - name: tests-create-results-directory
+      run: mkdir -p TestResults
+
+    - name: tests-run-tests-with-coverage
+      run: |
+        dotnet test ${{ inputs.testscsprojpath }} --no-build /p:CollectCoverage=true /p:CoverletOutput=TestResults/coverage.cobertura.xml /p:CoverletOutputFormat=cobertura
+      continue-on-error: true
+        
+    - name: tests-upload-results
+      uses: actions/upload-artifact@v4
+      with:
+        name: code-coverage-report
+        path: TestResults/coverage.cobertura.xml
+
+    - name: tests-install-reportgenerator
+      run: dotnet tool install --global dotnet-reportgenerator-globaltool
+
+    - name: tests-generate-report
+      run: reportgenerator "-reports:${{ inputs.testspath }}/TestResults/coverage.cobertura.xml" "-targetdir:${{ inputs.testspath }}/TestResults/coverage-report" "-reporttypes:Html"
+
+    - name: tests-upload-report
+      uses: actions/upload-artifact@v4
+      with:
+        name: coverage-report
+        path: ${{ inputs.testspath }}/TestResults/coverage-report
 
 # Bicep
     - name: bicep-install

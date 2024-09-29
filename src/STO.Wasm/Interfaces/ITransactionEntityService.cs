@@ -3,7 +3,7 @@ namespace STO.Wasm.Interfaces
     /// <summary>
     /// Service for working with TransactionEntities.
     /// </summary>
-    public interface ITransactionService
+    public interface ITransactionEntityService
     {
         /// <summary>
         /// Gets all TransactionEntities.

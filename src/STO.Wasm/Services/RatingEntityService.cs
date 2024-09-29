@@ -1,7 +1,9 @@
-﻿namespace STO.Wasm.Services
+﻿using STO.Models.Interfaces;
+
+namespace STO.Wasm.Services
 {
 	/// <inheritdoc/>
-	public class RatingService(IDataService dataService) : IRatingService
+	public class RatingEntityService(IDataService dataService) : IRatingEntityService
 	{
 		public async Task DeleteRatingEntityAsync(string rowKey)
 		{
@@ -60,7 +62,7 @@
 			
 			// Set the UrlSegment
 			// Cannot do this as setter for UrlSegment because we cannot resolve the GameEntity and PlayerEntity there
-			// Cannot use PlayerService due to circular dependency. need to work with data service directly to get player details
+			// Cannot use PlayerEntityService due to circular dependency. need to work with data service directly to get player details
 			var pes = dataService.PlayerEntities;
 			var player = pes.First(o => o.RowKey == ratingEntity.PlayerRowKey);
 			var ratingDate = $"{ratingEntity.Timestamp?.DateTime:dd-MM-yyyy-HH-mm-ss}";

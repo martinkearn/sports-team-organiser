@@ -1,6 +1,6 @@
 @page "/games/{GameUrlSegment}"
-@inject IPlayerService PlayerService
-@inject IGameService GameService
+@inject IPlayerEntityService PlayerEntityService
+@inject IGameEntityService GameEntityService
 
 <PageTitle>TNF - @_pageTitle</PageTitle>
 
@@ -62,7 +62,7 @@
     }
     @foreach (var pag in teamAPags)
     {
-        var pe = PlayerService.GetPlayerEntity(pag.PlayerRowKey);
+        var pe = PlayerEntityService.GetPlayerEntity(pag.PlayerRowKey);
         teamAAdminRatingTotal += pe.AdminRating;
         <tr>
             <td>A</td>
@@ -105,7 +105,7 @@
     }
     @foreach (var pag in teamBPags)
     {
-        var pe = PlayerService.GetPlayerEntity(pag.PlayerRowKey);
+        var pe = PlayerEntityService.GetPlayerEntity(pag.PlayerRowKey);
         teamBAdminRatingTotal += pe.AdminRating;
         <tr>
             <td>B</td>
@@ -143,7 +143,7 @@
     }
     @foreach (var pag in _pags.Where(o => string.IsNullOrEmpty(o.Team)))
     {
-        var pe = PlayerService.GetPlayerEntity(pag.PlayerRowKey);
+        var pe = PlayerEntityService.GetPlayerEntity(pag.PlayerRowKey);
         <tr>
             <td>None</td>
             <td>
@@ -222,14 +222,14 @@ else
 
     private async Task AddPagEntity()
     {
-        await GameService.UpsertPlayerAtGameEntityAsync(_newPagEntity);
+        await GameEntityService.UpsertPlayerAtGameEntityAsync(_newPagEntity);
         RefreshData();
     }
 
     private async Task CalculateTeams()
     {
         _showLongRunning = true;
-        _pags = await GameService.CalculateTeamsAsync(_pags);
+        _pags = await GameEntityService.CalculateTeamsAsync(_pags);
         RefreshData();
         _showLongRunning = false;
     }
@@ -237,7 +237,7 @@ else
     private async Task ResetTeams()
     {
         _showLongRunning = true;
-        await GameService.ResetTeamsAsync(_gameEntity.RowKey);
+        await GameEntityService.ResetTeamsAsync(_gameEntity.RowKey);
         RefreshData();
         _showLongRunning = false;
     }
@@ -265,19 +265,19 @@ else
 
     private void RefreshData()
     {
-        _gameEntity = GameService.GetGameEntityByUrlSegment(GameUrlSegment);
-        _allPlayerEntities = PlayerService.GetPlayerEntities();
-        _pags = GameService.GetPlayerAtGameEntitiesForGame(_gameEntity.RowKey);
+        _gameEntity = GameEntityService.GetGameEntityByUrlSegment(GameUrlSegment);
+        _allPlayerEntities = PlayerEntityService.GetPlayerEntities();
+        _pags = GameEntityService.GetPlayerAtGameEntitiesForGame(_gameEntity.RowKey);
         _newPagEntity = new PlayerAtGameEntity()
         {
             GameRowKey = _gameEntity.RowKey,
             Played = false,
             Forecast = Enums.PlayingStatus.Yes
         };
-        _pageTitle = GameService.GetGameLabel(_gameEntity.RowKey);
+        _pageTitle = GameEntityService.GetGameLabel(_gameEntity.RowKey);
         MainLayout.SetPageTitle(_pageTitle);
         _simpleView = false;
-        _mostRecentPag = GameService.GetMostRecentPlayerAtGameForGame(_gameEntity.RowKey);
+        _mostRecentPag = GameEntityService.GetMostRecentPlayerAtGameForGame(_gameEntity.RowKey);
 
         //Set simple view label
         SetSimpleViewLabel();

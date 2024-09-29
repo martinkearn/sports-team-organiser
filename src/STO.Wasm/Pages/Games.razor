@@ -1,5 +1,5 @@
 @page "/games"
-@inject IGameService GameService
+@inject IGameEntityService GameEntityService
 
 <PageTitle>TNF - @_pageTitle</PageTitle>
 
@@ -18,7 +18,7 @@
 	<tbody>
 		@foreach (var ge in _gameEntities)
 		{
-			var pags = GameService.GetPlayerAtGameEntitiesForGame(ge.RowKey);
+			var pags = GameEntityService.GetPlayerAtGameEntitiesForGame(ge.RowKey);
 			<tr>
 				<td><EntityTitleLink RowKey="@ge.RowKey" EntityType="Enums.EntityType.GameEntity" Length="Enums.TitleLength.Short" Link="true" Label="" /></td>
 				<td>@pags.Count</td>
@@ -41,7 +41,7 @@
 
 	private void RefreshData()
 	{
-		_gameEntities = GameService.GetGameEntities();
+		_gameEntities = GameEntityService.GetGameEntities();
 		_pageTitle = "Games";
 		MainLayout.SetPageTitle(_pageTitle);
 	}

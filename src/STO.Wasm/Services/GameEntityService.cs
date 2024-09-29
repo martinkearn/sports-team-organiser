@@ -1,7 +1,9 @@
-﻿namespace STO.Wasm.Services
+﻿using STO.Models.Interfaces;
+
+namespace STO.Wasm.Services
 {
 	/// <inheritdoc/>
-	public class GameService(IDataService dataService, IRatingService ratingEntityService, IPlayerService playerService, ITransactionService transactionService) : IGameService
+	public class GameEntityService(IDataService dataService, IRatingEntityService ratingEntityEntityService, IPlayerEntityService playerEntityService, ITransactionEntityService transactionEntityService) : IGameEntityService
 	{
 		public async Task<List<PlayerAtGameEntity>> CalculateTeamsAsync(List<PlayerAtGameEntity> pags)
 		{
@@ -57,10 +59,10 @@
 		public async Task DeleteGameEntityAsync(string rowkey)
 		{
 			// Delete Ratings
-			var ratingsForGame = ratingEntityService.GetRatingEntitiesForGame(rowkey);
+			var ratingsForGame = ratingEntityEntityService.GetRatingEntitiesForGame(rowkey);
 			foreach (var re in ratingsForGame)
 			{
-				await ratingEntityService.DeleteRatingEntityAsync(re.RowKey);
+				await ratingEntityEntityService.DeleteRatingEntityAsync(re.RowKey);
 			}
 
 			// Delete PAGs
@@ -188,7 +190,7 @@
 		public async Task TogglePlayerAtGamePlayedAsync(PlayerAtGameEntity pag, bool? played)
 		{
 			// Get player for pag
-			var playerEntity = playerService.GetPlayerEntity(pag.PlayerRowKey);
+			var playerEntity = playerEntityService.GetPlayerEntity(pag.PlayerRowKey);
 
 			if (played != null)
 			{
@@ -212,12 +214,12 @@
 					Notes = GetNotesForGame(pag.GameRowKey)
 				};
 
-                await transactionService.UpsertTransactionEntityAsync(transaction);
+                await transactionEntityService.UpsertTransactionEntityAsync(transaction);
 			}
 			else
 			{
 				// Get debit transactions (less than £0) for player and game
-				var teForPe = transactionService.GetTransactionEntities()
+				var teForPe = transactionEntityService.GetTransactionEntities()
 					.Where(o => o.PlayerRowKey == playerEntity.RowKey)
 					.OrderByDescending(o => o.Date);
 				var firstPagDebitTransactionEntities = teForPe.FirstOrDefault(o => o.Amount < 0);
@@ -226,7 +228,7 @@
 				if (firstPagDebitTransactionEntities != default)
 				{
 					// TO DO: This is a hacky way to do this. Need to re-add game association so that we can remove for the specific game.
-					await transactionService.DeleteTransactionEntityAsync(firstPagDebitTransactionEntities.RowKey);
+					await transactionEntityService.DeleteTransactionEntityAsync(firstPagDebitTransactionEntities.RowKey);
 				}
 			}
 
@@ -246,7 +248,7 @@
 			
 			// Set the UrlSegment
 			// Cannot do this as setter for UrlSegment because we cannot resolve the GameEntity and PlayerEntity there
-			var playerEntity = playerService.GetPlayerEntity(pagEntity.PlayerRowKey);
+			var playerEntity = playerEntityService.GetPlayerEntity(pagEntity.PlayerRowKey);
 			var gameEntity = GetGameEntity(pagEntity.GameRowKey);
 			pagEntity.UrlSegment = $"{playerEntity.UrlSegment}-{gameEntity.UrlSegment}";
 			
@@ -258,7 +260,7 @@
 		{
 			List<ExpandedPag> ePags = (from pag in pags 
 				let ge = GetGameEntity(pag.GameRowKey) 
-				let pe = playerService.GetPlayerEntity(pag.PlayerRowKey) 
+				let pe = playerEntityService.GetPlayerEntity(pag.PlayerRowKey) 
 				select new ExpandedPag(pag, ge, pe)).ToList();
 			return ePags;
 		}

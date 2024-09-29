@@ -1,5 +1,5 @@
 @page "/games/{GameUrlSegment}/edit"
-@inject IGameService GameService
+@inject IGameEntityService GameEntityService
 @inject NavigationManager Navigation
 
 <PageTitle>TNF - @_pageTitle</PageTitle>
@@ -73,22 +73,22 @@
     {
         var dt = new DateTime(_gameEntity.Date.Year, _gameEntity.Date.Month, _gameEntity.Date.Day, _hour, _minute, 0, DateTimeKind.Utc);
         _gameEntity.Date = dt;
-        await GameService.UpsertGameEntityAsync(_gameEntity);
+        await GameEntityService.UpsertGameEntityAsync(_gameEntity);
     }
 
     private async Task DeleteGame()
     {
-        await GameService.DeleteGameEntityAsync(_gameEntity.RowKey);
+        await GameEntityService.DeleteGameEntityAsync(_gameEntity.RowKey);
         Navigation.NavigateTo("/games");
     }
 
     private void RefreshData()
     {
-        _gameEntity = GameService.GetGameEntityByUrlSegment(GameUrlSegment);
+        _gameEntity = GameEntityService.GetGameEntityByUrlSegment(GameUrlSegment);
         _hour = _gameEntity.Date.Hour;
         _minute = _gameEntity.Date.Minute;
 
-        var gameLabel = GameService.GetGameLabel(_gameEntity.RowKey);
+        var gameLabel = GameEntityService.GetGameLabel(_gameEntity.RowKey);
         _pageTitle = $"Edit {gameLabel}";
         MainLayout.SetPageTitle(_pageTitle);
     }

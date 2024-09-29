@@ -1,7 +1,7 @@
 @page "/games/addtransactionstogame"
-@inject IPlayerService PlayerService
-@inject IGameService GameService
-@inject ITransactionService TransactionService
+@inject IPlayerEntityService PlayerEntityService
+@inject IGameEntityService GameEntityService
+@inject ITransactionEntityService TransactionEntityService
 @inject NavigationManager Navigation
 
 <PageTitle>@_pageTitle</PageTitle>
@@ -87,7 +87,7 @@
     {
         if (string.IsNullOrEmpty(_selectedProspectPagPlayerRowKey)) return;
 
-        var pe = PlayerService.GetPlayerEntity(_selectedProspectPagPlayerRowKey);
+        var pe = PlayerEntityService.GetPlayerEntity(_selectedProspectPagPlayerRowKey);
         var prospectTransaction = new TransactionEntity()
         {
             PlayerRowKey = _selectedProspectPagPlayerRowKey,
@@ -102,7 +102,7 @@
 
         foreach (var prospectTransaction in _prospectTransactions)
         {
-            await TransactionService.UpsertTransactionEntityAsync(prospectTransaction);
+            await TransactionEntityService.UpsertTransactionEntityAsync(prospectTransaction);
         }
 
         var nav = $"/games/{_selectedGame.UrlSegment}";
@@ -112,16 +112,16 @@
     private void RefreshGame()
     {
         if (string.IsNullOrEmpty(_selectedGameRowKey)) return;
-        _selectedGame = GameService.GetGameEntity(_selectedGameRowKey);
+        _selectedGame = GameEntityService.GetGameEntity(_selectedGameRowKey);
         _prospectTransactions.Clear();
-        var pags = GameService.GetPlayerAtGameEntitiesForGame(_selectedGameRowKey);
-        _pagPlayerEntities = PlayerService.GetPlayerEntitiesFromPags(pags);
+        var pags = GameEntityService.GetPlayerAtGameEntitiesForGame(_selectedGameRowKey);
+        _pagPlayerEntities = PlayerEntityService.GetPlayerEntitiesFromPags(pags);
     }
 
     private void RefreshData()
     {
-        _gameEntities = GameService.GetGameEntities();
-        _nextGameEntity = GameService.GetNextGameEntity();
+        _gameEntities = GameEntityService.GetGameEntities();
+        _nextGameEntity = GameEntityService.GetNextGameEntity();
         _selectedGameRowKey = _nextGameEntity.RowKey;
         _selectedGame = _nextGameEntity;
         _pageTitle = "Add Transactions to Game";

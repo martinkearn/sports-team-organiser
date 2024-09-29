@@ -17,6 +17,8 @@ jobs:
       apicsprojpath: './src/STO.Api/STO.Api.csproj'
       apidotnetoutputpath: './src/STO.Api/output'
       blazorwasmcsprojpath: './src/STO.Wasm/STO.Wasm.csproj'
+      testscsprojpath: './src/STO.Tests/STO.Tests.csproj'
+      testspath: './src/STO.Tests'
       blazorwasmdotnetoutputpath: './src/STO.Wasm/output'
     secrets:
       azure-credentials: ${{ secrets.AZURE_CREDENTIALS }}

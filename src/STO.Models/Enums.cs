@@ -1,5 +1,6 @@
 namespace STO.Models
 {
+    [ExcludeFromCodeCoverage]
     public abstract class Enums {
         public enum SortPagsBy { Name, Position, Team, GameBalance, PlayerBalance, Playing, Played };
         public enum SortTransactionsBy { Date, Amount, Player, Game };

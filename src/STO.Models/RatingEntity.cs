@@ -1,9 +1,6 @@
-using System.ComponentModel.DataAnnotations;
-using Azure;
-using Azure.Data.Tables;
-
 namespace STO.Models
 {
+    [ExcludeFromCodeCoverage]
     public class RatingEntity : ITableEntity
     {
         [Required]

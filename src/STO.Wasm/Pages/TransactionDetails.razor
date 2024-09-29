@@ -1,6 +1,6 @@
 @page "/transactions/{TransactionUrlSegment}"
-@inject ITransactionService TransactionService
-@inject IPlayerService PlayerService
+@inject ITransactionEntityService TransactionEntityService
+@inject IPlayerEntityService PlayerEntityService
 @inject NavigationManager Navigation
 
 <PageTitle>TNF - @_pageTitle</PageTitle>
@@ -56,14 +56,14 @@ else
 
 	private async Task DeleteTransaction()
 	{
-		await TransactionService.DeleteTransactionEntityAsync(_transactionEntity.RowKey);
+		await TransactionEntityService.DeleteTransactionEntityAsync(_transactionEntity.RowKey);
 		Navigation.NavigateTo("/transactions");
 	}
 
 	private void RefreshData()
 	{
-		_transactionEntity = TransactionService.GetTransactionEntityByUrlSegment(TransactionUrlSegment);
-		var playerEntity = PlayerService.GetPlayerEntity(_transactionEntity.PlayerRowKey);
+		_transactionEntity = TransactionEntityService.GetTransactionEntityByUrlSegment(TransactionUrlSegment);
+		var playerEntity = PlayerEntityService.GetPlayerEntity(_transactionEntity.PlayerRowKey);
 		_pageTitle = $"Transaction for {@playerEntity.Name}, {_transactionEntity.Date.Date.ToShortDateString()}";
 		MainLayout.SetPageTitle(_pageTitle);
 	}

@@ -1,7 +1,3 @@
-using System.ComponentModel.DataAnnotations;
-using Azure;
-using Azure.Data.Tables;
-
 namespace STO.Models
 {
     public class GameEntity : ITableEntity
@@ -27,6 +23,9 @@ namespace STO.Models
 
         public string Notes { get; set; }
         
+        /// <summary>
+        /// Format dd-MM-yyyy
+        /// </summary>
         public string UrlSegment { get; set; }
 
         public string PartitionKey { get; set; } = default!;

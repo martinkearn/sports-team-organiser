@@ -58,9 +58,12 @@ jobs:
     - name: tests-build-solution
       run: dotnet build ${{ inputs.servicestestscsprojpath }} --no-restore
 
+    - name: tests-create-results-directory
+      run: mkdir -p TestResults
+
     - name: tests-run-tests-with-coverage
       run: |
-        dotnet test ${{ inputs.servicestestscsprojpath }} --no-build --collect:"XPlat Code Coverage" /p:CollectCoverage=true /p:CoverletOutput=TestResults/ /p:CoverletOutputFormat=cobertura
+        dotnet test ${{ inputs.servicestestscsprojpath }} --no-build --collect:"XPlat Code Coverage" /p:CollectCoverage=true /p:CoverletOutput=TestResults/ /p:CoverletOutputFormat=cobertura --verbosity detailed
       continue-on-error: true
       
     - name: tests-upload-results

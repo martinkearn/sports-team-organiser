@@ -123,6 +123,16 @@ public class PlayerServiceFixture
             Title = "",
             UrlSegment = "10-04-2024"
         });
+        MockGameEntities.Add(new GameEntity()
+        {
+            RowKey = "G4",
+            Date = new DateTimeOffset(2024, 3, 10, 18, 30, 0, TimeSpan.Zero),
+            Notes = "Test game G4",
+            TeamAGoals = 0,
+            TeamBGoals = 0,
+            Title = "",
+            UrlSegment = "10-03-2024"
+        });
             
         // Initialise mock PLayerAtGame data
         MockPlayerAtGameEntities.Add(new PlayerAtGameEntity()

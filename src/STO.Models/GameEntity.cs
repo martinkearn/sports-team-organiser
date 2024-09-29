@@ -1,7 +1,3 @@
-using System.ComponentModel.DataAnnotations;
-using Azure;
-using Azure.Data.Tables;
-
 namespace STO.Models
 {
     public class GameEntity : ITableEntity

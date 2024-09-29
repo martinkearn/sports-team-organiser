@@ -1,6 +1,3 @@
-using Azure;
-using Azure.Data.Tables;
-
 namespace STO.Models
 {
     public class PlayerEntity : ITableEntity

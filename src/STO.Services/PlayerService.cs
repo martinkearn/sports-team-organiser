@@ -1,4 +1,5 @@
 using System.Globalization;
+using System.Net;
 using STO.Models;
 using STO.Models.Interfaces;
 
@@ -15,10 +16,10 @@ public class PlayerService(IDataService dataService) : IPlayerService
     private Player ConstructPlayer(string playerId)
     {
         // Verify PLayer
-        if (VerifyPlayerExists(playerId));
-        
+        VerifyPlayerExists(playerId);
+
         // PlayerEntity
-        var playerEntity = GetPlayerEntities().FirstOrDefault(pe => pe.RowKey == playerId);
+        var playerEntity = GetPlayerEntities().First(pe => pe.RowKey == playerId);
 
         // RatingEntities
         var playerRatingEntities = dataService.RatingEntities.Where(r => r.PlayerRowKey == playerId);
@@ -134,7 +135,7 @@ public class PlayerService(IDataService dataService) : IPlayerService
     public async Task DeletePlayerAsync(string playerId)
     {
         // Verify PLayer
-        if (VerifyPlayerExists(playerId));
+        VerifyPlayerExists(playerId);
 
         // Delete Ratings
         var ratingsForPlayer = dataService.RatingEntities.Where(o => o.PlayerRowKey == playerId).ToList();

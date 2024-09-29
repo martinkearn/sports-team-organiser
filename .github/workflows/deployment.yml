@@ -23,6 +23,9 @@ on:
         servicestestscsprojpath:
           type: string
           required: true
+        servicestestspath:
+          type: string
+          required: true
         blazorwasmdotnetoutputpath:
           type: string
           required: true
@@ -76,13 +79,13 @@ jobs:
       run: dotnet tool install --global dotnet-reportgenerator-globaltool
 
     - name: tests-generate-report
-      run: reportgenerator "-reports:TestResults/coverage.cobertura.xml" "-targetdir:TestResults/coverage-report" "-reporttypes:Html"
+      run: reportgenerator "-reports:${{ inputs.servicestestspath }}/TestResults/coverage.cobertura.xml" "-targetdir:${{ inputs.servicestestspath }}/TestResults/coverage-report" "-reporttypes:Html"
 
     - name: tests-upload-report
       uses: actions/upload-artifact@v3
       with:
         name: coverage-report
-        path: TestResults/coverage-report
+        path: ${{ inputs.servicestestspath }}/TestResults/coverage-report
 
 # Bicep
     - name: bicep-install

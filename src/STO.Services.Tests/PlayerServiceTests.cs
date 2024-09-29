@@ -226,6 +226,21 @@ namespace STO.Services.Tests
             Assert.Empty(result);
         }
         
+        [Fact]
+        public void GetPlayers_WithDate_ShouldReturnEmptyList_WhenNoPlayersAtGame()
+        {
+            // Arrange
+            // Set range to include a G4 (10-03-2024), a game with no players in the fixture
+            var dateRangeStart = new DateTime(2024, 3, 1);
+            var dateRangeEnd = new DateTime(2024, 3, 20);
+            
+            // Act
+            var result = _playerService.GetPlayers(dateRangeStart, dateRangeEnd);
+
+            // Assert
+            Assert.Empty(result);
+        }
+        
         #endregion
         
         #region DeletePlayerAsync

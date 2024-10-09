@@ -7,7 +7,7 @@
 <h1><i class="fa-solid fa-people-group me-2"></i> <EntityTitleLink RowKey="@_gameEntity.RowKey" EntityType="Enums.EntityType.GameEntity" Link="false" /></h1>
 
 <p>
-    @_pags.Count() players. @_gameEntity.Date.TimeOfDay.Hours:@_gameEntity.Date.TimeOfDay.Minutes kick off.
+    @_pags.Count() players. @_pags.Count(p => p.Forecast == Enums.PlayingStatus.Yes) yes, @_pags.Count(p => p.Forecast == Enums.PlayingStatus.Maybe) maybe, @_pags.Count(p => p.Forecast == Enums.PlayingStatus.No) no. @_gameEntity.Date.TimeOfDay.Hours:@_gameEntity.Date.TimeOfDay.Minutes kick off.
     @if (_mostRecentPag != default)
     {
         var localTime = _mostRecentPag.Timestamp?.ToLocalTime();
@@ -136,7 +136,7 @@
         var teamBAverageRating = teamBAdminRatingTotal / teamBPags.Count();
         <tr>
             <td colspan="3">
-                <span>Team B has @teamBPags.Count() players and a rating of @teamBAverageRating.ToString("#.##")</span>
+                <span>Team B has @teamBPags.Count() players and a rating of @teamBAverageRating.ToString("#.##"). Team B wears bibs.</span>
                 <hr>
             </td>
         </tr>

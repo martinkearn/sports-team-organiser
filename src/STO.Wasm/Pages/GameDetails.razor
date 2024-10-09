@@ -57,7 +57,9 @@
     <tbody>
 
     @{
-        var teamAPags = _pags.Where(o => o.Team == "A").ToList();
+        var teamAPags = _pags
+            .Where(o => o.Team == "A") 
+            .ToList();
         double teamAAdminRatingTotal = 0;
     }
     @foreach (var pag in teamAPags)
@@ -100,7 +102,9 @@
     }
 
     @{
-        var teamBPags = _pags.Where(o => o.Team == "B").ToList();
+        var teamBPags = _pags
+            .Where(o => o.Team == "B")
+            .ToList();
         double teamBAdminRatingTotal = 0;
     }
     @foreach (var pag in teamBPags)

@@ -21,6 +21,11 @@
 </div>
 
 <div class="mb-3">
+	<label class="form-label">Last Updated</label>
+	<span class="form-control-plaintext">@_playerEntity.Timestamp</span>
+</div>
+
+<div class="mb-3">
 	<label class="form-label">Url Segment</label>
 	<InputText class="form-control" @bind-Value="_playerEntity.UrlSegment" disabled="true"  />
 	<div class="form-text">Set automatically.</div>

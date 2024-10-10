@@ -24,12 +24,12 @@ public class Player
     public double DefaultRate { get; set; }
     public int AdminRating { get; set; }
     
+    public DateTime LastUpdated { get; set; }
+    
     // Calculated properties
     public string Label { get; set; }
     public double Rating { get; set; }
     public string UrlSegment { get; set; }
     public double Balance { get; set; }
-
-    public int GamesCount { get; set; }    
-    
+    public int GamesCount { get; set; } 
 }

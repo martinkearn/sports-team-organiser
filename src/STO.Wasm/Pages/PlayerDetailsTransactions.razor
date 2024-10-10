@@ -1,10 +1,9 @@
 @page "/players/{PlayerUrlSegment}/transactions"
 @using STO.Models.Interfaces
 @inject IDataService DataService
-@inject IPlayerEntityService PlayerEntityService
+@inject IPlayerService PlayerService
 @inject ITransactionEntityService TransactionEntityService
 @inject NavigationManager Navigation
-
 
 <PageTitle>TNF - @_pageTitle</PageTitle>
 
@@ -18,6 +17,10 @@
         <a class="nav-link active">Transactions</a>
     </li>
 </ul>
+
+<div class="mb-3 mt-3">
+    <p>Current balance is <CurrencyDisplay Amount="@_playerTransactions.Sum(t => t.Amount)" /></p>
+</div>
 
 <table class="table table-striped">
     <thead>
@@ -39,6 +42,7 @@
     </tbody>
 </table>
 
+<hr class="mb-4"/>
 <div class="hstack gap-2">
     <a class="btn btn-secondary" href="/players/"><i class="fa-solid fa-arrow-left"></i> All Players</a>
     <DeleteButtonWithCheck DeleteWhatLabel="@_deleteAllLabel" ButtonLabel="Delete all transactions" ParentPageCallback="DeleteTransactionsForPlayer" />
@@ -75,15 +79,15 @@
     private void RefreshData()
     {
         // Get Player
-        var playerEntity = PlayerEntityService.GetPlayerEntityFromUrlSegment(PlayerUrlSegment);
+        var player = PlayerService.GetPlayers().Single(p => p.UrlSegment == PlayerUrlSegment);
 
         // Get Transactions
-        _playerTransactions = DataService.TransactionEntities.Where(o => o.PlayerRowKey == playerEntity.RowKey)
+        _playerTransactions = DataService.TransactionEntities.Where(o => o.PlayerRowKey == player.Id)
             .OrderByDescending(o => o.Date)
             .ToList();
 
-        _deleteAllLabel = $"All transactions for {playerEntity?.Name}";
-        _pageTitle = $"{playerEntity?.Name}";
+        _deleteAllLabel = $"All transactions for {player.Name}";
+        _pageTitle = $"{player.Name}";
         MainLayout.SetPageTitle(_pageTitle);
     }
 }

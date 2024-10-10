@@ -1,22 +1,22 @@
 @page "/players/add"
-@inject IPlayerEntityService PlayerEntityService
+@inject IPlayerService PlayerService
 @inject NavigationManager Navigation
 
 <PageTitle>TNF - @_pageTitle</PageTitle>
 
 <h1>@_pageTitle</h1>
 
-<EditForm Model="@_newPlayerEntity" OnSubmit="@Add" Context="newPlayerEntity">
+<EditForm Model="@_newPlayer" OnSubmit="@Add" Context="newPlayer">
 	<DataAnnotationsValidator />
 	<ValidationSummary />
 	<div class="mb-3">
 		<label for="addName" class="form-label">Name</label>
-		<InputText class="form-control" id="addName" @bind-Value="_newPlayerEntity.Name" />
+		<InputText class="form-control" id="addName" @bind-Value="_newPlayer.Name" />
 	</div>
 
 	<div class="mb-3">
 		<label for="addTags" class="form-label">Position</label>
-		<InputSelect class="form-select" @bind-Value="_newPlayerEntity.Position">
+		<InputSelect class="form-select" @bind-Value="_newPlayer.Position">
 			@foreach (var option in Enum.GetNames(typeof(Enums.PlayerPosition)))
 			{
 				<option value="@option">@option</option>
@@ -26,14 +26,14 @@
 
 	<div class="mb-3">
 		<label class="form-label">Admin Rating</label>
-		<InputNumber class="form-control" id="addAdminRating" @bind-Value="_newPlayerEntity.AdminRating" />
+		<InputNumber class="form-control" id="addAdminRating" @bind-Value="_newPlayer.AdminRating" />
 	</div>
 
 	<div class="mb-3">
 		<label for="addDefaultRate" class="form-label">Default Rate</label>
 		<div class="input-group">
 			<span class="input-group-text">£</span>
-			<InputNumber type="number" min="0" class="form-control" id="addDefaultRate" @bind-Value="_newPlayerEntity.DefaultRate" />
+			<InputNumber type="number" min="0" class="form-control" id="addDefaultRate" @bind-Value="_newPlayer.DefaultRate" />
 		</div>
 		<div class="form-text">Default rate per game. Usually £3 or £4.</div>
 	</div>
@@ -45,8 +45,7 @@
 
 @code {
 	[CascadingParameter] public MainLayout MainLayout { get; set; } = default!;
-	private PlayerEntity _newPlayerEntity = new();
-
+	private Player _newPlayer = null!;
 	private string _pageTitle = default!;
 
 	protected override void OnInitialized()
@@ -56,13 +55,16 @@
 
 	private async Task Add()
 	{
-		await PlayerEntityService.UpsertPlayerEntityAsync(_newPlayerEntity);
+		await PlayerService.UpsertPlayerAsync(_newPlayer);
 		Navigation.NavigateTo("/players");
 	}
 
 	private void RefreshData()
 	{
-		_newPlayerEntity.DefaultRate = 3;
+		_newPlayer = new Player
+		{
+			DefaultRate = 3
+		};
 		_pageTitle = "Add Player";
 		MainLayout.SetPageTitle(_pageTitle);
 	}

@@ -1,5 +1,5 @@
 @page "/games/{GameUrlSegment}"
-@inject IPlayerEntityService PlayerEntityService
+@inject IPlayerService PlayerService
 @inject IGameEntityService GameEntityService
 
 <PageTitle>TNF - @_pageTitle</PageTitle>
@@ -27,9 +27,9 @@
             <div class="input-group col-12">
                 <InputSelect class="form-select" @bind-Value="_newPagEntity.PlayerRowKey">
                     <option value="">Add player to game ...</option>
-                    @foreach (var pe in _allPlayerEntities.Where(pe => _pags.FirstOrDefault(pag => pag.PlayerRowKey == pe.RowKey) == default))
+                    @foreach (var player in _allPlayers.Where(pe => _pags.FirstOrDefault(pag => pag.PlayerRowKey == pe.Id) == default))
                     {
-                        <option value="@pe.RowKey">@pe.Name</option>
+                        <option value="@player.Id">@player.Name</option>
                     }
                 </InputSelect>
                 <button class="btn btn-outline-secondary" type="submit"><i class="fa-solid fa-plus"></i></button>
@@ -64,20 +64,20 @@
     }
     @foreach (var pag in teamAPags)
     {
-        var pe = PlayerEntityService.GetPlayerEntity(pag.PlayerRowKey);
-        teamAAdminRatingTotal += pe.AdminRating;
+        var player = PlayerService.GetPlayer(pag.PlayerRowKey);
+        teamAAdminRatingTotal += player.AdminRating;
         <tr>
             <td>A</td>
             <td>
-                <a href="/games/@_gameEntity.UrlSegment/@pag.UrlSegment">@pe.Name</a>
+                <a href="/games/@_gameEntity.UrlSegment/@pag.UrlSegment">@player.Name</a>
                 <PlayingForecastIcon Forecast="@pag.Forecast"/>
-                <PositionIcon Position="pe.Position"/>
+                <PositionIcon Position="player.Position"/>
                 <RagIcon PagEntity="@pag"/>
                 <AuthorizeView Policy="IsAdminEmail">
                     <Authorized>
                         @if (!_simpleView)
                         {
-                            <RatingNumberIcon Rating=@pe.AdminRating/>
+                            <RatingNumberIcon Rating=@player.AdminRating/>
                         }
                     </Authorized>
                 </AuthorizeView>
@@ -109,20 +109,20 @@
     }
     @foreach (var pag in teamBPags)
     {
-        var pe = PlayerEntityService.GetPlayerEntity(pag.PlayerRowKey);
-        teamBAdminRatingTotal += pe.AdminRating;
+        var player = PlayerService.GetPlayer(pag.PlayerRowKey);
+        teamBAdminRatingTotal += player.AdminRating;
         <tr>
             <td>B</td>
             <td>
-                <a href="/games/@_gameEntity.UrlSegment/@pag.UrlSegment">@pe.Name</a>
+                <a href="/games/@_gameEntity.UrlSegment/@pag.UrlSegment">@player.Name</a>
                 <PlayingForecastIcon Forecast="@pag.Forecast"/>
-                <PositionIcon Position="pe.Position"/>
+                <PositionIcon Position="player.Position"/>
                 <RagIcon PagEntity="@pag"/>
                 <AuthorizeView Policy="IsAdminEmail">
                     <Authorized>
                         @if (!_simpleView)
                         {
-                            <RatingNumberIcon Rating=@pe.AdminRating/>
+                            <RatingNumberIcon Rating=@player.AdminRating/>
                         }
                     </Authorized>
                 </AuthorizeView>
@@ -147,19 +147,19 @@
     }
     @foreach (var pag in _pags.Where(o => string.IsNullOrEmpty(o.Team)))
     {
-        var pe = PlayerEntityService.GetPlayerEntity(pag.PlayerRowKey);
+        var player = PlayerService.GetPlayer(pag.PlayerRowKey);
         <tr>
             <td>None</td>
             <td>
-                <a href="/games/@_gameEntity.UrlSegment/@pag.UrlSegment">@pe.Name</a>
+                <a href="/games/@_gameEntity.UrlSegment/@pag.UrlSegment">@player.Name</a>
                 <PlayingForecastIcon Forecast="@pag.Forecast"/>
-                <PositionIcon Position="pe.Position"/>
+                <PositionIcon Position="player.Position"/>
                 <RagIcon PagEntity="@pag"/>
                 <AuthorizeView Policy="IsAdminEmail">
                     <Authorized>
                         @if (!_simpleView)
                         {
-                            <RatingNumberIcon Rating=@pe.AdminRating/>
+                            <RatingNumberIcon Rating=@player.AdminRating/>
                         }
                     </Authorized>
                 </AuthorizeView>
@@ -203,7 +203,7 @@ else
 
     private List<PlayerAtGameEntity> _pags = default!;
 
-    private List<PlayerEntity> _allPlayerEntities = [];
+    private List<Player> _allPlayers = [];
 
     private PlayerAtGameEntity _newPagEntity = new();
 
@@ -270,7 +270,7 @@ else
     private void RefreshData()
     {
         _gameEntity = GameEntityService.GetGameEntityByUrlSegment(GameUrlSegment);
-        _allPlayerEntities = PlayerEntityService.GetPlayerEntities();
+        _allPlayers = PlayerService.GetPlayers();
         _pags = GameEntityService.GetPlayerAtGameEntitiesForGame(_gameEntity.RowKey);
         _newPagEntity = new PlayerAtGameEntity()
         {

@@ -1,5 +1,5 @@
 @page "/games/addplayerstogame"
-@inject IPlayerEntityService PlayerEntityService
+@inject IPlayerService PlayerService
 @inject IGameEntityService GameEntityService
 @inject NavigationManager Navigation
 
@@ -40,9 +40,9 @@
     <label class="form-label">Add prospective players</label>
     <InputSelect class="form-select" @bind-Value="_selectedProspectPagPlayerRowKey" @bind-Value:after="AddProspectPag">
         <option value="" selected>Choose Player ...</option>
-        @foreach (var pe in _playerEntities)
+        @foreach (var player in _players)
         {
-            <option value="@pe.RowKey">@pe.Name</option>
+            <option value="@player.Id">@player.Name</option>
         }
     </InputSelect>
 </div>
@@ -66,7 +66,7 @@
     [CascadingParameter] public MainLayout MainLayout { get; set; } = default!;
     private List<GameEntity> _gameEntities = [];
 
-    private List<PlayerEntity> _playerEntities = [];
+    private List<Player> _players = [];
 
     private List<PlayerAtGameEntity> _prospectPags = [];
 
@@ -120,7 +120,7 @@
     private void RefreshData()
     {
         _gameEntities = GameEntityService.GetGameEntities();
-        _playerEntities = PlayerEntityService.GetPlayerEntities();
+        _players = PlayerService.GetPlayers();
         _nextGameEntity = GameEntityService.GetNextGameEntity();
         _selectedGameRowKey = _nextGameEntity.RowKey;
         _selectedGame = _nextGameEntity;

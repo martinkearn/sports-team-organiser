@@ -72,7 +72,7 @@
                 <a href="/games/@_gameEntity.UrlSegment/@pag.UrlSegment">@player.Name</a>
                 <PlayingForecastIcon Forecast="@pag.Forecast"/>
                 <PositionIcon Position="player.Position"/>
-                <RagIcon PagEntity="@pag"/>
+                <RagIcon Balance="player.Balance" Played="pag.Played" DefaultRate="player.DefaultRate" PlayerRowKey="@player.Id" />
                 <AuthorizeView Policy="IsAdminEmail">
                     <Authorized>
                         @if (!_simpleView)
@@ -117,7 +117,7 @@
                 <a href="/games/@_gameEntity.UrlSegment/@pag.UrlSegment">@player.Name</a>
                 <PlayingForecastIcon Forecast="@pag.Forecast"/>
                 <PositionIcon Position="player.Position"/>
-                <RagIcon PagEntity="@pag"/>
+                <RagIcon Balance="player.Balance" Played="pag.Played" DefaultRate="player.DefaultRate" PlayerRowKey="@player.Id" />
                 <AuthorizeView Policy="IsAdminEmail">
                     <Authorized>
                         @if (!_simpleView)
@@ -154,7 +154,7 @@
                 <a href="/games/@_gameEntity.UrlSegment/@pag.UrlSegment">@player.Name</a>
                 <PlayingForecastIcon Forecast="@pag.Forecast"/>
                 <PositionIcon Position="player.Position"/>
-                <RagIcon PagEntity="@pag"/>
+                <RagIcon Balance="player.Balance" Played="pag.Played" DefaultRate="player.DefaultRate" PlayerRowKey="@player.Id" />
                 <AuthorizeView Policy="IsAdminEmail">
                     <Authorized>
                         @if (!_simpleView)

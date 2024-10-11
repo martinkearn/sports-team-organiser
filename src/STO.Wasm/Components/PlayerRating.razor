@@ -1,4 +1,4 @@
-@if (_stars)
+@if (Stars)
 {
     @switch (_roundedRating)
     {
@@ -87,16 +87,13 @@ else
 }
 
 @code {
-    [Parameter] public double Rating { get; set; } = default!;
-    [Parameter] public bool? Stars { get; set; }
+    [Parameter] public double Rating { get; set; }
+    [Parameter] public bool Stars { get; set; }
 
     private double _roundedRating;
-    private bool _stars;
     
     protected override void OnInitialized()
     {
-        _stars = Stars == default || (bool)Stars;
-
         _roundedRating = Math.Round(Rating * 1, MidpointRounding.AwayFromZero);
     }
 }

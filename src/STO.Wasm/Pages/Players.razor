@@ -27,8 +27,8 @@
 				<td class="d-none d-lg-table-cell">@p.GamesCount</td>
 				<AuthorizeView Policy="IsAdminEmail">
 					<Authorized>
-						<td class="d-none d-lg-table-cell"><PlayerRating Rating="@p.AdminRating" /></td>
-						<td class="d-none d-lg-table-cell"><PlayerRating Rating="@p.Rating" /></td>
+						<td class="d-none d-lg-table-cell"><PlayerRating Rating="@p.AdminRating" Stars="true" /></td>
+						<td class="d-none d-lg-table-cell"><PlayerRating Rating="@p.Rating" Stars="true" /></td>
 						<td class="d-none d-lg-table-cell"><CurrencyDisplay Amount="@p.Balance" /></td>
 					</Authorized>
 					<NotAuthorized>

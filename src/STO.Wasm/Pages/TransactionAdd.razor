@@ -1,6 +1,6 @@
 @page "/transactions/add"
 @inject ITransactionEntityService TransactionEntityService
-@inject IPlayerEntityService PlayerEntityService
+@inject IPlayerService PlayerService
 @inject NavigationManager Navigation
 
 
@@ -17,9 +17,9 @@
 				<label for="addPlayerRowKey" class="form-label">Player</label>
 				<InputSelect class="form-select" @bind-Value="_newTransactionEntity.PlayerRowKey">
 					<option value="">Select Player ...</option>
-					@foreach (var pe in _playerEntities)
+					@foreach (var p in _players)
 					{
-						<option value="@pe.RowKey">@pe.Name</option>
+						<option value="@p.Id">@p.Name</option>
 					}
 				</InputSelect>
 			</div>
@@ -57,7 +57,7 @@
 
 @code {
 	[CascadingParameter] public MainLayout MainLayout { get; set; } = default!;
-	private List<PlayerEntity> _playerEntities = [];
+	private List<Player> _players = [];
 
 	private TransactionEntity _newTransactionEntity = new();
 
@@ -77,7 +77,7 @@
 	private void RefreshData()
 	{
 		_newTransactionEntity = new TransactionEntity();
-		_playerEntities = PlayerEntityService.GetPlayerEntities();
+		_players = PlayerService.GetPlayers();
 		_pageTitle = "Add Transaction";
 		MainLayout.SetPageTitle(_pageTitle);
 	}

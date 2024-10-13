@@ -21,9 +21,9 @@
 				@foreach (var re in _pageOfRatingEntities)
 				{
 					<tr>
-						<td><EntityTitleLink EntityType="Enums.EntityType.RatingEntity" RowKey="@re.RowKey" Link="true" Length="Enums.TitleLength.Short" /></td>
-						<td><EntityTitleLink EntityType="Enums.EntityType.PlayerEntity" RowKey="@re.PlayerRowKey" Link="true" /></td>
-						<td><EntityTitleLink EntityType="Enums.EntityType.GameEntity" RowKey="@re.GameRowKey" Link="false" /></td>
+						<td><a href="/ratings/{@re.UrlSegment}">@re.Timestamp!.Value.ToString("dd-MM-yy HH:mm")</a> TO DO: Use rating Label from Rating</td>
+						<td>@re.PlayerRowKey DO Player Name from Rating</td>
+						<td>@re.GameRowKey TO DO Game Title from Rating</td>
 						<td>@re.Rating</td>
 						<td class="d-none d-lg-table-cell">@re.Notes</td>
 					</tr>
@@ -56,7 +56,7 @@
 
 	private List<RatingEntity> _pageOfRatingEntities = [];
 
-	private readonly int _ratingsPerPage = 40;
+	private const int _ratingsPerPage = 40;
 
 	private int _currentPageNumber = 1;
 

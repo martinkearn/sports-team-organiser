@@ -13,7 +13,7 @@
 		<p>Ratings cannot be edited, only deleted</p>
 
 		<h5>Date & Time</h5>
-		<p>@_ratingEntity.Timestamp!.Value.ToString("dd-MM-yy HH:mm")</p>
+		<p>@_ratingEntity.Timestamp!.Value.ToString(Consts.DateTimeFormat)</p>
 
 		<h5>Url Segment</h5>
 		<p>@_ratingEntity.UrlSegment</p>
@@ -22,7 +22,7 @@
 		<p><PlayerLink Player="_player"/></p>
 
 		<h5>Game</h5>
-		<p><EntityTitleLink RowKey="@_ratingEntity.GameRowKey" EntityType="Enums.EntityType.GameEntity" Link="true" /></p>
+		<p>@_ratingEntity.GameRowKey TO DO Game Title from Rating</p>
 
 		<h5>Rating</h5>
 		<p>@_ratingEntity.Rating</p>

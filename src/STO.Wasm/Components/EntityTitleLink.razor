@@ -1,15 +1,12 @@
 @inject IGameEntityService GameEntityService
-@inject IPlayerEntityService PlayerEntityService
 @inject IRatingEntityService RatingEntityService
 @inject ITransactionEntityService TransactionEntityService
+@inject IPlayerService PlayerService
 
 @if (Link)
 {
     @switch (EntityType)
     {
-        case Enums.EntityType.PlayerEntity:
-            <a href="/players/@_playerEntity.UrlSegment">@Label</a>
-            break;
         case Enums.EntityType.GameEntity:
             <a href="/games/@_gameEntity.UrlSegment">@Label</a>
             break;
@@ -45,8 +42,6 @@ else
 
     private GameEntity _gameEntity = default!;
 
-    private PlayerEntity _playerEntity = default!;
-
     private PlayerAtGameEntity _playerAtGameEntity = default!;
 
     private TransactionEntity _transactionEntity = default!;
@@ -70,17 +65,6 @@ else
 
         switch (EntityType)
         {
-            case Enums.EntityType.PlayerEntity:
-                _playerEntity = PlayerEntityService.GetPlayerEntity(RowKey);
-
-                Label = Length switch
-                {
-                    Enums.TitleLength.Short => _playerEntity.Name,
-                    Enums.TitleLength.Long => $"{_playerEntity.Name}, {_playerEntity.Position}",
-                    _ => _playerEntity.Name
-                };
-
-                break;
             case Enums.EntityType.GameEntity:
                 _gameEntity = GameEntityService.GetGameEntity(RowKey);
                 if (string.IsNullOrEmpty(Label))
@@ -100,16 +84,16 @@ else
                 break;
             case Enums.EntityType.TransactionEntity:
                 _transactionEntity = TransactionEntityService.GetTransactionEntity(RowKey);
-                _playerEntity = PlayerEntityService.GetPlayerEntity(_transactionEntity.PlayerRowKey);
+                var player = PlayerService.GetPlayer(_transactionEntity.PlayerRowKey);
                 if (string.IsNullOrEmpty(Label))
                 {
                     var transactionLabel = Length switch
                     {
-                        Enums.TitleLength.Short => _transactionEntity.Date.ToString("dd-MM-yy"),
-                        Enums.TitleLength.Long => _transactionEntity.Date.ToString("dd MMM yyyy HH:mm"),
-                        _ => _transactionEntity.Date.ToString("dd-MM-yy")
+                        Enums.TitleLength.Short => _transactionEntity.Date.ToString(Consts.JustDateFormat),
+                        Enums.TitleLength.Long => _transactionEntity.Date.ToString(Consts.DateTimeFormat),
+                        _ => _transactionEntity.Date.ToString(Consts.JustDateFormat)
                     };
-                    Label = $"{transactionLabel} for {_playerEntity.Name}";
+                    Label = $"{transactionLabel} for {player.Name}";
                 }
                 
                 break;

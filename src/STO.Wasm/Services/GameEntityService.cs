@@ -3,7 +3,7 @@
 namespace STO.Wasm.Services
 {
 	/// <inheritdoc/>
-	public class GameEntityService(IDataService dataService, IRatingEntityService ratingEntityEntityService, IPlayerEntityService playerEntityService, ITransactionEntityService transactionEntityService) : IGameEntityService
+	public class GameEntityService(IDataService dataService, IRatingEntityService ratingEntityEntityService, ITransactionEntityService transactionEntityService) : IGameEntityService
 	{
 		public async Task<List<PlayerAtGameEntity>> CalculateTeamsAsync(List<PlayerAtGameEntity> pags)
 		{
@@ -190,7 +190,7 @@ namespace STO.Wasm.Services
 		public async Task TogglePlayerAtGamePlayedAsync(PlayerAtGameEntity pag, bool? played)
 		{
 			// Get player for pag
-			var playerEntity = playerEntityService.GetPlayerEntity(pag.PlayerRowKey);
+			var playerEntity = dataService.PlayerEntities.First(pe => pe.RowKey == pag.PlayerRowKey);
 
 			if (played != null)
 			{
@@ -248,7 +248,7 @@ namespace STO.Wasm.Services
 			
 			// Set the UrlSegment
 			// Cannot do this as setter for UrlSegment because we cannot resolve the GameEntity and PlayerEntity there
-			var playerEntity = playerEntityService.GetPlayerEntity(pagEntity.PlayerRowKey);
+			var playerEntity = dataService.PlayerEntities.First(pe => pe.RowKey == pagEntity.PlayerRowKey);
 			var gameEntity = GetGameEntity(pagEntity.GameRowKey);
 			pagEntity.UrlSegment = $"{playerEntity.UrlSegment}-{gameEntity.UrlSegment}";
 			
@@ -260,8 +260,8 @@ namespace STO.Wasm.Services
 		{
 			List<ExpandedPag> ePags = (from pag in pags 
 				let ge = GetGameEntity(pag.GameRowKey) 
-				let pe = playerEntityService.GetPlayerEntity(pag.PlayerRowKey) 
-				select new ExpandedPag(pag, ge, pe)).ToList();
+				let playerEntity = dataService.PlayerEntities.FirstOrDefault(pe => pe.RowKey == pag.PlayerRowKey)
+				select new ExpandedPag(pag, ge, playerEntity)).ToList();
 			return ePags;
 		}
 	}

@@ -1,34 +1,38 @@
 @page "/players"
-@inject IPlayerEntityService PlayerEntityService
+@inject IPlayerService PlayerService
 
 <PageTitle>TNF - @_pageTitle</PageTitle>
 
 <h1><i class="fa-solid fa-user me-2"></i> @_pageTitle</h1>
 
-<p>@_playerEntities.Count players registered.</p>
+<p>@_players.Count players registered.</p>
 
 <table class="table striped-columns table-hover">
 	<thead>
 		<tr>
 			<th scope="col">Name</th>
 			<th scope="col" class="d-none d-lg-table-cell">Position</th>
+			<th scope="col" class="d-none d-lg-table-cell">Games</th>
 			<th scope="col" class="d-none d-lg-table-cell">Admin Rating</th>
+			<th scope="col" class="d-none d-lg-table-cell">Rating</th>
 			<th scope="col" class="d-none d-lg-table-cell">Balance</th>
 		</tr>
 	</thead>
 	<tbody>
-		@foreach (var pe in _playerEntities)
+		@foreach (var p in _players)
 		{
-			var peBalance = PlayerEntityService.GetBalanceForPlayerEntity(pe.RowKey);
 			<tr>
-				<td><EntityTitleLink EntityType="Enums.EntityType.PlayerEntity" RowKey="@pe.RowKey" Length="Enums.TitleLength.Short" Link="true" /></td>
-				<td class="d-none d-lg-table-cell">@pe.Position</td>
+				<td><PlayerLink Player="@p" /></td>
+				<td class="d-none d-lg-table-cell">@p.Position</td>
+				<td class="d-none d-lg-table-cell">@p.GamesCount</td>
 				<AuthorizeView Policy="IsAdminEmail">
 					<Authorized>
-						<td class="d-none d-lg-table-cell">@pe.AdminRating</td>
-						<td class="d-none d-lg-table-cell"><CurrencyDisplay Amount="@peBalance" /></td>
+						<td class="d-none d-lg-table-cell"><PlayerRating Rating="@p.AdminRating" Stars="true" /></td>
+						<td class="d-none d-lg-table-cell"><PlayerRating Rating="@p.Rating" Stars="true" /></td>
+						<td class="d-none d-lg-table-cell"><CurrencyDisplay Amount="@p.Balance" /></td>
 					</Authorized>
 					<NotAuthorized>
+						<td class="d-none d-lg-table-cell"><i class="fa-solid fa-key grey"></i></td>
 						<td class="d-none d-lg-table-cell"><i class="fa-solid fa-key grey"></i></td>
 						<td class="d-none d-lg-table-cell"><i class="fa-solid fa-key grey"></i></td>
 					</NotAuthorized>
@@ -38,15 +42,14 @@
 	</tbody>
 </table>
 
-
 @code {
 	[CascadingParameter] public MainLayout MainLayout { get; set; } = default!;
-	private List<PlayerEntity> _playerEntities = [];
+	private List<Player> _players = [];
 	private string _pageTitle = default!;
 
 	protected override void OnInitialized()
 	{
-		_playerEntities = PlayerEntityService.GetPlayerEntities();
+		_players = PlayerService.GetPlayers();
 		_pageTitle = "Players";
 		MainLayout.SetPageTitle(_pageTitle);
 	}

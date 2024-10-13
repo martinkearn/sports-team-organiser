@@ -7,7 +7,7 @@
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject IDataService DataService
 @inject IGameEntityService GameEntityService
-@inject IPlayerEntityService PlayerEntityService
+@inject IPlayerService PlayerService
 @inject ITransactionEntityService TransactionEntityService
 @inject IRatingEntityService RatingEntityService
 
@@ -114,10 +114,10 @@
 	{
 		_updateCount = 0;
 		_updateStatus = "Start Players";
-		var players = PlayerEntityService.GetPlayerEntities();
+		var players = PlayerService.GetPlayers();
 		foreach (var player in players)
 		{
-			await PlayerEntityService.UpsertPlayerEntityAsync(player);
+			await PlayerService.UpsertPlayerAsync(player);
 			_updateCount += 1;
 		}
 		_updateStatus = $"Updated {_updateCount} Players";

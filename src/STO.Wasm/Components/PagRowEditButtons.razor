@@ -1,6 +1,6 @@
 @inject IGameEntityService GameEntityService
 @inject ITransactionEntityService TransactionEntityService
-@inject IPlayerEntityService PlayerEntityService
+@inject IPlayerService PlayerService
 @inject NavigationManager Navigation
 
 <AuthorizeView Policy="IsAdminEmail">
@@ -25,7 +25,7 @@
             <button type="button" class="btn btn-outline-secondary btn-sm d-none d-md-inline" @onclick="() => SwitchPagTeam(Enums.Team.None)">@PagEntity.Team <i class="fa-solid fa-repeat"></i></button>
             }
 
-            <button type="button" class="btn btn-outline-secondary btn-sm d-none d-md-inline" @onclick="AddTransactionForPlayer"><i class="fa-solid fa-plus"></i> £@_pagDefaultAmount</button>
+            <button type="button" class="btn btn-outline-secondary btn-sm d-none d-md-inline" @onclick="AddTransactionForPlayer"><i class="fa-solid fa-plus"></i> £@_player.DefaultRate</button>
             <button type="button" class="btn btn-outline-secondary btn-sm d-none d-lg-inline" @onclick="NavigateToPag"><i class="fa-solid fa-edit"></i> Edit</button>
         </div>
     </Authorized>
@@ -38,7 +38,7 @@
     [Parameter]
     public EventCallback RefreshMainPage { get; set; }
 
-    private double _pagDefaultAmount = default;
+    private Player _player = default!;
     
     private GameEntity _pagGameEntity = default!;
 
@@ -86,7 +86,7 @@
                 Date = DateTimeOffset.UtcNow,
                 Notes = GameEntityService.GetNotesForGame(PagEntity.GameRowKey),
                 PlayerRowKey = PagEntity.PlayerRowKey,
-                Amount = _pagDefaultAmount
+                Amount = _player.DefaultRate
             };
         if (TransactionEntityService is not null)
         {
@@ -98,7 +98,7 @@
     private async Task RefreshData()
     {
         _pagGameEntity = GameEntityService.GetGameEntity(PagEntity.GameRowKey);
-        _pagDefaultAmount = PlayerEntityService.GetDefaultRateForPlayerEntity(PagEntity.PlayerRowKey);
+        _player = PlayerService.GetPlayer(PagEntity.PlayerRowKey);
         await RefreshMainPage.InvokeAsync();
     }
 

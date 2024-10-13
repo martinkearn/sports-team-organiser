@@ -1,5 +1,5 @@
 @page "/players/{PlayerUrlSegment}"
-@inject IPlayerEntityService PlayerEntityService
+@inject IPlayerService PlayerService
 @inject NavigationManager Navigation
 
 <PageTitle>TNF - @_pageTitle</PageTitle>
@@ -15,25 +15,15 @@
 	</li>
 </ul>
 
-<div class="mb-3">
+<div class="mb-3 mt-3">
 	<label class="form-label">Name</label>
-	<InputText class="form-control"  @bind-Value="_playerEntity.Name" @bind-Value:after="Edit" />
+	<InputText class="form-control"  @bind-Value="_player.Name" @bind-Value:after="Edit" />
 </div>
 
-<div class="mb-3">
-	<label class="form-label">Last Updated</label>
-	<span class="form-control-plaintext">@_playerEntity.Timestamp</span>
-</div>
-
-<div class="mb-3">
-	<label class="form-label">Url Segment</label>
-	<InputText class="form-control" @bind-Value="_playerEntity.UrlSegment" disabled="true"  />
-	<div class="form-text">Set automatically.</div>
-</div>
 
 <div class="mb-3">
 	<label fclass="form-label">Position</label>
-	<InputSelect class="form-select" @bind-Value="_playerEntity.Position" @bind-Value:after="() => Edit()">
+	<InputSelect class="form-select" @bind-Value="_player.Position" @bind-Value:after="() => Edit()">
 		@foreach (var option in Enum.GetNames(typeof(Enums.PlayerPosition)))
 		{
 			<option value="@option">@option</option>
@@ -45,31 +35,50 @@
 	<Authorized>
 		<div class="mb-3">
 			<label class="form-label">Admin Rating</label>
-			<InputNumber class="form-control" id="addAdminRating" min="1" max="5" @bind-Value="_playerEntity.AdminRating" @bind-Value:after="Edit" />
-			<div class="form-text">1-5 (5 high).</div>
+			<InputNumber class="form-control" id="addAdminRating" min="1" max="5" @bind-Value="_player.AdminRating" @bind-Value:after="Edit" />
+		</div>
+
+		<div class="mb-3">
+			<label class="form-label">Average Rating</label>
+			<div class="form-control bg-body-secondary"><PlayerRating Rating="_player.Rating" Stars="true" /></div>
 		</div>
 
 		<div class="mb-3">
 			<label class="form-label">Default Rate</label>
 			<div class="input-group">
 				<span class="input-group-text">£</span>
-				<InputNumber type="number" min="0" class="form-control" id="addDefaultRate" @bind-Value="_playerEntity.DefaultRate" @bind-Value:after="Edit" />
+				<InputNumber type="number" min="0" class="form-control" id="addDefaultRate" @bind-Value="_player.DefaultRate" @bind-Value:after="Edit" />
 			</div>
-			<div class="form-text">Default rate per game. Usually £3 or £4.</div>
 		</div>
 
 		<div class="mb-3">
 			<label class="form-label">Balance</label>
-			<span class="form-control-plaintext"><CurrencyDisplay Amount="@_playerEntityBalance" /></span>
+			<span class="form-control-plaintext"><CurrencyDisplay Amount="@_player.Balance" /></span>
 		</div>
 	</Authorized>
 </AuthorizeView>
 
+<div class="mb-3">
+	<label class="form-label">Url Segment</label>
+	<InputText class="form-control" @bind-Value="_player.UrlSegment" disabled="true"  />
+</div>
+
+<div class="mb-3">
+	<label class="form-label">Games Played</label>
+	<div class="form-control bg-body-secondary">@_player.GamesCount</div>
+</div>
+
+<div class="mb-3">
+	<label class="form-label">Last Updated</label>
+	<div class="form-control bg-body-secondary">@_player.LastUpdated</div>
+</div>
+
+<hr class="mb-4"/>
 <div class="hstack gap-2">
 	<a class="btn btn-secondary" href="/players/"><i class="fa-solid fa-arrow-left"></i> All Players</a>
 	<AuthorizeView Policy="IsAdminEmail">
 		<Authorized>
-			<DeleteButtonWithCheck DeleteWhatLabel="@_playerEntity.Name" ButtonLabel="Delete" ParentPageCallback="DeletePlayer" />
+			<DeleteButtonWithCheck DeleteWhatLabel="@_player.Name" ButtonLabel="Delete" ParentPageCallback="DeletePlayer" />
 		</Authorized>
 		<NotAuthorized>
 			<a class="btn btn-secondary disabled"><i class="fa-solid fa-trash"></i> Delete</a>
@@ -83,9 +92,7 @@
 	
 	[Parameter] public string PlayerUrlSegment { get; set; } = default!;
 
-	private PlayerEntity _playerEntity = default!;
-
-	private double _playerEntityBalance;
+	private Player _player = default!;
 
 	private string _pageTitle = default!;
 
@@ -96,12 +103,12 @@
 
 	async Task Edit()
 	{
-		await PlayerEntityService.UpsertPlayerEntityAsync(_playerEntity);
+		await PlayerService.UpsertPlayerAsync(_player);
 	}
 
 	private async Task DeletePlayer()
 	{
-		await PlayerEntityService.DeletePlayerEntityAsync(_playerEntity.RowKey);
+		await PlayerService.DeletePlayerAsync(_player.Id);
 		Navigation.NavigateTo("/players");
 	}
 
@@ -109,9 +116,8 @@
 
 	private void RefreshData()
 	{
-		_playerEntity = PlayerEntityService.GetPlayerEntityFromUrlSegment(PlayerUrlSegment);
-		_playerEntityBalance = PlayerEntityService.GetBalanceForPlayerEntity(_playerEntity.RowKey);
-		_pageTitle = $"{_playerEntity.Name}";
+		_player = PlayerService.GetPlayers().Single(p => p.UrlSegment == PlayerUrlSegment);
+		_pageTitle = $"{_player.Name}";
 		MainLayout.SetPageTitle(_pageTitle);
 	}
 }

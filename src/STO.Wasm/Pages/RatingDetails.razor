@@ -1,7 +1,7 @@
 @page "/ratings/{RatingUrlSegment}"
 @inject IRatingEntityService RatingEntityEntityService
-@inject IPlayerEntityService PlayerEntityService
-@inject  IGameEntityService GameEntityService
+@inject IPlayerService PlayerService
+@inject IGameEntityService GameEntityService
 @inject NavigationManager Navigation
 
 <PageTitle>TNF - @_pageTitle</PageTitle>
@@ -13,16 +13,16 @@
 		<p>Ratings cannot be edited, only deleted</p>
 
 		<h5>Date & Time</h5>
-		<p><EntityTitleLink EntityType="Enums.EntityType.RatingEntity" RowKey="@_ratingEntity.RowKey" Link="false" Length="Enums.TitleLength.Long" /></p>
+		<p>@_ratingEntity.Timestamp!.Value.ToString(Consts.DateTimeFormat)</p>
 
 		<h5>Url Segment</h5>
 		<p>@_ratingEntity.UrlSegment</p>
 
 		<h5>Player</h5>
-		<p><EntityTitleLink EntityType="Enums.EntityType.PlayerEntity" RowKey="@_ratingEntity.PlayerRowKey" Link="true" /></p>
+		<p><PlayerLink Player="_player"/></p>
 
 		<h5>Game</h5>
-		<p><EntityTitleLink RowKey="@_ratingEntity.GameRowKey" EntityType="Enums.EntityType.GameEntity" Link="true" /></p>
+		<p>@_ratingEntity.GameRowKey TO DO Game Title from Rating</p>
 
 		<h5>Rating</h5>
 		<p>@_ratingEntity.Rating</p>
@@ -56,7 +56,7 @@
 
 	private RatingEntity _ratingEntity = default!;
 
-	private PlayerEntity _playerEntity = default!;
+	private Player _player = default!;
 
 	private string _pageTitle = default!;
 
@@ -74,8 +74,8 @@
 	private void RefreshData()
 	{
 		_ratingEntity = RatingEntityEntityService.GetRatingEntityByUrlSegment(RatingUrlSegment);
-		_playerEntity = PlayerEntityService.GetPlayerEntity(_ratingEntity.PlayerRowKey);
-		_pageTitle = $"Rating for {_playerEntity.Name} {GameEntityService.GetGameLabel(_ratingEntity.GameRowKey)}";
+		_player = PlayerService.GetPlayer(_ratingEntity.PlayerRowKey);
+		_pageTitle = $"Rating for {_player.Name} {GameEntityService.GetGameLabel(_ratingEntity.GameRowKey)}";
 		MainLayout.SetPageTitle(_pageTitle);
 	}
 }

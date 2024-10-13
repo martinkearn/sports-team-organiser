@@ -1,24 +1,22 @@
-@inject IPlayerEntityService PlayerEntityService
-<a href="/players/@PagEntity?.PlayerRowKey">
+<a href="/players/@PlayerRowKey">
 @if (!string.IsNullOrEmpty(_css))
 {
     <i class="@_css"></i>  
-}
-else
-{
-    @if(Rag is not null)
-    {
-        @Rag.ToString()
-    }
 }
 </a>
 
 @code {
     [Parameter]
-    public PlayerAtGameEntity? PagEntity { get; set; }
-
+    public required double Balance { get; set; }
+    
     [Parameter]
-    public string? Rag { get; set; }
+    public required double DefaultRate { get; set; }
+    
+    [Parameter]
+    public required string PlayerRowKey { get; set; }
+    
+    [Parameter]
+    public required bool Played { get; set; }
 
     private string? _css;
 
@@ -34,42 +32,44 @@ else
 
     private void SetCss()
     {
-        if (PagEntity is not null)
-        {
+        var rag = "red";
             // Work out pag RAG status
-            Rag = "red";
-            var pagBalance = PlayerEntityService.GetBalanceForPlayerEntity(PagEntity.PlayerRowKey);
-            var pagDefaultRate = PlayerEntityService.GetDefaultRateForPlayerEntity(PagEntity.PlayerRowKey);
-            if (!PagEntity.Played)
+            if (!Played)
             {
-                // Not played, so pre-game rag
-                if (pagBalance < 0)
+                switch (Balance)
                 {
-                    Rag = "red";
-                }
-                else if ((pagBalance >= 0) && (pagBalance < pagDefaultRate))
-                {
-                    Rag = "amber";
-                }
-                else if (pagBalance >= pagDefaultRate)
-                {
-                    Rag = "green";
+                    // Not played, so pre-game rag
+                    case < 0:
+                        rag = "red";
+                        break;
+                    case >= 0 when (Balance < DefaultRate):
+                        rag = "amber";
+                        break;
+                    default:
+                    {
+                        if (Balance >= DefaultRate)
+                        {
+                            rag = "green";
+                        }
+
+                        break;
+                    }
                 }
             }
             else
             {
                 // Has played so post game rag
-                if (pagBalance >= 0)
+                if (Balance >= 0)
                 {
-                    Rag = "green";
+                    rag = "green";
                 }
-                else if ((pagBalance == 0) && (pagBalance > 0))
+                else if (Balance == 0 && Balance > 0)
                 {
-                    Rag = "amber";
+                    rag = "amber";
                 }
             }
 
-            switch (Rag)
+            switch (rag)
             {
                 case "green":
                     _css = "fa-solid fa-circle-check text-success";
@@ -83,6 +83,5 @@ else
                 default:
                     break;
             }
-        }
     }
 }

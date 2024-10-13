@@ -1,6 +1,6 @@
 @page "/ratings/addmultiple"
 @inject IRatingEntityService RatingEntityEntityService
-@inject IPlayerEntityService PlayerEntityService
+@inject IPlayerService PlayerService
 @inject NavigationManager Navigation
 
 <PageTitle>TNF - @_pageTitle</PageTitle>
@@ -22,9 +22,9 @@
 	<tbody>
 	@foreach (var re in _ratingEntityAllPlayers)
 	{
-		var pe = PlayerEntityService.GetPlayerEntity(re.PlayerRowKey);
+		var player = PlayerService.GetPlayer(re.PlayerRowKey);
 		<tr>
-			<td><EntityTitleLink EntityType="Enums.EntityType.PlayerEntity" RowKey="@re.PlayerRowKey" Link="false" /> <PositionIcon Position="pe.Position"></PositionIcon></td>
+			<td><EntityTitleLink EntityType="Enums.EntityType.PlayerEntity" RowKey="@re.PlayerRowKey" Link="false" /> <PositionIcon Position="player.Position"></PositionIcon></td>
 			<td>
 				<InputSelect class="form-select" @bind-Value="@re.Rating">
 					<option value="0">Select Rating ...</option>
@@ -49,7 +49,6 @@
 
 @code {
 	[CascadingParameter] public MainLayout MainLayout { get; set; } = default!;
-	private List<PlayerEntity> _playerEntities = [];
 
 	private readonly List<RatingEntity> _ratingEntityAllPlayers = [];
 
@@ -73,12 +72,12 @@
 
 	private void RefreshData()
 	{
-		_playerEntities = PlayerEntityService.GetPlayerEntities().OrderBy(o => o.Position).ToList();
-		foreach (var pe in _playerEntities)
+		var players = PlayerService.GetPlayers().OrderBy(o => o.Position).ToList();
+		foreach (var p in players)
 		{
 			_ratingEntityAllPlayers.Add(new RatingEntity
 			{
-				 PlayerRowKey = pe.RowKey,
+				 PlayerRowKey = p.Id,
 				 Rating = 0
 			});
 		}

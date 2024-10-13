@@ -15,6 +15,7 @@
     <PackageReference Include="Microsoft.Authentication.WebAssembly.Msal" Version="8.0.2" />
     <PackageReference Include="Microsoft.AspNetCore.Components.Authorization" Version="8.0.2" />
     <PackageReference Include="Microsoft.Extensions.Http" Version="2.1.0" />
+    <ProjectReference Include="..\STO.Services\STO.Services.csproj" />
   </ItemGroup>
 
   <!-- To fix "There was an error trying to log you in: '"undefined" is not valid JSON'" https://github.com/dotnet/aspnetcore/issues/49956 -->

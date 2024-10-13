@@ -1,5 +1,5 @@
 @page "/games/addtransactionstogame"
-@inject IPlayerEntityService PlayerEntityService
+@inject IPlayerService PlayerService
 @inject IGameEntityService GameEntityService
 @inject ITransactionEntityService TransactionEntityService
 @inject NavigationManager Navigation
@@ -34,9 +34,9 @@
             <label class="form-label">Players to add payments for</label>
             <InputSelect class="form-select" @bind-Value="_selectedProspectPagPlayerRowKey" @bind-Value:after="AddProspectTransaction">
                 <option value="" selected>Choose Player ...</option>
-                @foreach (var pe in _pagPlayerEntities)
+                @foreach (var player in _pagPlayers)
                 {
-                    <option value="@pe.RowKey"><EntityTitleLink RowKey="@pe.RowKey" EntityType="Enums.EntityType.PlayerEntity" Link="false" /></option>
+                    <option value="@player.Id">@player.Name</option>
                 }
             </InputSelect>
         </div>
@@ -64,7 +64,7 @@
     [CascadingParameter] public MainLayout MainLayout { get; set; } = default!;
     private List<GameEntity> _gameEntities = [];
 
-    private List<PlayerEntity> _pagPlayerEntities = [];
+    private List<Player> _pagPlayers = [];
 
     private List<TransactionEntity> _prospectTransactions = [];
 
@@ -87,11 +87,11 @@
     {
         if (string.IsNullOrEmpty(_selectedProspectPagPlayerRowKey)) return;
 
-        var pe = PlayerEntityService.GetPlayerEntity(_selectedProspectPagPlayerRowKey);
+        var player = PlayerService.GetPlayer(_selectedProspectPagPlayerRowKey);
         var prospectTransaction = new TransactionEntity()
         {
             PlayerRowKey = _selectedProspectPagPlayerRowKey,
-            Amount = pe.DefaultRate,
+            Amount = player.DefaultRate,
         };
         _prospectTransactions.Add(prospectTransaction);
     }
@@ -114,8 +114,7 @@
         if (string.IsNullOrEmpty(_selectedGameRowKey)) return;
         _selectedGame = GameEntityService.GetGameEntity(_selectedGameRowKey);
         _prospectTransactions.Clear();
-        var pags = GameEntityService.GetPlayerAtGameEntitiesForGame(_selectedGameRowKey);
-        _pagPlayerEntities = PlayerEntityService.GetPlayerEntitiesFromPags(pags);
+        _pagPlayers = PlayerService.GetPlayers(_selectedGameRowKey);
     }
 
     private void RefreshData()

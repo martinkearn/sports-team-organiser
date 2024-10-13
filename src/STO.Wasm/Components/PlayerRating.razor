@@ -1,0 +1,99 @@
+@if (Stars)
+{
+    @switch (_roundedRating)
+    {
+        case 0:
+            <i class="fa-regular fa-star" title="@Rating"></i>
+            <i class="fa-regular fa-star" title="@Rating"></i>
+            <i class="fa-regular fa-star" title="@Rating"></i>
+            <i class="fa-regular fa-star" title="@Rating"></i>
+            <i class="fa-regular fa-star" title="@Rating"></i>
+            break;
+        case 0.5:
+            <i class="fa-regular fa-star-half-stroke" title="@Rating"></i>
+            <i class="fa-regular fa-star" title="@Rating"></i>
+            <i class="fa-regular fa-star" title="@Rating"></i>
+            <i class="fa-regular fa-star" title="@Rating"></i>
+            <i class="fa-regular fa-star" title="@Rating"></i>
+            break;
+        case 1:
+            <i class="fa-solid fa-star" title="@Rating"></i>
+            <i class="fa-regular fa-star" title="@Rating"></i>
+            <i class="fa-regular fa-star" title="@Rating"></i>
+            <i class="fa-regular fa-star" title="@Rating"></i>
+            <i class="fa-regular fa-star" title="@Rating"></i>
+            break;
+        case 1.5:
+            <i class="fa-solid fa-star" title="@Rating"></i>
+            <i class="fa-regular fa-star-half-stroke" title="@Rating"></i>
+            <i class="fa-regular fa-star" title="@Rating"></i>
+            <i class="fa-regular fa-star" title="@Rating"></i>
+            <i class="fa-regular fa-star" title="@Rating"></i>
+            break;
+        case 2:
+            <i class="fa-solid fa-star" title="@Rating"></i>
+            <i class="fa-solid fa-star" title="@Rating"></i>
+            <i class="fa-regular fa-star" title="@Rating"></i>
+            <i class="fa-regular fa-star" title="@Rating"></i>
+            <i class="fa-regular fa-star" title="@Rating"></i>
+            break;
+        case 2.5:
+            <i class="fa-solid fa-star" title="@Rating"></i>
+            <i class="fa-solid fa-star" title="@Rating"></i>
+            <i class="fa-regular fa-star-half-stroke" title="@Rating"></i>
+            <i class="fa-regular fa-star" title="@Rating"></i>
+            <i class="fa-regular fa-star" title="@Rating"></i>
+            break;
+        case 3:
+            <i class="fa-solid fa-star" title="@Rating"></i>
+            <i class="fa-solid fa-star" title="@Rating"></i>
+            <i class="fa-solid fa-star" title="@Rating"></i>
+            <i class="fa-regular fa-star" title="@Rating"></i>
+            <i class="fa-regular fa-star" title="@Rating"></i>
+            break;
+        case 3.5:
+            <i class="fa-solid fa-star" title="@Rating"></i>
+            <i class="fa-solid fa-star" title="@Rating"></i>
+            <i class="fa-solid fa-star" title="@Rating"></i>
+            <i class="fa-regular fa-star-half-stroke" title="@Rating"></i>
+            <i class="fa-regular fa-star" title="@Rating"></i>
+            break;
+        case 4:
+            <i class="fa-solid fa-star" title="@Rating"></i>
+            <i class="fa-solid fa-star" title="@Rating"></i>
+            <i class="fa-solid fa-star" title="@Rating"></i>
+            <i class="fa-solid fa-star" title="@Rating"></i>
+            <i class="fa-regular fa-star" title="@Rating"></i>
+            break;
+        case 4.5:
+            <i class="fa-solid fa-star" title="@Rating"></i>
+            <i class="fa-solid fa-star" title="@Rating"></i>
+            <i class="fa-solid fa-star" title="@Rating"></i>
+            <i class="fa-solid fa-star" title="@Rating"></i>
+            <i class="fa-regular fa-star-half-stroke" title="@Rating"></i>
+            break;
+        case 5:
+            <i class="fa-solid fa-star" title="@Rating"></i>
+            <i class="fa-solid fa-star" title="@Rating"></i>
+            <i class="fa-solid fa-star" title="@Rating"></i>
+            <i class="fa-solid fa-star" title="@Rating"></i>
+            <i class="fa-solid fa-star" title="@Rating"></i>
+            break;
+    }
+}
+else
+{
+    <span>@_roundedRating</span>
+}
+
+@code {
+    [Parameter] public double Rating { get; set; }
+    [Parameter] public bool Stars { get; set; }
+
+    private double _roundedRating;
+    
+    protected override void OnInitialized()
+    {
+        _roundedRating = Math.Round(Rating * 1, MidpointRounding.AwayFromZero);
+    }
+}

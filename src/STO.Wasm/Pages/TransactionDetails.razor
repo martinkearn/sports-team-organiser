@@ -1,6 +1,6 @@
 @page "/transactions/{TransactionUrlSegment}"
 @inject ITransactionEntityService TransactionEntityService
-@inject IPlayerEntityService PlayerEntityService
+@inject IPlayerService PlayerService
 @inject NavigationManager Navigation
 
 <PageTitle>TNF - @_pageTitle</PageTitle>
@@ -32,7 +32,7 @@ else
 }
 
 <h5>Player</h5>
-<p><EntityTitleLink EntityType="Enums.EntityType.PlayerEntity" RowKey="@_transactionEntity.PlayerRowKey" Link="true" /></p>
+<p><PlayerLink Player="@_player" /></p>
 
 <div class="hstack gap-2">
 	<a class="btn btn-secondary" href="/transactions/"><i class="fa-solid fa-arrow-left"></i> All Transactions</a>
@@ -49,6 +49,8 @@ else
 
 	private string _pageTitle = default!;
 
+	private Player _player = default!;
+
 	protected override void OnInitialized()
 	{
 		RefreshData();
@@ -63,8 +65,8 @@ else
 	private void RefreshData()
 	{
 		_transactionEntity = TransactionEntityService.GetTransactionEntityByUrlSegment(TransactionUrlSegment);
-		var playerEntity = PlayerEntityService.GetPlayerEntity(_transactionEntity.PlayerRowKey);
-		_pageTitle = $"Transaction for {@playerEntity.Name}, {_transactionEntity.Date.Date.ToShortDateString()}";
+		_player = PlayerService.GetPlayer(_transactionEntity.PlayerRowKey);
+		_pageTitle = $"Transaction for {_player.Name}, {_transactionEntity.Date.Date.ToShortDateString()}";
 		MainLayout.SetPageTitle(_pageTitle);
 	}
 }

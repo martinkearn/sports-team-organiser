@@ -1,5 +1,5 @@
 @page "/playerstochase"
-@inject IPlayerEntityService PlayerEntityService
+@inject IPlayerService PlayerService
 @inject IGameEntityService GameEntityService
 
 <PageTitle>TNF - @_pageTitle</PageTitle>
@@ -30,7 +30,7 @@ else
 
 @foreach (var rp in _recentPlayersNotAtSelectedGame)
 {
-    <p><EntityTitleLink EntityType="Enums.EntityType.PlayerEntity" RowKey="@rp.Item1.RowKey" Length="Enums.TitleLength.Short" Link="true" /> has played @rp.Item2 times</p>
+    <p><PlayerLink Player="rp" /> has played @rp.GamesCount times</p>
 }
 
 @code {
@@ -39,8 +39,8 @@ else
     private List<GameEntity> _recentGames = default!;
     private string _selectedGameRowKey = default!;
     private string _selectedGameLabel = default!;
-    private List<(PlayerEntity, int)> _recentPlayers = default!;
-    private List<(PlayerEntity, int)> _recentPlayersNotAtSelectedGame = default!;
+    private List<Player> _recentPlayers = default!;
+    private List<Player> _recentPlayersNotAtSelectedGame = default!;
     private DateTime _startDate = default!;
 
     protected override void OnInitialized()
@@ -64,7 +64,7 @@ else
             _recentPlayersNotAtSelectedGame = []; //Reset list to all players
             foreach (var recentPlayer in _recentPlayers)
             {
-                if (pagsForSelectedGame.All(p => p.PlayerRowKey != recentPlayer.Item1.RowKey))
+                if (pagsForSelectedGame.All(p => p.PlayerRowKey != recentPlayer.Id))
                 {
                     _recentPlayersNotAtSelectedGame.Add(recentPlayer);
                 }
@@ -78,7 +78,7 @@ else
         _startDate = DateTime.UtcNow.Subtract(new TimeSpan(30, 0, 0, 0));
         
         // Get recent players
-        _recentPlayers = PlayerEntityService.GetRecentPlayerEntities(_startDate, DateTime.UtcNow);
+        _recentPlayers = PlayerService.GetPlayers(_startDate, DateTime.UtcNow);
         
         // Get recent games
         _recentGames = GameEntityService.GetGameEntities()

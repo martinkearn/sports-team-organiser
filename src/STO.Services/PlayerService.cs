@@ -52,6 +52,7 @@ public class PlayerService(IDataService dataService) : IPlayerService
             Position = playerEntity.Position,
             DefaultRate = playerEntity.DefaultRate,
             AdminRating = playerEntity.AdminRating,
+            LastUpdated = playerEntity.Timestamp!.Value.DateTime,
             Rating = rating,
             Balance = balance,
             Label = label,
@@ -72,7 +73,8 @@ public class PlayerService(IDataService dataService) : IPlayerService
             Name = player.Name,
             RowKey = player.Id,
             Tags = player.Tags,
-            UrlSegment = player.UrlSegment
+            UrlSegment = player.UrlSegment,
+            Timestamp = player.LastUpdated
         };
         return pe;
     }

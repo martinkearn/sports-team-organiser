@@ -89,9 +89,9 @@ else
                 {
                     var transactionLabel = Length switch
                     {
-                        Enums.TitleLength.Short => _transactionEntity.Date.ToString("dd-MM-yy"),
-                        Enums.TitleLength.Long => _transactionEntity.Date.ToString("dd MMM yyyy HH:mm"),
-                        _ => _transactionEntity.Date.ToString("dd-MM-yy")
+                        Enums.TitleLength.Short => _transactionEntity.Date.ToString(Consts.JustDateFormat),
+                        Enums.TitleLength.Long => _transactionEntity.Date.ToString(Consts.DateTimeFormat),
+                        _ => _transactionEntity.Date.ToString(Consts.JustDateFormat)
                     };
                     Label = $"{transactionLabel} for {player.Name}";
                 }

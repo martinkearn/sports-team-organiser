@@ -21,7 +21,7 @@
 				@foreach (var re in _pageOfRatingEntities)
 				{
 					<tr>
-						<td><a href="/ratings/{@re.UrlSegment}">@re.Timestamp!.Value.ToString("dd-MM-yy HH:mm")</a> TO DO: Use rating Label from Rating</td>
+						<td><a href="/ratings/@re.UrlSegment">@re.Timestamp!.Value.ToString("dd-MM-yy HH:mm")</a> TO DO: Use rating Label from Rating</td>
 						<td>@re.PlayerRowKey DO Player Name from Rating</td>
 						<td>@re.GameRowKey TO DO Game Title from Rating</td>
 						<td>@re.Rating</td>

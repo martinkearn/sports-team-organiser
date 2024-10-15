@@ -45,7 +45,8 @@
             <label class="form-label">Prospective Payments</label>
             @foreach (var prospectTransaction in _prospectTransactions)
             {
-                <p><CurrencyDisplay Amount="@prospectTransaction.Amount" BlackText="true"></CurrencyDisplay> for <EntityTitleLink EntityType="Enums.EntityType.PlayerEntity" RowKey="@prospectTransaction.PlayerRowKey" Link="false" /> </p>
+                var player = PlayerService.GetPlayer(prospectTransaction.PlayerRowKey);
+                <p><CurrencyDisplay Amount="@prospectTransaction.Amount" BlackText="true"></CurrencyDisplay> for <PlayerLink Player="player" /> </p>
             }
         </div>
 

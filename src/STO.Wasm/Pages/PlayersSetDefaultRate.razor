@@ -1,0 +1,24 @@
+@page "/playerssetdefaultrate"
+@inject IPlayerService PlayerService
+@inject IGameEntityService GameEntityService
+
+<PageTitle>TNF - @_pageTitle</PageTitle>
+
+<h1><i class="fa-solid fa-user me-2"></i> @_pageTitle</h1>
+
+@code {
+    [CascadingParameter] public MainLayout MainLayout { get; set; } = default!;
+    private string _pageTitle = default!;
+
+    protected override void OnInitialized()
+    {
+        RefreshData();
+    }
+    
+    private void RefreshData()
+    {
+        _pageTitle = "Players Set Default Rate";
+        MainLayout.SetPageTitle(_pageTitle);
+    }
+
+}

@@ -6,44 +6,50 @@
 
 <h1>@_pageTitle</h1>
 
-<EditForm Model="@_newPlayer" OnSubmit="@Add" Context="newPlayer">
-	<DataAnnotationsValidator />
-	<ValidationSummary />
-	<div class="mb-3">
-		<label for="addName" class="form-label">Name</label>
-		<InputText class="form-control" id="addName" @bind-Value="_newPlayer.Name" />
-	</div>
+<AuthorizeView Policy="IsAdminEmail">
+	<Authorized>
 
-	<div class="mb-3">
-		<label for="addTags" class="form-label">Position</label>
-		<InputSelect class="form-select" @bind-Value="_newPlayer.Position">
-			@foreach (var option in Enum.GetNames(typeof(Enums.PlayerPosition)))
-			{
-				<option value="@option">@option</option>
-			}
-		</InputSelect>
-	</div>
-
-	<div class="mb-3">
-		<label class="form-label">Admin Rating</label>
-		<InputNumber class="form-control" id="addAdminRating" @bind-Value="_newPlayer.AdminRating" />
-	</div>
-
-	<div class="mb-3">
-		<label for="addDefaultRate" class="form-label">Default Rate</label>
-		<div class="input-group">
-			<span class="input-group-text">£</span>
-			<InputNumber type="number" min="0" class="form-control" id="addDefaultRate" @bind-Value="_newPlayer.DefaultRate" />
+	<EditForm Model="@_newPlayer" OnSubmit="@Add" Context="newPlayer">
+		<DataAnnotationsValidator />
+		<ValidationSummary />
+		<div class="mb-3">
+			<label for="addName" class="form-label">Name</label>
+			<InputText class="form-control" id="addName" @bind-Value="_newPlayer.Name" />
 		</div>
-		<div class="form-text">Default rate per game. Usually £3 or £4.</div>
-	</div>
 
-	<div class="hstack gap-2">
-		<button type="submit" class="btn btn-secondary"><i class="fa-solid fa-plus"></i> Add Player</button>
-	</div>
-</EditForm>
+		<div class="mb-3">
+			<label for="addTags" class="form-label">Position</label>
+			<InputSelect class="form-select" @bind-Value="_newPlayer.Position">
+				@foreach (var option in Enum.GetNames(typeof(Enums.PlayerPosition)))
+				{
+					<option value="@option">@option</option>
+				}
+			</InputSelect>
+		</div>
 
-@code {
+		<div class="mb-3">
+			<label class="form-label">Admin Rating</label>
+			<InputNumber class="form-control" id="addAdminRating" @bind-Value="_newPlayer.AdminRating" />
+		</div>
+
+		<div class="mb-3">
+			<label for="addDefaultRate" class="form-label">Default Rate</label>
+			<div class="input-group">
+				<span class="input-group-text">£</span>
+				<InputNumber type="number" min="0" class="form-control" id="addDefaultRate" @bind-Value="_newPlayer.DefaultRate" />
+			</div>
+			<div class="form-text">Default rate per game. Usually £3 or £4.</div>
+		</div>
+
+		<div class="hstack gap-2">
+			<button type="submit" class="btn btn-secondary"><i class="fa-solid fa-plus"></i> Add Player</button>
+		</div>
+	</EditForm>
+
+	</Authorized>
+</AuthorizeView>
+
+	@code {
 	[CascadingParameter] public MainLayout MainLayout { get; set; } = default!;
 	private Player _newPlayer = null!;
 	private string _pageTitle = default!;

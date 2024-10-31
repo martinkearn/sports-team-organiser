@@ -1,0 +1,66 @@
+@page "/playerssetdefaultrate"
+@inject IPlayerService PlayerService
+
+<PageTitle>TNF - @_pageTitle</PageTitle>
+
+<h1><i class="fa-solid fa-user me-2"></i> @_pageTitle</h1>
+
+@if (!_showLongRunning)
+{
+    <div class="mb-3">
+        <label class="form-label">Default Rate</label>
+        <div class="input-group">
+            <span class="input-group-text">£</span>
+            <InputNumber type="number" min="0" class="form-control" id="addDefaultRate" @bind-Value="_newDefaultRate"  />
+        </div>
+    </div>
+    
+    <div class="hstack gap-2">
+        <button class="btn btn-secondary" @onclick="SetDefaultRate" title="Set Default Rate"><i class="fa-solid fa-save"></i> <span class="d-none d-md-inline">Set Default Rate</span></button>
+        @if (_playerUpdateCount > 0)
+        {
+            <p>@_playerUpdateCount players updated with new default rate of <CurrencyDisplay Amount="@_newDefaultRate" BlackText="true" /></p>
+        }
+    </div>
+}
+else
+{
+    <LongRunning />
+}
+
+@code {
+    [CascadingParameter] public MainLayout MainLayout { get; set; } = default!;
+    private string _pageTitle = default!;
+    private double _newDefaultRate;
+    private int _playerUpdateCount;
+    private bool _showLongRunning;
+
+    protected override void OnInitialized()
+    {
+        RefreshData();
+    }
+
+    private async Task SetDefaultRate()
+    {
+        _showLongRunning = true;
+        
+        var allPlayers = PlayerService.GetPlayers().ToList();
+        _playerUpdateCount = 0;
+
+        foreach (var player in allPlayers)
+        {
+            player.DefaultRate = _newDefaultRate;
+            await PlayerService.UpsertPlayerAsync(player);
+            _playerUpdateCount += 1;
+        }
+
+        _showLongRunning = false;
+    }
+
+    private void RefreshData()
+    {
+        _pageTitle = "Players Set Default Rate";
+        MainLayout.SetPageTitle(_pageTitle);
+    }
+
+}

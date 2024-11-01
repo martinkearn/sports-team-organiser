@@ -238,17 +238,17 @@
     @{
         var noPags = _pags.Where(p => p.Forecast == Enums.PlayingStatus.No).ToList();
     }
+    <tr>
+        <td colspan="2"><h2>Not Playing</h2></td>
+    </tr>
+    <tr>
+        <td colspan="2">
+            <span>@noPags.Count() players are not playing.</span>
+        </td>
+    </tr>
     @foreach (var pag in noPags)
     {
         var player = PlayerService.GetPlayer(pag.PlayerRowKey);
-        <tr>
-            <td colspan="2"><h2>Not Playing</h2></td>
-        </tr>
-        <tr>
-            <td colspan="2">
-                <span>@noPags.Count() players are not playing.</span>
-            </td>
-        </tr>
         <tr>
             <td>
                 <a href="/games/@_gameEntity.UrlSegment/@pag.UrlSegment">@player.Name</a>
@@ -271,12 +271,12 @@
                 }
             </td>
         </tr>
-        <tr>
-            <td colspan="2">
-                <hr>
-            </td>
-        </tr>
     }
+    <tr>
+        <td colspan="2">
+            <hr>
+        </td>
+    </tr>
     </tbody>
 </table>
 

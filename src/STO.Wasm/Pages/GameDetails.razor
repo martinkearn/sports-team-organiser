@@ -56,9 +56,11 @@
     </thead>
     <tbody>
 
+    @*TEAM A*@
     @{
         var teamAPags = _pags
-            .Where(o => o.Team == "A") 
+            .Where(p => p.Team == "A")
+            .Where(p => p.Forecast == Enums.PlayingStatus.Yes)
             .ToList();
         double teamAAdminRatingTotal = 0;
     }
@@ -100,10 +102,12 @@
             </td>
         </tr>
     }
-
+    
+    @*TEAM B*@
     @{
         var teamBPags = _pags
-            .Where(o => o.Team == "B")
+            .Where(p => p.Team == "B")
+            .Where(p => p.Forecast == Enums.PlayingStatus.Yes)
             .ToList();
         double teamBAdminRatingTotal = 0;
     }
@@ -145,11 +149,102 @@
             </td>
         </tr>
     }
-    @foreach (var pag in _pags.Where(o => string.IsNullOrEmpty(o.Team)))
+
+    @*Yes No TEAM*@
+    @{
+        var yesNoTeamPags = _pags
+            .Where(p => p.Team == "")
+            .Where(p => p.Forecast == Enums.PlayingStatus.Yes)
+            .ToList();
+    }
+    @foreach (var pag in yesNoTeamPags)
     {
         var player = PlayerService.GetPlayer(pag.PlayerRowKey);
         <tr>
-            <td>None</td>
+            <td>No Team</td>
+            <td>
+                <a href="/games/@_gameEntity.UrlSegment/@pag.UrlSegment">@player.Name</a>
+                <PlayingForecastIcon Forecast="@pag.Forecast"/>
+                <PositionIcon Position="player.Position"/>
+                <RagIcon Balance="player.Balance" Played="pag.Played" DefaultRate="player.DefaultRate" PlayerRowKey="@player.Id" />
+                <AuthorizeView Policy="IsAdminEmail">
+                    <Authorized>
+                        @if (!_simpleView)
+                        {
+                        <RatingNumberIcon Rating=@player.AdminRating/>
+                        }
+                    </Authorized>
+                </AuthorizeView>
+            </td>
+            <td class="text-end">
+                @if (!_simpleView)
+                {
+                <PagRowEditButtons PagEntity="@pag" RefreshMainPage="RefreshData"/>
+                }
+            </td>
+        </tr>
+    }
+    @if (yesNoTeamPags.Any())
+    {
+        <tr>
+            <td colspan="3">
+                <span>@yesNoTeamPags.Count() players are playing but have not yet got a team.</span>
+                <hr>
+            </td>
+        </tr>
+    }
+
+    @*Maybe*@
+    @{
+        var includedForecast = new[] { Enums.PlayingStatus.Maybe, Enums.PlayingStatus.Reserve1, Enums.PlayingStatus.Reserve2, Enums.PlayingStatus.Reserve3, Enums.PlayingStatus.Reserve4, Enums.PlayingStatus.Reserve5 };
+        var maybePags = _pags.Where(p => includedForecast.Contains(p.Forecast)).ToList();
+    }
+    @foreach (var pag in maybePags)
+    {
+        var player = PlayerService.GetPlayer(pag.PlayerRowKey);
+        <tr>
+            <td>Maybe</td>
+            <td>
+                <a href="/games/@_gameEntity.UrlSegment/@pag.UrlSegment">@player.Name</a>
+                <PlayingForecastIcon Forecast="@pag.Forecast"/>
+                <PositionIcon Position="player.Position"/>
+                <RagIcon Balance="player.Balance" Played="pag.Played" DefaultRate="player.DefaultRate" PlayerRowKey="@player.Id" />
+                <AuthorizeView Policy="IsAdminEmail">
+                    <Authorized>
+                        @if (!_simpleView)
+                        {
+                        <RatingNumberIcon Rating=@player.AdminRating/>
+                        }
+                    </Authorized>
+                </AuthorizeView>
+            </td>
+            <td class="text-end">
+                @if (!_simpleView)
+                {
+                    <PagRowEditButtons PagEntity="@pag" RefreshMainPage="RefreshData"/>
+                }
+            </td>
+        </tr>
+        }
+        @if (maybePags.Any())
+        {
+            <tr>
+                <td colspan="3">
+                    <span>@teamBPags.Count() players are maybe.</span>
+                    <hr>
+                </td>
+            </tr>
+        }
+
+    @*No*@
+    @{
+        var noPags = _pags.Where(p => p.Forecast == Enums.PlayingStatus.No).ToList();
+    }
+    @foreach (var pag in noPags)
+    {
+        var player = PlayerService.GetPlayer(pag.PlayerRowKey);
+        <tr>
+            <td>Not Playing</td>
             <td>
                 <a href="/games/@_gameEntity.UrlSegment/@pag.UrlSegment">@player.Name</a>
                 <PlayingForecastIcon Forecast="@pag.Forecast"/>
@@ -169,6 +264,15 @@
                 {
                     <PagRowEditButtons PagEntity="@pag" RefreshMainPage="RefreshData"/>
                 }
+            </td>
+        </tr>
+    }
+    @if (noPags.Any())
+    {
+        <tr>
+            <td colspan="3">
+                <span>@noPags.Count() players are not playing.</span>
+                <hr>
             </td>
         </tr>
     }
@@ -276,7 +380,8 @@ else
         {
             GameRowKey = _gameEntity.RowKey,
             Played = false,
-            Forecast = Enums.PlayingStatus.Yes
+            Forecast = Enums.PlayingStatus.Yes, 
+            Team = string.Empty
         };
         _pageTitle = GameEntityService.GetGameLabel(_gameEntity.RowKey);
         MainLayout.SetPageTitle(_pageTitle);

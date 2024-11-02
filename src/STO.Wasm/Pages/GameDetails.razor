@@ -41,28 +41,18 @@
 
 <table class="table table-sm table-borderless">
     <tbody>
-
-    @*TEAM A*@
-    @{
-        var teamAPags = _pags
-            .Where(p => p.Team == "A")
-            .Where(p => p.Forecast == Enums.PlayingStatus.Yes)
-            .ToList();
-        double teamAAdminRatingTotal = 0;
-    }
+    
     <tr>
         <td colspan="2"><h2>Team A</h2></td>
     </tr>
     <tr>
         <td colspan="2">
-            <span>Team A has @teamAPags.Count() players and a rating of ??</span>
+            <span>Team A has @_teamAPags.Count() players and a rating of @_teamARating</span>
         </td>
     </tr>
-    @foreach (var pag in teamAPags)
+    @foreach (var pag in _teamAPags)
     {
-        var player = PlayerService.GetPlayer(pag.PlayerRowKey);
-        teamAAdminRatingTotal += player.AdminRating;
-        var teamAAverageRating = teamAAdminRatingTotal / teamAPags.Count();
+        var player = _teamAPlayers.Single(p => p.Id == pag.PlayerRowKey);
         <tr>
             <td>
                 <a href="/games/@_gameEntity.UrlSegment/@pag.UrlSegment">@player.Name</a>
@@ -324,6 +314,10 @@ else
 
     private bool _showLongRunning;
 
+    private List<PlayerAtGameEntity> _teamAPags;
+    private List<Player> _teamAPlayers;
+    private double _teamARating;
+
     protected override void OnInitialized()
     {
         RefreshData();
@@ -376,6 +370,7 @@ else
     {
         _gameEntity = GameEntityService.GetGameEntityByUrlSegment(GameUrlSegment);
         _allPlayers = PlayerService.GetPlayers();
+        var gamePlayers = PlayerService.GetPlayers(_gameEntity.RowKey);
         _pags = GameEntityService.GetPlayerAtGameEntitiesForGame(_gameEntity.RowKey);
         _newPagEntity = new PlayerAtGameEntity()
         {
@@ -388,9 +383,22 @@ else
         MainLayout.SetPageTitle(_pageTitle);
         _simpleView = false;
         _mostRecentPag = GameEntityService.GetMostRecentPlayerAtGameForGame(_gameEntity.RowKey);
-
+        
+        //Team A
+        _teamAPags = _pags
+            .Where(p => p.Team == "A")
+            .Where(p => p.Forecast == Enums.PlayingStatus.Yes)
+            .ToList();
+        _teamAPlayers = gamePlayers
+            .Where(player => _teamAPags.Any(atGame => atGame.PlayerRowKey == player.Id))
+            .ToList();
+        _teamARating = Math.Round(_teamAPlayers.Average(p => p.AdminRating), 1);
+        
         //Set simple view label
         SetSimpleViewLabel();
+        
+        // Refresh blazor state
+        StateHasChanged(); 
     }
 
 }

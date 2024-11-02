@@ -42,47 +42,16 @@
 <table class="table table-sm table-borderless">
     <tbody>
 
-    @*TEAM B*@
-    @*TODO: Will this work as a component?*@
-    <tr>
-        <td colspan="2"><h2>Team A</h2></td>
-    </tr>
-    <tr>
-        <td colspan="2">
-            <span>Team A has @_teamAPags.Count() players and a rating of @_teamARating</span>
-        </td>
-    </tr>
-    @foreach (var pag in _teamAPags)
-    {
-        var player = _teamAPlayers.Single(p => p.Id == pag.PlayerRowKey);
-        <tr>
-            <td>
-                <a href="/games/@_gameEntity.UrlSegment/@pag.UrlSegment">@player.Name</a>
-                <PlayingForecastIcon Forecast="@pag.Forecast"/>
-                <PositionIcon Position="player.Position"/>
-                <RagIcon Balance="player.Balance" Played="pag.Played" DefaultRate="player.DefaultRate" PlayerRowKey="@player.Id" />
-                <AuthorizeView Policy="IsAdminEmail">
-                    <Authorized>
-                        @if (!_simpleView)
-                        {
-                            <RatingNumberIcon Rating=@player.AdminRating/>
-                        }
-                    </Authorized>
-                </AuthorizeView>
-            </td>
-            <td class="text-end">
-                @if (!_simpleView)
-                {
-                    <PagRowEditButtons PagEntity="@pag" RefreshMainPage="RefreshData"/>
-                }
-            </td>
-        </tr>
-    }
-    <tr>
-        <td colspan="2">
-            <hr>
-        </td>
-    </tr>
+    @*TEAM A*@
+    <PagGroup 
+        Label="A" 
+        Rating="@_teamARating" 
+        Pags="@_teamAPags" 
+        Players="@_teamAPlayers" 
+        GameUrlSegment="@_gameEntity.UrlSegment" 
+        SimpleView="@_simpleView" 
+        RefreshMainPage="RefreshData" 
+        />
     
     @*TEAM B*@
     @{

@@ -137,22 +137,22 @@ else
 
     private bool _showLongRunning;
 
-    private List<PlayerAtGameEntity> _teamAPags = default!;
-    private List<Player> _teamAPlayers = default!;
+    private List<PlayerAtGameEntity>? _teamAPags ;
+    private List<Player>? _teamAPlayers;
     private double _teamARating;
     
-    private List<PlayerAtGameEntity> _teamBPags = default!;
-    private List<Player> _teamBPlayers = default!;
+    private List<PlayerAtGameEntity>? _teamBPags;
+    private List<Player>? _teamBPlayers;
     private double _teamBRating;
     
-    private List<PlayerAtGameEntity> _noTeamPags = default!;
-    private List<Player> _noTeamPlayers = default!;
+    private List<PlayerAtGameEntity>? _noTeamPags;
+    private List<Player>? _noTeamPlayers;
     
-    private List<PlayerAtGameEntity> _maybeReservePags = default!;
-    private List<Player> _maybeReservePlayers = default!;
+    private List<PlayerAtGameEntity>? _maybeReservePags;
+    private List<Player>? _maybeReservePlayers;
     
-    private List<PlayerAtGameEntity> _noPags = default!;
-    private List<Player> _noPlayers = default!;
+    private List<PlayerAtGameEntity>? _noPags;
+    private List<Player>? _noPlayers;
 
     protected override void OnInitialized()
     {
@@ -234,7 +234,7 @@ else
         }
         else
         {
-            _teamAPlayers = [];
+            _teamAPlayers = null;
             _teamARating = 0;
         }
         
@@ -252,7 +252,7 @@ else
         }
         else
         {
-            _teamAPlayers = [];
+            _teamAPlayers = null;
             _teamBRating = 0;
         }
         

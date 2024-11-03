@@ -1,0 +1,75 @@
+@if (Pags != default && Pags.Count > 0)
+{
+    <tr>
+        <td colspan="2"><h3>@Label</h3></td>
+    </tr>
+
+    <tr>
+        <td colspan="2">
+            <span>@Label has @Pags.Count() players</span>
+            @if (Rating != null)
+            {
+                <span> with a rating of @Rating</span>
+            }
+        </td>
+    </tr>
+    @foreach (var pag in Pags)
+    {
+        var player = Players.Single(p => p.Id == pag.PlayerRowKey);
+        <tr>
+            <td>
+                <a href="/games/@GameUrlSegment/@pag.UrlSegment">@player.Name</a>
+                <PlayingForecastIcon Forecast="@pag.Forecast"/>
+                <PositionIcon Position="player.Position"/>
+                <RagIcon Balance="player.Balance" Played="pag.Played" DefaultRate="player.DefaultRate" PlayerRowKey="@player.Id" />
+                <AuthorizeView Policy="IsAdminEmail">
+                    <Authorized>
+                        @if (!SimpleView)
+                        {
+                            <RatingNumberIcon Rating=@player.AdminRating/>
+                        }
+                    </Authorized>
+                </AuthorizeView>
+            </td>
+            <td class="text-end">
+                @if (!SimpleView)
+                {
+                    <PagRowEditButtons PagEntity="@pag" RefreshMainPage="RefreshData"/>
+                }
+            </td>
+        </tr>
+    }
+
+    <tr>
+        <td colspan="2">
+            <hr>
+        </td>
+    </tr>
+}
+
+@code {
+    [Parameter] public string? Label { get; set; }
+
+    [Parameter] public double? Rating { get; set; }
+    
+    [Parameter] public List<PlayerAtGameEntity> Pags { get; set; } = default!;
+    
+    [Parameter] public List<Player> Players { get; set; } = default!;
+
+    [Parameter] public string? GameUrlSegment { get; set; }
+
+    [Parameter] public bool SimpleView { get; set; }
+
+    [Parameter] public EventCallback RefreshMainPage { get; set; }
+
+    protected override void OnInitialized()
+    {
+        
+    }
+    
+    private async Task RefreshData()
+    {
+        await RefreshMainPage.InvokeAsync();
+    }
+
+}

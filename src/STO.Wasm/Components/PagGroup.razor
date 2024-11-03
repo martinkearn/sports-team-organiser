@@ -3,7 +3,11 @@
 </tr>
 <tr>
     <td colspan="2">
-        <span>Team @Label has @Pags.Count() players and a rating of @Rating</span>
+        <span>@Label has @Pags.Count() players</span>
+        @if (Rating != null)
+        {
+            <span> with a rating of @Rating</span>
+        }
     </td>
 </tr>
 @foreach (var pag in Pags)

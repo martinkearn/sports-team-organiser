@@ -6,42 +6,48 @@
 
 <h1><i class="fa-solid fa-people-group me-2"></i> <EntityTitleLink RowKey="@_gameEntity.RowKey" EntityType="Enums.EntityType.GameEntity" Link="false" /></h1>
 
-<p>
-    @_pags.Count() players. @_pags.Count(p => p.Forecast == Enums.PlayingStatus.Yes) yes, @_pags.Count(p => p.Forecast == Enums.PlayingStatus.Maybe) maybe, @_pags.Count(p => p.Forecast == Enums.PlayingStatus.No) no. @_gameEntity.Date.TimeOfDay.Hours:@_gameEntity.Date.TimeOfDay.Minutes kick off.
-    @if (_mostRecentPag != default)
-    {
-        var localTime = _mostRecentPag.Timestamp?.ToLocalTime();
-        <span>Last player added @localTime?.ToString("ddd HH:mm")</span>
-    }
-</p>
-@if (!string.IsNullOrEmpty(_gameEntity.Notes))
+@if (_showLongRunning)
 {
-    <p>@_gameEntity.Notes</p>
+    <LongRunning />
 }
+else
+{
+    <p>
+        @_pags.Count() players. @_pags.Count(p => p.Forecast == Enums.PlayingStatus.Yes) yes, @_pags.Count(p => p.Forecast == Enums.PlayingStatus.Maybe) maybe, @_pags.Count(p => p.Forecast == Enums.PlayingStatus.No) no. @_gameEntity.Date.TimeOfDay.Hours:@_gameEntity.Date.TimeOfDay.Minutes kick off.
+        @if (_mostRecentPag != default)
+        {
+            var localTime = _mostRecentPag.Timestamp?.ToLocalTime();
+            <span>Last player added @localTime?.ToString("ddd HH:mm")</span>
+        }
+    </p>
+    @if (!string.IsNullOrEmpty(_gameEntity.Notes))
+    {
+        <p>@_gameEntity.Notes</p>
+    }
 
-<div class="row">
-    <div class="col">
-        <EditForm Model="@_newPagEntity" OnValidSubmit="AddPagEntity" class="row row-cols-lg-auto g-3 align-items-center">
-            <DataAnnotationsValidator />
-            <ValidationSummary />
-            <div class="input-group col-12">
-                <InputSelect class="form-select" @bind-Value="_newPagEntity.PlayerRowKey">
-                    <option value="">Add player to game ...</option>
-                    @foreach (var player in _allPlayers.Where(pe => _pags.FirstOrDefault(pag => pag.PlayerRowKey == pe.Id) == default))
-                    {
-                        <option value="@player.Id">@player.Name</option>
-                    }
-                </InputSelect>
-                <button class="btn btn-outline-secondary" type="submit"><i class="fa-solid fa-plus"></i></button>
-            </div>
-        </EditForm>
+    <div class="row">
+        <div class="col">
+            <EditForm Model="@_newPagEntity" OnValidSubmit="AddPagEntity" class="row row-cols-lg-auto g-3 align-items-center">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+                <div class="input-group col-12">
+                    <InputSelect class="form-select" @bind-Value="_newPagEntity.PlayerRowKey">
+                        <option value="">Add player to game ...</option>
+                        @foreach (var player in _allPlayers.Where(pe => _pags.FirstOrDefault(pag => pag.PlayerRowKey == pe.Id) == default))
+                        {
+                            <option value="@player.Id">@player.Name</option>
+                        }
+                    </InputSelect>
+                    <button class="btn btn-outline-secondary" type="submit"><i class="fa-solid fa-plus"></i></button>
+                </div>
+            </EditForm>
+        </div>
     </div>
-</div>
 
-<br>
+    <br>
 
-<table class="table table-sm table-borderless">
-    <tbody>
+    <table class="table table-sm table-borderless">
+        <tbody>
 
         @*TEAM A*@
         <PagGroup 
@@ -65,7 +71,7 @@
 
         @*Yes No TEAM*@
         <PagGroup
-            Label="No Team"
+            Label="Playing with no team"
             Pags="@_noTeamPags"
             Players="@_noTeamPlayers"
             GameUrlSegment="@_gameEntity.UrlSegment"
@@ -74,7 +80,7 @@
 
         @*Maybe*@
         <PagGroup
-            Label="Maybe & Reserve"
+            Label="Maybe & reserve"
             Pags="@_maybeReservePags"
             Players="@_maybeReservePlayers"
             GameUrlSegment="@_gameEntity.UrlSegment"
@@ -90,15 +96,9 @@
             SimpleView="@_simpleView"
             RefreshMainPage="RefreshData" />
 
-    </tbody>
-</table>
-
-@if (_showLongRunning)
-{
-    <LongRunning />
-}
-else
-{
+        </tbody>
+    </table>
+    
     <div class="hstack gap-2">
         <a class="btn btn-secondary" href="/games/" title="All Games"><i class="fa-solid fa-arrow-left"></i> <span class="d-none d-md-inline">All Games</span></a>
         <a class="btn btn-secondary" href="/games/@GameUrlSegment/edit" title="Edit"><i class="fa-solid fa-edit"></i> <span class="d-none d-md-inline">Edit</span></a>

@@ -225,34 +225,32 @@ else
             .Where(p => p.Team == "A")
             .Where(p => p.Forecast == Enums.PlayingStatus.Yes)
             .ToList();
-        if (_teamAPags.Count > 0)
-        {
-            _teamAPlayers = gamePlayers
+        _teamAPlayers = gamePlayers
                 .Where(player => _teamAPags.Any(atGame => atGame.PlayerRowKey == player.Id))
                 .ToList();
+        if (_teamAPags.Count != 0)
+        {
             _teamARating = Math.Round(_teamAPlayers.Average(p => p.AdminRating), 1);
         }
         else
         {
-            _teamAPlayers = null;
             _teamARating = 0;
         }
-        
+
         //Team B
         _teamBPags = _pags
             .Where(p => p.Team == "B")
             .Where(p => p.Forecast == Enums.PlayingStatus.Yes)
             .ToList();
-        if (_teamBPags.Count > 0)
+        _teamBPlayers = gamePlayers
+            .Where(player => _teamBPags.Any(atGame => atGame.PlayerRowKey == player.Id))
+            .ToList();
+        if (_teamBPags.Count != 0)
         {
-            _teamBPlayers = gamePlayers
-                .Where(player => _teamBPags.Any(atGame => atGame.PlayerRowKey == player.Id))
-                .ToList();
             _teamBRating = Math.Round(_teamBPlayers.Average(p => p.AdminRating), 1);
         }
         else
         {
-            _teamAPlayers = null;
             _teamBRating = 0;
         }
         

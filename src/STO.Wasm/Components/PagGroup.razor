@@ -1,8 +1,9 @@
-<tr>
-    <td colspan="2"><h3>@Label</h3></td>
-</tr>
-@if (Pags != null && Players != null)
+@if (Pags != default && Pags.Count > 0)
 {
+    <tr>
+        <td colspan="2"><h3>@Label</h3></td>
+    </tr>
+
     <tr>
         <td colspan="2">
             <span>@Label has @Pags.Count() players</span>
@@ -38,23 +39,23 @@
             </td>
         </tr>
     }
-}
 
-<tr>
-    <td colspan="2">
-        <hr>
-    </td>
-</tr>
+    <tr>
+        <td colspan="2">
+            <hr>
+        </td>
+    </tr>
+}
 
 @code {
     [Parameter] public string? Label { get; set; }
 
     [Parameter] public double? Rating { get; set; }
     
-    [Parameter] public List<PlayerAtGameEntity>? Pags { get; set; }
+    [Parameter] public List<PlayerAtGameEntity> Pags { get; set; } = default!;
     
-    [Parameter] public List<Player>? Players { get; set; }
-    
+    [Parameter] public List<Player> Players { get; set; } = default!;
+
     [Parameter] public string? GameUrlSegment { get; set; }
 
     [Parameter] public bool SimpleView { get; set; }

@@ -1,7 +1,6 @@
 @inject IGameEntityService GameEntityService
 @inject ITransactionEntityService TransactionEntityService
 @inject IPlayerService PlayerService
-@inject NavigationManager Navigation
 
 <AuthorizeView Policy="IsAdminEmail">
     <Authorized>
@@ -10,11 +9,11 @@
             {
                 @if (PagEntity.Played)
                 {
-                    <button type="button" class="btn btn-outline-secondary btn-sm active d-inline" @onclick="TogglePlayed"> Played</button>
+                    <button type="button" class="btn btn-outline-secondary btn-sm active d-inline" @onclick="TogglePlayed"><i class="fa-solid fa-person-running"></i> Played</button>
                 }
                 else
                 {
-                    <button type="button" class="btn btn-outline-secondary btn-sm d-inline" @onclick="TogglePlayed"> Not Played</button>
+                    <button type="button" class="btn btn-outline-secondary btn-sm d-inline" @onclick="TogglePlayed"> <i class="fa-solid fa-person-running"></i> Not Played</button>
                 }
                 
                 @if (PagEntity.Team == string.Empty)
@@ -33,8 +32,6 @@
             {
                 <button type="button" class="btn btn-outline-secondary btn-sm d-inline" @onclick="ForecastYesForPlayer"><i class="fa-solid fa-futbol"></i> Now Playing</button>
             }
-
-            <button type="button" class="btn btn-outline-secondary btn-sm d-none d-lg-inline" @onclick="NavigateToPag"><i class="fa-solid fa-edit"></i> Edit</button>
         </div>
     </Authorized>
 </AuthorizeView>
@@ -80,11 +77,6 @@
 
         await GameEntityService.UpsertPlayerAtGameEntityAsync(PagEntity);
         await RefreshMainPage.InvokeAsync();
-    }
-
-    private void NavigateToPag()
-    {
-        Navigation.NavigateTo($"/games/{_pagGameEntity.UrlSegment}/{PagEntity.UrlSegment}");
     }
 
     private async Task AddTransactionForPlayer()

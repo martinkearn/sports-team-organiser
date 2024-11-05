@@ -25,27 +25,6 @@ else
         <p>@_gameEntity.Notes</p>
     }
 
-    <div class="row">
-        <div class="col">
-            <EditForm Model="@_newPagEntity" OnValidSubmit="AddPagEntity" class="row row-cols-lg-auto g-3 align-items-center">
-                <DataAnnotationsValidator />
-                <ValidationSummary />
-                <div class="input-group col-12">
-                    <InputSelect class="form-select" @bind-Value="_newPagEntity.PlayerRowKey">
-                        <option value="">Add player to game ...</option>
-                        @foreach (var player in _allPlayers.Where(pe => _pags.FirstOrDefault(pag => pag.PlayerRowKey == pe.Id) == default))
-                        {
-                            <option value="@player.Id">@player.Name</option>
-                        }
-                    </InputSelect>
-                    <button class="btn btn-outline-secondary" type="submit"><i class="fa-solid fa-plus"></i></button>
-                </div>
-            </EditForm>
-        </div>
-    </div>
-
-    <br>
-
     <table class="table table-sm table-borderless">
         <tbody>
 
@@ -102,6 +81,7 @@ else
     <div class="hstack gap-2">
         <a class="btn btn-secondary" href="/games/" title="All Games"><i class="fa-solid fa-arrow-left"></i> <span class="d-none d-md-inline">All Games</span></a>
         <a class="btn btn-secondary" href="/games/@GameUrlSegment/edit" title="Edit"><i class="fa-solid fa-edit"></i> <span class="d-none d-md-inline">Edit</span></a>
+        <a class="btn btn-secondary" href="/games/addplayerstogame" title="Edit"><i class="fa-solid fa-plus"></i> <span class="d-none d-md-inline">Add Player</span></a>
         <AuthorizeView Policy="IsAdminEmail">
             <Authorized>
                 <button class="btn btn-secondary" @onclick="ToggleSimpleView" title="@_simpleViewLabel"><i class=@_simpleViewCss></i> <span class="d-none d-md-inline">@_simpleViewLabel</span></button>
@@ -120,10 +100,6 @@ else
     private GameEntity _gameEntity = default!;
 
     private List<PlayerAtGameEntity> _pags = default!;
-
-    private List<Player> _allPlayers = [];
-
-    private PlayerAtGameEntity _newPagEntity = new();
 
     private PlayerAtGameEntity? _mostRecentPag;
 
@@ -156,12 +132,6 @@ else
 
     protected override void OnInitialized()
     {
-        RefreshData();
-    }
-
-    private async Task AddPagEntity()
-    {
-        await GameEntityService.UpsertPlayerAtGameEntityAsync(_newPagEntity);
         RefreshData();
     }
 
@@ -205,19 +175,8 @@ else
     private void RefreshData()
     {
         _gameEntity = GameEntityService.GetGameEntityByUrlSegment(GameUrlSegment);
-        _allPlayers = PlayerService.GetPlayers();
         var gamePlayers = PlayerService.GetPlayers(_gameEntity.RowKey);
         _pags = GameEntityService.GetPlayerAtGameEntitiesForGame(_gameEntity.RowKey);
-        _newPagEntity = new PlayerAtGameEntity()
-        {
-            GameRowKey = _gameEntity.RowKey,
-            Played = false,
-            Forecast = Enums.PlayingStatus.Yes, 
-            Team = string.Empty
-        };
-        _pageTitle = GameEntityService.GetGameLabel(_gameEntity.RowKey);
-        MainLayout.SetPageTitle(_pageTitle);
-        _simpleView = false;
         _mostRecentPag = GameEntityService.GetMostRecentPlayerAtGameForGame(_gameEntity.RowKey);
         
         //Team A
@@ -278,6 +237,10 @@ else
         
         //Set simple view label
         SetSimpleViewLabel();
+        
+        _pageTitle = GameEntityService.GetGameLabel(_gameEntity.RowKey);
+        MainLayout.SetPageTitle(_pageTitle);
+        _simpleView = false;
         
         // Refresh blazor state
         StateHasChanged(); 

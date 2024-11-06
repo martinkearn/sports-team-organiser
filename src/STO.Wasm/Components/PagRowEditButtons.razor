@@ -86,6 +86,7 @@
                 Date = DateTimeOffset.UtcNow,
                 Notes = GameEntityService.GetNotesForGame(PagEntity.GameRowKey),
                 PlayerRowKey = PagEntity.PlayerRowKey,
+                GameRowKey = PagEntity.GameRowKey,
                 Amount = _player.DefaultRate
             };
         if (TransactionEntityService is not null)

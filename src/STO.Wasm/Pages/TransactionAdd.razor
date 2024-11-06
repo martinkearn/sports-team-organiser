@@ -1,6 +1,7 @@
 @page "/transactions/add"
 @inject ITransactionEntityService TransactionEntityService
 @inject IPlayerService PlayerService
+@inject IGameEntityService GameEntityService
 @inject NavigationManager Navigation
 
 
@@ -20,6 +21,18 @@
 					@foreach (var p in _players)
 					{
 						<option value="@p.Id">@p.Name</option>
+					}
+				</InputSelect>
+			</div>
+
+
+			<div class="mb-3">
+				<label for="addGameRowKey" class="form-label">Game</label>
+				<InputSelect class="form-select" @bind-Value="_newTransactionEntity.GameRowKey">
+					<option value="">Select Game ...</option>
+					@foreach (var ge in _gameEntities)
+					{
+						<option value="@ge.RowKey">@ge.UrlSegment</option>
 					}
 				</InputSelect>
 			</div>
@@ -58,6 +71,7 @@
 @code {
 	[CascadingParameter] public MainLayout MainLayout { get; set; } = default!;
 	private List<Player> _players = [];
+	private List<GameEntity> _gameEntities = [];
 
 	private TransactionEntity _newTransactionEntity = new();
 
@@ -78,6 +92,7 @@
 	{
 		_newTransactionEntity = new TransactionEntity();
 		_players = PlayerService.GetPlayers();
+		_gameEntities = GameEntityService.GetGameEntities();
 		_pageTitle = "Add Transaction";
 		MainLayout.SetPageTitle(_pageTitle);
 	}

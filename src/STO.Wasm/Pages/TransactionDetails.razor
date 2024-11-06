@@ -1,6 +1,7 @@
 @page "/transactions/{TransactionUrlSegment}"
 @inject ITransactionEntityService TransactionEntityService
 @inject IPlayerService PlayerService
+@inject IGameEntityService GameEntityService
 @inject NavigationManager Navigation
 
 <PageTitle>TNF - @_pageTitle</PageTitle>
@@ -34,6 +35,16 @@ else
 <h5>Player</h5>
 <p><PlayerLink Player="@_player" /></p>
 
+<h5>Game</h5>
+@if (_gameEntity != default)
+{
+	<p><EntityTitleLink EntityType="Enums.EntityType.GameEntity" RowKey="@_transactionEntity.GameRowKey" Length="Enums.TitleLength.Long" Link="true" /></p>
+}
+else
+{
+	<p>No Game</p>
+}
+
 <div class="hstack gap-2">
 	<a class="btn btn-secondary" href="/transactions/"><i class="fa-solid fa-arrow-left"></i> All Transactions</a>
 	<DeleteButtonWithCheck DeleteWhatLabel="@_pageTitle" ButtonLabel="Delete" ParentPageCallback="DeleteTransaction" />
@@ -51,6 +62,8 @@ else
 
 	private Player _player = default!;
 
+	private GameEntity? _gameEntity;
+
 	protected override void OnInitialized()
 	{
 		RefreshData();
@@ -66,6 +79,10 @@ else
 	{
 		_transactionEntity = TransactionEntityService.GetTransactionEntityByUrlSegment(TransactionUrlSegment);
 		_player = PlayerService.GetPlayer(_transactionEntity.PlayerRowKey);
+		if (!string.IsNullOrEmpty(_transactionEntity.GameRowKey))
+		{
+			_gameEntity = GameEntityService.GetGameEntity(_transactionEntity.GameRowKey);
+		}
 		_pageTitle = $"Transaction for {_player.Name}, {_transactionEntity.Date.Date.ToShortDateString()}";
 		MainLayout.SetPageTitle(_pageTitle);
 	}

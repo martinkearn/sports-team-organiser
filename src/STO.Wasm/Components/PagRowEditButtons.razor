@@ -1,32 +1,37 @@
 @inject IGameEntityService GameEntityService
 @inject ITransactionEntityService TransactionEntityService
 @inject IPlayerService PlayerService
-@inject NavigationManager Navigation
 
 <AuthorizeView Policy="IsAdminEmail">
     <Authorized>
         <div class="hstack gap-2">
-            @if (PagEntity.Played)
+            @if (PagEntity.Forecast == Enums.PlayingStatus.Yes)
             {
-            <button type="button" class="btn btn-outline-secondary btn-sm active d-inline" @onclick="TogglePlayed"> Played</button>
+                @if (PagEntity.Played)
+                {
+                    <button type="button" class="btn btn-outline-secondary btn-sm active d-inline" @onclick="TogglePlayed"><i class="fa-solid fa-person-running"></i> Played</button>
+                }
+                else
+                {
+                    <button type="button" class="btn btn-outline-secondary btn-sm d-inline" @onclick="TogglePlayed"> <i class="fa-solid fa-person-running"></i> Not Played</button>
+                }
+                
+                @if (PagEntity.Team == string.Empty)
+                {
+                    <button type="button" class="btn btn-outline-secondary btn-sm d-none d-md-inline" @onclick="() => SwitchPagTeam(Enums.Team.A)"> +A <i class="fa-solid fa-repeat"></i></button>
+                    <button type="button" class="btn btn-outline-secondary btn-sm d-none d-md-inline" @onclick="() => SwitchPagTeam(Enums.Team.B)"> +B <i class="fa-solid fa-repeat"></i></button>
+                }
+                else
+                {
+                    <button type="button" class="btn btn-outline-secondary btn-sm d-none d-md-inline" @onclick="() => SwitchPagTeam(Enums.Team.None)">@PagEntity.Team <i class="fa-solid fa-repeat"></i></button>
+                }
+
+                <button type="button" class="btn btn-outline-secondary btn-sm d-none d-md-inline" @onclick="AddTransactionForPlayer"><i class="fa-solid fa-plus"></i> £@_player.DefaultRate</button>
             }
             else
             {
-            <button type="button" class="btn btn-outline-secondary btn-sm d-inline" @onclick="TogglePlayed"> Not Played</button>
+                <button type="button" class="btn btn-outline-secondary btn-sm d-inline" @onclick="ForecastYesForPlayer"><i class="fa-solid fa-futbol"></i> Now Playing</button>
             }
-
-            @if (PagEntity.Team == null)
-            {
-            <button type="button" class="btn btn-outline-secondary btn-sm d-none d-md-inline" @onclick="() => SwitchPagTeam(Enums.Team.A)"> +A <i class="fa-solid fa-repeat"></i></button>
-            <button type="button" class="btn btn-outline-secondary btn-sm d-none d-md-inline" @onclick="() => SwitchPagTeam(Enums.Team.B)"> +B <i class="fa-solid fa-repeat"></i></button>
-            }
-            else
-            {
-            <button type="button" class="btn btn-outline-secondary btn-sm d-none d-md-inline" @onclick="() => SwitchPagTeam(Enums.Team.None)">@PagEntity.Team <i class="fa-solid fa-repeat"></i></button>
-            }
-
-            <button type="button" class="btn btn-outline-secondary btn-sm d-none d-md-inline" @onclick="AddTransactionForPlayer"><i class="fa-solid fa-plus"></i> £@_player.DefaultRate</button>
-            <button type="button" class="btn btn-outline-secondary btn-sm d-none d-lg-inline" @onclick="NavigateToPag"><i class="fa-solid fa-edit"></i> Edit</button>
         </div>
     </Authorized>
 </AuthorizeView>
@@ -74,11 +79,6 @@
         await RefreshMainPage.InvokeAsync();
     }
 
-    private void NavigateToPag()
-    {
-        Navigation.NavigateTo($"/games/{_pagGameEntity.UrlSegment}/{PagEntity.UrlSegment}");
-    }
-
     private async Task AddTransactionForPlayer()
     {
         var newTransactionEntityForPag = new TransactionEntity()
@@ -92,6 +92,14 @@
         {
             await TransactionEntityService.UpsertTransactionEntityAsync(newTransactionEntityForPag);
         }
+        await RefreshMainPage.InvokeAsync();
+    }
+
+    private async Task ForecastYesForPlayer()
+    {
+        PagEntity.Forecast = Enums.PlayingStatus.Yes;
+        PagEntity.Team = string.Empty;
+        await GameEntityService.UpsertPlayerAtGameEntityAsync(PagEntity);
         await RefreshMainPage.InvokeAsync();
     }
 

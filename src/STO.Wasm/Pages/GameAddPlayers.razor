@@ -53,7 +53,8 @@
         <label class="form-label">Prospective players</label>
         @foreach (var prospectPag in _prospectPags)
         {
-            <p><EntityTitleLink EntityType="Enums.EntityType.PlayerEntity" RowKey="@prospectPag.PlayerRowKey" Link="true" /> as @prospectPag.Forecast.ToString()</p>
+            var player = PlayerService.GetPlayer(prospectPag.PlayerRowKey);
+            <p><PlayerLink Player="player" /> @prospectPag.Forecast.ToString()</p>
         }
     </div>
 
@@ -94,7 +95,8 @@
             PlayerRowKey = _selectedProspectPagPlayerRowKey,
             GameRowKey = _selectedGameRowKey,
             Played = false,
-            Forecast = _selectedPlayingStatus
+            Forecast = _selectedPlayingStatus,
+            Team = string.Empty
         };
         _prospectPags.Add(prospectPag);
     }

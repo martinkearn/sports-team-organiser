@@ -15,23 +15,24 @@
 	</li>
 </ul>
 
-<div class="mb-3 mt-3">
-	<label class="form-label">Name</label>
-	<InputText class="form-control"  @bind-Value="_player.Name" @bind-Value:after="Edit" />
-</div>
-
-<div class="mb-3">
-	<label fclass="form-label">Position</label>
-	<InputSelect class="form-select" @bind-Value="_player.Position" @bind-Value:after="() => Edit()">
-		@foreach (var option in Enum.GetNames(typeof(Enums.PlayerPosition)))
-		{
-			<option value="@option">@option</option>
-		}
-	</InputSelect>
-</div>
-
 <AuthorizeView Policy="IsAdminEmail">
 	<Authorized>
+
+		<div class="mb-3 mt-3">
+			<label class="form-label">Name</label>
+			<InputText class="form-control"  @bind-Value="_player.Name" @bind-Value:after="Edit" />
+		</div>
+
+		<div class="mb-3">
+			<label fclass="form-label">Position</label>
+			<InputSelect class="form-select" @bind-Value="_player.Position" @bind-Value:after="() => Edit()">
+				@foreach (var option in Enum.GetNames(typeof(Enums.PlayerPosition)))
+				{
+					<option value="@option">@option</option>
+				}
+			</InputSelect>
+		</div>
+		
 		<div class="mb-3">
 			<label class="form-label">Admin Rating</label>
 			<InputNumber class="form-control" id="addAdminRating" min="1" max="5" @bind-Value="_player.AdminRating" @bind-Value:after="Edit" />
@@ -54,37 +55,34 @@
 			<label class="form-label">Balance</label>
 			<span class="form-control-plaintext"><CurrencyDisplay Amount="@_player.Balance" /></span>
 		</div>
-	</Authorized>
-</AuthorizeView>
 
-<div class="mb-3">
-	<label class="form-label">Url Segment</label>
-	<InputText class="form-control" @bind-Value="_player.UrlSegment" disabled="true"  />
-</div>
+		<div class="mb-3">
+			<label class="form-label">Url Segment</label>
+			<InputText class="form-control" @bind-Value="_player.UrlSegment" disabled="true"  />
+		</div>
 
-<div class="mb-3">
-	<label class="form-label">Games Played</label>
-	<div class="form-control bg-body-secondary">@_player.GamesCount</div>
-</div>
+		<div class="mb-3">
+			<label class="form-label">Games Played</label>
+			<div class="form-control bg-body-secondary">@_player.GamesCount</div>
+		</div>
 
-<div class="mb-3">
-	<label class="form-label">Last Updated</label>
-	<div class="form-control bg-body-secondary">@_player.LastUpdated</div>
-</div>
+		<div class="mb-3">
+			<label class="form-label">Last Updated</label>
+			<div class="form-control bg-body-secondary">@_player.LastUpdated</div>
+		</div>
 
-<hr class="mb-4"/>
-<div class="hstack gap-2">
-	<a class="btn btn-secondary" href="/players/"><i class="fa-solid fa-arrow-left"></i> All Players</a>
-	<AuthorizeView Policy="IsAdminEmail">
-		<Authorized>
+		<hr class="mb-4"/>
+		<div class="hstack gap-2">
+			<a class="btn btn-secondary" href="/players/"><i class="fa-solid fa-arrow-left"></i> All Players</a>
 			<DeleteButtonWithCheck DeleteWhatLabel="@_player.Name" ButtonLabel="Delete" ParentPageCallback="DeletePlayer" />
-		</Authorized>
-		<NotAuthorized>
-			<a class="btn btn-secondary disabled"><i class="fa-solid fa-trash"></i> Delete</a>
-		</NotAuthorized>
-	</AuthorizeView>
-</div>
+		</div>
 
+	</Authorized>
+	<NotAuthorized>
+		<h4>Access Denied!</h4>
+		<a class="btn btn-secondary" href="authentication/login"><i class="fa-solid fa-key me-2"></i> Log in</a>
+	</NotAuthorized>
+</AuthorizeView>
 
 @code {
 	[CascadingParameter] public MainLayout MainLayout { get; set; } = default!;

@@ -6,42 +6,52 @@
 
 <h1><i class="fa-solid fa-people-group me-2"></i> @_pageTitle</h1>
 
-<EditForm Model="@_newGameEntity" OnSubmit="@Add" Context="editForm">
-    <DataAnnotationsValidator />
-    <ValidationSummary />
-    <div class="mb-3">
-        <label for="addDate" class="form-label">Date</label>
-        <InputDate class="form-control" id="addDate" @bind-Value="_newGameEntity.Date" />
-    </div>
+<AuthorizeView Policy="IsAdminEmail">
+    <Authorized>
 
-    <div class="mb-3">
-        <label for="addDate" class="form-label">Time</label>
-        <div class="row">
-            <div class="col-auto">
-                <div class="input-group">
-                    <InputNumber class="form-control" min="0" max="23" @bind-Value="_hour" />
-                    <InputNumber class="form-control" min="0" max="59" @bind-Value="_minute" />
+        <EditForm Model="@_newGameEntity" OnSubmit="@Add" Context="editForm">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+            <div class="mb-3">
+                <label for="addDate" class="form-label">Date</label>
+                <InputDate class="form-control" id="addDate" @bind-Value="_newGameEntity.Date" />
+            </div>
+
+            <div class="mb-3">
+                <label for="addDate" class="form-label">Time</label>
+                <div class="row">
+                    <div class="col-auto">
+                        <div class="input-group">
+                            <InputNumber class="form-control" min="0" max="23" @bind-Value="_hour" />
+                            <InputNumber class="form-control" min="0" max="59" @bind-Value="_minute" />
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-    </div>
 
-    <div class="mb-3">
-        <label for="addTitle" class="form-label">Title</label>
-        <InputText class="form-control" id="addTitle" @bind-Value="_newGameEntity.Title" />
-    </div>
+            <div class="mb-3">
+                <label for="addTitle" class="form-label">Title</label>
+                <InputText class="form-control" id="addTitle" @bind-Value="_newGameEntity.Title" />
+            </div>
 
-    <div class="mb-3">
-        <label for="addNotes" class="form-label">Notes</label>
-        <InputText class="form-control" id="addNotes" @bind-Value="_newGameEntity.Notes" />
-    </div>
+            <div class="mb-3">
+                <label for="addNotes" class="form-label">Notes</label>
+                <InputText class="form-control" id="addNotes" @bind-Value="_newGameEntity.Notes" />
+            </div>
 
-    <div class="hstack gap-2">
-        <button type="submit" class="btn btn-secondary"><i class="fa-solid fa-plus"></i> Add Game</button>
-    </div>
-</EditForm>
+            <div class="hstack gap-2">
+                <button type="submit" class="btn btn-secondary"><i class="fa-solid fa-plus"></i> Add Game</button>
+            </div>
+        </EditForm>
 
-@code {
+    </Authorized>
+    <NotAuthorized>
+        <h4>Access Denied!</h4>
+        <a class="btn btn-secondary" href="authentication/login"><i class="fa-solid fa-key me-2"></i> Log in</a>
+    </NotAuthorized>
+</AuthorizeView>
+
+    @code {
     [CascadingParameter] public MainLayout MainLayout { get; set; } = default!;
     private GameEntity _newGameEntity = new();
 

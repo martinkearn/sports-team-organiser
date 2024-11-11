@@ -7,47 +7,57 @@
 
 <h1><i class="fa-solid fa-people-group me-2"></i> @_pageTitle</h1>
 
-<div class="mb-3">
-    <label class="form-label">Game</label>
-    <InputSelect class="form-select" @bind-Value="_selectedGameRowKey" @bind-Value:after="RefreshGame">
-        <option value="">Select Game ...</option>
-        @foreach (var ge in _gameEntities)
-        {
-            var gameRowKey = ge.RowKey;
-            if (gameRowKey == _nextGameEntity?.RowKey)
-            {
-                <option value="@gameRowKey" selected><EntityTitleLink RowKey="@ge.RowKey" EntityType="Enums.EntityType.GameEntity" Link="false" /></option>
-            }
-            else
-            {
-                <option value="@gameRowKey"><EntityTitleLink RowKey="@ge.RowKey" EntityType="Enums.EntityType.GameEntity" Link="false" /></option>
-            }
-        }
-    </InputSelect>
-</div>
+<AuthorizeView Policy="IsAdminEmail">
+    <Authorized>
 
-<div class="mb-3">
-    <label class="form-label">Playing status for prospective players</label>
-    <InputSelect class="form-select" @bind-Value="_selectedPlayingStatus" >
-        @foreach (var playingStatus in Enum.GetValues<Enums.PlayingStatus>())
-        {
-            <option value="@playingStatus">@playingStatus</option>
-        }
-    </InputSelect>
-</div>
+        <div class="mb-3">
+            <label class="form-label">Game</label>
+            <InputSelect class="form-select" @bind-Value="_selectedGameRowKey" @bind-Value:after="RefreshGame">
+                <option value="">Select Game ...</option>
+                @foreach (var ge in _gameEntities)
+                {
+                    var gameRowKey = ge.RowKey;
+                    if (gameRowKey == _nextGameEntity?.RowKey)
+                    {
+                        <option value="@gameRowKey" selected><EntityTitleLink RowKey="@ge.RowKey" EntityType="Enums.EntityType.GameEntity" Link="false" /></option>
+                    }
+                    else
+                    {
+                        <option value="@gameRowKey"><EntityTitleLink RowKey="@ge.RowKey" EntityType="Enums.EntityType.GameEntity" Link="false" /></option>
+                    }
+                }
+            </InputSelect>
+        </div>
 
-<div class="mb-3">
-    <label class="form-label">Add prospective players</label>
-    <InputSelect class="form-select" @bind-Value="_selectedProspectPagPlayerRowKey" @bind-Value:after="AddProspectPag">
-        <option value="" selected>Choose Player ...</option>
-        @foreach (var player in _players)
-        {
-            <option value="@player.Id">@player.Name</option>
-        }
-    </InputSelect>
-</div>
+        <div class="mb-3">
+            <label class="form-label">Playing status for prospective players</label>
+            <InputSelect class="form-select" @bind-Value="_selectedPlayingStatus" >
+                @foreach (var playingStatus in Enum.GetValues<Enums.PlayingStatus>())
+                {
+                    <option value="@playingStatus">@playingStatus</option>
+                }
+            </InputSelect>
+        </div>
 
-@if (_prospectPags.Count > 0)
+        <div class="mb-3">
+            <label class="form-label">Add prospective players</label>
+            <InputSelect class="form-select" @bind-Value="_selectedProspectPagPlayerRowKey" @bind-Value:after="AddProspectPag">
+                <option value="" selected>Choose Player ...</option>
+                @foreach (var player in _players)
+                {
+                    <option value="@player.Id">@player.Name</option>
+                }
+            </InputSelect>
+        </div>
+
+    </Authorized>
+    <NotAuthorized>
+        <h4>Access Denied!</h4>
+        <a class="btn btn-secondary" href="authentication/login"><i class="fa-solid fa-key me-2"></i> Log in</a>
+    </NotAuthorized>
+</AuthorizeView>
+
+    @if (_prospectPags.Count > 0)
 {
     <div class="mb-3">
         <label class="form-label">Prospective players</label>

@@ -34,9 +34,17 @@ public class TransactionService(IDataService dataService) : ITransactionService
         return t;
     }
 
-    public List<Transaction> GetTransactions()
+    public List<Transaction> GetTransactions(int? skip, int? take)
     {
-        throw new NotImplementedException();
+        var tes = GetTransactionEntities();
+        
+        // Apply Skip and Take only if values are provided
+        tes = skip.HasValue ? tes.Skip(skip.Value) : tes;
+        tes = take.HasValue ? tes.Take(take.Value) : tes;
+
+        var ts = tes.Select(te => ConstructTransaction(te.RowKey)).ToList();
+
+        return ts;
     }
 
     public List<Transaction> GetTransactions(string playerId)

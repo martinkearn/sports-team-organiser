@@ -8,14 +8,11 @@ public interface ITransactionService
     /// <summary>
     /// Gets all Transactions.
     /// </summary>
+    /// <param name="skip">How many items to skip before taking. For example, if set to 30, the return will start from the 31st item. If null, no items will be skipped</param>
+    /// <param name="take">How many items to take For example, if set to 20, 20 items will be returned. If null, all items will be taken from the skip</param>
+    /// <param name="playerRowKey">Optional player to filter on</param>
     /// <returns>List of Transaction.</returns>
-    public List<Transaction> GetTransactions();
-    
-    /// <summary>
-    /// Gets all Transactions for a specified Player Id.
-    /// </summary>
-    /// <returns>List of Transaction.</returns>
-    public List<Transaction> GetTransactions(string playerId);
+    public List<Transaction> GetTransactions(int? skip, int? take, string? playerRowKey);
 
     /// <summary>
     /// Gets a specific Transaction based on the Id

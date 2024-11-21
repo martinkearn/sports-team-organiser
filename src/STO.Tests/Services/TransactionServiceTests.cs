@@ -87,6 +87,83 @@ namespace STO.Tests.Services
 
         #endregion
         
+        #region GetTransactions
+        
+        [Fact]
+        public void GetTransactions_NoSkipOrTake_ReturnsAllTransactions()
+        {
+            // Act
+            var transactions = _transactionService.GetTransactions(null, null);
+
+            // Assert
+            Assert.Equal(10, transactions.Count); // All transactions should be returned
+        }
+
+        [Fact]
+        public void GetTransactions_WithSkip_ReturnsSkippedTransactions()
+        {
+            // Act
+            var transactions = _transactionService.GetTransactions(5, null);
+
+            // Assert
+            Assert.Equal(5, transactions.Count); // 5 transactions after skipping 5
+            Assert.Equal("T6", transactions[0].Id); // Verify the first returned transaction
+        }
+
+        [Fact]
+        public void GetTransactions_WithTake_ReturnsLimitedTransactions()
+        {
+            // Act
+            var transactions = _transactionService.GetTransactions(null, 3);
+
+            // Assert
+            Assert.Equal(3, transactions.Count); // Only 3 transactions should be returned
+            Assert.Equal("T1", transactions[0].Id); // Verify the first returned transaction
+        }
+
+        [Fact]
+        public void GetTransactions_WithSkipAndTake_ReturnsCorrectSubset()
+        {
+            // Act
+            var transactions = _transactionService.GetTransactions(3, 4);
+
+            // Assert
+            Assert.Equal(4, transactions.Count); // 4 transactions after skipping 3
+            Assert.Equal("T4", transactions[0].Id); // Verify the first returned transaction
+        }
+
+        [Fact]
+        public void GetTransactions_SkipExceedsTotal_ReturnsEmptyList()
+        {
+            // Act
+            var transactions = _transactionService.GetTransactions(15, null);
+
+            // Assert
+            Assert.Empty(transactions); // No transactions should be returned
+        }
+
+        [Fact]
+        public void GetTransactions_TakeExceedsTotal_ReturnsAllTransactions()
+        {
+            // Act
+            var transactions = _transactionService.GetTransactions(null, 20);
+
+            // Assert
+            Assert.Equal(10, transactions.Count); // All transactions should be returned
+        }
+
+        [Fact]
+        public void GetTransactions_SkipAndTakeExceedTotal_ReturnsEmptyList()
+        {
+            // Act
+            var transactions = _transactionService.GetTransactions(15, 20);
+
+            // Assert
+            Assert.Empty(transactions); // No transactions should be returned
+        }
+        
+        #endregion
+        
     }
     
 }

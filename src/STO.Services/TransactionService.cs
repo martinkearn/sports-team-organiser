@@ -14,26 +14,24 @@ public class TransactionService(IDataService dataService) : ITransactionService
 
     private Transaction ConstructTransaction(string transactionId)
     {
-        // Get Transaction
-        var te = VerifyTransaction(transactionId);
-        
+        // Get TransactionEntity
+        var te = GetTransactionEntities().Single(te => te.RowKey == transactionId);
+
         // Get PlayerEntity
         var pe = dataService.PlayerEntities.Single(p => p.RowKey == te.PlayerRowKey);
-        
+
         // Get GameEntity
-        //var ge = dataService.GameEntities.Single(g => g.RowKey == te.)
-        throw new NotImplementedException();
-    }
+        var ge = dataService.GameEntities.SingleOrDefault(g => g.RowKey == te.GameRowKey);
 
-    private TransactionEntity VerifyTransaction(string transactionId)
-    {
-        var transactionEntity = GetTransactionEntities().FirstOrDefault(pe => pe.RowKey == transactionId);
-        if (transactionEntity == default)
+        // Construct Transaction
+        var t = new Transaction(te.RowKey, pe, ge)
         {
-            throw new KeyNotFoundException($"The TransactionEntity with ID {transactionId} was not found.");
-        }
+            Amount = te.Amount,
+            DateTime = te.Date.DateTime,
+            Notes = te.Notes,
+        };
 
-        return transactionEntity;
+        return t;
     }
 
     public List<Transaction> GetTransactions()
@@ -48,7 +46,7 @@ public class TransactionService(IDataService dataService) : ITransactionService
 
     public Transaction GetTransaction(string id)
     {
-        throw new NotImplementedException();
+        return ConstructTransaction(id);
     }
 
     public Task DeleteTransactionAsync(string id)

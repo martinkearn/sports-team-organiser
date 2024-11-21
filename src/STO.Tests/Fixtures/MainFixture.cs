@@ -174,5 +174,11 @@ public class MainFixture
             Played = false,
             UrlSegment = "jacob-ramsey-10-04-2024"
         });
+        
+        // Add Transactions which do not affect the balance (they cancel each other out)
+        TransactionEntities.Add(new TransactionEntity { RowKey = "T7", PlayerRowKey = "4", Amount = 3, Date = dtOffset });
+        TransactionEntities.Add(new TransactionEntity { RowKey = "T8", PlayerRowKey = "4", Amount = -3, Date = dtOffset });
+        TransactionEntities.Add(new TransactionEntity { RowKey = "T9", PlayerRowKey = "4", Amount = 3, Date = dtOffset });
+        TransactionEntities.Add(new TransactionEntity { RowKey = "T10", PlayerRowKey = "4", Amount = -3, Date = dtOffset });
     }
 }

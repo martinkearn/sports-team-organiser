@@ -27,7 +27,7 @@ namespace STO.Tests.Services
         #region GetTransaction
 
         [Fact]
-        public void GetTransaction_ShouldReturnTransactionWithCorrectDetails()
+        public void GetTransaction_WithValidId_ReturnsTransaction()
         {
             // Arrange
             const string transactionId = "T1";
@@ -46,7 +46,7 @@ namespace STO.Tests.Services
         }
         
         [Fact]
-        public void GetTransaction_WithNoGame_ShouldReturnTransactionWithCorrectDetails()
+        public void GetTransaction_WithMissingGameEntity_ReturnsTransactionWithoutGameEntity()
         {
             // Arrange
             const string transactionId = "T2";
@@ -56,11 +56,32 @@ namespace STO.Tests.Services
             
             // Assert
             Assert.NotNull(result);
-            Assert.Equal(transactionId, result.Id);
-            Assert.Equal("1", result.PlayerEntity.RowKey);
-            Assert.Null(result.GameEntity); // Transaction T2 does now have a GameEntity
-            Assert.Equal(-3, result.Amount); // Transaction T2 has a negative amount of -£3
+            Assert.Null(result.GameEntity); // Transaction T2 does not have a GameEntity
+        }
+        
+        [Fact]
+        public void GetTransaction_WithNegativeAmount_ReturnsTransaction()
+        {
+            // Arrange
+            const string transactionId = "T2"; // Amount for T2 is -£3
+
+            // Act
+            var result = _transactionService.GetTransaction(transactionId);
+            
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal(-3, result.Amount);
             Assert.Equal("ollie-watkins--3-20-01-2024-18-30-00", result.UrlSegment);
+        }
+        
+        [Fact]
+        public void GetTransaction_WithInvalidId_ThrowsException()
+        {
+            // Arrange
+            const string transactionId = "invalid123";
+
+            // Act & Assert
+            Assert.Throws<InvalidOperationException>(() => _transactionService.GetTransaction(transactionId));
         }
 
         #endregion

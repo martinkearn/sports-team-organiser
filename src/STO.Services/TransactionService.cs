@@ -32,6 +32,21 @@ public class TransactionService(IDataService dataService) : ITransactionService
 
         return t;
     }
+    
+    private static TransactionEntity DeconstructTransaction(Transaction transaction)
+    {
+        var te = new TransactionEntity()
+        {
+            RowKey = transaction.Id,
+            Amount = transaction.Amount,
+            Date = new DateTimeOffset(transaction.DateTime),
+            GameRowKey = transaction.GameEntity?.RowKey,
+            Notes = transaction.Notes,
+            PlayerRowKey = transaction.PlayerEntity.RowKey,
+            UrlSegment = transaction.UrlSegment
+        };
+        return te;
+    }
 
     public List<Transaction> GetTransactions(int? skip, int? take)
     {
@@ -82,8 +97,9 @@ public class TransactionService(IDataService dataService) : ITransactionService
         throw new NotImplementedException();
     }
 
-    public Task UpsertTransactionAsync(Transaction transaction)
+    public async Task UpsertTransactionAsync(Transaction transaction)
     {
-        throw new NotImplementedException();
+        var te = DeconstructTransaction(transaction);
+        await dataService.UpsertEntityAsync(te);
     }
 }

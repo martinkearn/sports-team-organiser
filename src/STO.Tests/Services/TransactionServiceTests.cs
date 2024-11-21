@@ -38,10 +38,29 @@ namespace STO.Tests.Services
             // Assert
             Assert.NotNull(result);
             Assert.Equal(transactionId, result.Id);
-            Assert.Equal("1", result.PlayerRowKey);
-            Assert.Equal("G1", result.GameRowKey);
+            Assert.Equal("1", result.PlayerEntity.RowKey);
+            Assert.NotNull(result.GameEntity); // Transaction T1 does have a GameRowKey set which is G1
+            Assert.Equal("G1", result.GameEntity.RowKey);
             Assert.Equal(3, result.Amount);
-            Assert.Equal("ollie-watkins-01-20-2024-18-30-00", result.UrlSegment);
+            Assert.Equal("ollie-watkins-3-20-01-2024-18-30-00", result.UrlSegment);
+        }
+        
+        [Fact]
+        public void GetTransaction_WithNoGame_ShouldReturnTransactionWithCorrectDetails()
+        {
+            // Arrange
+            const string transactionId = "T2";
+
+            // Act
+            var result = _transactionService.GetTransaction(transactionId);
+            
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal(transactionId, result.Id);
+            Assert.Equal("1", result.PlayerEntity.RowKey);
+            Assert.Null(result.GameEntity); // Transaction T2 does now have a GameEntity
+            Assert.Equal(-3, result.Amount); // Transaction T2 has a negative amount of -£3
+            Assert.Equal("ollie-watkins--3-20-01-2024-18-30-00", result.UrlSegment);
         }
 
         #endregion

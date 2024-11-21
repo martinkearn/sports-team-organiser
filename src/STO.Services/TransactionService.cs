@@ -1,4 +1,3 @@
-using System.Globalization;
 using STO.Models;
 using STO.Models.Interfaces;
 
@@ -36,7 +35,28 @@ public class TransactionService(IDataService dataService) : ITransactionService
 
     public List<Transaction> GetTransactions(int? skip, int? take)
     {
+        // Get all TransactionEntity
         var tes = GetTransactionEntities();
+        
+        // Apply Skip and Take only if values are provided
+        tes = skip.HasValue ? tes.Skip(skip.Value) : tes;
+        tes = take.HasValue ? tes.Take(take.Value) : tes;
+
+        var ts = tes.Select(te => ConstructTransaction(te.RowKey)).ToList();
+
+        return ts;
+    }
+    
+    public List<Transaction> GetTransactions(int? skip, int? take, string playerId)
+    {
+        // If playerId not defined, do not filter by player
+        if (string.IsNullOrEmpty(playerId))
+        {
+            return GetTransactions(skip, take);
+        }
+
+        // Get player's TransactionEntity
+        var tes = GetTransactionEntities().Where(te => te.PlayerRowKey == playerId);
         
         // Apply Skip and Take only if values are provided
         tes = skip.HasValue ? tes.Skip(skip.Value) : tes;

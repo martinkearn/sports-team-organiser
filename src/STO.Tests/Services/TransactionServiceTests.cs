@@ -93,7 +93,7 @@ namespace STO.Tests.Services
         public void GetTransactions_NoSkipOrTake_ReturnsAllTransactions()
         {
             // Act
-            var transactions = _transactionService.GetTransactions(null, null);
+            var transactions = _transactionService.GetTransactions(null, null, null);
 
             // Assert
             Assert.Equal(10, transactions.Count); // All transactions should be returned
@@ -103,7 +103,7 @@ namespace STO.Tests.Services
         public void GetTransactions_WithSkip_ReturnsSkippedTransactions()
         {
             // Act
-            var transactions = _transactionService.GetTransactions(5, null);
+            var transactions = _transactionService.GetTransactions(5, null, null);
 
             // Assert
             Assert.Equal(5, transactions.Count); // 5 transactions after skipping 5
@@ -160,6 +160,84 @@ namespace STO.Tests.Services
 
             // Assert
             Assert.Empty(transactions); // No transactions should be returned
+        }
+        
+        [Fact]
+        public void GetTransactions_WithPlayerId_ReturnsFilteredTransactions()
+        {
+            // Act
+            var transactions = _transactionService.GetTransactions(null, null, "4");
+
+            // Assert
+            Assert.Equal(4, transactions.Count); // Only transactions for 4 should be returned
+            Assert.All(transactions, t => Assert.Equal("4", t.PlayerEntity.RowKey)); // Ensure all transactions belong to Jacob Ramsey (ID4)
+        }
+
+        [Fact]
+        public void GetTransactions_WithInvalidPlayerId_ReturnsEmptyList()
+        {
+            // Act
+            var transactions = _transactionService.GetTransactions(null, null, "invalidPlayer");
+
+            // Assert
+            Assert.Empty(transactions); // No transactions should be returned
+        }
+
+        [Fact]
+        public void GetTransactions_WithPlayerIdAndSkip_ReturnsSkippedTransactions()
+        {
+            // Act
+            var transactions = _transactionService.GetTransactions(2, null, "4");
+
+            // Assert
+            Assert.Equal(2, transactions.Count); // Only 2 transactions should be returned after skipping 2
+            Assert.All(transactions, t => Assert.Equal("4", t.PlayerEntity.RowKey)); // Ensure all transactions belong to Jacob Ramsey (ID4)
+            Assert.Equal("T9", transactions[0].Id); // Verify the first returned transaction
+        }
+
+        [Fact]
+        public void GetTransactions_WithPlayerIdAndTake_ReturnsLimitedTransactions()
+        {
+            // Act
+            var transactions = _transactionService.GetTransactions(null, 3, "4");
+
+            // Assert
+            Assert.Equal(3, transactions.Count); // Only 3 transactions should be returned
+            Assert.All(transactions, t => Assert.Equal("4", t.PlayerEntity.RowKey)); // Ensure all transactions belong to Jacob Ramsey (ID4)
+            Assert.Equal("T7", transactions[0].Id); // Verify the first returned transaction
+        }
+
+        [Fact]
+        public void GetTransactions_WithPlayerIdSkipAndTake_ReturnsCorrectSubset()
+        {
+            // Act
+            var transactions = _transactionService.GetTransactions(1, 2, "4");
+
+            // Assert
+            Assert.Equal(2, transactions.Count); // Only 4 transactions after skipping 3
+            Assert.All(transactions, t => Assert.Equal("4", t.PlayerEntity.RowKey)); // Ensure all transactions belong to Jacob Ramsey (ID4)
+            Assert.Equal("T8", transactions[0].Id); // Verify the first returned transaction
+        }
+
+        [Fact]
+        public void GetTransactions_WithPlayerIdAndSkipExceedsTotal_ReturnsEmptyList()
+        {
+            // Act
+            var transactions = _transactionService.GetTransactions(15, null, "4");
+
+            // Assert
+            Assert.Empty(transactions); // No transactions should be returned
+        }
+
+        [Fact]
+        public void GetTransactions_WithPlayerIdAndTakeExceedsTotal_ReturnsAllTransactions()
+        {
+            // Act
+            var transactions = _transactionService.GetTransactions(null, 20, "4");
+
+            // Assert
+            Assert.Equal(4, transactions.Count); // All transactions should be returned
+            Assert.All(transactions, t => Assert.Equal("4", t.PlayerEntity.RowKey)); // Ensure all transactions belong to Jacob Ramsey (ID4)
         }
         
         #endregion

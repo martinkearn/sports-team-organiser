@@ -6,5 +6,5 @@ Used as a log during development to keep track of progress and status in between
 - [x] GetTransaction
 - [x] GetTransactions with skip and take
 - [x] GetTransactions with playerId
-- [ ] UpsertTransactionAsync
+- [x] UpsertTransactionAsync
 - [ ] DeleteTransactionAsync

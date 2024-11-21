@@ -242,6 +242,24 @@ namespace STO.Tests.Services
         
         #endregion
         
+        #region UpsertTransactionAsync
+        
+        [Fact]
+        public async Task UpsertTransactionAsync_ShouldCallUpsertEntityAsyncWithCorrectEntity()
+        {
+            // Arrange
+            var expectedTransaction = _fixture.UpdatedJacobRamseyT10;
+
+            // Act
+            await _transactionService.UpsertTransactionAsync(expectedTransaction);
+
+            // Assert
+            // Verify that UpsertEntityAsync was called with the correct transformed TransactionEntity
+            _mockDataService.Verify(ds => ds.UpsertEntityAsync(It.Is<TransactionEntity>(te => te.RowKey == "T10" && te.Amount == expectedTransaction.Amount && te.Notes == expectedTransaction.Notes)), Times.Once);
+        }
+        
+        #endregion
+        
     }
     
 }

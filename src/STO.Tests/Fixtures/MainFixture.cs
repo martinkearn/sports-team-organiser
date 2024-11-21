@@ -8,6 +8,7 @@ public class MainFixture
     public readonly List<PlayerAtGameEntity> PlayerAtGameEntities = [];
     public readonly List<GameEntity> GameEntities = [];
     public readonly Player PlayerWollyWatkins;
+    public readonly Transaction UpdatedJacobRamseyT10;
 
     public MainFixture()
     {
@@ -180,5 +181,16 @@ public class MainFixture
         TransactionEntities.Add(new TransactionEntity { RowKey = "T8", PlayerRowKey = "4", Amount = -3, Date = dtOffset });
         TransactionEntities.Add(new TransactionEntity { RowKey = "T9", PlayerRowKey = "4", Amount = 3, Date = dtOffset });
         TransactionEntities.Add(new TransactionEntity { RowKey = "T10", PlayerRowKey = "4", Amount = -3, Date = dtOffset });
+        
+        // Updated Transaction for Jacob ramsey T10
+        UpdatedJacobRamseyT10 = new Transaction(
+            "T10", 
+            PlayerEntities.Single(pe => pe.RowKey == "4"),
+            GameEntities.Single(ge => ge.RowKey == "G3"))
+        {
+            Amount = 5,
+            DateTime = dtOffset.Add(new TimeSpan(0,1,0,0)).DateTime,
+            Notes = "foo"
+        };
     }
 }

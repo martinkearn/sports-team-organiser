@@ -7,4 +7,10 @@ Used as a log during development to keep track of progress and status in between
 - [x] GetTransactions with skip and take
 - [x] GetTransactions with playerId
 - [x] UpsertTransactionAsync
-- [ ] DeleteTransactionAsync
+- [x] DeleteTransactionAsync
+
+## Pages & Components
+- [ ] /transactions
+- [ ] /transactions/add
+- [ ] /transactions/{TransactionUrlSegment}
+- [ ] /players/{PlayerUrlSegment}/transactions

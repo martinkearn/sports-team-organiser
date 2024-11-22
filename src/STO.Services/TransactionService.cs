@@ -92,9 +92,9 @@ public class TransactionService(IDataService dataService) : ITransactionService
         return ConstructTransaction(id);
     }
 
-    public Task DeleteTransactionAsync(string id)
+    public async Task DeleteTransactionAsync(string id)
     {
-        throw new NotImplementedException();
+        await dataService.DeleteEntityAsync<TransactionEntity>(id);
     }
 
     public async Task UpsertTransactionAsync(Transaction transaction)

@@ -241,6 +241,23 @@ namespace STO.Tests.Services
         }
         
         #endregion
+
+        #region DeleteTransaction
+
+        [Fact]
+        public async Task DeleteTransactionAsync_ShouldDeleteTransactionEntity()
+        {
+            // Arrange
+            var transactionId = "1";
+
+            // Act
+            await _transactionService.DeleteTransactionAsync(transactionId);
+
+            // Assert
+            _mockDataService.Verify(ds => ds.DeleteEntityAsync<TransactionEntity>(transactionId), Times.Once);
+        }
+
+        #endregion
         
         #region UpsertTransactionAsync
         

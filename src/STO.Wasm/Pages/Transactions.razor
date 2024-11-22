@@ -1,5 +1,5 @@
 @page "/transactions"
-@inject ITransactionEntityService TransactionEntityService
+@inject ITransactionService TransactionService
 
 <PageTitle>TNF - @_pageTitle</PageTitle>
 
@@ -15,13 +15,13 @@
 		</tr>
 	</thead>
 	<tbody>
-		@foreach (var te in _pageOfTransactionEntities)
+		@foreach (var t in _pageOfTransactions)
 		{
 			<tr>
-				<td><EntityTitleLink EntityType="Enums.EntityType.TransactionEntity" RowKey="@te.RowKey" Length="Enums.TitleLength.Long" Link="true" /></td>
-				<td><CurrencyDisplay Amount="@te.Amount" /></td>
-				<td class="d-none d-lg-table-cell">TO DO Player Name here</td>
-				<td class="d-none d-lg-table-cell">@te.Notes</td>
+				<td><EntityTitleLink EntityType="Enums.EntityType.TransactionEntity" RowKey="@t.Id" Length="Enums.TitleLength.Long" Link="true" /></td>
+				<td><CurrencyDisplay Amount="@t.Amount" /></td>
+				<td class="d-none d-lg-table-cell">@t.PlayerEntity.Name</td>
+				<td class="d-none d-lg-table-cell">@t.Notes</td>
 			</tr>
 		}
 	</tbody>
@@ -38,14 +38,12 @@
 	</ul>
 </nav>
 
-<p>@_transactionEntities.Count transactions. @_transactionsPerPage per page.</p>
-
+<p>@_transactionsPerPage per page.</p>
 
 @code {
 	[CascadingParameter] public MainLayout MainLayout { get; set; } = default!;
-	private List<TransactionEntity> _transactionEntities = [];
 
-	private List<TransactionEntity> _pageOfTransactionEntities = [];
+	private List<Transaction> _pageOfTransactions = [];
 
 	private readonly int _transactionsPerPage = 40;
 
@@ -67,22 +65,22 @@
 		switch (by)
 		{
 			case Enums.SortTransactionsBy.Date:
-				_transactionEntities = (_currentSortBy == by) ?
-					_transactionEntities.OrderByDescending(o => o.Date.Date).ToList() :
-					_transactionEntities.OrderBy(o => o.Date.Date).ToList();
+				_pageOfTransactions = (_currentSortBy == by) ?
+					_pageOfTransactions.OrderByDescending(o => o.DateTime).ToList() :
+					_pageOfTransactions.OrderBy(o => o.DateTime).ToList();
 				break;
 			case Enums.SortTransactionsBy.Amount:
-				_transactionEntities = (_currentSortBy == by) ?
-					_transactionEntities.OrderByDescending(o => o.Amount).ToList() :
-					_transactionEntities.OrderBy(o => o.Amount).ToList();
+				_pageOfTransactions = (_currentSortBy == by) ?
+					_pageOfTransactions.OrderByDescending(o => o.Amount).ToList() :
+					_pageOfTransactions.OrderBy(o => o.Amount).ToList();
 				break;
 			case Enums.SortTransactionsBy.Player:
-				_transactionEntities = (_currentSortBy == by) ?
-					_transactionEntities.OrderByDescending(o => o.PlayerRowKey).ToList() :
-					_transactionEntities.OrderBy(o => o.PlayerRowKey).ToList();
+				_pageOfTransactions = (_currentSortBy == by) ?
+					_pageOfTransactions.OrderByDescending(o => o.PlayerEntity.RowKey).ToList() :
+					_pageOfTransactions.OrderBy(o => o.PlayerEntity.RowKey).ToList();
 				break;
 			default:
-				_transactionEntities = _transactionEntities.OrderByDescending(o => o.Date.Date).ToList();
+				_pageOfTransactions = _pageOfTransactions.OrderByDescending(o => o.DateTime).ToList();
 				break;
 		}
 
@@ -93,20 +91,27 @@
 	private void ChangePage(int page)
 	{
 		_currentPageNumber = page;
-		_pageOfTransactionEntities = _transactionEntities.Skip((page - 1) * _transactionsPerPage).Take(_transactionsPerPage).ToList();
+		//_pageOfTransactions = _transactions.Skip((page - 1) * _transactionsPerPage).Take(_transactionsPerPage).ToList();
+		
+		_pageOfTransactions = TransactionService
+			.GetTransactions((page - 1) * _transactionsPerPage, _transactionsPerPage)
+			.OrderByDescending(o => o.DateTime)
+			.ToList();
 	}
 	
 	private void SetupPages()
 	{
-		_pageOfTransactionEntities = _transactionEntities.Take(_transactionsPerPage).ToList();
-		var pagesDec = (double)_transactionEntities.Count / (double)_transactionsPerPage;
+		_pageOfTransactions = TransactionService
+		 	.GetTransactions(0, _transactionsPerPage)
+		 	.OrderByDescending(o => o.DateTime)
+		 	.ToList();
+		var pagesDec = (double)_pageOfTransactions.Count / (double)_transactionsPerPage;
 		_pages = Convert.ToInt16(Math.Ceiling(pagesDec));
 		_currentPageNumber = 1;
 	}
 
 	private void RefreshData()
 	{
-		_transactionEntities = TransactionEntityService.GetTransactionEntities().OrderByDescending(o => o.Date.Date).ToList();
 		_pageTitle = "Transactions";
 		MainLayout.SetPageTitle(_pageTitle);
 		SetupPages();

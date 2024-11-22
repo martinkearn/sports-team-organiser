@@ -11,7 +11,7 @@ Used as a log during development to keep track of progress and status in between
 - [x] Startup DI
 
 ## Pages & Components
-- [ ] /transactions
+- [ ] /transactions - WIP
 - [ ] /transactions/add
 - [ ] /transactions/{TransactionUrlSegment}
 - [ ] /players/{PlayerUrlSegment}/transactions

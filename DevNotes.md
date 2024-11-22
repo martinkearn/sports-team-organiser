@@ -8,6 +8,7 @@ Used as a log during development to keep track of progress and status in between
 - [x] GetTransactions with playerId
 - [x] UpsertTransactionAsync
 - [x] DeleteTransactionAsync
+- [x] Startup DI
 
 ## Pages & Components
 - [ ] /transactions

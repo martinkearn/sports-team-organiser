@@ -8,9 +8,9 @@
 <table class="table table-striped">
 	<thead>
 		<tr>
-			<th scope="col"><button class="btn btn-link m-0 p-0" @onclick="() => SortTransactions(Enums.SortTransactionsBy.Date)">Date</button></th>
-			<th scope="col"><button class="btn btn-link m-0 p-0" @onclick="() => SortTransactions(Enums.SortTransactionsBy.Amount)">Amount</button></th>
-			<th scope="col" class="d-none d-lg-table-cell"><button class="btn btn-link m-0 p-0" @onclick="() => SortTransactions(Enums.SortTransactionsBy.Player)">Player</button></th>
+			<th scope="col">Date</th>
+			<th scope="col">Amount</th>
+			<th scope="col" class="d-none d-lg-table-cell">Player</th>
 			<th scope="col" class="d-none d-lg-table-cell">Notes</th>
 		</tr>
 	</thead>
@@ -50,9 +50,7 @@
 	private int _currentPageNumber = 1;
 
 	private int _pages = default!;
-
-	private Enums.SortTransactionsBy _currentSortBy = default!;
-
+	
 	private string _pageTitle = default!;
 
 	protected override void OnInitialized()
@@ -60,60 +58,26 @@
 		RefreshData();
 	}
 
-	private void SortTransactions(Enums.SortTransactionsBy by)
-	{
-		switch (by)
-		{
-			case Enums.SortTransactionsBy.Date:
-				_pageOfTransactions = (_currentSortBy == by) ?
-					_pageOfTransactions.OrderByDescending(o => o.DateTime).ToList() :
-					_pageOfTransactions.OrderBy(o => o.DateTime).ToList();
-				break;
-			case Enums.SortTransactionsBy.Amount:
-				_pageOfTransactions = (_currentSortBy == by) ?
-					_pageOfTransactions.OrderByDescending(o => o.Amount).ToList() :
-					_pageOfTransactions.OrderBy(o => o.Amount).ToList();
-				break;
-			case Enums.SortTransactionsBy.Player:
-				_pageOfTransactions = (_currentSortBy == by) ?
-					_pageOfTransactions.OrderByDescending(o => o.PlayerEntity.RowKey).ToList() :
-					_pageOfTransactions.OrderBy(o => o.PlayerEntity.RowKey).ToList();
-				break;
-			default:
-				_pageOfTransactions = _pageOfTransactions.OrderByDescending(o => o.DateTime).ToList();
-				break;
-		}
-
-		_currentSortBy = by;
-		SetupPages();
-	}
-
 	private void ChangePage(int page)
 	{
 		_currentPageNumber = page;
-		//_pageOfTransactions = _transactions.Skip((page - 1) * _transactionsPerPage).Take(_transactionsPerPage).ToList();
 		
 		_pageOfTransactions = TransactionService
 			.GetTransactions((page - 1) * _transactionsPerPage, _transactionsPerPage)
 			.OrderByDescending(o => o.DateTime)
 			.ToList();
 	}
-	
-	private void SetupPages()
-	{
-		_pageOfTransactions = TransactionService
-		 	.GetTransactions(0, _transactionsPerPage)
-		 	.OrderByDescending(o => o.DateTime)
-		 	.ToList();
-		var pagesDec = (double)_pageOfTransactions.Count / (double)_transactionsPerPage;
-		_pages = Convert.ToInt16(Math.Ceiling(pagesDec));
-		_currentPageNumber = 1;
-	}
 
 	private void RefreshData()
 	{
 		_pageTitle = "Transactions";
 		MainLayout.SetPageTitle(_pageTitle);
-		SetupPages();
+		_pageOfTransactions = TransactionService
+			.GetTransactions(0, _transactionsPerPage)
+			.OrderByDescending(o => o.DateTime)
+			.ToList();
+		var pagesDec = (double)_pageOfTransactions.Count / (double)_transactionsPerPage;
+		_pages = Convert.ToInt16(Math.Ceiling(pagesDec));
+		_currentPageNumber = 1;
 	}
 }

@@ -30,7 +30,7 @@
 <p>Showing @_transactions.Count items.</p>
 
 <div class="hstack gap-2">
-	<a class="btn btn-secondary" title="Show More" @onclick="ShowMore"><i class="fa-solid fa-arrow-down"></i> Show @_itemsPerPage More</a>
+	<a class="btn btn-secondary" title="Show More" @onclick="ShowMore"><i class="fa-solid fa-arrow-down"></i> Show @ItemsPerPage More</a>
 </div>
 
 
@@ -39,8 +39,8 @@
 
 	private List<Transaction> _transactions = [];
 
-	private readonly int _itemsPerPage = 30;
-	
+	private const int ItemsPerPage = 30;
+
 	private string _pageTitle = default!;
 
 	protected override void OnInitialized()
@@ -51,7 +51,7 @@
 	private void ShowMore()
 	{
 		var addedTransactions = TransactionService
-			.GetTransactions(_transactions.Count, _itemsPerPage)
+			.GetTransactions(_transactions.Count, ItemsPerPage)
 			.ToList();
 		
 		_transactions.AddRange(addedTransactions);
@@ -60,7 +60,7 @@
 	private void RefreshData()
 	{
 		_transactions = TransactionService
-			.GetTransactions(0, _itemsPerPage)
+			.GetTransactions(0, ItemsPerPage)
 			.ToList();
 		
 		_pageTitle = "Transactions";

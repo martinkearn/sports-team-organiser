@@ -8,7 +8,7 @@ public class TransactionService(IDataService dataService) : ITransactionService
     
     private IEnumerable<TransactionEntity> GetTransactionEntities()
     {
-        return [.. dataService.TransactionEntities.OrderBy(o => o.Date.DateTime)];
+        return [.. dataService.TransactionEntities.OrderByDescending(o => o.Date.DateTime)];
     }
 
     private Transaction ConstructTransaction(string transactionId)

@@ -62,8 +62,8 @@ public class Transaction(string id, PlayerEntity playerEntity, GameEntity? gameE
     }
     
     // Calculated properties
-    public string UrlSegment { get; set; }
-    public string Label { get; set; }
+    public string UrlSegment { get; set; } = default!;
+    public string Label { get; set; } = default!;
 
     private void SetCalculatedProperties(double amount, DateTime date)
     {

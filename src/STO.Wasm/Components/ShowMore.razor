@@ -1,13 +1,13 @@
+<p>Showing @TotalItems items.</p>
+    
 @if (_showLongRunning)
-{
+{    
     <LongRunning />
 }
 else
 {
-    <p>Showing @TotalItems items.</p>
-
     <div class="hstack gap-2">
-        <a class="btn btn-secondary" title="Show More" @onclick="CallParent"><i class="fa-solid fa-arrow-down"></i> Show @ItemsPerPage More</a>
+        <a class="btn btn-primary" title="Show More" @onclick="CallParent"><i class="fa-solid fa-arrow-down"></i> Show @ItemsPerPage More</a>
     </div>
 }
 
@@ -22,7 +22,7 @@ else
         _showLongRunning = true;
         StateHasChanged();
 		
-        await Task.Delay(500);
+        await Task.Delay(100); //This delay is required to force the UI refresh
         await ParentPageCallback.InvokeAsync();
         
         _showLongRunning = false;

@@ -12,7 +12,7 @@ Used as a log during development to keep track of progress and status in between
 
 ## Pages & Components
 - [x] /transactions - Show more
-- [ ] ShowMore as a component
+- [x] ShowMore as a component
 - [ ] /transactions/add
 - [ ] /transactions/{TransactionUrlSegment}
 - [ ] /players/{PlayerUrlSegment}/transactions

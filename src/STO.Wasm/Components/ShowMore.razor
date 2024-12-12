@@ -1,0 +1,16 @@
+<p>Showing @TotalItems items.</p>
+
+<div class="hstack gap-2">
+    <a class="btn btn-secondary" title="Show More" @onclick="CallParent"><i class="fa-solid fa-arrow-down"></i> Show @ItemsPerPage More</a>
+</div>
+
+@code {
+    [Parameter] public int TotalItems { get; set; }
+    [Parameter] public int ItemsPerPage { get; set; }
+    [Parameter] public EventCallback ParentPageCallback { get; set; }
+
+    private async Task CallParent()
+    {
+        await ParentPageCallback.InvokeAsync();
+    }
+}

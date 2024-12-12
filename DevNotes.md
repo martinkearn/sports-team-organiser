@@ -12,7 +12,6 @@ Used as a log during development to keep track of progress and status in between
 
 ## Pages & Components
 - [x] /transactions - Show more
-- [ ] /transactions - order by other properties
 - [ ] ShowMore as a component
 - [ ] /transactions/add
 - [ ] /transactions/{TransactionUrlSegment}

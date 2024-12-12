@@ -38,7 +38,7 @@
 	</tbody>
 </table>
 
-<ShowMore TotalItems="@_transactions.Count" ItemsPerPage="@ItemsPerPage" ParentPageCallback="() => ShowMore(ItemsPerPage)" />
+<ShowMore TotalItems="@_transactions.Count" ItemsPerPage="@ItemsPerPage" ParentPageCallback="ShowMore" />
 
 @code {
 	[CascadingParameter] public MainLayout MainLayout { get; set; } = default!;
@@ -54,13 +54,9 @@
 		RefreshData();
 	}
 
-	private void ShowMore(int itemsPerPage)
+	private void ShowMore()
 	{
-		var addedTransactions = TransactionService
-			.GetTransactions(_transactions.Count, itemsPerPage)
-			.ToList();
-		
-		_transactions.AddRange(addedTransactions);
+		_transactions.AddRange(TransactionService.GetTransactions(_transactions.Count, ItemsPerPage));
 	}
 
 	private void RefreshData()

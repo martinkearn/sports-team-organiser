@@ -1,16 +1,30 @@
-<p>Showing @TotalItems items.</p>
+@if (_showLongRunning)
+{
+    <LongRunning />
+}
+else
+{
+    <p>Showing @TotalItems items.</p>
 
-<div class="hstack gap-2">
-    <a class="btn btn-secondary" title="Show More" @onclick="CallParent"><i class="fa-solid fa-arrow-down"></i> Show @ItemsPerPage More</a>
-</div>
+    <div class="hstack gap-2">
+        <a class="btn btn-secondary" title="Show More" @onclick="CallParent"><i class="fa-solid fa-arrow-down"></i> Show @ItemsPerPage More</a>
+    </div>
+}
 
 @code {
     [Parameter] public int TotalItems { get; set; }
     [Parameter] public int ItemsPerPage { get; set; }
     [Parameter] public EventCallback ParentPageCallback { get; set; }
+    private bool _showLongRunning;
 
     private async Task CallParent()
-    {
+    {		
+        _showLongRunning = true;
+        StateHasChanged();
+		
+        await Task.Delay(500);
         await ParentPageCallback.InvokeAsync();
+        
+        _showLongRunning = false;
     }
 }

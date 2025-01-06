@@ -252,8 +252,25 @@ namespace STO.Wasm.Services
 			var gameEntity = GetGameEntity(pagEntity.GameRowKey);
 			pagEntity.UrlSegment = $"{playerEntity.UrlSegment}-{gameEntity.UrlSegment}";
 			
-			// Upsert pag
-			await dataService.UpsertEntityAsync(pagEntity);
+			// Check if PAG exists
+			var matchingPagsByUrlSegment =
+				dataService.PlayerAtGameEntities.Count(p => p.UrlSegment == pagEntity.UrlSegment);
+
+			if (matchingPagsByUrlSegment > 0)
+			{
+				var matchingPag = GetPlayerAtGameEntityByUrlSegment(pagEntity.UrlSegment);
+				matchingPag.Forecast = pagEntity.Forecast;
+				matchingPag.Played = pagEntity.Played;
+				matchingPag.Team = pagEntity.Team;
+				
+				// Upsert pag
+				await dataService.UpsertEntityAsync(matchingPag);
+			}
+			else
+			{
+				// Upsert pag
+				await dataService.UpsertEntityAsync(pagEntity);
+			}
 		}
 
 		private List<ExpandedPag> ExpandPags(List<PlayerAtGameEntity> pags)

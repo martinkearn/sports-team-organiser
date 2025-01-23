@@ -1,7 +1,6 @@
 #nullable enable
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using STO.Models.Interfaces;
 
 namespace STO.Models;
 
@@ -11,29 +10,43 @@ public class Transaction()
     private DateTime _dateTime;
     private double _amount;
     private DateTime _lastUpdated = DateTime.UtcNow;
-    
-    public Transaction(IPlayerService playerService, string playerId) : this()
-    {
-        var thisPlayerService = playerService?? throw new ArgumentNullException(nameof(playerService)); // Null-check for safety
-        
-        // Use player service to get other player props
-        var player = thisPlayerService.GetPlayer(playerId);
-        PlayerId = player.Id;
-        PlayerName = player.Name;
-        PlayerUrlSegment = player.UrlSegment;
-    }
+    private string _playerName;
+    private string _playerUrlSegment;
     
     // Public events
     public event PropertyChangedEventHandler? PropertyChanged;
     
-    // Constructed properties
-    public string PlayerId { get; set; } = null!;
-    public string PlayerName { get; set; } = null!;
-    public string PlayerUrlSegment { get; set; } = null!;
-    
-    // Properties from TransactionEntity
+    // Public properties
     public string Id { get; set; }
+    public string PlayerId { get; set; } = null!;
+    public string GameId { get; set; } = null!;
+    public string GameTitle { get; set; } = null!;
     public string Notes { get; set; } = default!;
+    
+    public string PlayerName
+    {
+        get => _playerName;
+        set
+        {
+            // Set this property
+            _playerName = value;
+            
+            // Set dependant calculated properties
+            SetCalculatedProperties(Amount, DateTime, value, PlayerUrlSegment);
+        }
+    }
+    public string PlayerUrlSegment
+    {
+        get => _playerUrlSegment;
+        set
+        {
+            // Set this property
+            _playerUrlSegment = value;
+            
+            // Set dependant calculated properties
+            SetCalculatedProperties(Amount, DateTime, PlayerName, value);
+        }
+    }
     
     public double Amount
     {
@@ -44,7 +57,7 @@ public class Transaction()
             _amount = value;
             
             // Set dependant calculated properties
-            SetCalculatedProperties(value, DateTime);
+            SetCalculatedProperties(value, DateTime, PlayerName, PlayerUrlSegment);
         }
     }
 
@@ -57,7 +70,7 @@ public class Transaction()
             _dateTime = value;
             
             // Set dependant calculated properties
-            SetCalculatedProperties(Amount, value);
+            SetCalculatedProperties(Amount, value, PlayerName, PlayerUrlSegment);
         }
     }
     
@@ -75,10 +88,10 @@ public class Transaction()
     public string UrlSegment { get; set; } = default!;
     public string Label { get; set; } = default!;
 
-    private void SetCalculatedProperties(double amount, DateTime date)
+    private void SetCalculatedProperties(double amount, DateTime date, string playerName, string playerUrlSegment)
     {
-        UrlSegment = $"{PlayerUrlSegment}-{amount}-{date:dd-MM-yyyy-HH-mm-ss}";
-        Label = $"Transaction by {PlayerName} for {amount} on {date:dd MMM}";
+        UrlSegment = $"{playerUrlSegment}-{amount}-{date:dd-MM-yyyy-HH-mm-ss}";
+        Label = $"Transaction by {playerName} for {amount} on {date:dd MMM}";
     }
 
     // This method is called whenever any property changes

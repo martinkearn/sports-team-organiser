@@ -9,6 +9,7 @@ Used as a log during development to keep track of progress and status in between
 - [x] UpsertTransactionAsync
 - [x] DeleteTransactionAsync
 - [x] Startup DI
+- [ ] Refactor Transaction to only have properties, not sub-objects like PlayerEntity or Player
 
 ## Pages & Components
 - [x] /transactions - Show more

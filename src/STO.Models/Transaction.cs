@@ -1,30 +1,40 @@
 #nullable enable
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using STO.Models.Interfaces;
 
 namespace STO.Models;
 
-public class Transaction(string id, PlayerEntity playerEntity, GameEntity? gameEntity)
+public class Transaction()
 {
     // Private properties
     private DateTime _dateTime;
     private double _amount;
     private DateTime _lastUpdated = DateTime.UtcNow;
     
+    public Transaction(IPlayerService playerService, string playerId) : this()
+    {
+        var thisPlayerService = playerService?? throw new ArgumentNullException(nameof(playerService)); // Null-check for safety
+        
+        // Use player service to get other player props
+        var player = thisPlayerService.GetPlayer(playerId);
+        PlayerId = player.Id;
+        PlayerName = player.Name;
+        PlayerUrlSegment = player.UrlSegment;
+    }
+    
     // Public events
     public event PropertyChangedEventHandler? PropertyChanged;
     
     // Constructed properties
+    public string PlayerId { get; set; } = null!;
+    public string PlayerName { get; set; } = null!;
+    public string PlayerUrlSegment { get; set; } = null!;
     
-    public string Id { get; set; } = id;
-    public PlayerEntity PlayerEntity { get; set; } = playerEntity;
-
-    public GameEntity? GameEntity { get; set; } = gameEntity;
-    
-    // Public properties
-    
+    // Properties from TransactionEntity
+    public string Id { get; set; }
     public string Notes { get; set; } = default!;
-
+    
     public double Amount
     {
         get => _amount;
@@ -67,8 +77,8 @@ public class Transaction(string id, PlayerEntity playerEntity, GameEntity? gameE
 
     private void SetCalculatedProperties(double amount, DateTime date)
     {
-        UrlSegment = $"{PlayerEntity.UrlSegment}-{amount}-{date:dd-MM-yyyy-HH-mm-ss}";
-        Label = $"Transaction by {PlayerEntity.Name} for {amount} on {date:dd MMM}";
+        UrlSegment = $"{PlayerUrlSegment}-{amount}-{date:dd-MM-yyyy-HH-mm-ss}";
+        Label = $"Transaction by {PlayerName} for {amount} on {date:dd MMM}";
     }
 
     // This method is called whenever any property changes

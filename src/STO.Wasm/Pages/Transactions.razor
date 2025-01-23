@@ -21,11 +21,11 @@
 		<tr>
 			<td><EntityTitleLink EntityType="Enums.EntityType.TransactionEntity" RowKey="@t.Id" Length="Enums.TitleLength.Long" Link="true" /></td>
 			<td><CurrencyDisplay Amount="@t.Amount" /></td>
-			<td class="d-none d-lg-table-cell">@t.PlayerEntity.Name</td>
-			@if (t.GameEntity != null)
+			<td class="d-none d-lg-table-cell">@t.PlayerName</td>
+			@if (t.GameId != null)
 			{
 				<td class="d-none d-lg-table-cell">
-					<EntityTitleLink EntityType="Enums.EntityType.GameEntity" RowKey="@t.GameEntity.RowKey" Length="Enums.TitleLength.Short" Link="true"/>
+					<EntityTitleLink EntityType="Enums.EntityType.GameEntity" RowKey="@t.GameId" Length="Enums.TitleLength.Short" Link="true"/>
 				</td>
 			}
 			else

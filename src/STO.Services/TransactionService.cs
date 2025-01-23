@@ -23,12 +23,21 @@ public class TransactionService(IDataService dataService) : ITransactionService
         var ge = dataService.GameEntities.SingleOrDefault(g => g.RowKey == te.GameRowKey);
 
         // Construct Transaction
-        var t = new Transaction(te.RowKey, pe, ge)
+        var t = new Transaction()
         {
+            Id = te.RowKey,
             Amount = te.Amount,
             DateTime = te.Date.DateTime,
             Notes = te.Notes,
+            PlayerId = pe.RowKey,
+            PlayerName = pe.Name,
+            PlayerUrlSegment = pe.UrlSegment
         };
+        if (ge != null)
+        {
+            t.GameId = ge.RowKey;
+            t.GameLabel = ge.Title;
+        }
 
         return t;
     }
@@ -40,9 +49,9 @@ public class TransactionService(IDataService dataService) : ITransactionService
             RowKey = transaction.Id,
             Amount = transaction.Amount,
             Date = new DateTimeOffset(transaction.DateTime),
-            GameRowKey = transaction.GameEntity?.RowKey,
+            GameRowKey = transaction.GameId,
             Notes = transaction.Notes,
-            PlayerRowKey = transaction.PlayerEntity.RowKey,
+            PlayerRowKey = transaction.PlayerId,
             UrlSegment = transaction.UrlSegment
         };
         return te;

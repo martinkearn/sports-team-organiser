@@ -58,7 +58,8 @@ public class MainFixture
                 Tags = "",
                 Position = Enums.PlayerPosition.BoxToBox,
                 DefaultRate = 3,
-                AdminRating = 4
+                AdminRating = 4,
+                UrlSegment = "morgan-rogers"
             }
         );
         RatingEntities.Add(new RatingEntity { RowKey = "R5", PlayerRowKey = "2", Rating = 4 });
@@ -77,7 +78,8 @@ public class MainFixture
                 Tags = "",
                 Position = Enums.PlayerPosition.Forward,
                 DefaultRate = 3,
-                AdminRating = 4
+                AdminRating = 4,
+                UrlSegment = "leon-bailey"
             }
         );
         RatingEntities.Add(new RatingEntity { RowKey = "R9", PlayerRowKey = "3", Rating = 5 });// Average 3.5
@@ -92,7 +94,8 @@ public class MainFixture
                 Tags = "",
                 Position = Enums.PlayerPosition.BoxToBox,
                 DefaultRate = 3,
-                AdminRating = 3
+                AdminRating = 3,
+                UrlSegment = "jacob-ramsey"
             }
         );
         
@@ -183,14 +186,17 @@ public class MainFixture
         TransactionEntities.Add(new TransactionEntity { RowKey = "T10", PlayerRowKey = "4", Amount = -3, Date = dtOffset });
         
         // Updated Transaction for Jacob ramsey T10
-        UpdatedJacobRamseyT10 = new Transaction(
-            "T10", 
-            PlayerEntities.Single(pe => pe.RowKey == "4"),
-            GameEntities.Single(ge => ge.RowKey == "G3"))
+        UpdatedJacobRamseyT10 = new Transaction()
         {
+            Id = "T10",
             Amount = 5,
             DateTime = dtOffset.Add(new TimeSpan(0,1,0,0)).DateTime,
-            Notes = "foo"
+            Notes = "foo",
+            PlayerId = "4",
+            PlayerName = "Jacob Ramsey",
+            PlayerUrlSegment = "jacob-ramsey",
+            GameId = "G3",
+            GameLabel = ""
         };
     }
 }

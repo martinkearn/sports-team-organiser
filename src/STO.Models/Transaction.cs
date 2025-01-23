@@ -20,7 +20,7 @@ public class Transaction()
     public string Id { get; set; }
     public string PlayerId { get; set; } = null!;
     public string GameId { get; set; } = null!;
-    public string GameTitle { get; set; } = null!;
+    public string GameLabel { get; set; } = null!;
     public string Notes { get; set; } = default!;
     
     public string PlayerName

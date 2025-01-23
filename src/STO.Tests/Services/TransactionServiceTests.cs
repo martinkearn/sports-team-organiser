@@ -38,9 +38,8 @@ namespace STO.Tests.Services
             // Assert
             Assert.NotNull(result);
             Assert.Equal(transactionId, result.Id);
-            Assert.Equal("1", result.PlayerEntity.RowKey);
-            Assert.NotNull(result.GameEntity); // Transaction T1 does have a GameRowKey set which is G1
-            Assert.Equal("G1", result.GameEntity.RowKey);
+            Assert.Equal("1", result.PlayerId);
+            Assert.Equal("G1", result.GameId);
             Assert.Equal(3, result.Amount);
             Assert.Equal("ollie-watkins-3-20-01-2024-18-30-00", result.UrlSegment);
             Assert.True(result.LastUpdated > DateTime.UtcNow.Subtract(new TimeSpan(0,0,1,0))); // was update more recently than now minus 1 minute 
@@ -57,7 +56,7 @@ namespace STO.Tests.Services
             
             // Assert
             Assert.NotNull(result);
-            Assert.Null(result.GameEntity); // Transaction T2 does not have a GameEntity
+            Assert.Null(result.GameId); // Transaction T2 does not have a Game
         }
         
         [Fact]
@@ -170,7 +169,7 @@ namespace STO.Tests.Services
 
             // Assert
             Assert.Equal(4, transactions.Count); // Only transactions for 4 should be returned
-            Assert.All(transactions, t => Assert.Equal("4", t.PlayerEntity.RowKey)); // Ensure all transactions belong to Jacob Ramsey (ID4)
+            Assert.All(transactions, t => Assert.Equal("4", t.PlayerId)); // Ensure all transactions belong to Jacob Ramsey (ID4)
         }
 
         [Fact]
@@ -191,7 +190,7 @@ namespace STO.Tests.Services
 
             // Assert
             Assert.Equal(2, transactions.Count); // Only 2 transactions should be returned after skipping 2
-            Assert.All(transactions, t => Assert.Equal("4", t.PlayerEntity.RowKey)); // Ensure all transactions belong to Jacob Ramsey (ID4)
+            Assert.All(transactions, t => Assert.Equal("4", t.PlayerId)); // Ensure all transactions belong to Jacob Ramsey (ID4)
             Assert.Equal("T9", transactions[0].Id); // Verify the first returned transaction
         }
 
@@ -203,7 +202,7 @@ namespace STO.Tests.Services
 
             // Assert
             Assert.Equal(3, transactions.Count); // Only 3 transactions should be returned
-            Assert.All(transactions, t => Assert.Equal("4", t.PlayerEntity.RowKey)); // Ensure all transactions belong to Jacob Ramsey (ID4)
+            Assert.All(transactions, t => Assert.Equal("4", t.PlayerId)); // Ensure all transactions belong to Jacob Ramsey (ID4)
             Assert.Equal("T7", transactions[0].Id); // Verify the first returned transaction
         }
 
@@ -215,7 +214,7 @@ namespace STO.Tests.Services
 
             // Assert
             Assert.Equal(2, transactions.Count); // Only 4 transactions after skipping 3
-            Assert.All(transactions, t => Assert.Equal("4", t.PlayerEntity.RowKey)); // Ensure all transactions belong to Jacob Ramsey (ID4)
+            Assert.All(transactions, t => Assert.Equal("4", t.PlayerId)); // Ensure all transactions belong to Jacob Ramsey (ID4)
             Assert.Equal("T8", transactions[0].Id); // Verify the first returned transaction
         }
 
@@ -237,7 +236,7 @@ namespace STO.Tests.Services
 
             // Assert
             Assert.Equal(4, transactions.Count); // All transactions should be returned
-            Assert.All(transactions, t => Assert.Equal("4", t.PlayerEntity.RowKey)); // Ensure all transactions belong to Jacob Ramsey (ID4)
+            Assert.All(transactions, t => Assert.Equal("4", t.PlayerId)); // Ensure all transactions belong to Jacob Ramsey (ID4)
         }
         
         #endregion

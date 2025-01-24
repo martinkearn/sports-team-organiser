@@ -87,7 +87,11 @@
 
 	private void RefreshData()
 	{
-		_newTransaction = new Transaction();
+		_newTransaction = new Transaction
+		{
+			DateTime = DateTime.UtcNow
+		};
+
 		_players = PlayerService.GetPlayers();
 		_gameEntities = GameEntityService.GetGameEntities();
 		_pageTitle = "Add Transaction";

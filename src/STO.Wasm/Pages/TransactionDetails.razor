@@ -20,7 +20,7 @@
 		<p>@_transactionEntity.UrlSegment</p>
 
 		<h5>Date</h5>
-		<p><EntityTitleLink EntityType="Enums.EntityType.TransactionEntity" RowKey="@_transactionEntity.RowKey" Length="Enums.TitleLength.Long" Link="false" /></p>
+		<p>@_transactionEntity.Date.DateTime</p>
 
 		<h5>Amount</h5>
 		<p><CurrencyDisplay Amount="@_transactionEntity.Amount"></CurrencyDisplay></p>
@@ -36,7 +36,7 @@
 		}
 
 		<h5>Game</h5>
-		@if (_gameEntity != default)
+		@if (_gameEntity != null)
 		{
 			<p><EntityTitleLink EntityType="Enums.EntityType.GameEntity" RowKey="@_transactionEntity.GameRowKey" Length="Enums.TitleLength.Long" Link="true" /></p>
 		}

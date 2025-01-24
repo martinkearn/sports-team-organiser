@@ -5,41 +5,51 @@
 
 <h1><i class="fa-solid fa-coins me-2"></i> @_pageTitle</h1>
 
-<table class="table table-striped">
-	<thead>
-	<tr>
-		<th scope="col">Date</th>
-		<th scope="col">Amount</th>
-		<th scope="col" class="d-none d-lg-table-cell">Player</th>
-		<th scope="col" class="d-none d-lg-table-cell">Game</th>
-		<th scope="col" class="d-none d-lg-table-cell">Notes</th>
-	</tr>
-	</thead>
-	<tbody>
-	@foreach (var t in _transactions)
-	{
-		<tr>
-			<td><EntityTitleLink EntityType="Enums.EntityType.TransactionEntity" RowKey="@t.Id" Length="Enums.TitleLength.Long" Link="true" /></td>
-			<td><CurrencyDisplay Amount="@t.Amount" /></td>
-			<td class="d-none d-lg-table-cell">@t.PlayerName</td>
-			@if (t.GameId != null)
-			{
-				<td class="d-none d-lg-table-cell">
-					<EntityTitleLink EntityType="Enums.EntityType.GameEntity" RowKey="@t.GameId" Length="Enums.TitleLength.Short" Link="true"/>
-				</td>
-			}
-			else
-			{
-				<td class="d-none d-lg-table-cell">No Game</td>
-			}
-			<td class="d-none d-lg-table-cell">@t.Notes</td>
-		</tr>
-	}
-	</tbody>
-</table>
+<AuthorizeView Policy="IsAdminEmail">
+	<Authorized>
 
-<p>Showing @_transactions.Count transactions.</p>
-<ShowMore ParentPageCallback="ShowMore" />
+		<table class="table table-striped">
+			<thead>
+			<tr>
+				<th scope="col">Date</th>
+				<th scope="col">Amount</th>
+				<th scope="col" class="d-none d-lg-table-cell">Player</th>
+				<th scope="col" class="d-none d-lg-table-cell">Game</th>
+				<th scope="col" class="d-none d-lg-table-cell">Notes</th>
+			</tr>
+			</thead>
+			<tbody>
+			@foreach (var t in _transactions)
+			{
+				<tr>
+					<td><EntityTitleLink EntityType="Enums.EntityType.TransactionEntity" RowKey="@t.Id" Length="Enums.TitleLength.Long" Link="true" /></td>
+					<td><CurrencyDisplay Amount="@t.Amount" /></td>
+					<td class="d-none d-lg-table-cell">@t.PlayerName</td>
+					@if (t.GameId != null)
+					{
+						<td class="d-none d-lg-table-cell">
+							<EntityTitleLink EntityType="Enums.EntityType.GameEntity" RowKey="@t.GameId" Length="Enums.TitleLength.Short" Link="true"/>
+						</td>
+					}
+					else
+					{
+						<td class="d-none d-lg-table-cell">No Game</td>
+					}
+					<td class="d-none d-lg-table-cell">@t.Notes</td>
+				</tr>
+			}
+			</tbody>
+		</table>
+
+		<p>Showing @_transactions.Count transactions.</p>
+		<ShowMore ParentPageCallback="ShowMore" />
+
+	</Authorized>
+	<NotAuthorized>
+		<h4>Access Denied!</h4>
+		<a class="btn btn-secondary" href="authentication/login"><i class="fa-solid fa-key me-2"></i> Log in</a>
+	</NotAuthorized>
+</AuthorizeView>
 
 @code {
 	[CascadingParameter] public MainLayout MainLayout { get; set; } = default!;
@@ -48,7 +58,7 @@
 
 	private const int ItemsPerPage = 30;
 
-	private string _pageTitle = default!;
+	private string _pageTitle = null!;
 
 	protected override void OnInitialized()
 	{

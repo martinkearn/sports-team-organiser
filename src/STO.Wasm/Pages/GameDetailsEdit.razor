@@ -6,58 +6,60 @@
 
 <h1><i class="fa-solid fa-people-group me-2"></i> Edit <EntityTitleLink RowKey="@_gameEntity.RowKey" EntityType="Enums.EntityType.GameEntity" Link="false" /></h1>
 
-<div class="mb-3">
-    <label class="form-label">Date</label>
-    <InputDate class="form-control" @bind-Value="_gameEntity.Date" />
-</div>
+<AuthorizeView Policy="IsAdminEmail">
+    <Authorized>
+        
+        <div class="mb-3">
+            <label class="form-label">Date</label>
+            <InputDate class="form-control" @bind-Value="_gameEntity.Date" />
+        </div>
 
-<div class="mb-3">
-    <label class="form-label">Last Updated</label>
-    <span class="form-control-plaintext">@_gameEntity.Timestamp</span>
-</div>
+        <div class="mb-3">
+            <label class="form-label">Last Updated</label>
+            <span class="form-control-plaintext">@_gameEntity.Timestamp</span>
+        </div>
 
-<div class="mb-3">
-    <label class="form-label">Time</label>
-    <div class="row">
-        <div class="col-auto">
-            <div class="input-group">
-                <InputNumber class="form-control" min="0" max="23" @bind-Value="_hour" @bind-Value:after="Edit" />
-                <InputNumber class="form-control" min="0" max="59" @bind-Value="_minute" @bind-Value:after="Edit" />
+        <div class="mb-3">
+            <label class="form-label">Time</label>
+            <div class="row">
+                <div class="col-auto">
+                    <div class="input-group">
+                        <InputNumber class="form-control" min="0" max="23" @bind-Value="_hour" @bind-Value:after="Edit" />
+                        <InputNumber class="form-control" min="0" max="59" @bind-Value="_minute" @bind-Value:after="Edit" />
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
-</div>
 
-<div class="mb-3">
-    <label class="form-label">Title</label>
-    <InputText class="form-control" @bind-Value="_gameEntity.Title" @bind-Value:after="Edit" />
-</div>
+        <div class="mb-3">
+            <label class="form-label">Title</label>
+            <InputText class="form-control" @bind-Value="_gameEntity.Title" @bind-Value:after="Edit" />
+        </div>
 
-<div class="mb-3">
-    <label class="form-label">Url Segment</label>
-    <InputText class="form-control" @bind-Value="_gameEntity.UrlSegment" disabled="true"  />
-    <div class="form-text">Set automatically.</div>
-</div>
+        <div class="mb-3">
+            <label class="form-label">Url Segment</label>
+            <InputText class="form-control" @bind-Value="_gameEntity.UrlSegment" disabled="true"  />
+            <div class="form-text">Set automatically.</div>
+        </div>
 
-<div class="mb-3">
-    <label class="form-label">Notes</label>
-    <InputText class="form-control" @bind-Value="_gameEntity.Notes" @bind-Value:after="Edit" />
-</div>
+        <div class="mb-3">
+            <label class="form-label">Notes</label>
+            <InputText class="form-control" @bind-Value="_gameEntity.Notes" @bind-Value:after="Edit" />
+        </div>
 
-<div class="hstack gap-2">
-    <a class="btn btn-secondary" href="/games/@GameUrlSegment"><i class="fa-solid fa-arrow-left"></i>Back to Game</a>
-
-    <AuthorizeView Policy="IsAdminEmail">
-        <Authorized>
+        <div class="hstack gap-2">
+            <a class="btn btn-secondary" href="/games/@GameUrlSegment"><i class="fa-solid fa-arrow-left"></i>Back to Game</a>
             <DeleteButtonWithCheck @rendermode="RenderMode.InteractiveAuto" DeleteWhatLabel="@_pageTitle" ButtonLabel="Delete" ParentPageCallback="DeleteGame" />
-        </Authorized>
-        <NotAuthorized>
-            <a class="btn btn-secondary disabled"><i class="fa-solid fa-trash"></i> Delete</a>
-        </NotAuthorized>
-    </AuthorizeView>
-</div>
+        </div>
 
-@code {
+    </Authorized>
+    <NotAuthorized>
+        <h4>Access Denied!</h4>
+        <a class="btn btn-secondary" href="authentication/login"><i class="fa-solid fa-key me-2"></i> Log in</a>
+    </NotAuthorized>
+</AuthorizeView>
+
+    @code {
     [CascadingParameter] public MainLayout MainLayout { get; set; } = default!;
     
     [Parameter] public string GameUrlSegment { get; set; } = default!;

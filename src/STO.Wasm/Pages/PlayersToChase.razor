@@ -6,32 +6,42 @@
 
 <h1><i class="fa-solid fa-user me-2"></i> @_pageTitle</h1>
 
-<p>Search back to @_startDate.Date.ToShortDateString() for recent games and players.</p>
+<AuthorizeView Policy="IsAdminEmail">
+    <Authorized>
 
-<InputSelect class="form-select" @bind-Value="_selectedGameRowKey" @bind-Value:after="GameSelected">
-    <option value="all">Select Game ...</option>
-    @foreach (var game in _recentGames)
-    {
-        <option value="@game.RowKey">
-            <EntityTitleLink EntityType="Enums.EntityType.GameEntity" RowKey="@game.RowKey" Link="false" />
-        </option>
-    }
-</InputSelect>
+        <p>Search back to @_startDate.Date.ToShortDateString() for recent games and players.</p>
 
-<br/>
-@if (string.IsNullOrEmpty(_selectedGameLabel))
-{
-    <p>All recent players:</p>
-}
-else
-{
-    <p>Recent players not playing at @_selectedGameLabel:</p>
-}
+        <InputSelect class="form-select" @bind-Value="_selectedGameRowKey" @bind-Value:after="GameSelected">
+            <option value="all">Select Game ...</option>
+            @foreach (var game in _recentGames)
+            {
+                <option value="@game.RowKey">
+                    <EntityTitleLink EntityType="Enums.EntityType.GameEntity" RowKey="@game.RowKey" Link="false" />
+                </option>
+            }
+        </InputSelect>
 
-@foreach (var rp in _recentPlayersNotAtSelectedGame)
-{
-    <p><PlayerLink Player="rp" /> has played @rp.GamesCount times</p>
-}
+        <br/>
+        @if (string.IsNullOrEmpty(_selectedGameLabel))
+        {
+            <p>All recent players:</p>
+        }
+        else
+        {
+            <p>Recent players not playing at @_selectedGameLabel:</p>
+        }
+
+        @foreach (var rp in _recentPlayersNotAtSelectedGame)
+        {
+            <p><PlayerLink Player="rp" /> has played @rp.GamesCount times</p>
+        }
+
+    </Authorized>
+    <NotAuthorized>
+        <h4>Access Denied!</h4>
+        <a class="btn btn-secondary" href="authentication/login"><i class="fa-solid fa-key me-2"></i> Log in</a>
+    </NotAuthorized>
+</AuthorizeView>
 
 @code {
     [CascadingParameter] public MainLayout MainLayout { get; set; } = default!;

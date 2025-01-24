@@ -60,23 +60,23 @@
 			<button class="btn btn-secondary" @onclick="ClearLocalData">Clear Local Data</button>
 			<button class="btn btn-secondary" @onclick="() => RefreshData(true)">Refresh Data</button>
 		</div>
-		@foreach (var p in DataService.PlayerEntities)
+		@foreach (var p in DataService.PlayerEntities.OrderByDescending(p => p.Timestamp))
 		{
 			<p><a href="/players/@p.UrlSegment">Player, @p.RowKey, @p.Name</a></p>
 		}
-		@foreach (var g in _allGames)
+		@foreach (var g in _allGames.OrderByDescending(p => p.Timestamp))
 		{
 			<p><a href="/games/@g.UrlSegment">Game, @g.RowKey, @g.Date</a></p>
 		}
-		@foreach (var t in DataService.TransactionEntities)
+		@foreach (var t in DataService.TransactionEntities.OrderByDescending(p => p.Timestamp))
 		{
 			<p><a href="/transactions/@t.UrlSegment">Transaction, @t.RowKey, @t.Date, @t.Amount</a></p>
 		}
-		@foreach (var pag in _allPlayerAtGame)
+		@foreach (var pag in _allPlayerAtGame.OrderByDescending(p => p.Timestamp))
 		{
 			<p><a href="/games/pags/@pag.UrlSegment">PlayerAtGame, @pag.RowKey, @pag.PlayerRowKey, @pag.GameRowKey</a></p>
 		}
-		@foreach (var r in _allRatings)
+		@foreach (var r in _allRatings.OrderByDescending(p => p.Timestamp))
 		{
 			<p><a href="/ratings/@r.UrlSegment">Rating, @r.RowKey, @r.PlayerRowKey, @r.GameRowKey, @r.Rating</a></p>
 		}
@@ -84,6 +84,10 @@
 		<BootstrapBreakpoints/>
 
 	</Authorized>
+	<NotAuthorized>
+		<h4>Access Denied!</h4>
+		<a class="btn btn-secondary" href="authentication/login"><i class="fa-solid fa-key me-2"></i> Log in</a>
+	</NotAuthorized>
 </AuthorizeView>
 
 

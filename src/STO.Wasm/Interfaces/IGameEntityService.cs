@@ -66,7 +66,7 @@ namespace STO.Wasm.Interfaces
 		/// <summary>
 		/// Gets a single Pag (player at game).
 		/// </summary>
-		/// <param name="urlSegment">The UrlSegment for the GameEntity to get.</param>
+		/// <param name="urlSegment">The UrlSegment for the PlayerAtGameEntity to get.</param>
 		/// <returns>PlayerAtGame.</returns>
 		public PlayerAtGameEntity GetPlayerAtGameEntityByUrlSegment(string urlSegment);
 

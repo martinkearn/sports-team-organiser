@@ -81,9 +81,42 @@ namespace STO.Tests.Services
             const string transactionId = "invalid123";
 
             // Act & Assert
-            Assert.Throws<InvalidOperationException>(() => _transactionService.GetTransaction(transactionId));
+            Assert.Throws<KeyNotFoundException>(() => _transactionService.GetTransaction(transactionId));
         }
 
+        #endregion
+        
+        #region GetTransactionByUrlSegment
+        
+        [Fact]
+        public void GetTransactionByUrlSegment_WithValidUrlSegment_ReturnsTransaction()
+        {
+            // Arrange
+            const string transactionUrlSegment = "ollie-watkins-3-20-01-2024-18-30-00";
+
+            // Act
+            var result = _transactionService.GetTransactionByUrlSegment(transactionUrlSegment);
+            
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal(transactionUrlSegment, result.UrlSegment);
+            Assert.Equal("T1", result.Id);
+            Assert.Equal("1", result.PlayerId);
+            Assert.Equal("G1", result.GameId);
+            Assert.Equal(3, result.Amount);
+            Assert.True(result.LastUpdated > DateTime.UtcNow.Subtract(new TimeSpan(0,0,1,0))); // was update more recently than now minus 1 minute 
+        }
+        
+        [Fact]
+        public void GetTransactionByUrlSegment_WithInvalidUrlSegment_ThrowsException()
+        {
+            // Arrange
+            const string transactionUrlSegment = "invalid123";
+
+            // Act & Assert
+            Assert.Throws<KeyNotFoundException>(() => _transactionService.GetTransactionByUrlSegment(transactionUrlSegment));
+        }
+        
         #endregion
         
         #region GetTransactions

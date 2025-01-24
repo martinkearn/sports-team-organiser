@@ -14,7 +14,12 @@ public class TransactionService(IDataService dataService) : ITransactionService
     private Transaction ConstructTransaction(string transactionId)
     {
         // Get TransactionEntity
-        var te = GetTransactionEntities().Single(te => te.RowKey == transactionId);
+        var te = GetTransactionEntities().SingleOrDefault(te => te.RowKey == transactionId);
+        
+        if (te == default)
+        {
+            throw new KeyNotFoundException();
+        }
 
         // Get PlayerEntity
         var pe = dataService.PlayerEntities.Single(p => p.RowKey == te.PlayerRowKey);
@@ -99,6 +104,19 @@ public class TransactionService(IDataService dataService) : ITransactionService
     public Transaction GetTransaction(string id)
     {
         return ConstructTransaction(id);
+    }
+
+    public Transaction GetTransactionByUrlSegment(string urlSegment)
+    {
+        // Get TransactionEntity for this UrlSegment
+        var te = GetTransactionEntities().FirstOrDefault(te => te.UrlSegment == urlSegment);
+
+        if (te == default)
+        {
+            throw new KeyNotFoundException();
+        }
+
+        return ConstructTransaction(te!.RowKey);
     }
 
     public async Task DeleteTransactionAsync(string id)

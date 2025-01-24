@@ -30,6 +30,13 @@ public interface ITransactionService
     public Transaction GetTransaction(string id);
 
     /// <summary>
+    /// Gets a specific Transaction based on the UrlSegment
+    /// </summary>
+    /// <param name="urlSegment">the UrlSegment for the Transaction to get</param>
+    /// <returns>A Transaction</returns>
+    public Transaction GetTransactionByUrlSegment(string urlSegment);
+
+    /// <summary>
     /// Deletes a Transaction.
     /// </summary>
     /// <param name="id">The id for the Transaction to delete.</param>

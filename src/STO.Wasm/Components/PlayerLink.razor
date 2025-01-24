@@ -1,5 +1,18 @@
-<a href="/players/@Player.UrlSegment">@Player.Name</a>
+<a href="/players/@PlayerUrlSegment">@PlayerName</a>
 
 @code {
     [Parameter] public Player Player { get; set; } = default!;
+    
+    [Parameter] public string PlayerName { get; set; } = default!;
+    
+    [Parameter] public string PlayerUrlSegment { get; set; } = default!;
+    
+    protected override void OnInitialized()
+    {
+        if (Player is not null)
+        {
+            PlayerName = Player.Name;
+            PlayerUrlSegment = PlayerUrlSegment;
+        }
+    }
 }

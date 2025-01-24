@@ -11,7 +11,7 @@
 		<table class="table table-striped">
 			<thead>
 			<tr>
-				<th scope="col">Date</th>
+				<th scope="col">Transaction</th>
 				<th scope="col">Amount</th>
 				<th scope="col" class="d-none d-lg-table-cell">Player</th>
 				<th scope="col" class="d-none d-lg-table-cell">Game</th>
@@ -22,7 +22,7 @@
 			@foreach (var t in _transactions)
 			{
 				<tr>
-					<td><EntityTitleLink EntityType="Enums.EntityType.TransactionEntity" RowKey="@t.Id" Length="Enums.TitleLength.Long" Link="true" /></td>
+					<td><a href="/transactions/@t.UrlSegment">@t.Label</a></td>
 					<td><CurrencyDisplay Amount="@t.Amount" /></td>
 					<td class="d-none d-lg-table-cell">@t.PlayerName</td>
 					@if (t.GameId != null)
@@ -52,7 +52,7 @@
 </AuthorizeView>
 
 @code {
-	[CascadingParameter] public MainLayout MainLayout { get; set; } = default!;
+	[CascadingParameter] public MainLayout MainLayout { get; set; } = null!;
 
 	private List<Transaction> _transactions = [];
 

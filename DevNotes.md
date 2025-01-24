@@ -10,6 +10,7 @@ Used as a log during development to keep track of progress and status in between
 - [x] DeleteTransactionAsync
 - [x] Startup DI
 - [x] Refactor Transaction to only have properties, not sub-objects like PlayerEntity or Player
+- [x] Put Player name in UrlSegment
 
 ## Pages & Components
 - [x] /transactions - Show more
@@ -19,3 +20,9 @@ Used as a log during development to keep track of progress and status in between
 - [x] PAG add transaction
 - [ ] /transactions/{TransactionUrlSegment}
 - [ ] /players/{PlayerUrlSegment}/transactions
+- [ ] TransactionLink component to replace EntityTitleLink
+
+## Current focus
+The URL segment and labels do not appear to be always added or read consistently.
+
+Are they being constructed properly in the Transaction class

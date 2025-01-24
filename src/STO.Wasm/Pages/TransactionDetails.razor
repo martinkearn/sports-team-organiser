@@ -1,7 +1,6 @@
 @page "/transactions/{TransactionUrlSegment}"
-@inject ITransactionEntityService TransactionEntityService
-@inject IPlayerService PlayerService
-@inject IGameEntityService GameEntityService
+@using System.Globalization
+@inject ITransactionService TransactionService
 @inject NavigationManager Navigation
 
 <PageTitle>TNF - @_pageTitle</PageTitle>
@@ -13,22 +12,22 @@
 
 		<p>Transactions cannot be edited, only deleted</p>
 
-		<h5>Row Key</h5>
-		<p>@_transactionEntity.RowKey</p>
+		<h5>Id</h5>
+		<p>@_transaction.Id</p>
 
 		<h5>UrlSegment</h5>
-		<p>@_transactionEntity.UrlSegment</p>
+		<p>@_transaction.UrlSegment</p>
 
 		<h5>Date</h5>
-		<p>@_transactionEntity.Date.DateTime</p>
+		<p>@_transaction.DateTime.ToString(CultureInfo.CurrentCulture)</p>
 
 		<h5>Amount</h5>
-		<p><CurrencyDisplay Amount="@_transactionEntity.Amount"></CurrencyDisplay></p>
+		<p><CurrencyDisplay Amount="@_transaction.Amount"></CurrencyDisplay></p>
 
 		<h5>Notes</h5>
-		@if (_transactionEntity.Notes is not null)
+		@if (_transaction.Notes is not null)
 		{
-			<p>@_transactionEntity.Notes</p>
+			<p>@_transaction.Notes</p>
 		}
 		else
 		{
@@ -36,9 +35,9 @@
 		}
 
 		<h5>Game</h5>
-		@if (_gameEntity != null)
+		@if (_transaction.GameId != null)
 		{
-			<p><EntityTitleLink EntityType="Enums.EntityType.GameEntity" RowKey="@_transactionEntity.GameRowKey" Length="Enums.TitleLength.Long" Link="true" /></p>
+			<p><EntityTitleLink EntityType="Enums.EntityType.GameEntity" RowKey="@_transaction.GameId" Length="Enums.TitleLength.Long" Link="true" /></p>
 		}
 		else
 		{
@@ -46,7 +45,7 @@
 		}
 
 		<h5>Player</h5>
-		<p><PlayerLink Player="@_player" /></p>
+		<p><PlayerLink PlayerName="@_transaction.PlayerName" PlayerUrlSegment="@_transaction.PlayerUrlSegment" /></p>
 
 		<div class="hstack gap-2">
 			<a class="btn btn-secondary" href="/transactions/"><i class="fa-solid fa-arrow-left"></i> All Transactions</a>
@@ -61,18 +60,14 @@
 </AuthorizeView>
 
 @code {
-	[CascadingParameter] public MainLayout MainLayout { get; set; } = default!;
+	[CascadingParameter] public MainLayout MainLayout { get; set; } = null!;
 	
 	[Parameter]
-	public string TransactionUrlSegment { get; set; } = default!;
+	public string TransactionUrlSegment { get; set; } = null!;
 
-	private TransactionEntity _transactionEntity = default!;
+	private Transaction _transaction = null!;
 
-	private string _pageTitle = default!;
-
-	private Player _player = default!;
-
-	private GameEntity? _gameEntity;
+	private string _pageTitle = null!;
 
 	protected override void OnInitialized()
 	{
@@ -81,19 +76,14 @@
 
 	private async Task DeleteTransaction()
 	{
-		await TransactionEntityService.DeleteTransactionEntityAsync(_transactionEntity.RowKey);
+		await TransactionService.DeleteTransactionAsync(_transaction.Id);
 		Navigation.NavigateTo("/transactions");
 	}
 
 	private void RefreshData()
 	{
-		_transactionEntity = TransactionEntityService.GetTransactionEntityByUrlSegment(TransactionUrlSegment);
-		_player = PlayerService.GetPlayer(_transactionEntity.PlayerRowKey);
-		if (!string.IsNullOrEmpty(_transactionEntity.GameRowKey))
-		{
-			_gameEntity = GameEntityService.GetGameEntity(_transactionEntity.GameRowKey);
-		}
-		_pageTitle = $"Transaction for {_player.Name}, {_transactionEntity.Date.Date.ToShortDateString()}";
+		_transaction = TransactionService.GetTransactionByUrlSegment(TransactionUrlSegment);
+		_pageTitle = $"Transaction for {_transaction.PlayerName}, {_transaction.DateTime.Date.ToShortDateString()}";
 		MainLayout.SetPageTitle(_pageTitle);
 	}
 }

@@ -1,5 +1,5 @@
 @inject IGameEntityService GameEntityService
-@inject ITransactionEntityService TransactionEntityService
+@inject ITransactionService TransactionService
 @inject IPlayerService PlayerService
 
 <AuthorizeView Policy="IsAdminEmail">
@@ -38,14 +38,14 @@
 
 @code {
     [Parameter]
-    public PlayerAtGameEntity PagEntity { get; set; } = default!;
+    public PlayerAtGameEntity PagEntity { get; set; } = null!;
 
     [Parameter]
     public EventCallback RefreshMainPage { get; set; }
 
-    private Player _player = default!;
+    private Player _player = null!;
     
-    private GameEntity _pagGameEntity = default!;
+    private GameEntity _pagGameEntity = null!;
 
     protected override async Task OnInitializedAsync()
     {
@@ -81,17 +81,17 @@
 
     private async Task AddTransactionForPlayer()
     {
-        var newTransactionEntityForPag = new TransactionEntity()
+        var newTransactionForPag = new Transaction()
             {
-                Date = DateTimeOffset.UtcNow,
+                DateTime = DateTime.UtcNow,
                 Notes = GameEntityService.GetNotesForGame(PagEntity.GameRowKey),
-                PlayerRowKey = PagEntity.PlayerRowKey,
-                GameRowKey = PagEntity.GameRowKey,
+                PlayerId = PagEntity.PlayerRowKey,
+                GameId = PagEntity.GameRowKey,
                 Amount = _player.DefaultRate
             };
-        if (TransactionEntityService is not null)
+        if (TransactionService is not null)
         {
-            await TransactionEntityService.UpsertTransactionEntityAsync(newTransactionEntityForPag);
+            await TransactionService.UpsertTransactionAsync(newTransactionForPag);
         }
         await RefreshMainPage.InvokeAsync();
     }

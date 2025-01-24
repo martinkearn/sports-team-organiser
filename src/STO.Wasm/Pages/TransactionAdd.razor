@@ -1,9 +1,8 @@
 @page "/transactions/add"
-@inject ITransactionEntityService TransactionEntityService
+@inject ITransactionService TransactionService
 @inject IPlayerService PlayerService
 @inject IGameEntityService GameEntityService
 @inject NavigationManager Navigation
-
 
 <PageTitle>TNF - @_pageTitle</PageTitle>
 
@@ -11,12 +10,12 @@
 
 <AuthorizeView Policy="IsAdminEmail">
 	<Authorized>
-		<EditForm Model="@_newTransactionEntity" OnValidSubmit="Add" Context="newTransactionEntity">
+		<EditForm Model="@_newTransaction" OnValidSubmit="Add" Context="newTransaction">
 			<DataAnnotationsValidator />
 			<ValidationSummary />
 			<div class="mb-3">
-				<label for="addPlayerRowKey" class="form-label">Player</label>
-				<InputSelect class="form-select" @bind-Value="_newTransactionEntity.PlayerRowKey">
+				<label class="form-label">Player</label>
+				<InputSelect class="form-select" @bind-Value="_newTransaction.PlayerId">
 					<option value="">Select Player ...</option>
 					@foreach (var p in _players)
 					{
@@ -24,11 +23,10 @@
 					}
 				</InputSelect>
 			</div>
-
-
+			
 			<div class="mb-3">
-				<label for="addGameRowKey" class="form-label">Game</label>
-				<InputSelect class="form-select" @bind-Value="_newTransactionEntity.GameRowKey">
+				<label class="form-label">Game</label>
+				<InputSelect class="form-select" @bind-Value="_newTransaction.GameId">
 					<option value="">Select Game ...</option>
 					@foreach (var ge in _gameEntities)
 					{
@@ -39,19 +37,19 @@
 
 			<div class="mb-3">
 				<label for="addDate" class="form-label">Date</label>
-				<InputDate class="form-control" id="addDate" @bind-Value="_newTransactionEntity.Date" />
+				<InputDate class="form-control" id="addDate" @bind-Value="_newTransaction.DateTime" />
 			</div>
 
 			<div class="mb-3">
 				<label for="addNotes" class="form-label">Notes</label>
-				<InputText class="form-control" id="addNotes" @bind-Value="_newTransactionEntity.Notes" />
+				<InputText class="form-control" id="addNotes" @bind-Value="_newTransaction.Notes" />
 			</div>
 
 			<div class="mb-3">
 				<label for="addAmount" class="form-label">Amount</label>
 				<div class="input-group">
 					<span class="input-group-text">£</span>
-					<InputNumber type="number" class="form-control" id="addAmount" @bind-Value="_newTransactionEntity.Amount" />
+					<InputNumber type="number" class="form-control" id="addAmount" @bind-Value="_newTransaction.Amount" />
 				</div>
 				<div class="form-text">Positive for payments, negative to pay for a played game.</div>
 			</div>
@@ -69,13 +67,11 @@
 
 
 @code {
-	[CascadingParameter] public MainLayout MainLayout { get; set; } = default!;
+	[CascadingParameter] public MainLayout MainLayout { get; set; } = null!;
 	private List<Player> _players = [];
 	private List<GameEntity> _gameEntities = [];
-
-	private TransactionEntity _newTransactionEntity = new();
-
-	private string _pageTitle = default!;
+	private Transaction _newTransaction = new();
+	private string _pageTitle = null!;
 
 	protected override void OnInitialized()
 	{
@@ -84,13 +80,14 @@
 
 	protected async Task Add()
 	{
-		await TransactionEntityService.UpsertTransactionEntityAsync(_newTransactionEntity);
+		
+		await TransactionService.UpsertTransactionAsync(_newTransaction);
 		Navigation.NavigateTo("/transactions");
 	}
 
 	private void RefreshData()
 	{
-		_newTransactionEntity = new TransactionEntity();
+		_newTransaction = new Transaction();
 		_players = PlayerService.GetPlayers();
 		_gameEntities = GameEntityService.GetGameEntities();
 		_pageTitle = "Add Transaction";

@@ -16,6 +16,6 @@ Used as a log during development to keep track of progress and status in between
 - [x] ShowMore as a component
 - [x] /transactions/add
 - [x] Game details add transaction
-- [ ] PAG add transaction
+- [x] PAG add transaction
 - [ ] /transactions/{TransactionUrlSegment}
 - [ ] /players/{PlayerUrlSegment}/transactions

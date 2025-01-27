@@ -16,7 +16,7 @@ public class TransactionService(IDataService dataService) : ITransactionService
         // Get TransactionEntity
         var te = GetTransactionEntities().SingleOrDefault(te => te.RowKey == transactionId);
         
-        if (te == default)
+        if (te == null)
         {
             throw new KeyNotFoundException();
         }
@@ -27,20 +27,27 @@ public class TransactionService(IDataService dataService) : ITransactionService
         // Get GameEntity
         var ge = dataService.GameEntities.SingleOrDefault(g => g.RowKey == te.GameRowKey);
 
+        // Calculate label
+        var label = te.Amount < 0 ? 
+            $"Charge of £{Math.Abs(te.Amount)} to {pe.Name} on {te.Date.DateTime:dd MMM}" : 
+            $"Payment of £{te.Amount} from {pe.Name} on {te.Date.DateTime:dd MMM}";
+
         // Construct Transaction
         var t = new Transaction()
         {
             Id = te.RowKey,
             Amount = te.Amount,
-            DateTime = te.Date.DateTime,
             Notes = te.Notes,
-            PlayerId = pe.RowKey,
+            DateTime = te.Date.DateTime,
+            UrlSegment = te.UrlSegment,
+            Label = label,
+            PlayerId = te.PlayerRowKey,
             PlayerName = pe.Name,
-            PlayerUrlSegment = pe.UrlSegment
+            PlayerUrlSegment = pe.UrlSegment,
+            GameId = te.GameRowKey,
         };
         if (ge != null)
         {
-            t.GameId = ge.RowKey;
             t.GameLabel = ge.Title;
         }
 
@@ -51,13 +58,13 @@ public class TransactionService(IDataService dataService) : ITransactionService
     {
         var te = new TransactionEntity()
         {
-            RowKey = transaction.Id,
+            PlayerRowKey = transaction.PlayerId,
             Amount = transaction.Amount,
             Date = new DateTimeOffset(transaction.DateTime),
-            GameRowKey = transaction.GameId,
             Notes = transaction.Notes,
-            PlayerRowKey = transaction.PlayerId,
-            UrlSegment = transaction.UrlSegment
+            UrlSegment = transaction.UrlSegment,
+            GameRowKey = transaction.GameId,
+            RowKey = transaction.Id,
         };
         return te;
     }
@@ -111,12 +118,12 @@ public class TransactionService(IDataService dataService) : ITransactionService
         // Get TransactionEntity for this UrlSegment
         var te = GetTransactionEntities().FirstOrDefault(te => te.UrlSegment == urlSegment);
 
-        if (te == default)
+        if (te == null)
         {
             throw new KeyNotFoundException();
         }
 
-        return ConstructTransaction(te!.RowKey);
+        return ConstructTransaction(te.RowKey);
     }
 
     public async Task DeleteTransactionAsync(string id)
@@ -126,6 +133,10 @@ public class TransactionService(IDataService dataService) : ITransactionService
 
     public async Task UpsertTransactionAsync(Transaction transaction)
     {
+        // Calc UrlSegment
+        transaction.UrlSegment = $"{transaction.PlayerUrlSegment}-{transaction.Amount}-{transaction.DateTime:dd-MM-yyyy-HH-mm-ss}";
+
+        // Deconstruct to TransactionEntity
         var te = DeconstructTransaction(transaction);
         await dataService.UpsertEntityAsync(te);
     }

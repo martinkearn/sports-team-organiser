@@ -30,7 +30,7 @@ public class MainFixture
         RatingEntities.Add(new RatingEntity { RowKey = "R4", PlayerRowKey = "1", Rating = 5 });// Average 4.25
         var dtOffset = new DateTimeOffset(2024, 01, 20, 18, 30, 0, TimeSpan.FromHours(0));
         TransactionEntities.Add(new TransactionEntity { RowKey = "T1", PlayerRowKey = "1", Amount = 3, Date = dtOffset, GameRowKey = "G1", UrlSegment = "ollie-watkins-3-20-01-2024-18-30-00"});
-        TransactionEntities.Add(new TransactionEntity { RowKey = "T2", PlayerRowKey = "1", Amount = -3, Date = dtOffset });
+        TransactionEntities.Add(new TransactionEntity { RowKey = "T2", PlayerRowKey = "1", Amount = -3, Date = dtOffset, UrlSegment = "ollie-watkins--3-20-01-2024-18-30-00" });
         TransactionEntities.Add(new TransactionEntity { RowKey = "T3", PlayerRowKey = "1", Amount = 3, Date = dtOffset });// Total £3
         
         // Initialise mock data for updated Ollie Watkins to test update methods

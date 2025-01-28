@@ -132,6 +132,19 @@ public class PlayerService(IDataService dataService) : IPlayerService
     {
         return ConstructPlayer(playerId);
     }
+    
+    public Player GetPlayerByUrlSegment(string urlSegment)
+    {
+        // Get PlayerEntity for this UrlSegment
+        var pe = GetPlayerEntities().FirstOrDefault(pe => pe.UrlSegment == urlSegment);
+
+        if (pe == null)
+        {
+            throw new KeyNotFoundException();
+        }
+
+        return ConstructPlayer(pe.RowKey);
+    }
 
     public async Task DeletePlayerAsync(string playerId)
     {

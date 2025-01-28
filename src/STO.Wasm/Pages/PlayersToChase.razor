@@ -33,7 +33,7 @@
 
         @foreach (var rp in _recentPlayersNotAtSelectedGame)
         {
-            <p><PlayerLink Player="rp" /> has played @rp.GamesCount times</p>
+            <p><PlayerLink PlayerName="@rp.Name" PlayerUrlSegment="@rp.UrlSegment" /> has played @rp.GamesCount times</p>
         }
 
     </Authorized>

@@ -64,7 +64,7 @@
         @foreach (var prospectPag in _prospectPags)
         {
             var player = PlayerService.GetPlayer(prospectPag.PlayerRowKey);
-            <p><PlayerLink Player="player" /> @prospectPag.Forecast.ToString()</p>
+            <p><PlayerLink PlayerName="@player.Name" PlayerUrlSegment="@player.UrlSegment" /> @prospectPag.Forecast.ToString()</p>
         }
     </div>
 

@@ -46,7 +46,7 @@
             @foreach (var prospectTransaction in _prospectTransactions)
             {
                 var player = PlayerService.GetPlayer(prospectTransaction.PlayerRowKey);
-                <p><CurrencyDisplay Amount="@prospectTransaction.Amount" BlackText="true"></CurrencyDisplay> for <PlayerLink Player="player" /> </p>
+                <p><CurrencyDisplay Amount="@prospectTransaction.Amount" BlackText="true"></CurrencyDisplay> for <PlayerLink PlayerName="@player.Name" PlayerUrlSegment="@player.UrlSegment" /> </p>
             }
         </div>
 

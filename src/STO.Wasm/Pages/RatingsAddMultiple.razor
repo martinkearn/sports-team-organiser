@@ -24,7 +24,7 @@
 	{
 		var player = PlayerService.GetPlayer(re.PlayerRowKey);
 		<tr>
-			<td><PlayerLink Player="player" /> <PositionIcon Position="player.Position"></PositionIcon></td>
+			<td><PlayerLink PlayerName="@player.Name" PlayerUrlSegment="@player.UrlSegment" /> <PositionIcon Position="player.Position"></PositionIcon></td>
 			<td>
 				<InputSelect class="form-select" @bind-Value="@re.Rating">
 					<option value="0">Select Rating ...</option>

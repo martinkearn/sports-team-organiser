@@ -14,8 +14,8 @@ Used as a log during development to keep track of progress and status in between
 - [x] Startup DI
 - [x] Refactor Transaction to only have properties, not sub-objects like PlayerEntity or Player
 - [x] Put Player name in UrlSegment
-- [ ] Set amount back to older format (<playerurl>-<dateTime> dan-lewis-19-03-2024-19-53-23) because amount is not required given we are storing time to the second and also old data will not work
-- [ ] If the amount is zero, don't add a trasdnaction at all ... negative or positive
+- [x] Set amount back to older format (<playerurl>-<dateTime> dan-lewis-19-03-2024-19-53-23) because amount is not required given we are storing time to the second and also old data will not work
+- [ ] If the amount is zero, don't add a transaction at all ... negative or positive
 
 ## Pages & Components
 - [x] /transactions - Show more
@@ -23,11 +23,8 @@ Used as a log during development to keep track of progress and status in between
 - [x] /transactions/add
 - [x] Game details add transaction
 - [x] PAG add transaction
-- [ ] /transactions/{TransactionUrlSegment}
+- [x] /transactions/{TransactionUrlSegment}
 - [ ] /players/{PlayerUrlSegment}/transactions
 - [ ] TransactionLink component to replace EntityTitleLink
 
 ## Current focus
-The URL segment and labels do not appear to be always added or read consistently.
-
-Are they being constructed properly in the Transaction class

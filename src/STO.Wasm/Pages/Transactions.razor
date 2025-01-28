@@ -24,7 +24,7 @@
 				<tr>
 					<td><a href="/transactions/@t.UrlSegment">@t.Label</a></td>
 					<td><CurrencyDisplay Amount="@t.Amount" /></td>
-					<td class="d-none d-lg-table-cell">@t.PlayerName</td>
+					<td class="d-none d-lg-table-cell"><PlayerLink PlayerName="@t.PlayerName" PlayerUrlSegment="@t.PlayerUrlSegment" /></td>
 					@if (t.GameId != null)
 					{
 						<td class="d-none d-lg-table-cell">

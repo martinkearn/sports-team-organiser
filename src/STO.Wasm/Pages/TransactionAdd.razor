@@ -80,7 +80,6 @@
 
 	protected async Task Add()
 	{
-		
 		await TransactionService.UpsertTransactionAsync(_newTransaction);
 		Navigation.NavigateTo("/transactions");
 	}

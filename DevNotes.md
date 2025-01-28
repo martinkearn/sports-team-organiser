@@ -30,6 +30,9 @@ Used as a log during development to keep track of progress and status in between
 - [x] Admin
 - [x] /games/addtransactionstogame
 
+## Services
+- [ ] GameEntityService
+
 ## Wrap up
 - [ ] Remove ITransactionEntityService
 - [ ] Remove TransactionEntityService

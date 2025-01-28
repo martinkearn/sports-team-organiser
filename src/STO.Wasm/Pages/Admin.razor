@@ -8,7 +8,7 @@
 @inject IDataService DataService
 @inject IGameEntityService GameEntityService
 @inject IPlayerService PlayerService
-@inject ITransactionEntityService TransactionEntityService
+@inject ITransactionService TransactionService
 @inject IRatingEntityService RatingEntityService
 
 <PageTitle>TNF - @_pageTitle</PageTitle>
@@ -44,16 +44,6 @@
 	<Authorized>
 		<h2>Backend Jobs</h2>
 		<p>@_updateStatus</p>
-
-		<button class="btn btn-primary" @onclick="SetUrlSegmentGames"> Set UrlSegment for All Games</button>
-
-		<button class="btn btn-primary" @onclick="SetUrlSegmentPlayers"> Set UrlSegment for All Players</button>
-
-		<button class="btn btn-primary" @onclick="SetUrlSegmentPags"> Set UrlSegment for All PAGs</button>
-
-		<button class="btn btn-primary" @onclick="SetUrlSegmentTransactions"> Set UrlSegment for All Transactions</button>
-
-		<button class="btn btn-primary" @onclick="SetUrlSegmentRatings"> Set UrlSegment for All Ratings</button>
 		
 		<h2>Data</h2>
 		<div class="hstack gap-2">
@@ -100,75 +90,7 @@
 	private string _pageTitle = default!;
 	private int _updateCount = 0;
 	private string _updateStatus = default!;
-
-	private async Task SetUrlSegmentGames()
-	{
-		_updateCount = 0;
-		_updateStatus = "Start Games";
-		var games = GameEntityService.GetGameEntities();
-		foreach (var game in games)
-		{
-			await GameEntityService.UpsertGameEntityAsync(game);
-			_updateCount += 1;
-		}
-		_updateStatus = $"Updated {_updateCount} Games";
-	}
 	
-	private async Task SetUrlSegmentPlayers()
-	{
-		_updateCount = 0;
-		_updateStatus = "Start Players";
-		var players = PlayerService.GetPlayers();
-		foreach (var player in players)
-		{
-			await PlayerService.UpsertPlayerAsync(player);
-			_updateCount += 1;
-		}
-		_updateStatus = $"Updated {_updateCount} Players";
-	}
-
-	private async Task SetUrlSegmentPags()
-	{
-		_updateCount = 0;
-		_updateStatus = "Start Pags";
-		var games = GameEntityService.GetGameEntities();
-		foreach (var game in games)
-		{
-			foreach (var pag in GameEntityService.GetPlayerAtGameEntitiesForGame(game.RowKey))
-			{
-				await GameEntityService.UpsertPlayerAtGameEntityAsync(pag);
-				_updateCount += 1;
-			}
-		}
-		_updateStatus = $"Updated {_updateCount} Pags";
-	}
-	
-	private async Task SetUrlSegmentTransactions()
-	{
-		_updateCount = 0;
-		_updateStatus = "Start Transactions";
-		var transactions = TransactionEntityService.GetTransactionEntities();
-		foreach (var te in transactions)
-		{
-			await TransactionEntityService.UpsertTransactionEntityAsync(te);
-			_updateCount += 1;
-		}
-		_updateStatus = $"Updated {_updateCount} Trasnactions";
-	}
-	
-	private async Task SetUrlSegmentRatings()
-	{
-		_updateCount = 0;
-		_updateStatus = "Start Ratings";
-		var ratings = RatingEntityService.GetRatingEntities();
-		foreach (var re in ratings)
-		{
-			await RatingEntityService.UpsertRatingEntityAsync(re);
-			_updateCount += 1;
-		}
-		_updateStatus = $"Updated {_updateCount} Ratings";
-	}
-
 	protected override async Task OnInitializedAsync()
 	{
 		await RefreshData(false);
@@ -189,7 +111,6 @@
 		_allGames = await DataService.QueryEntitiesAsync<GameEntity>();
 		_allPlayerAtGame = await DataService.QueryEntitiesAsync<PlayerAtGameEntity>();
 		_allRatings = await DataService.QueryEntitiesAsync<RatingEntity>();
-
 	}
 
 	private async Task ClearLocalData()

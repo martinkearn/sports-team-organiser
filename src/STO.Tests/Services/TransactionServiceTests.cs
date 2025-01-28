@@ -41,7 +41,7 @@ namespace STO.Tests.Services
             Assert.Equal("1", result.PlayerId);
             Assert.Equal("G1", result.GameId);
             Assert.Equal(3, result.Amount);
-            Assert.Equal("ollie-watkins-3-20-01-2024-18-30-00", result.UrlSegment);
+            Assert.Equal("ollie-watkins-20-01-2024-18-30-00", result.UrlSegment);
         }
         
         [Fact]
@@ -70,7 +70,7 @@ namespace STO.Tests.Services
             // Assert
             Assert.NotNull(result);
             Assert.Equal(-3, result.Amount);
-            Assert.Equal("ollie-watkins--3-20-01-2024-18-30-00", result.UrlSegment);
+            Assert.Equal("ollie-watkins-20-01-2024-18-30-00", result.UrlSegment);
         }
         
         [Fact]
@@ -91,7 +91,7 @@ namespace STO.Tests.Services
         public void GetTransactionByUrlSegment_WithValidUrlSegment_ReturnsTransaction()
         {
             // Arrange
-            const string transactionUrlSegment = "ollie-watkins-3-20-01-2024-18-30-00";
+            const string transactionUrlSegment = "ollie-watkins-20-01-2024-18-30-00";
 
             // Act
             var result = _transactionService.GetTransactionByUrlSegment(transactionUrlSegment);

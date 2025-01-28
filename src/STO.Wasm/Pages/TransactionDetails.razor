@@ -35,7 +35,7 @@
 		<div class="mb-3 mt-3">
 			<label class="form-label">Notes</label>
 			<div class="form-control bg-body-secondary">
-				@if (_transaction.Notes is not null)
+				@if (!string.IsNullOrEmpty(_transaction.Notes))
 				{
 					@_transaction.Notes
 				}
@@ -49,7 +49,7 @@
 		<div class="mb-3 mt-3">
 			<label class="form-label">Game</label>
 			<div class="form-control bg-body-secondary">
-				@if (_transaction.GameId != null)
+				@if (!string.IsNullOrEmpty(_transaction.GameId))
 				{
 					<span><EntityTitleLink EntityType="Enums.EntityType.GameEntity" RowKey="@_transaction.GameId" Length="Enums.TitleLength.Long" Link="true" /></span>
 				}

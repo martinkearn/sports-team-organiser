@@ -14,6 +14,7 @@ Used as a log during development to keep track of progress and status in between
 - [x] Startup DI
 - [x] Refactor Transaction to only have properties, not sub-objects like PlayerEntity or Player
 - [x] Put Player name in UrlSegment
+- [ ] Set amount back to older format (<playerurl>-<dateTime> dan-lewis-19-03-2024-19-53-23) because amount is not required given we are storing time to the second and also old data will not work
 - [ ] If the amount is zero, don't add a trasdnaction at all ... negative or positive
 
 ## Pages & Components

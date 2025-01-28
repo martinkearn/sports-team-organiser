@@ -20,41 +20,59 @@ public class TransactionService(IDataService dataService) : ITransactionService
         {
             throw new KeyNotFoundException();
         }
-
-        // Get PlayerEntity
-        var pe = dataService.PlayerEntities.Single(p => p.RowKey == te.PlayerRowKey);
-
-        // Get GameEntity
-        var ge = dataService.GameEntities.SingleOrDefault(g => g.RowKey == te.GameRowKey);
-
-        // Calculate label
-        var label = te.Amount < 0 ? 
-            $"Charge of £{Math.Abs(te.Amount)} to {pe.Name} on {te.Date.DateTime:dd MMM}" : 
-            $"Payment of £{te.Amount} from {pe.Name} on {te.Date.DateTime:dd MMM}";
-
-        // Construct Transaction
+        
+        // Complete base Transaction properties
         var t = new Transaction()
         {
             Id = te.RowKey,
             Amount = te.Amount,
-            Notes = te.Notes,
             DateTime = te.Date.DateTime,
-            UrlSegment = te.UrlSegment,
-            Label = label,
+            Notes = te.Notes,
             PlayerId = te.PlayerRowKey,
-            PlayerName = pe.Name,
-            PlayerUrlSegment = pe.UrlSegment,
             GameId = te.GameRowKey,
             LastUpdated = te.Timestamp!.Value.DateTime,
         };
+        
+        // Fill Transaction
+        t = FillTransaction(t);
+
+        return t;
+    }
+
+    private Transaction FillTransaction(Transaction t)
+    {
+        if (t == null)
+        {
+            throw new KeyNotFoundException();
+        }
+
+        // Get PlayerEntity
+        var pe = dataService.PlayerEntities.Single(p => p.RowKey == t.PlayerId);
+        
+        // Calculate label
+        var label = t.Amount < 0 ? 
+            $"Charge of £{Math.Abs(t.Amount)} to {pe.Name} on {t.DateTime:dd MMM}" : 
+            $"Payment of £{t.Amount} from {pe.Name} on {t.DateTime:dd MMM}";
+        
+        // Calculate UrlSegment
+        var urlSegment = $"{pe.UrlSegment}-{t.DateTime:dd-MM-yyyy-HH-mm-ss}";
+
+        // Get GameEntity
+        var ge = dataService.GameEntities.SingleOrDefault(g => g.RowKey == t.GameId);
+        
+        // Construct Transaction
+        t.PlayerName = pe.Name;
+        t.PlayerUrlSegment = pe.UrlSegment;
+        t.Label = label;
+        t.UrlSegment = urlSegment;
         if (ge != null)
         {
             t.GameLabel = ge.Title;
         }
-
+        
         return t;
     }
-    
+
     private static TransactionEntity DeconstructTransaction(Transaction transaction)
     {
         var te = new TransactionEntity()
@@ -134,9 +152,9 @@ public class TransactionService(IDataService dataService) : ITransactionService
 
     public async Task UpsertTransactionAsync(Transaction transaction)
     {
-        // Calc UrlSegment
-        transaction.UrlSegment = $"{transaction.PlayerUrlSegment}-{transaction.Amount}-{transaction.DateTime:dd-MM-yyyy-HH-mm-ss}";
-
+        // Fill Transaction - to populate UrlSegment
+        transaction = FillTransaction(transaction);
+        
         // Deconstruct to TransactionEntity
         var te = DeconstructTransaction(transaction);
         await dataService.UpsertEntityAsync(te);

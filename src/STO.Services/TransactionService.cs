@@ -45,6 +45,7 @@ public class TransactionService(IDataService dataService) : ITransactionService
             PlayerName = pe.Name,
             PlayerUrlSegment = pe.UrlSegment,
             GameId = te.GameRowKey,
+            LastUpdated = te.Timestamp!.Value.DateTime,
         };
         if (ge != null)
         {

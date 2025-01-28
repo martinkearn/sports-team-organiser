@@ -6,13 +6,6 @@ namespace STO.Models;
 
 public class Transaction
 {
-    // Private properties
-    private DateTime _lastUpdated = DateTime.UtcNow;
-    
-    // Public events
-    public event PropertyChangedEventHandler? PropertyChanged;
-    
-    // Public properties
     public string Id { get; set; } = null!;
     public double Amount { get; set; }
     public string Notes { get; set; } = null!;
@@ -25,25 +18,6 @@ public class Transaction
     public string GameId { get; set; } = null!;
     public string GameLabel { get; set; } = null!;
     
-    public DateTime LastUpdated
-    {
-        get => _lastUpdated;
-        private set
-        {
-            _lastUpdated = value;
-            OnPropertyChanged();
-        }
-    }
+    public DateTime LastUpdated { get; set; }
 
-    // This method is called whenever any property changes
-    private void OnPropertyChanged([CallerMemberName] string propertyName = null!)
-    {
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-
-        // Update LastUpdated unless it is LastUpdated itself
-        if (propertyName != nameof(LastUpdated))
-        {
-            LastUpdated = DateTime.UtcNow;
-        }
-    }
 }

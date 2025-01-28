@@ -42,7 +42,6 @@ namespace STO.Tests.Services
             Assert.Equal("G1", result.GameId);
             Assert.Equal(3, result.Amount);
             Assert.Equal("ollie-watkins-3-20-01-2024-18-30-00", result.UrlSegment);
-            Assert.True(result.LastUpdated > DateTime.UtcNow.Subtract(new TimeSpan(0,0,1,0))); // was update more recently than now minus 1 minute 
         }
         
         [Fact]
@@ -104,7 +103,6 @@ namespace STO.Tests.Services
             Assert.Equal("1", result.PlayerId);
             Assert.Equal("G1", result.GameId);
             Assert.Equal(3, result.Amount);
-            Assert.True(result.LastUpdated > DateTime.UtcNow.Subtract(new TimeSpan(0,0,1,0))); // was update more recently than now minus 1 minute 
         }
         
         [Fact]

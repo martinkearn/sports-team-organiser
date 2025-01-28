@@ -152,11 +152,15 @@ public class TransactionService(IDataService dataService) : ITransactionService
 
     public async Task UpsertTransactionAsync(Transaction transaction)
     {
-        // Fill Transaction - to populate UrlSegment
-        transaction = FillTransaction(transaction);
+        // We only need to store transactions with a positive or negative amount
+        if (transaction.Amount != 0)
+        {
+            // Fill Transaction - to populate UrlSegment
+            transaction = FillTransaction(transaction);
         
-        // Deconstruct to TransactionEntity
-        var te = DeconstructTransaction(transaction);
-        await dataService.UpsertEntityAsync(te);
+            // Deconstruct to TransactionEntity
+            var te = DeconstructTransaction(transaction);
+            await dataService.UpsertEntityAsync(te);
+        }
     }
 }

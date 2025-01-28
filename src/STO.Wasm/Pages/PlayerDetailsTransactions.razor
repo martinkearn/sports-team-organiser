@@ -26,19 +26,30 @@
 
         <table class="table table-striped">
             <thead>
-            <tr>
-                <th scope="col">Date</th>
-                <th scope="col">Amount</th>
-                <th scope="col" class="d-none d-lg-table-cell">Notes</th>
-            </tr>
+                <tr>
+                    <th scope="col">Date</th>
+                    <th scope="col">Amount</th>
+                    <th scope="col" class="d-none d-lg-table-cell">Game</th>
+                    <th scope="col" class="d-none d-lg-table-cell">Notes</th>
+                </tr>
             </thead>
             <tbody>
-            @foreach (var transaction in _playerTransactions)
+            @foreach (var t in _playerTransactions)
             {
                 <tr>
-                    <td><EntityTitleLink EntityType="Enums.EntityType.TransactionEntity" RowKey="@transaction.Id" Length="Enums.TitleLength.Long" Link="true" /></td>
-                    <td><CurrencyDisplay Amount="@transaction.Amount" /></td>
-                    <td class="d-none d-lg-table-cell">@transaction.Notes</td>
+                    <td><TransactionLink UrlSegment="@t.UrlSegment" Label="@t.Label" /></td>
+                    <td><CurrencyDisplay Amount="@t.Amount" /></td>
+                    @if (!string.IsNullOrEmpty(t.GameId))
+                    {
+                        <td class="d-none d-lg-table-cell">
+                            <EntityTitleLink EntityType="Enums.EntityType.GameEntity" RowKey="@t.GameId" Length="Enums.TitleLength.Short" Link="true"/>
+                        </td>
+                    }
+                    else
+                    {
+                        <td class="d-none d-lg-table-cell">No Game</td>
+                    }
+                    <td class="d-none d-lg-table-cell">@t.Notes</td>
                 </tr>
             }
             </tbody>
@@ -102,9 +113,10 @@
     private void RefreshData()
     {
         // Get Player
-        var player = PlayerService.GetPlayers().Single(p => p.UrlSegment == PlayerUrlSegment);
+        var player = PlayerService.GetPlayerByUrlSegment(PlayerUrlSegment);
 
         // Get Transactions
+        // TO DO: The PLayerService already does this internally in order to get the player's balance. Is there a way to have the PlayerService return transactions, ratings etc without putting them on the Player object?
         _playerTransactions = TransactionService.GetTransactions(null, null, player.Id);
 
         _deleteAllLabel = $"All transactions for {player.Name}";

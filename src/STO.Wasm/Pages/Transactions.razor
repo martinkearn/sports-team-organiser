@@ -22,10 +22,10 @@
 			@foreach (var t in _transactions)
 			{
 				<tr>
-					<td><a href="/transactions/@t.UrlSegment">@t.Label</a></td>
+					<td><TransactionLink UrlSegment="@t.UrlSegment" Label="@t.Label" /></td>
 					<td><CurrencyDisplay Amount="@t.Amount" /></td>
 					<td class="d-none d-lg-table-cell"><PlayerLink PlayerName="@t.PlayerName" PlayerUrlSegment="@t.PlayerUrlSegment" /></td>
-					@if (t.GameId != null)
+					@if (!string.IsNullOrEmpty(t.GameId))
 					{
 						<td class="d-none d-lg-table-cell">
 							<EntityTitleLink EntityType="Enums.EntityType.GameEntity" RowKey="@t.GameId" Length="Enums.TitleLength.Short" Link="true"/>

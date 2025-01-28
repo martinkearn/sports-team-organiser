@@ -2,6 +2,9 @@
 
 Used as a log during development to keep track of progress and status in between sessions.
 
+## Transaction Class
+- [ ] Remove Transaction.LastUpdated calculations because the built-in TimeStamp does the same thing
+
 ## Transaction Service
 - [x] GetTransaction
 - [x] GetTransactions with skip and take

@@ -12,40 +12,63 @@
 
 		<p>Transactions cannot be edited, only deleted</p>
 
-		<h5>Id</h5>
-		<p>@_transaction.Id</p>
+		<div class="mb-3 mt-3">
+			<label class="form-label">Id</label>
+			<div class="form-control bg-body-secondary">@_transaction.Id</div>
+		</div>
 
-		<h5>UrlSegment</h5>
-		<p>@_transaction.UrlSegment</p>
+		<div class="mb-3 mt-3">
+			<label class="form-label">UrlSegment</label>
+			<div class="form-control bg-body-secondary">@_transaction.UrlSegment</div>
+		</div>
 
-		<h5>Date</h5>
-		<p>@_transaction.DateTime.ToString(CultureInfo.CurrentCulture)</p>
+		<div class="mb-3 mt-3">
+			<label class="form-label">Date</label>
+			<div class="form-control bg-body-secondary">@_transaction.DateTime.ToString(CultureInfo.CurrentCulture)</div>
+		</div>
 
-		<h5>Amount</h5>
-		<p><CurrencyDisplay Amount="@_transaction.Amount"></CurrencyDisplay></p>
+		<div class="mb-3 mt-3">
+			<label class="form-label">Amount</label>
+			<div class="form-control bg-body-secondary"><CurrencyDisplay Amount="@_transaction.Amount" /></div>
+		</div>
 
-		<h5>Notes</h5>
-		@if (_transaction.Notes is not null)
-		{
-			<p>@_transaction.Notes</p>
-		}
-		else
-		{
-			<p>No Notes</p>
-		}
+		<div class="mb-3 mt-3">
+			<label class="form-label">Notes</label>
+			<div class="form-control bg-body-secondary">
+				@if (_transaction.Notes is not null)
+				{
+					@_transaction.Notes
+				}
+				else
+				{
+					<span>No Notes</span>
+				}
+			</div>
+		</div>
 
-		<h5>Game</h5>
-		@if (_transaction.GameId != null)
-		{
-			<p><EntityTitleLink EntityType="Enums.EntityType.GameEntity" RowKey="@_transaction.GameId" Length="Enums.TitleLength.Long" Link="true" /></p>
-		}
-		else
-		{
-			<p>No Game</p>
-		}
+		<div class="mb-3 mt-3">
+			<label class="form-label">Game</label>
+			<div class="form-control bg-body-secondary">
+				@if (_transaction.GameId != null)
+				{
+					<span><EntityTitleLink EntityType="Enums.EntityType.GameEntity" RowKey="@_transaction.GameId" Length="Enums.TitleLength.Long" Link="true" /></span>
+				}
+				else
+				{
+					<span>No Game</span>
+				}
+			</div>
+		</div>
 
-		<h5>Player</h5>
-		<p><PlayerLink PlayerName="@_transaction.PlayerName" PlayerUrlSegment="@_transaction.PlayerUrlSegment" /></p>
+		<div class="mb-3 mt-3">
+			<label class="form-label">Player</label>
+			<div class="form-control bg-body-secondary"><PlayerLink PlayerName="@_transaction.PlayerName" PlayerUrlSegment="@_transaction.PlayerUrlSegment" /></div>
+		</div>
+
+		<div class="mb-3">
+			<label class="form-label">Last Updated</label>
+			<div class="form-control bg-body-secondary">@_transaction.LastUpdated</div>
+		</div>
 
 		<div class="hstack gap-2">
 			<a class="btn btn-secondary" href="/transactions/"><i class="fa-solid fa-arrow-left"></i> All Transactions</a>

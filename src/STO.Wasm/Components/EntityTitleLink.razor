@@ -1,7 +1,5 @@
 @inject IGameEntityService GameEntityService
 @inject IRatingEntityService RatingEntityService
-@inject ITransactionEntityService TransactionEntityService
-@inject IPlayerService PlayerService
 
 @if (Link)
 {
@@ -12,9 +10,6 @@
             break;
         case Enums.EntityType.PlayerAtGameEntity:
             <a href="/games/@_gameEntity.UrlSegment/@_playerAtGameEntity.UrlSegment">@Label</a>
-            break;
-        case Enums.EntityType.TransactionEntity:
-            <a href="/transactions/@_transactionEntity.UrlSegment">@Label</a>
             break;
         case Enums.EntityType.RatingEntity:
             <a href="/ratings/@_ratingEntity.UrlSegment">@Label</a>
@@ -43,8 +38,6 @@ else
     private GameEntity _gameEntity = default!;
 
     private PlayerAtGameEntity _playerAtGameEntity = default!;
-
-    private TransactionEntity _transactionEntity = default!;
 
     private RatingEntity _ratingEntity = default!;
 
@@ -79,21 +72,6 @@ else
                 if (string.IsNullOrEmpty(Label))
                 {
                     Label = GameEntityService.GetPlayerAtGameLabel(_playerAtGameEntity.RowKey, Length);
-                }
-                
-                break;
-            case Enums.EntityType.TransactionEntity:
-                _transactionEntity = TransactionEntityService.GetTransactionEntity(RowKey);
-                var player = PlayerService.GetPlayer(_transactionEntity.PlayerRowKey);
-                if (string.IsNullOrEmpty(Label))
-                {
-                    var transactionLabel = Length switch
-                    {
-                        Enums.TitleLength.Short => _transactionEntity.Date.ToString(Consts.JustDateFormat),
-                        Enums.TitleLength.Long => _transactionEntity.Date.ToString(Consts.DateTimeFormat),
-                        _ => _transactionEntity.Date.ToString(Consts.JustDateFormat)
-                    };
-                    Label = $"{transactionLabel} for {player.Name}";
                 }
                 
                 break;

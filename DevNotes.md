@@ -16,6 +16,7 @@ Used as a log during development to keep track of progress and status in between
 - [x] Put Player name in UrlSegment
 - [x] Set amount back to older format (<playerurl>-<dateTime> dan-lewis-19-03-2024-19-53-23) because amount is not required given we are storing time to the second and also old data will not work
 - [x] If the amount is zero, don't add a transaction at all ... negative or positive
+- [ ] Check performance on game details page
 
 ## Pages & Components
 - [x] /transactions - Show more
@@ -26,5 +27,9 @@ Used as a log during development to keep track of progress and status in between
 - [x] /transactions/{TransactionUrlSegment}
 - [ ] /players/{PlayerUrlSegment}/transactions
 - [ ] TransactionLink component to replace EntityTitleLink
+
+## Wrap up
+- [ ] Remove ITransactionEntityService
+- [ ] Remove TransactionEntityService
 
 ## Current focus

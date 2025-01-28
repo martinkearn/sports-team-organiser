@@ -28,6 +28,7 @@ Used as a log during development to keep track of progress and status in between
 - [x] /players/{PlayerUrlSegment}/transactions
 - [x] TransactionLink component to replace EntityTitleLink
 - [x] Admin
+- [x] /games/addtransactionstogame
 
 ## Wrap up
 - [ ] Remove ITransactionEntityService

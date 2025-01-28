@@ -211,7 +211,8 @@ namespace STO.Wasm.Services
 					PlayerRowKey = pag.PlayerRowKey,
 					Amount = -playerEntity.DefaultRate,
 					Date = DateTimeOffset.UtcNow,
-					Notes = GetNotesForGame(pag.GameRowKey)
+					Notes = GetNotesForGame(pag.GameRowKey),
+					GameRowKey = pag.GameRowKey
 				};
 
                 await transactionEntityService.UpsertTransactionEntityAsync(transaction);

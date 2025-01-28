@@ -11,6 +11,7 @@ Used as a log during development to keep track of progress and status in between
 - [x] Startup DI
 - [x] Refactor Transaction to only have properties, not sub-objects like PlayerEntity or Player
 - [x] Put Player name in UrlSegment
+- [ ] If the amount is zero, don't add a trasdnaction at all ... negative or positive
 
 ## Pages & Components
 - [x] /transactions - Show more

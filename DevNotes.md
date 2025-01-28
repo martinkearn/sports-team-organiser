@@ -25,7 +25,7 @@ Used as a log during development to keep track of progress and status in between
 - [x] Game details add transaction
 - [x] PAG add transaction
 - [x] /transactions/{TransactionUrlSegment}
-- [ ] /players/{PlayerUrlSegment}/transactions
+- [x] /players/{PlayerUrlSegment}/transactions
 - [ ] TransactionLink component to replace EntityTitleLink
 
 ## Wrap up

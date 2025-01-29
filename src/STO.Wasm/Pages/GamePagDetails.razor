@@ -1,6 +1,6 @@
 @page "/games/{GameUrlSegment}/{PagUrlSegment}"
 @inject IGameEntityService GameEntityService
-@inject ITransactionEntityService TransactionEntityService
+@inject ITransactionService TransactionService
 @inject IPlayerService PlayerService
 @inject NavigationManager Navigation
 
@@ -13,7 +13,7 @@
 
             <div class="mb-3">
                 <label class="form-label">Player Name</label>
-                <span class="form-control-plaintext"><PlayerLink Player="_player" /></span>
+                <span class="form-control-plaintext"><PlayerLink PlayerName="@_player.Name" PlayerUrlSegment="@_player.UrlSegment" /></span>
             </div>
 
             <div class="mb-3">
@@ -79,20 +79,20 @@
     </NotAuthorized>
 </AuthorizeView>
 
-    @code {
-    [CascadingParameter] public MainLayout MainLayout { get; set; } = default!;
+@code {
+    [CascadingParameter] public MainLayout MainLayout { get; set; } = null!;
     
-    [Parameter] public string PagUrlSegment { get; set; } = default!;
+    [Parameter] public string PagUrlSegment { get; set; } = null!;
     
-    [Parameter] public string GameUrlSegment { get; set; } = default!;
+    [Parameter] public string GameUrlSegment { get; set; } = null!;
 
-    private PlayerAtGameEntity _pagEntity = default!;
+    private PlayerAtGameEntity _pagEntity = null!;
 
-    private Player _player = default!;
+    private Player _player = null!;
 
-    private string _pageTitle = default!;
+    private string _pageTitle = null!;
 
-    private GameEntity _gameEntity = default!;
+    private GameEntity _gameEntity = null!;
 
     protected override void OnInitialized()
     {
@@ -101,16 +101,17 @@
 
     private async Task AddTransactionForPlayer()
     {
-        var newTransactionEntityForPag = new TransactionEntity()
+        var newTransactionForPag = new Transaction()
             {
-                Date = DateTimeOffset.UtcNow,
+                DateTime = DateTime.UtcNow,
                 Notes = GameEntityService.GetNotesForGame(_pagEntity.GameRowKey),
-                PlayerRowKey = _player.Id,
+                PlayerId = _player.Id,
+                GameId = _gameEntity.RowKey,
                 Amount = _player.DefaultRate
             };
-        if (TransactionEntityService is not null)
+        if (TransactionService is not null)
         {
-            await TransactionEntityService.UpsertTransactionEntityAsync(newTransactionEntityForPag);
+            await TransactionService.UpsertTransactionAsync(newTransactionForPag);
         }
         RefreshData();
     }

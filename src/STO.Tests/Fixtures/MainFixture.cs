@@ -8,6 +8,7 @@ public class MainFixture
     public readonly List<PlayerAtGameEntity> PlayerAtGameEntities = [];
     public readonly List<GameEntity> GameEntities = [];
     public readonly Player PlayerWollyWatkins;
+    public readonly Transaction UpdatedJacobRamseyT10;
 
     public MainFixture()
     {
@@ -27,9 +28,10 @@ public class MainFixture
         RatingEntities.Add(new RatingEntity { RowKey = "R2", PlayerRowKey = "1", Rating = 5 });
         RatingEntities.Add(new RatingEntity { RowKey = "R3", PlayerRowKey = "1", Rating = 3 });
         RatingEntities.Add(new RatingEntity { RowKey = "R4", PlayerRowKey = "1", Rating = 5 });// Average 4.25
-        TransactionEntities.Add(new TransactionEntity { RowKey = "T1", PlayerRowKey = "1", Amount = 3 });
-        TransactionEntities.Add(new TransactionEntity { RowKey = "T2", PlayerRowKey = "1", Amount = -3 });
-        TransactionEntities.Add(new TransactionEntity { RowKey = "T3", PlayerRowKey = "1", Amount = 3 });// Total £3
+        var dtOffset = new DateTimeOffset(2024, 01, 20, 18, 30, 0, TimeSpan.FromHours(0));
+        TransactionEntities.Add(new TransactionEntity { RowKey = "T1", PlayerRowKey = "1", Amount = 3, Date = dtOffset, GameRowKey = "G1", UrlSegment = "ollie-watkins-20-01-2024-18-30-00"});
+        TransactionEntities.Add(new TransactionEntity { RowKey = "T2", PlayerRowKey = "1", Amount = -3, Date = dtOffset, UrlSegment = "ollie-watkins-20-01-2024-18-30-00" });
+        TransactionEntities.Add(new TransactionEntity { RowKey = "T3", PlayerRowKey = "1", Amount = 3, Date = dtOffset });// Total £3
         
         // Initialise mock data for updated Ollie Watkins to test update methods
         PlayerWollyWatkins = new Player()
@@ -56,15 +58,16 @@ public class MainFixture
                 Tags = "",
                 Position = Enums.PlayerPosition.BoxToBox,
                 DefaultRate = 3,
-                AdminRating = 4
+                AdminRating = 4,
+                UrlSegment = "morgan-rogers"
             }
         );
         RatingEntities.Add(new RatingEntity { RowKey = "R5", PlayerRowKey = "2", Rating = 4 });
         RatingEntities.Add(new RatingEntity { RowKey = "R6", PlayerRowKey = "2", Rating = 4 });
         RatingEntities.Add(new RatingEntity { RowKey = "R7", PlayerRowKey = "2", Rating = 3 });
         RatingEntities.Add(new RatingEntity { RowKey = "R8", PlayerRowKey = "2", Rating = 3 });// Average 3.5
-        TransactionEntities.Add(new TransactionEntity { RowKey = "T4", PlayerRowKey = "2", Amount = 3 });
-        TransactionEntities.Add(new TransactionEntity { RowKey = "T5", PlayerRowKey = "2", Amount = -3 });// Total £0
+        TransactionEntities.Add(new TransactionEntity { RowKey = "T4", PlayerRowKey = "2", Amount = 3, Date = dtOffset });
+        TransactionEntities.Add(new TransactionEntity { RowKey = "T5", PlayerRowKey = "2", Amount = -3, Date = dtOffset });// Total £0
             
         // Initialize mock data for Leon Baily
         PlayerEntities.Add(
@@ -75,11 +78,12 @@ public class MainFixture
                 Tags = "",
                 Position = Enums.PlayerPosition.Forward,
                 DefaultRate = 3,
-                AdminRating = 4
+                AdminRating = 4,
+                UrlSegment = "leon-bailey"
             }
         );
         RatingEntities.Add(new RatingEntity { RowKey = "R9", PlayerRowKey = "3", Rating = 5 });// Average 3.5
-        TransactionEntities.Add(new TransactionEntity { RowKey = "T6", PlayerRowKey = "3", Amount = 3 });// Total £0
+        TransactionEntities.Add(new TransactionEntity { RowKey = "T6", PlayerRowKey = "3", Amount = 3, Date = dtOffset });// Total £0
            
         // Initialize mock data for Jacob Ramsey
         PlayerEntities.Add(
@@ -90,7 +94,8 @@ public class MainFixture
                 Tags = "",
                 Position = Enums.PlayerPosition.BoxToBox,
                 DefaultRate = 3,
-                AdminRating = 3
+                AdminRating = 3,
+                UrlSegment = "jacob-ramsey"
             }
         );
         
@@ -173,5 +178,25 @@ public class MainFixture
             Played = false,
             UrlSegment = "jacob-ramsey-10-04-2024"
         });
+        
+        // Add Transactions which do not affect the balance (they cancel each other out)
+        TransactionEntities.Add(new TransactionEntity { RowKey = "T7", PlayerRowKey = "4", Amount = 3, Date = dtOffset });
+        TransactionEntities.Add(new TransactionEntity { RowKey = "T8", PlayerRowKey = "4", Amount = -3, Date = dtOffset });
+        TransactionEntities.Add(new TransactionEntity { RowKey = "T9", PlayerRowKey = "4", Amount = 3, Date = dtOffset });
+        TransactionEntities.Add(new TransactionEntity { RowKey = "T10", PlayerRowKey = "4", Amount = -3, Date = dtOffset });
+        
+        // Updated Transaction for Jacob ramsey T10
+        UpdatedJacobRamseyT10 = new Transaction()
+        {
+            Id = "T10",
+            Amount = 5,
+            DateTime = dtOffset.Add(new TimeSpan(0,1,0,0)).DateTime,
+            Notes = "foo",
+            PlayerId = "4",
+            PlayerName = "Jacob Ramsey",
+            PlayerUrlSegment = "jacob-ramsey",
+            GameId = "G3",
+            GameLabel = ""
+        };
     }
 }

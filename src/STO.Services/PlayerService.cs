@@ -1,5 +1,4 @@
 using System.Globalization;
-using System.Net;
 using STO.Models;
 using STO.Models.Interfaces;
 
@@ -132,6 +131,19 @@ public class PlayerService(IDataService dataService) : IPlayerService
     public Player GetPlayer(string playerId)
     {
         return ConstructPlayer(playerId);
+    }
+    
+    public Player GetPlayerByUrlSegment(string urlSegment)
+    {
+        // Get PlayerEntity for this UrlSegment
+        var pe = GetPlayerEntities().FirstOrDefault(pe => pe.UrlSegment.ToLowerInvariant() == urlSegment.ToLowerInvariant());
+
+        if (pe == null)
+        {
+            throw new KeyNotFoundException();
+        }
+
+        return ConstructPlayer(pe.RowKey);
     }
 
     public async Task DeletePlayerAsync(string playerId)

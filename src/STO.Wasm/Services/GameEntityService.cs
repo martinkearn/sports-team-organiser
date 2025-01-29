@@ -3,7 +3,7 @@
 namespace STO.Wasm.Services
 {
 	/// <inheritdoc/>
-	public class GameEntityService(IDataService dataService, IRatingEntityService ratingEntityEntityService, ITransactionEntityService transactionEntityService) : IGameEntityService
+	public class GameEntityService(IDataService dataService, IRatingEntityService ratingEntityEntityService, ITransactionService transactionService) : IGameEntityService
 	{
 		public async Task<List<PlayerAtGameEntity>> CalculateTeamsAsync(List<PlayerAtGameEntity> pags)
 		{
@@ -206,29 +206,38 @@ namespace STO.Wasm.Services
 			// Add / remove transactions if played / not played
 			if (pag.Played)
 			{
-				var transaction = new TransactionEntity()
+				var chargeTransaction = new Transaction()
 				{
-					PlayerRowKey = pag.PlayerRowKey,
+					PlayerId = pag.PlayerRowKey,
 					Amount = -playerEntity.DefaultRate,
-					Date = DateTimeOffset.UtcNow,
-					Notes = GetNotesForGame(pag.GameRowKey)
+					DateTime = DateTime.UtcNow,
+					Notes = GetNotesForGame(pag.GameRowKey),
+					GameId = pag.GameRowKey
 				};
 
-                await transactionEntityService.UpsertTransactionEntityAsync(transaction);
+                await transactionService.UpsertTransactionAsync(chargeTransaction);
 			}
 			else
 			{
 				// Get debit transactions (less than £0) for player and game
-				var teForPe = transactionEntityService.GetTransactionEntities()
-					.Where(o => o.PlayerRowKey == playerEntity.RowKey)
-					.OrderByDescending(o => o.Date);
-				var firstPagDebitTransactionEntities = teForPe.FirstOrDefault(o => o.Amount < 0);
+				var chargeTransactionsForPlayer = transactionService.GetTransactions(null, null, pag.PlayerRowKey)
+					.Where(t => t.Amount < 0)
+					.ToList();
 				
-				// Delete the newest zero or less transaction
-				if (firstPagDebitTransactionEntities != default)
+				// Do we have any associated with this game. If so, use those
+				var chargeTransactionsForPag = chargeTransactionsForPlayer.Where(t => t.GameId == pag.GameRowKey).ToList();
+				if (chargeTransactionsForPag.Count > 0)
 				{
-					// TO DO: This is a hacky way to do this. Need to re-add game association so that we can remove for the specific game.
-					await transactionEntityService.DeleteTransactionEntityAsync(firstPagDebitTransactionEntities.RowKey);
+					foreach (var t in chargeTransactionsForPag)
+					{
+						await transactionService.DeleteTransactionAsync(t.Id);
+					}
+				}
+				else
+				{
+					// If not, these must be old transactions without the GameId. Just remove the latest one
+					var latestTransaction = chargeTransactionsForPlayer.OrderByDescending(o => o.DateTime).First();
+					await transactionService.DeleteTransactionAsync(latestTransaction.Id);
 				}
 			}
 

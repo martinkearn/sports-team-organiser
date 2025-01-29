@@ -1,7 +1,8 @@
 @page "/games/addtransactionstogame"
+@using System.Globalization
 @inject IPlayerService PlayerService
 @inject IGameEntityService GameEntityService
-@inject ITransactionEntityService TransactionEntityService
+@inject ITransactionService TransactionService
 @inject NavigationManager Navigation
 
 <PageTitle>@_pageTitle</PageTitle>
@@ -45,14 +46,21 @@
             <label class="form-label">Prospective Payments</label>
             @foreach (var prospectTransaction in _prospectTransactions)
             {
-                var player = PlayerService.GetPlayer(prospectTransaction.PlayerRowKey);
-                <p><CurrencyDisplay Amount="@prospectTransaction.Amount" BlackText="true"></CurrencyDisplay> for <PlayerLink Player="player" /> </p>
+                var player = PlayerService.GetPlayer(prospectTransaction.PlayerId);
+                <p><CurrencyDisplay Amount="@prospectTransaction.Amount" BlackText="true" /> for <PlayerLink PlayerName="@player.Name" PlayerUrlSegment="@player.UrlSegment" /> </p>
             }
         </div>
 
-        <div class="hstack gap-2">
-            <button class="btn btn-secondary" @onclick="AddProspectTransactionsToGame"><i class="fa-solid fa-plus"></i> Add @_prospectTransactions.Count Payments to Game</button>
-        </div>
+        @if (_showLongRunning)
+        {
+            <LongRunning />
+        }
+        else
+        {
+            <div class="hstack gap-2">
+                <button class="btn btn-secondary" @onclick="AddProspectTransactionsToGame"><i class="fa-solid fa-plus"></i> Add @_prospectTransactions.Count Payments to Game</button>
+            </div>
+        }
 
     </Authorized>
     <NotAuthorized>
@@ -62,22 +70,24 @@
 </AuthorizeView>
 
 @code {
-    [CascadingParameter] public MainLayout MainLayout { get; set; } = default!;
+    [CascadingParameter] public MainLayout MainLayout { get; set; } = null!;
     private List<GameEntity> _gameEntities = [];
 
     private List<Player> _pagPlayers = [];
 
-    private List<TransactionEntity> _prospectTransactions = [];
+    private List<Transaction> _prospectTransactions = [];
 
-    private string _selectedProspectPagPlayerRowKey = default!;
+    private string _selectedProspectPagPlayerRowKey = null!;
 
-    private string _selectedGameRowKey = default!;
+    private string _selectedGameRowKey = null!;
 
-    private GameEntity _selectedGame = default!;
+    private GameEntity _selectedGame = null!;
 
-    private GameEntity _nextGameEntity = default!;
+    private GameEntity _nextGameEntity = null!;
     
-    private string _pageTitle = default!;
+    private bool _showLongRunning;
+    
+    private string _pageTitle = null!;
 
     protected override void OnInitialized()
     {
@@ -89,9 +99,12 @@
         if (string.IsNullOrEmpty(_selectedProspectPagPlayerRowKey)) return;
 
         var player = PlayerService.GetPlayer(_selectedProspectPagPlayerRowKey);
-        var prospectTransaction = new TransactionEntity()
+        var prospectTransaction = new Transaction()
         {
-            PlayerRowKey = _selectedProspectPagPlayerRowKey,
+            DateTime = DateTime.UtcNow,
+            Notes = $"Added as part of bulk addition {DateTime.UtcNow.ToString(CultureInfo.InvariantCulture)}",
+            PlayerId = _selectedProspectPagPlayerRowKey,
+            GameId = _selectedGameRowKey,
             Amount = player.DefaultRate,
         };
         _prospectTransactions.Add(prospectTransaction);
@@ -101,13 +114,15 @@
     {
         if (string.IsNullOrEmpty(_selectedProspectPagPlayerRowKey)) return;
 
+        _showLongRunning = true;
+        StateHasChanged();
+
         foreach (var prospectTransaction in _prospectTransactions)
         {
-            await TransactionEntityService.UpsertTransactionEntityAsync(prospectTransaction);
+            await TransactionService.UpsertTransactionAsync(prospectTransaction);
         }
-
-        var nav = $"/games/{_selectedGame.UrlSegment}";
-        Navigation.NavigateTo(nav);
+        
+        Navigation.NavigateTo($"/games/{_selectedGame.UrlSegment}");
     }
 
     private void RefreshGame()

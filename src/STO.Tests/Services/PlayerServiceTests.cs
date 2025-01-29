@@ -91,6 +91,67 @@ namespace STO.Tests.Services
         
         #endregion
         
+        #region GetPLayerByUrlSegment
+        
+        [Fact]
+        public void GetPlayerByUrlSegment_WhenUrlSegmentExists_ReturnsPlayerWithCorrectDetails()
+        {
+            // Arrange
+            var urlSegment = "ollie-watkins";
+
+            // Act
+            var result = _playerService.GetPlayerByUrlSegment(urlSegment);
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal("1", result.Id);
+            Assert.Equal("Ollie Watkins", result.Name);
+            Assert.Empty(result.Tags);
+            Assert.Equal(Enums.PlayerPosition.Forward, result.Position);
+            Assert.Equal(3, result.DefaultRate);
+            Assert.Equal(5, result.AdminRating);
+            Assert.Equal("Ollie Watkins", result.Label);
+            Assert.Equal(4.25, result.Rating); // Average of 4,5,3,5
+            Assert.Equal("ollie-watkins", result.UrlSegment);
+            Assert.Equal(3, result.Balance); // +3 -3, +3
+            Assert.Equal(1, result.GamesCount);
+        }
+        
+        [Fact]
+        public void GetPlayerByUrlSegment_WhenUrlSegmentDoesNotExist_ThrowsKeyNotFoundException()
+        {
+            // Arrange
+            var urlSegment = "foo";
+
+            // Act & Assert
+            Assert.Throws<KeyNotFoundException>(() => _playerService.GetPlayerByUrlSegment(urlSegment));
+        }
+        
+        [Fact]
+        public void GetPlayerByUrlSegment_WhenUrlSegmentIsNull_ThrowsNullReferenceException()
+        {
+            // Arrange
+            string urlSegment = null;
+
+            // Act & Assert
+            Assert.Throws<NullReferenceException>(() => _playerService.GetPlayerByUrlSegment(urlSegment));
+        }
+        
+        [Fact]
+        public void GetPlayerByUrlSegment_WhenUrlSegmentHasDifferentCase_ReturnsPlayer()
+        {
+            // Arrange
+            var urlSegment = "OlLiE-wAtKiNs";
+
+            // Act
+            var result = _playerService.GetPlayerByUrlSegment(urlSegment);
+
+            // Assert
+            Assert.NotNull(result);
+        }
+        
+        #endregion
+        
         #region GetPlayers
         
         [Fact]

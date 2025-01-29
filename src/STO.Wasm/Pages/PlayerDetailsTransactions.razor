@@ -1,8 +1,7 @@
 @page "/players/{PlayerUrlSegment}/transactions"
 @using STO.Models.Interfaces
-@inject IDataService DataService
 @inject IPlayerService PlayerService
-@inject ITransactionEntityService TransactionEntityService
+@inject ITransactionService TransactionService
 @inject NavigationManager Navigation
 
 <PageTitle>TNF - @_pageTitle</PageTitle>
@@ -27,29 +26,48 @@
 
         <table class="table table-striped">
             <thead>
-            <tr>
-                <th scope="col">Date</th>
-                <th scope="col">Amount</th>
-                <th scope="col" class="d-none d-lg-table-cell">Notes</th>
-            </tr>
+                <tr>
+                    <th scope="col">Date</th>
+                    <th scope="col">Amount</th>
+                    <th scope="col" class="d-none d-lg-table-cell">Game</th>
+                    <th scope="col" class="d-none d-lg-table-cell">Notes</th>
+                </tr>
             </thead>
             <tbody>
-            @foreach (var transactionEntity in _playerTransactions)
+            @foreach (var t in _playerTransactions)
             {
                 <tr>
-                    <td><EntityTitleLink EntityType="Enums.EntityType.TransactionEntity" RowKey="@transactionEntity.RowKey" Length="Enums.TitleLength.Long" Link="true" /></td>
-                    <td><CurrencyDisplay Amount="@transactionEntity.Amount" /></td>
-                    <td class="d-none d-lg-table-cell">@transactionEntity.Notes</td>
+                    <td><TransactionLink UrlSegment="@t.UrlSegment" Label="@t.Label" /></td>
+                    <td><CurrencyDisplay Amount="@t.Amount" /></td>
+                    @if (!string.IsNullOrEmpty(t.GameId))
+                    {
+                        <td class="d-none d-lg-table-cell">
+                            <EntityTitleLink EntityType="Enums.EntityType.GameEntity" RowKey="@t.GameId" Length="Enums.TitleLength.Short" Link="true"/>
+                        </td>
+                    }
+                    else
+                    {
+                        <td class="d-none d-lg-table-cell">No Game</td>
+                    }
+                    <td class="d-none d-lg-table-cell">@t.Notes</td>
                 </tr>
             }
             </tbody>
         </table>
-
+        
         <hr class="mb-4"/>
-        <div class="hstack gap-2">
-            <a class="btn btn-secondary" href="/players/"><i class="fa-solid fa-arrow-left"></i> All Players</a>
-            <DeleteButtonWithCheck DeleteWhatLabel="@_deleteAllLabel" ButtonLabel="Delete all transactions" ParentPageCallback="DeleteTransactionsForPlayer" />
-        </div>
+
+        @if (_showLongRunning)
+        {
+            <LongRunning />
+        }
+        else
+        {
+            <div class="hstack gap-2">
+                <a class="btn btn-secondary" href="/players/"><i class="fa-solid fa-arrow-left"></i> All Players</a>
+                <DeleteButtonWithCheck DeleteWhatLabel="@_deleteAllLabel" ButtonLabel="Delete all transactions" ParentPageCallback="DeleteTransactionsForPlayer" />
+            </div>
+        }
         
     </Authorized>
     <NotAuthorized>
@@ -60,15 +78,17 @@
 
 
 @code {
-    [CascadingParameter] public MainLayout MainLayout { get; set; } = default!;
+    [CascadingParameter] public MainLayout MainLayout { get; set; } = null!;
     
-    [Parameter] public string PlayerUrlSegment { get; set; } = default!;
+    [Parameter] public string PlayerUrlSegment { get; set; } = null!;
 
-    private List<TransactionEntity> _playerTransactions = [];
+    private List<Transaction> _playerTransactions = [];
+    
+    private bool _showLongRunning;
 
-    private string _pageTitle = default!;
+    private string _pageTitle = null!;
 
-    private string _deleteAllLabel = default!;
+    private string _deleteAllLabel = null!;
 
     protected override void OnInitialized()
     {
@@ -77,9 +97,12 @@
 
     private async Task DeleteTransactionsForPlayer()
     {
-        foreach (var te in _playerTransactions)
+        _showLongRunning = true;
+        StateHasChanged();
+        
+        foreach (var t in _playerTransactions)
         {
-            await TransactionEntityService.DeleteTransactionEntityAsync(te.RowKey);
+            await TransactionService.DeleteTransactionAsync(t.Id);
         }
 
         Navigation.NavigateTo("/players");
@@ -90,12 +113,11 @@
     private void RefreshData()
     {
         // Get Player
-        var player = PlayerService.GetPlayers().Single(p => p.UrlSegment == PlayerUrlSegment);
+        var player = PlayerService.GetPlayerByUrlSegment(PlayerUrlSegment);
 
         // Get Transactions
-        _playerTransactions = DataService.TransactionEntities.Where(o => o.PlayerRowKey == player.Id)
-            .OrderByDescending(o => o.Date)
-            .ToList();
+        // TO DO: The PLayerService already does this internally in order to get the player's balance. Is there a way to have the PlayerService return transactions, ratings etc without putting them on the Player object?
+        _playerTransactions = TransactionService.GetTransactions(null, null, player.Id);
 
         _deleteAllLabel = $"All transactions for {player.Name}";
         _pageTitle = $"{player.Name}";

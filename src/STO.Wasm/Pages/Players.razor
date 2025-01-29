@@ -22,7 +22,7 @@
 		@foreach (var p in _players)
 		{
 			<tr>
-				<td><PlayerLink Player="@p" /></td>
+				<td><PlayerLink PlayerName="@p.Name" PlayerUrlSegment="@p.UrlSegment" /></td>
 				<td class="d-none d-lg-table-cell">@p.Position</td>
 				<td class="d-none d-lg-table-cell">@p.GamesCount</td>
 				<AuthorizeView Policy="IsAdminEmail">

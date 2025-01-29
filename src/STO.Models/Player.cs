@@ -23,7 +23,6 @@ public class Player
     public Enums.PlayerPosition Position { get; set; }
     public double DefaultRate { get; set; }
     public int AdminRating { get; set; }
-    
     public DateTime LastUpdated { get; set; }
     
     // Calculated properties

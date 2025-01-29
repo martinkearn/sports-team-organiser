@@ -34,6 +34,13 @@ public interface IPlayerService
     public Player GetPlayer(string id);
     
     /// <summary>
+    /// Gets a specific Player based on the UrlSegment
+    /// </summary>
+    /// <param name="urlSegment">the UrlSegment for the Player to get</param>
+    /// <returns>A Player</returns>
+    public Player GetPlayerByUrlSegment(string urlSegment);
+    
+    /// <summary>
     /// Deletes the Player, Transaction(s) and PlayerAtGame(s) associated with a Player.
     /// </summary>
     /// <param name="id">The Id for the Player to delete.</param>

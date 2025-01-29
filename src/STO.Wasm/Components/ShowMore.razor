@@ -1,0 +1,26 @@
+@if (_showLongRunning)
+{    
+    <LongRunning />
+}
+else
+{
+    <div class="hstack gap-2">
+        <a class="btn btn-primary" title="Show More" @onclick="CallParent"><i class="fa-solid fa-arrow-down"></i> Show More</a>
+    </div>
+}
+
+@code {
+    [Parameter] public EventCallback ParentPageCallback { get; set; }
+    private bool _showLongRunning;
+
+    private async Task CallParent()
+    {		
+        _showLongRunning = true;
+        StateHasChanged();
+		
+        await Task.Delay(100); //This delay is required to force the UI refresh
+        await ParentPageCallback.InvokeAsync();
+        
+        _showLongRunning = false;
+    }
+}

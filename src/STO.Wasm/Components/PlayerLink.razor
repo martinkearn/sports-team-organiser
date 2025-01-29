@@ -1,5 +1,7 @@
-<a href="/players/@Player.UrlSegment">@Player.Name</a>
+<a href="/players/@PlayerUrlSegment">@PlayerName</a>
 
 @code {
-    [Parameter] public Player Player { get; set; } = default!;
+    [Parameter] public string PlayerName { get; set; } = null!;
+    
+    [Parameter] public string PlayerUrlSegment { get; set; } = null!;
 }

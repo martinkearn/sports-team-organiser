@@ -147,6 +147,11 @@ public class TransactionService(IDataService dataService) : ITransactionService
 
     public async Task UpsertTransactionAsync(Transaction transaction)
     {
+        if (transaction == null)
+        {
+            throw new NullReferenceException();
+        }
+
         // We only need to store transactions with a positive or negative amount
         if (transaction.Amount != 0)
         {

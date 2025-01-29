@@ -41,11 +41,6 @@ public class TransactionService(IDataService dataService) : ITransactionService
 
     private Transaction FillTransaction(Transaction t)
     {
-        if (t == null)
-        {
-            throw new NullReferenceException();
-        }
-
         // Get PlayerEntity
         var pe = dataService.PlayerEntities.Single(p => p.RowKey == t.PlayerId);
         

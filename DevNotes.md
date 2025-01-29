@@ -34,7 +34,7 @@ Used as a log during development to keep track of progress and status in between
 - [x] GameEntityService
 
 ## Wrap up
-- [ ] Remove ITransactionEntityService
-- [ ] Remove TransactionEntityService
+- [x] Remove ITransactionEntityService
+- [x] Remove TransactionEntityService
 
 ## Current focus

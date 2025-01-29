@@ -136,7 +136,7 @@ public class PlayerService(IDataService dataService) : IPlayerService
     public Player GetPlayerByUrlSegment(string urlSegment)
     {
         // Get PlayerEntity for this UrlSegment
-        var pe = GetPlayerEntities().FirstOrDefault(pe => pe.UrlSegment == urlSegment);
+        var pe = GetPlayerEntities().FirstOrDefault(pe => pe.UrlSegment.ToLowerInvariant() == urlSegment.ToLowerInvariant());
 
         if (pe == null)
         {

@@ -74,7 +74,7 @@ namespace STO.Tests.Services
         }
         
         [Fact]
-        public void GetTransaction_WithInvalidId_ThrowsException()
+        public void GetTransaction_WithInvalidId_ThrowsKeyNotFoundException()
         {
             // Arrange
             const string transactionId = "invalid123";
@@ -303,6 +303,32 @@ namespace STO.Tests.Services
             // Assert
             // Verify that UpsertEntityAsync was called with the correct transformed TransactionEntity
             _mockDataService.Verify(ds => ds.UpsertEntityAsync(It.Is<TransactionEntity>(te => te.RowKey == "T10" && te.Amount == expectedTransaction.Amount && te.Notes == expectedTransaction.Notes)), Times.Once);
+        }
+        
+        [Fact]
+        public async Task UpsertTransaction_WhichIsNull_ThrowsNullReferenceException()
+        {
+            // Arrange
+            Transaction nullTransaction = null;
+
+            // Act & Assert
+            await Assert.ThrowsAsync<NullReferenceException>(() => _transactionService.UpsertTransactionAsync(nullTransaction));
+        }
+        
+        [Fact]
+        public async Task UpsertTransactionAsync_WhenAmountIsZero_ShouldNotCallUpsertEntityAsync()
+        {
+            // Arrange
+            var transaction = new Transaction { Amount = 0 };
+
+            var mockDataService = new Mock<IDataService>();
+            var service = new TransactionService(mockDataService.Object);
+        
+            // Act
+            await service.UpsertTransactionAsync(transaction);
+
+            // Assert
+            _mockDataService.Verify(ds => ds.UpsertEntityAsync(It.IsAny<TransactionEntity>()), Times.Never);
         }
         
         #endregion

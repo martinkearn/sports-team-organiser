@@ -43,7 +43,7 @@ public class TransactionService(IDataService dataService) : ITransactionService
     {
         if (t == null)
         {
-            throw new KeyNotFoundException();
+            throw new NullReferenceException();
         }
 
         // Get PlayerEntity

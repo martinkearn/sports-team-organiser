@@ -306,13 +306,13 @@ namespace STO.Tests.Services
         }
         
         [Fact]
-        public async Task UpsertTransaction_WhichIsNull_ThrowsNullReferenceException()
+        public async Task UpsertTransaction_WhichIsNull_ThrowsArgumentNullException()
         {
             // Arrange
             Transaction nullTransaction = null;
 
             // Act & Assert
-            await Assert.ThrowsAsync<NullReferenceException>(() => _transactionService.UpsertTransactionAsync(nullTransaction));
+            await Assert.ThrowsAsync<ArgumentNullException>(() => _transactionService.UpsertTransactionAsync(nullTransaction));
         }
         
         [Fact]

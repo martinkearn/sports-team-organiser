@@ -122,11 +122,6 @@ public class TransactionService(IDataService dataService) : ITransactionService
         return ts;
     }
 
-    public List<Transaction> GetTransactions(string playerId)
-    {
-        throw new NotImplementedException();
-    }
-
     public Transaction GetTransaction(string id)
     {
         return ConstructTransaction(id);

@@ -41,6 +41,11 @@ public class TransactionService(IDataService dataService) : ITransactionService
 
     private Transaction FillTransaction(Transaction t)
     {
+        if (t == null)
+        {
+            throw new NullReferenceException();
+        }
+
         // Get PlayerEntity
         var pe = dataService.PlayerEntities.Single(p => p.RowKey == t.PlayerId);
         
@@ -142,8 +147,6 @@ public class TransactionService(IDataService dataService) : ITransactionService
 
     public async Task UpsertTransactionAsync(Transaction transaction)
     {
-        ArgumentNullException.ThrowIfNull(transaction);
-
         // We only need to store transactions with a positive or negative amount
         if (transaction.Amount != 0)
         {

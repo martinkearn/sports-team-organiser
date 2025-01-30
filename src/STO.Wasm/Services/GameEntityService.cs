@@ -15,12 +15,10 @@ namespace STO.Wasm.Services
 			}
 
 			// Delete PAGs
-			//TO DO: get this directly form data service
-			var pagsForGame = GetPlayerAtGameEntitiesForGame(rowkey);
+			var pagsForGame = dataService.PlayerAtGameEntities.Where(pag => pag.GameRowKey == rowkey).ToList();
 			foreach (var pag in pagsForGame)
 			{
-				//TO DO: Do this directly via data service
-				await DeletePlayerAtGameEntityAsync(pag.RowKey);
+				await dataService.DeleteEntityAsync<PlayerAtGameEntity>(pag.RowKey);
 			}
 
 			// Delete game
@@ -54,7 +52,6 @@ namespace STO.Wasm.Services
 		public string GetNotesForGame(string rowKey)
 		{
 			var ge = GetGameEntity(rowKey);
-			if (ge is null) return string.Empty;
 			var notes = $"For game {ge.Date.Date:dd MMM yyyy}";
 			return notes;
 		}

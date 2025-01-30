@@ -41,7 +41,7 @@ public class PlayerAtGameEntityService(IDataService dataService, IRatingEntitySe
 	    // Set the UrlSegment
 	    // Cannot do this as setter for UrlSegment because we cannot resolve the GameEntity and PlayerEntity there
 	    var playerEntity = dataService.PlayerEntities.First(pe => pe.RowKey == pagEntity.PlayerRowKey);
-	    var gameEntity = GetGameEntity(pagEntity.GameRowKey);
+	    var gameEntity = dataService.GameEntities.First(ge => ge.RowKey == pagEntity.GameRowKey);
 	    pagEntity.UrlSegment = $"{playerEntity.UrlSegment}-{gameEntity.UrlSegment}";
 			
 	    // Check if PAG exists
@@ -145,7 +145,6 @@ public class PlayerAtGameEntityService(IDataService dataService, IRatingEntitySe
 					PlayerId = pag.PlayerRowKey,
 					Amount = -playerEntity.DefaultRate,
 					DateTime = DateTime.UtcNow,
-					Notes = GetNotesForGame(pag.GameRowKey),
 					GameId = pag.GameRowKey
 				};
 
@@ -186,9 +185,10 @@ public class PlayerAtGameEntityService(IDataService dataService, IRatingEntitySe
         var pagInList = new List<PlayerAtGameEntity> { pag };
         var expandedPags = ExpandPags(pagInList);
         var expandedPag = expandedPags.First();
-			
+        
         // Construct label
-        var gameLabel = GetGameLabel(pag.GameRowKey, Enums.TitleLength.Short);
+        //TODO: When there is a .Label object on Game, use it here.
+        var gameLabel = expandedPag.GameEntity.Date.ToString("dd MMM");
         var pagLabel = length switch
         {
             Enums.TitleLength.Short => expandedPag.PlayerEntity.Name,
@@ -209,7 +209,7 @@ public class PlayerAtGameEntityService(IDataService dataService, IRatingEntitySe
     private List<ExpandedPag> ExpandPags(List<PlayerAtGameEntity> pags)
     {
 	    List<ExpandedPag> ePags = (from pag in pags 
-		    let ge = GetGameEntity(pag.GameRowKey) 
+		    let ge = dataService.GameEntities.FirstOrDefault(ge => ge.RowKey == pag.GameRowKey) 
 		    let playerEntity = dataService.PlayerEntities.FirstOrDefault(pe => pe.RowKey == pag.PlayerRowKey)
 		    select new ExpandedPag(pag, ge, playerEntity)).ToList();
 	    return ePags;
@@ -219,8 +219,6 @@ public class PlayerAtGameEntityService(IDataService dataService, IRatingEntitySe
 public class ExpandedPag(PlayerAtGameEntity pagEntity, GameEntity gameEntity, PlayerEntity playerEntity)
 {
 	public PlayerAtGameEntity PagEntity { get; } = pagEntity;
-
 	public PlayerEntity PlayerEntity { get; } = playerEntity;
-
 	public GameEntity GameEntity { get; set; } = gameEntity;
 }

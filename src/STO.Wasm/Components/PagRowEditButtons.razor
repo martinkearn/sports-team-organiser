@@ -1,4 +1,4 @@
-@inject IGameEntityService GameEntityService
+@inject IPlayerAtGameEntityService PlayerAtGameEntityService
 @inject ITransactionService TransactionService
 @inject IPlayerService PlayerService
 
@@ -44,8 +44,6 @@
     public EventCallback RefreshMainPage { get; set; }
 
     private Player _player = null!;
-    
-    private GameEntity _pagGameEntity = null!;
 
     protected override async Task OnInitializedAsync()
     {
@@ -54,7 +52,7 @@
 
     private async Task TogglePlayed()
     {
-        await GameEntityService.TogglePlayerAtGamePlayedAsync(PagEntity, null);
+        await PlayerAtGameEntityService.TogglePlayerAtGamePlayedAsync(PagEntity, null);
         await RefreshMainPage.InvokeAsync();
     }
 
@@ -75,7 +73,7 @@
             PagEntity.Team = team.ToString();
         }
 
-        await GameEntityService.UpsertPlayerAtGameEntityAsync(PagEntity);
+        await PlayerAtGameEntityService.UpsertPlayerAtGameEntityAsync(PagEntity);
         await RefreshMainPage.InvokeAsync();
     }
 
@@ -84,7 +82,6 @@
         var newTransactionForPag = new Transaction()
             {
                 DateTime = DateTime.UtcNow,
-                Notes = GameEntityService.GetNotesForGame(PagEntity.GameRowKey),
                 PlayerId = PagEntity.PlayerRowKey,
                 GameId = PagEntity.GameRowKey,
                 Amount = _player.DefaultRate
@@ -100,13 +97,12 @@
     {
         PagEntity.Forecast = Enums.PlayingStatus.Yes;
         PagEntity.Team = string.Empty;
-        await GameEntityService.UpsertPlayerAtGameEntityAsync(PagEntity);
+        await PlayerAtGameEntityService.UpsertPlayerAtGameEntityAsync(PagEntity);
         await RefreshMainPage.InvokeAsync();
     }
 
     private async Task RefreshData()
     {
-        _pagGameEntity = GameEntityService.GetGameEntity(PagEntity.GameRowKey);
         _player = PlayerService.GetPlayer(PagEntity.PlayerRowKey);
         await RefreshMainPage.InvokeAsync();
     }

@@ -1,4 +1,5 @@
 @inject IGameEntityService GameEntityService
+@inject IPlayerAtGameEntityService PlayerAtGameEntityService
 @inject IRatingEntityService RatingEntityService
 
 @if (Link)
@@ -25,9 +26,9 @@ else
 }
 
 @code {
-    [Parameter] public string RowKey { get; set; } = default!;
+    [Parameter] public string RowKey { get; set; } = null!;
 
-    [Parameter] public string Label { get; set; } = default!;
+    [Parameter] public string Label { get; set; } = null!;
 
     [Parameter] public bool Link { get; set; } = true;
 
@@ -35,11 +36,11 @@ else
 
     [Parameter] public Enums.TitleLength Length { get; set; } = Enums.TitleLength.Short;
 
-    private GameEntity _gameEntity = default!;
+    private GameEntity _gameEntity = null!;
 
-    private PlayerAtGameEntity _playerAtGameEntity = default!;
+    private PlayerAtGameEntity _playerAtGameEntity = null!;
 
-    private RatingEntity _ratingEntity = default!;
+    private RatingEntity _ratingEntity = null!;
 
     protected override void OnInitialized()
     {
@@ -67,11 +68,11 @@ else
 
                 break;
             case Enums.EntityType.PlayerAtGameEntity:
-                _playerAtGameEntity = GameEntityService.GetPlayerAtGameEntity(RowKey);
+                _playerAtGameEntity = PlayerAtGameEntityService.GetPlayerAtGameEntity(RowKey);
                 _gameEntity = GameEntityService.GetGameEntity(_playerAtGameEntity.GameRowKey);
                 if (string.IsNullOrEmpty(Label))
                 {
-                    Label = GameEntityService.GetPlayerAtGameLabel(_playerAtGameEntity.RowKey, Length);
+                    Label = PlayerAtGameEntityService.GetPlayerAtGameLabel(_playerAtGameEntity.RowKey, Length);
                 }
                 
                 break;

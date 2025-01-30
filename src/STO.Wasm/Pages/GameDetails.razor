@@ -1,6 +1,7 @@
 @page "/games/{GameUrlSegment}"
 @inject IPlayerService PlayerService
 @inject IGameEntityService GameEntityService
+@inject IPlayerAtGameEntityService PlayerAtGameEntityService
 
 <PageTitle>TNF - @_pageTitle</PageTitle>
 
@@ -144,7 +145,7 @@
     private async Task CalculateTeams()
     {
         _showLongRunning = true;
-        _pags = await GameEntityService.CalculateTeamsAsync(_pags);
+        _pags = await PlayerAtGameEntityService.CalculateTeamsAsync(_pags);
         RefreshData();
         _showLongRunning = false;
     }
@@ -152,7 +153,7 @@
     private async Task ResetTeams()
     {
         _showLongRunning = true;
-        await GameEntityService.ResetTeamsAsync(_gameEntity.RowKey);
+        await PlayerAtGameEntityService.ResetTeamsAsync(_gameEntity.RowKey);
         RefreshData();
         _showLongRunning = false;
     }
@@ -182,8 +183,8 @@
     {
         _gameEntity = GameEntityService.GetGameEntityByUrlSegment(GameUrlSegment);
         var gamePlayers = PlayerService.GetPlayers(_gameEntity.RowKey);
-        _pags = GameEntityService.GetPlayerAtGameEntitiesForGame(_gameEntity.RowKey);
-        _mostRecentPag = GameEntityService.GetMostRecentPlayerAtGameForGame(_gameEntity.RowKey);
+        _pags = PlayerAtGameEntityService.GetPlayerAtGameEntitiesForGame(_gameEntity.RowKey);
+        _mostRecentPag = PlayerAtGameEntityService.GetMostRecentPlayerAtGameForGame(_gameEntity.RowKey);
         
         //Team A
         _teamAPags = _pags

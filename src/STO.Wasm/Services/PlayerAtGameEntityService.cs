@@ -1,6 +1,6 @@
 namespace STO.Wasm.Services;
 
-public class PlayerAtGameEntityService(IDataService dataService, IRatingEntityService ratingEntityEntityService, ITransactionService transactionService) : IPlayerAtGameEntityService
+public class PlayerAtGameEntityService(IDataService dataService, ITransactionService transactionService) : IPlayerAtGameEntityService
 {
     public List<PlayerAtGameEntity> GetPlayerAtGameEntitiesForGame(string gameRowKey)
     {

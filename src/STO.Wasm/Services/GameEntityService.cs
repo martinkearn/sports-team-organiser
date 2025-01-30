@@ -1,9 +1,7 @@
-﻿using STO.Models.Interfaces;
-
-namespace STO.Wasm.Services
+﻿namespace STO.Wasm.Services
 {
 	/// <inheritdoc/>
-	public class GameEntityService(IDataService dataService, IRatingEntityService ratingEntityEntityService, ITransactionService transactionService) : IGameEntityService
+	public class GameEntityService(IDataService dataService, IRatingEntityService ratingEntityEntityService) : IGameEntityService
 	{
 		public async Task DeleteGameEntityAsync(string rowkey)
 		{

@@ -1,5 +1,6 @@
 @page "/games/{GameUrlSegment}/{PagUrlSegment}"
 @inject IGameEntityService GameEntityService
+@inject IPlayerAtGameEntityService PlayerAtGameEntityService
 @inject ITransactionService TransactionService
 @inject IPlayerService PlayerService
 @inject NavigationManager Navigation
@@ -118,25 +119,25 @@
 
     private async Task Edit()
     {
-        await GameEntityService.UpsertPlayerAtGameEntityAsync(_pagEntity);
+        await PlayerAtGameEntityService.UpsertPlayerAtGameEntityAsync(_pagEntity);
         RefreshData();
     }
 
     private async Task EditPlayed()
     {
-        await GameEntityService.TogglePlayerAtGamePlayedAsync(_pagEntity, _pagEntity.Played);
+        await PlayerAtGameEntityService.TogglePlayerAtGamePlayedAsync(_pagEntity, _pagEntity.Played);
         RefreshData();
     }
 
     private async Task DeletePag()
     {
-        await GameEntityService.DeletePlayerAtGameEntityAsync(_pagEntity.RowKey);
+        await PlayerAtGameEntityService.DeletePlayerAtGameEntityAsync(_pagEntity.RowKey);
         Navigation.NavigateTo($"/games/{GameUrlSegment}");
     }
 
     private void RefreshData()
     {
-        _pagEntity = GameEntityService.GetPlayerAtGameEntityByUrlSegment(PagUrlSegment);
+        _pagEntity = PlayerAtGameEntityService.GetPlayerAtGameEntityByUrlSegment(PagUrlSegment);
         _player = PlayerService.GetPlayer(_pagEntity.PlayerRowKey);
         _gameEntity = GameEntityService.GetGameEntity(_pagEntity.GameRowKey);
         var gameLabel = GameEntityService.GetGameLabel(_gameEntity.RowKey);

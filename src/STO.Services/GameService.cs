@@ -77,7 +77,7 @@ public class GameService : IGameService
 
     public Game GetGame(string id)
     {
-        
+        return ConstructGame(id);  
     }
 
     public Game GetGameByUrlSegment(string urlSegment)

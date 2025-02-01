@@ -5,8 +5,10 @@ public interface IGameService
     /// <summary>
     /// Gets all Games.
     /// </summary>
+    /// <param name="skip">How many items to skip before taking. For example, if set to 30, the return will start from the 31st item. If null, no items will be skipped</param>
+    /// <param name="take">How many items to take For example, if set to 20, 20 items will be returned. If null, all items will be taken from the skip</param>
     /// <returns>List of Game.</returns>
-    public List<Game> GetGames();
+    public List<Game> GetGames(int? skip, int? take);
     
     /// <summary>
     /// Gets a single Game by Id.

@@ -6,12 +6,12 @@ namespace STO.Services;
 public class GameService : IGameService
 {
     private readonly IDataService _dataService;
-    private readonly List<GameEntity> _gameEntities;
+    private readonly IEnumerable<GameEntity> _gameEntities;
 
     public GameService(IDataService dataService)
     {
         _dataService = dataService;
-        _gameEntities = _dataService.GameEntities.OrderByDescending(o => o.Date).ToList();
+        _gameEntities = _dataService.GameEntities.OrderByDescending(o => o.Date);
     }
 
     private Game ConstructGame(string gameId)
@@ -62,14 +62,22 @@ public class GameService : IGameService
         return gameEntity;
     }
 
-    public List<Game> GetGames()
+    public List<Game> GetGames(int? skip, int? take)
     {
-        throw new NotImplementedException();
+        var ges = _gameEntities;
+        
+        // Apply Skip and Take only if values are provided
+        ges = skip.HasValue ? ges.Skip(skip.Value) : ges;
+        ges = take.HasValue ? ges.Take(take.Value) : ges;
+
+        var gs = ges.Select(ge => ConstructGame(ge.RowKey)).ToList();
+
+        return gs;
     }
 
     public Game GetGame(string id)
     {
-        throw new NotImplementedException();
+        
     }
 
     public Game GetGameByUrlSegment(string urlSegment)

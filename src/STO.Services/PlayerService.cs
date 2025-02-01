@@ -40,6 +40,7 @@ public class PlayerService(IDataService dataService) : IPlayerService
         var label = textInfo.ToTitleCase(playerEntity.Name);
         
         // Url Segment
+        //TODO: This could be in the class as a setter on the Name property
         var urlSegment = playerEntity.Name.Replace(" ", "-").ToLowerInvariant();
         
         // Construct
@@ -86,6 +87,7 @@ public class PlayerService(IDataService dataService) : IPlayerService
             throw new KeyNotFoundException($"The PlayerEntity with ID {playerId} was not found.");
         }
 
+        //TODO: This could not just return the PlayerEntity. One less round trip to data store.
         return true;
     }
 

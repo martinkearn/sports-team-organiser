@@ -82,7 +82,15 @@ public class GameService : IGameService
 
     public Game GetGameByUrlSegment(string urlSegment)
     {
-        throw new NotImplementedException();
+        // Get PlayerEntity for this UrlSegment
+        var ge = _dataService.GameEntities.FirstOrDefault(ge => ge.UrlSegment.ToLowerInvariant() == urlSegment.ToLowerInvariant());
+
+        if (ge == null)
+        {
+            throw new KeyNotFoundException();
+        }
+
+        return ConstructGame(ge.RowKey);
     }
 
     public Game GetNextGame()

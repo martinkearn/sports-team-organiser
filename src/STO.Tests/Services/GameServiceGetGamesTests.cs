@@ -5,27 +5,22 @@ namespace STO.Tests.Services;
 public class GameServiceGetGamesTests : IClassFixture<MainFixture>
 {
     private readonly GameService _gameService;
-    private readonly Mock<IDataService> _mockDataService;
-    private readonly MainFixture _fixture;
-    
+
     public GameServiceGetGamesTests(MainFixture fixture)
     {
-        _fixture = fixture;
-            
         // Mocking IDataService with data from Fixture
-        _mockDataService = new Mock<IDataService>();
-        _mockDataService.Setup(ds => ds.PlayerEntities).Returns(_fixture.PlayerEntities);
-        _mockDataService.Setup(ds => ds.RatingEntities).Returns(_fixture.RatingEntities);
-        _mockDataService.Setup(ds => ds.TransactionEntities).Returns(_fixture.TransactionEntities);
-        _mockDataService.Setup(ds => ds.GameEntities).Returns(_fixture.GameEntities);
-        _mockDataService.Setup(ds => ds.PlayerAtGameEntities).Returns(_fixture.PlayerAtGameEntities);
+        var mockDataService = new Mock<IDataService>();
+        mockDataService.Setup(ds => ds.PlayerEntities).Returns(fixture.PlayerEntities);
+        mockDataService.Setup(ds => ds.RatingEntities).Returns(fixture.RatingEntities);
+        mockDataService.Setup(ds => ds.TransactionEntities).Returns(fixture.TransactionEntities);
+        mockDataService.Setup(ds => ds.GameEntities).Returns(fixture.GameEntities);
+        mockDataService.Setup(ds => ds.PlayerAtGameEntities).Returns(fixture.PlayerAtGameEntities);
 
         // Create GameService with mocked IDataService
-        _gameService = new GameService(_mockDataService.Object);
+        _gameService = new GameService(mockDataService.Object);
     }
     
-    // Initial tests from GPT
-    /*[Fact]
+    [Fact]
     public void GetGames_ShouldReturnAllGames_WhenNoSkipOrTakeProvided()
     {
         // Act
@@ -33,7 +28,7 @@ public class GameServiceGetGamesTests : IClassFixture<MainFixture>
 
         // Assert
         Assert.NotNull(result);
-        Assert.Equal(3, result.Count);
+        Assert.Equal(4, result.Count);
     }
 
     [Fact]
@@ -55,8 +50,8 @@ public class GameServiceGetGamesTests : IClassFixture<MainFixture>
 
         // Assert
         Assert.NotNull(result);
-        Assert.Equal(2, result.Count);
-        Assert.Equal("Game 2", result[0].Title);
+        Assert.Equal(3, result.Count);
+        Assert.Equal("G2", result[0].Id);
     }
 
     [Fact]
@@ -68,6 +63,6 @@ public class GameServiceGetGamesTests : IClassFixture<MainFixture>
         // Assert
         Assert.NotNull(result);
         Assert.Single(result);
-        Assert.Equal("Game 2", result[0].Title);
-    }*/
+        Assert.Equal("G2", result[0].Id);
+    }
 }

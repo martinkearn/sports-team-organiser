@@ -56,7 +56,7 @@ public class GameService : IGameService
         var gameEntity = _gameEntities.FirstOrDefault(ge => ge.RowKey == gameId);
         if (gameEntity == null)
         {
-            throw new KeyNotFoundException($"The GameEntity with ID {gameEntity} was not found.");
+            throw new KeyNotFoundException($"The Game with Id {gameId} was not found.");
         }
 
         return gameEntity;
@@ -87,7 +87,7 @@ public class GameService : IGameService
 
         if (ge == null)
         {
-            throw new KeyNotFoundException();
+            throw new KeyNotFoundException($"The game with UrlSegment {urlSegment} was not found.");
         }
 
         return ConstructGame(ge.RowKey);
@@ -95,7 +95,14 @@ public class GameService : IGameService
 
     public Game GetNextGame()
     {
-        throw new NotImplementedException();
+        var nextGe = _dataService.GameEntities.OrderByDescending(o => o.Date.DateTime).FirstOrDefault();
+
+        if (nextGe == null)
+        {
+            throw new KeyNotFoundException("No next game found.");
+        }
+
+        return ConstructGame(nextGe.RowKey);
     }
 
     public async Task DeleteGameAsync(string id)

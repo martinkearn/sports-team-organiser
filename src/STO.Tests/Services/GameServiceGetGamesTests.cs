@@ -65,4 +65,6 @@ public class GameServiceGetGamesTests : IClassFixture<MainFixture>
         Assert.Single(result);
         Assert.Equal("G2", result[0].Id);
     }
+    
+    //TODO: Test for no games in collection
 }

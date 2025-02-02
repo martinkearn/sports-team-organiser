@@ -40,8 +40,11 @@ public class GameServiceGetGameTests : IClassFixture<MainFixture>
     [Fact]
     public void GetGame_ShouldThrowKeyNotFoundException_WhenInvalidIdIsProvided()
     {
+        // Arrange
+        var gameId = "notvalidgameid";
+        
         // Act & Assert
-        var exception = Assert.Throws<KeyNotFoundException>(() => _gameService.GetGame("999"));
-        Assert.Contains("was not found", exception.Message);
+        var exception = Assert.Throws<KeyNotFoundException>(() => _gameService.GetGame(gameId));
+        Assert.Contains($"The Game with Id {gameId} was not found.", exception.Message);
     }
 }

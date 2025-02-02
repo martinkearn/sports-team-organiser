@@ -45,8 +45,11 @@ public class GameServiceGetGameByUrlSegmentTests : IClassFixture<MainFixture>
     [Fact]
     public void GetGameByUrlSegment_ShouldThrowKeyNotFoundException_WhenInvalidUrlSegmentIsProvided()
     {
+        // Arrange
+        var gameUrlSegment = "notvalidgameurlsegment";
+            
         // Act & Assert
-        var exception = Assert.Throws<KeyNotFoundException>(() => _gameService.GetGameByUrlSegment("non-existent"));
-        Assert.IsType<KeyNotFoundException>(exception);
+        var exception = Assert.Throws<KeyNotFoundException>(() => _gameService.GetGameByUrlSegment(gameUrlSegment));
+        Assert.Contains($"The game with UrlSegment {gameUrlSegment} was not found.", exception.Message);
     }
 }

@@ -107,11 +107,27 @@ public class GameService : IGameService
 
     public async Task DeleteGameAsync(string id)
     {
-        throw new NotImplementedException();
+        // Delete Ratings
+        var ratingsForGame = _dataService.RatingEntities.Where(re => re.GameRowKey == id);
+        foreach (var re in ratingsForGame)
+        {
+            await _dataService.DeleteEntityAsync<RatingEntity>(re.RowKey);
+        }
+
+        // Delete PAGs
+        var pagsForGame = _dataService.PlayerAtGameEntities.Where(pag => pag.GameRowKey == id);
+        foreach (var pag in pagsForGame)
+        {
+            await _dataService.DeleteEntityAsync<PlayerAtGameEntity>(pag.RowKey);
+        }
+
+        // Delete game
+        await _dataService.DeleteEntityAsync<GameEntity>(id);
     }
 
     public async Task UpsertGameAsync(Game game)
     {
-        throw new NotImplementedException();
+        var ge = DeconstructGame(game);
+        await _dataService.UpsertEntityAsync(ge);
     }
 }

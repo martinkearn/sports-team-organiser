@@ -107,6 +107,9 @@ public class GameService : IGameService
 
     public async Task DeleteGameAsync(string id)
     {
+        // Verify Game
+        var gameEntity = VerifyGameExists(id);
+        
         // Delete Ratings
         var ratingsForGame = _dataService.RatingEntities.Where(re => re.GameRowKey == id);
         foreach (var re in ratingsForGame)

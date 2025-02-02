@@ -4,6 +4,7 @@ using System.Runtime.CompilerServices;
 
 namespace STO.Models;
 
+[ExcludeFromCodeCoverage]
 public class Transaction
 {
     public string Id { get; set; } = null!;
@@ -17,7 +18,6 @@ public class Transaction
     public string PlayerUrlSegment { get; set; } = null!;
     public string GameId { get; set; } = null!;
     public string GameLabel { get; set; } = null!;
-    
     public DateTime LastUpdated { get; set; }
 
 }

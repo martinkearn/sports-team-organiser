@@ -9,7 +9,7 @@ Used as a log during development to keep track of progress and status in between
 ## Game Service
 - [x] Create initial GameService by copying and consolidating methods from GameEntityService
 - [x] Tests
-- [ ] Startup DI
+- [x] Startup DI
 
 ## Pages
 - [ ] /games

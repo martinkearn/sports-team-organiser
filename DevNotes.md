@@ -11,14 +11,28 @@ Used as a log during development to keep track of progress and status in between
 - [x] Tests
 - [ ] Startup DI
 
-## Pages & Components
-TODO: Populate pages which need to be updated for new GameService
+## Pages
+- [ ] /games
+- [ ] /games/{GameUrlSegment}
+- [ ] /games/{GameUrlSegment}/edit
+- [ ] /games/{GameUrlSegment}/{PagUrlSegment}
+- [ ] /games/add
+- [ ] /games/addplayerstogame
+- [ ] /games/addtransactionstogame
+- [ ] /playerstochase
+- [ ] /ratings/add
+- [ ] /ratings/{RatingUrlSegment}
+- [ ] /transactions/add
+- [ ] /admin
+
+## Components
+- [ ] Add GameLink
+- [ ] EntityTitleLink - remove game references
+- [ ] NextGameLink
 
 ## Services
-TODO: Populate service which need to be updated for new GameService 
-
-## Wrap up
 - [ ] Remove IGameEntityService
 - [ ] Remove GameEntityService
+- [ ] Program.cs
 
 ## Current focus

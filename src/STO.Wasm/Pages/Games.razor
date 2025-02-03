@@ -1,48 +1,61 @@
 @page "/games"
-@inject IGameEntityService GameEntityService
+@inject IGameService GameService
 @inject IPlayerAtGameEntityService PlayerAtGameEntityService
 
 <PageTitle>TNF - @_pageTitle</PageTitle>
 
 <h1><i class="fa-solid fa-people-group me-2"></i> @_pageTitle</h1>
 
-<p>@_gameEntities.Count games.</p>
+<p>@_games.Count games.</p>
 
 <table class="table table-striped">
 	<thead>
-		<tr>
-			<th scope="col">Date</th>
-			<th scope="col">Players</th>
-			<th scope="col">Notes</th>
-		</tr>
+	<tr>
+		<th scope="col">Date</th>
+		<th scope="col">Yes Players</th>
+		<th scope="col">Maybe Players</th>
+		<th scope="col" class="d-none d-lg-table-cell">Notes</th>
+	</tr>
 	</thead>
 	<tbody>
-		@foreach (var ge in _gameEntities)
-		{
-			var pags = PlayerAtGameEntityService.GetPlayerAtGameEntitiesForGame(ge.RowKey);
-			<tr>
-				<td><EntityTitleLink RowKey="@ge.RowKey" EntityType="Enums.EntityType.GameEntity" Length="Enums.TitleLength.Short" Link="true" Label="" /></td>
-				<td>@pags.Count</td>
-				<td>@ge.Notes</td>
-			</tr>
-		}
+	@foreach (var g in _games)
+	{
+		var pags = PlayerAtGameEntityService.GetPlayerAtGameEntitiesForGame(g.Id);
+		<tr>
+			<td><GameLink GameUrlSegment="@g.UrlSegment" GameLabel="@g.Label" /></td>
+			<td>@pags.Count(pag => pag.Forecast == Enums.PlayingStatus.Yes)</td>
+			<td>@pags.Count(pag => pag.Forecast == Enums.PlayingStatus.Maybe)</td>
+			<td class="d-none d-lg-table-cell">@g.Notes</td>
+		</tr>
+	}
 	</tbody>
 </table>
 
-@code {
-	[CascadingParameter] public MainLayout MainLayout { get; set; } = default!;
-	private List<GameEntity> _gameEntities = [];
+<p>Showing @_games.Count games.</p>
+<ShowMore ParentPageCallback="ShowMore" />
 
-	private string _pageTitle = default!;
+@code {
+	[CascadingParameter] public MainLayout MainLayout { get; set; } = null!;
+	
+	private List<Game> _games = [];
+	
+	private const int ItemsPerPage = 20;
+
+	private string _pageTitle = null!;
 
 	protected override void OnInitialized()
 	{
 		RefreshData();
 	}
+	
+	private void ShowMore()
+	{
+		_games.AddRange(GameService.GetGames(_games.Count, ItemsPerPage));
+	}
 
 	private void RefreshData()
 	{
-		_gameEntities = GameEntityService.GetGameEntities();
+		_games = GameService.GetGames(0, ItemsPerPage);
 		_pageTitle = "Games";
 		MainLayout.SetPageTitle(_pageTitle);
 	}

@@ -12,7 +12,7 @@ Used as a log during development to keep track of progress and status in between
 - [x] Startup DI
 
 ## Pages
-- [ ] /games
+- [x] /games
 - [ ] /games/{GameUrlSegment}
 - [ ] /games/{GameUrlSegment}/edit
 - [ ] /games/{GameUrlSegment}/{PagUrlSegment}
@@ -26,7 +26,7 @@ Used as a log during development to keep track of progress and status in between
 - [ ] /admin
 
 ## Components
-- [ ] Add GameLink
+- [x] Add GameLink
 - [ ] EntityTitleLink - remove game references
 - [ ] NextGameLink
 

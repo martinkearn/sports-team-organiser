@@ -39,16 +39,16 @@
 		</div>
 
 		<div class="mb-3">
-			<label class="form-label">Average Rating</label>
-			<div class="form-control bg-body-secondary"><PlayerRating Rating="_player.Rating" Stars="true" /></div>
-		</div>
-
-		<div class="mb-3">
 			<label class="form-label">Default Rate</label>
 			<div class="input-group">
 				<span class="input-group-text">£</span>
 				<InputNumber type="number" min="0" class="form-control" id="addDefaultRate" @bind-Value="_player.DefaultRate" @bind-Value:after="Edit" />
 			</div>
+		</div>
+
+		<div class="mb-3">
+			<label class="form-label">Average Rating</label>
+			<div class="form-control bg-body-secondary"><PlayerRating Rating="_player.Rating" Stars="true" /></div>
 		</div>
 
 		<div class="mb-3">

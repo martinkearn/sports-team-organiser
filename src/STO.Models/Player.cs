@@ -27,6 +27,7 @@ public class Player
     
     // Calculated properties
     public string Label { get; set; }
+    //TODO: This should be a read-only computed property like Game.Label
     public double Rating { get; set; }
     public string UrlSegment { get; set; }
     public double Balance { get; set; }

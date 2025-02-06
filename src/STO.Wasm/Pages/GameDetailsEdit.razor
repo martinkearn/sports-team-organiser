@@ -4,22 +4,17 @@
 
 <PageTitle>TNF - @_pageTitle</PageTitle>
 
-<h1><i class="fa-solid fa-people-group me-2"></i> Edit @_pageTitle</h1>
+<h1><i class="fa-solid fa-people-group me-2"></i> @_pageTitle</h1>
 
 <AuthorizeView Policy="IsAdminEmail">
     <Authorized>
         
-        <div class="mb-3">
+        <div class="mb-3 mt-3">
             <label class="form-label">Date</label>
             <InputDate class="form-control" @bind-Value="_game.DateTime" @bind-Value:after="Edit" />
         </div>
 
-        <div class="mb-3">
-            <label class="form-label">Last Updated</label>
-            <span class="form-control-plaintext">@_game.LastUpdated</span>
-        </div>
-
-        <div class="mb-3">
+        <div class="mb-3 mt-3">
             <label class="form-label">Time</label>
             <div class="row">
                 <div class="col-auto">
@@ -31,25 +26,29 @@
             </div>
         </div>
 
-        <div class="mb-3">
+        <div class="mb-3 mt-3">
             <label class="form-label">Title</label>
             <InputText class="form-control" @bind-Value="_game.Title" @bind-Value:after="Edit" />
         </div>
-
-        <div class="mb-3">
-            <label class="form-label">Url Segment</label>
-            <InputText class="form-control" @bind-Value="_game.UrlSegment" disabled="true"  />
-            <div class="form-text">Set automatically.</div>
-        </div>
-
-        <div class="mb-3">
+        
+        <div class="mb-3 mt-3">
             <label class="form-label">Notes</label>
             <InputText class="form-control" @bind-Value="_game.Notes" @bind-Value:after="Edit" />
         </div>
-
+        
+        <div class="mb-3 mt-3">
+            <label class="form-label">Url Segment</label>
+            <InputText class="form-control" @bind-Value="_game.UrlSegment" disabled="true"  />
+        </div>
+        
+        <div class="mb-3">
+            <label class="form-label">Last Updated</label>
+            <span class="form-control bg-body-secondary">@_game.LastUpdated</span>
+        </div>
+        
         <div class="hstack gap-2">
             <a class="btn btn-secondary" href="/games/@_game.UrlSegment"><i class="fa-solid fa-arrow-left"></i>Back to Game</a>
-            <DeleteButtonWithCheck @rendermode="RenderMode.InteractiveAuto" DeleteWhatLabel="@_pageTitle" ButtonLabel="Delete" ParentPageCallback="DeleteGame" />
+            <DeleteButtonWithCheck @rendermode="RenderMode.InteractiveAuto" DeleteWhatLabel="@_game.Label" ButtonLabel="Delete" ParentPageCallback="DeleteGame" />
         </div>
 
     </Authorized>

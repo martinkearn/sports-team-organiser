@@ -1,11 +1,11 @@
 @page "/games/{GameUrlSegment}"
 @inject IPlayerService PlayerService
-@inject IGameEntityService GameEntityService
+@inject IGameService GameService
 @inject IPlayerAtGameEntityService PlayerAtGameEntityService
 
 <PageTitle>TNF - @_pageTitle</PageTitle>
 
-<h1><i class="fa-solid fa-people-group me-2"></i> <EntityTitleLink RowKey="@_gameEntity.RowKey" EntityType="Enums.EntityType.GameEntity" Link="false" /></h1>
+<h1><i class="fa-solid fa-people-group me-2"></i> @_pageTitle</h1>
 
 <AuthorizeView Policy="IsAdminEmail">
     <Authorized>
@@ -17,16 +17,16 @@
         else
         {
             <p>
-                @_pags.Count() players. @_pags.Count(p => p.Forecast == Enums.PlayingStatus.Yes) yes, @_pags.Count(p => p.Forecast == Enums.PlayingStatus.Maybe) maybe, @_pags.Count(p => p.Forecast == Enums.PlayingStatus.No) no. @_gameEntity.Date.TimeOfDay.Hours:@_gameEntity.Date.TimeOfDay.Minutes kick off.
-                @if (_mostRecentPag != default)
+                @_pags.Count() players. @_pags.Count(p => p.Forecast == Enums.PlayingStatus.Yes) yes, @_pags.Count(p => p.Forecast == Enums.PlayingStatus.Maybe) maybe, @_pags.Count(p => p.Forecast == Enums.PlayingStatus.No) no. @_game.DateTime.TimeOfDay.Hours:@_game.DateTime.TimeOfDay.Minutes kick off.
+                @if (_mostRecentPag != null)
                 {
                     var localTime = _mostRecentPag.Timestamp?.ToLocalTime();
                     <span>Last player added @localTime?.ToString("ddd HH:mm")</span>
                 }
             </p>
-            @if (!string.IsNullOrEmpty(_gameEntity.Notes))
+            @if (!string.IsNullOrEmpty(_game.Notes))
             {
-                <p>@_gameEntity.Notes</p>
+                <p>@_game.Notes</p>
             }
 
             <table class="table table-sm table-borderless">
@@ -38,7 +38,7 @@
                     Rating="@_teamARating" 
                     Pags="@_teamAPags" 
                     Players="@_teamAPlayers" 
-                    GameUrlSegment="@_gameEntity.UrlSegment" 
+                    GameUrlSegment="@_game.UrlSegment" 
                     SimpleView="@_simpleView" 
                     RefreshMainPage="RefreshData" />
 
@@ -48,7 +48,7 @@
                     Rating="@_teamBRating"
                     Pags="@_teamBPags"
                     Players="@_teamBPlayers"
-                    GameUrlSegment="@_gameEntity.UrlSegment"
+                    GameUrlSegment="@_game.UrlSegment"
                     SimpleView="@_simpleView"
                     RefreshMainPage="RefreshData" />
 
@@ -57,7 +57,7 @@
                     Label="Playing with no team"
                     Pags="@_noTeamPags"
                     Players="@_noTeamPlayers"
-                    GameUrlSegment="@_gameEntity.UrlSegment"
+                    GameUrlSegment="@_game.UrlSegment"
                     SimpleView="@_simpleView"
                     RefreshMainPage="RefreshData" />
 
@@ -66,7 +66,7 @@
                     Label="Maybe & Reserve"
                     Pags="@_maybeReservePags"
                     Players="@_maybeReservePlayers"
-                    GameUrlSegment="@_gameEntity.UrlSegment"
+                    GameUrlSegment="@_game.UrlSegment"
                     SimpleView="@_simpleView"
                     RefreshMainPage="RefreshData" />
 
@@ -75,7 +75,7 @@
                     Label="No"
                     Pags="@_noPags"
                     Players="@_noPlayers"
-                    GameUrlSegment="@_gameEntity.UrlSegment"
+                    GameUrlSegment="@_game.UrlSegment"
                     SimpleView="@_simpleView"
                     RefreshMainPage="RefreshData" />
 
@@ -100,19 +100,19 @@
 </AuthorizeView>
 
 @code {
-    [CascadingParameter] public MainLayout MainLayout { get; set; } = default!;
+    [CascadingParameter] public MainLayout MainLayout { get; set; } = null!;
 
-    [Parameter] public string GameUrlSegment { get; set; } = default!;
+    [Parameter] public string GameUrlSegment { get; set; } = null!;
 
-    private GameEntity _gameEntity = default!;
+    private Game _game = null!;
 
-    private List<PlayerAtGameEntity> _pags = default!;
+    private List<PlayerAtGameEntity> _pags = null!;
 
     private PlayerAtGameEntity? _mostRecentPag;
 
     private string? _pageTitle;
 
-    private string _simpleViewLabel = default!;
+    private string _simpleViewLabel = null!;
 
     private bool _simpleView;
 
@@ -153,7 +153,7 @@
     private async Task ResetTeams()
     {
         _showLongRunning = true;
-        await PlayerAtGameEntityService.ResetTeamsAsync(_gameEntity.RowKey);
+        await PlayerAtGameEntityService.ResetTeamsAsync(_game.Id);
         RefreshData();
         _showLongRunning = false;
     }
@@ -181,10 +181,10 @@
 
     private void RefreshData()
     {
-        _gameEntity = GameEntityService.GetGameEntityByUrlSegment(GameUrlSegment);
-        var gamePlayers = PlayerService.GetPlayers(_gameEntity.RowKey);
-        _pags = PlayerAtGameEntityService.GetPlayerAtGameEntitiesForGame(_gameEntity.RowKey);
-        _mostRecentPag = PlayerAtGameEntityService.GetMostRecentPlayerAtGameForGame(_gameEntity.RowKey);
+        _game = GameService.GetGameByUrlSegment(GameUrlSegment);
+        var gamePlayers = PlayerService.GetPlayers(_game.Id);
+        _pags = PlayerAtGameEntityService.GetPlayerAtGameEntitiesForGame(_game.Id);
+        _mostRecentPag = PlayerAtGameEntityService.GetMostRecentPlayerAtGameForGame(_game.Id);
         
         //Team A
         _teamAPags = _pags
@@ -245,7 +245,7 @@
         //Set simple view label
         SetSimpleViewLabel();
         
-        _pageTitle = GameEntityService.GetGameLabel(_gameEntity.RowKey);
+        _pageTitle = _game.Label;
         MainLayout.SetPageTitle(_pageTitle);
         _simpleView = false;
         

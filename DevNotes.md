@@ -13,7 +13,7 @@ Used as a log during development to keep track of progress and status in between
 
 ## Pages
 - [x] /games
-- [ ] /games/{GameUrlSegment}
+- [x] /games/{GameUrlSegment}
 - [ ] /games/{GameUrlSegment}/edit
 - [ ] /games/{GameUrlSegment}/{PagUrlSegment}
 - [ ] /games/add

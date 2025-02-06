@@ -42,7 +42,6 @@ public class MainFixture
             Position = Enums.PlayerPosition.Defender,
             DefaultRate = 3,
             AdminRating = 2,
-            Label = "Wolly Watkins",
             Rating = 2,
             UrlSegment = "wolly-watkins",
             Balance = 3,

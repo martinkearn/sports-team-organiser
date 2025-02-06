@@ -35,14 +35,6 @@ public class PlayerService(IDataService dataService) : IPlayerService
             .Where(p => p.Played == true);
         var pagCount = pagEntities.Count();
         
-        // Label
-        var textInfo = new CultureInfo("en-GB", false).TextInfo;
-        var label = textInfo.ToTitleCase(playerEntity.Name);
-        
-        // Url Segment
-        //TODO: This could be in the class as a setter on the Name property
-        var urlSegment = playerEntity.Name.Replace(" ", "-").ToLowerInvariant();
-        
         // Construct
         var player = new Player()
         {
@@ -55,9 +47,9 @@ public class PlayerService(IDataService dataService) : IPlayerService
             LastUpdated = playerEntity.Timestamp!.Value.DateTime,
             Rating = rating,
             Balance = balance,
-            Label = label,
-            UrlSegment= urlSegment,
             GamesCount = pagCount
+            //Label is set in Player class
+            //UrlSegment is set in Player class
         };
 
         return player;
@@ -82,12 +74,12 @@ public class PlayerService(IDataService dataService) : IPlayerService
     private bool VerifyPlayerExists(string playerId)
     {
         var playerEntity = GetPlayerEntities().FirstOrDefault(pe => pe.RowKey == playerId);
-        if (playerEntity == default)
+        if (playerEntity == null)
         {
             throw new KeyNotFoundException($"The PlayerEntity with ID {playerId} was not found.");
         }
 
-        //TODO: This could not just return the PlayerEntity. One less round trip to data store.
+        //TODO: This could just return the PlayerEntity. One less round trip to data store.
         return true;
     }
 

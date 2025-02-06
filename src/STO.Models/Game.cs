@@ -22,10 +22,6 @@ public class Game
             
             // Set UrlSegment
             UrlSegment = value.Date.ToString("dd-MM-yyyy");
-            
-            // // Set Label
-            // var dateForLabel = value.Date.ToString("dd MMM");
-            // Label = string.IsNullOrEmpty(Title) ? dateForLabel : $"{dateForLabel} {Title}";
         }
     }
 

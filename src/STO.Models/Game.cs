@@ -54,4 +54,9 @@ public class Game
     /// Format dd-MM-yyyy
     /// </summary>
     public string UrlSegment { get; set; }
+    
+    /// <summary>
+    /// Format dd-MM-yyyy
+    /// </summary>
+    public DateTime LastUpdated { get; set; }
 }

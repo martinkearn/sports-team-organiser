@@ -28,6 +28,7 @@ public class GameService : IGameService
             TeamBGoals = gameEntity.TeamBGoals,
             Title = gameEntity.Title,
             Notes = gameEntity.Notes,
+            LastUpdated = gameEntity.Timestamp!.Value.DateTime,
             //Label is filled by the Game class
             //UrlSegment is filled by the game class
         };

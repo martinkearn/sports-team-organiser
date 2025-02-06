@@ -85,6 +85,7 @@ public class GameServiceTests : IClassFixture<MainFixture>
         Assert.Equal(1, result.TeamBGoals);
         Assert.Equal("Foo", result.Title);
         Assert.Equal("10-06-2024", result.UrlSegment);
+        Assert.Equal("10 Jun Foo", result.Label);
     }
 
     [Fact]

@@ -23,16 +23,16 @@ public class Game
             // Set UrlSegment
             UrlSegment = value.Date.ToString("dd-MM-yyyy");
             
-            // Set Label
-            var dateForLabel = value.Date.ToString("dd MMM");
-            Label = string.IsNullOrEmpty(Title) ? dateForLabel : $"{dateForLabel} {Title}";
+            // // Set Label
+            // var dateForLabel = value.Date.ToString("dd MMM");
+            // Label = string.IsNullOrEmpty(Title) ? dateForLabel : $"{dateForLabel} {Title}";
         }
     }
-    
+
     /// <summary>
     /// The label of the game to use in titles and lists.
     /// </summary>
-    public string Label { get; set; } = null!;
+    public string Label => string.IsNullOrEmpty(Title) ? $"{DateTime.Date:dd MMM}": $"{DateTime.Date:dd MMM} {Title}"; 
     
     /// <summary>
     /// The number of goals scored by team A during the game

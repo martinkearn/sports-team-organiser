@@ -15,7 +15,7 @@ Used as a log during development to keep track of progress and status in between
 - [x] /games
 - [x] /games/{GameUrlSegment}
 - [x] /games/{GameUrlSegment}/edit
-- [ ] /games/{GameUrlSegment}/{PagUrlSegment}
+- [x] /games/{GameUrlSegment}/{PagUrlSegment}
 - [ ] /games/add
 - [ ] /games/addplayerstogame
 - [ ] /games/addtransactionstogame

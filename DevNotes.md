@@ -19,7 +19,7 @@ Used as a log during development to keep track of progress and status in between
 - [x] /games/add
 - [x] /games/addplayerstogame
 - [x] /games/addtransactionstogame
-- [ ] /playerstochase
+- [x] /playerstochase
 - [ ] /ratings/add
 - [ ] /ratings/{RatingUrlSegment}
 - [ ] /transactions/add

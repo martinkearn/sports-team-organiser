@@ -22,8 +22,8 @@ Used as a log during development to keep track of progress and status in between
 - [x] /playerstochase
 - [x] /ratings/add
 - [x] /ratings/{RatingUrlSegment}
-- [ ] /transactions/add
-- [ ] /admin
+- [x] /transactions/add
+- [x] /admin
 
 ## Components
 - [x] Add GameLink

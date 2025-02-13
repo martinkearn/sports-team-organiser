@@ -1,5 +1,5 @@
 @page "/games/{GameUrlSegment}/{PagUrlSegment}"
-@inject IGameEntityService GameEntityService
+@inject IGameService GameService
 @inject IPlayerAtGameEntityService PlayerAtGameEntityService
 @inject ITransactionService TransactionService
 @inject IPlayerService PlayerService
@@ -12,61 +12,60 @@
 <AuthorizeView Policy="IsAdminEmail">
     <Authorized>
 
-            <div class="mb-3">
-                <label class="form-label">Player Name</label>
-                <span class="form-control-plaintext"><PlayerLink PlayerName="@_player.Name" PlayerUrlSegment="@_player.UrlSegment" /></span>
-            </div>
+        <div class="mb-3">
+            <label class="form-label">Playing Forecast</label>
+            <InputSelect class="form-select" @bind-Value=_pagEntity.Forecast @bind-Value:after="Edit">
+                @foreach (var playingStatus in Enum.GetValues<Enums.PlayingStatus>())
+                {
+                    <option value="@playingStatus">@playingStatus</option>
+                }
+            </InputSelect>
+        </div>
 
-            <div class="mb-3">
-                <label class="form-label">Last Updated</label>
-                <span class="form-control-plaintext">@_pagEntity.Timestamp</span>
-            </div>
+        <div class="mb-3">
+            <label class="form-label">Played</label>
+            <InputSelect class="form-select" @bind-Value=_pagEntity.Played @bind-Value:after="EditPlayed">
+                <option value="true">Yes</option>
+                <option value="false">No</option>
+            </InputSelect>
+        </div>
 
-            <div class="mb-3">
-                <label class="form-label">Url Segment</label>
-                <span class="form-control-plaintext" disabled="true">@_pagEntity.UrlSegment</span>
-                <div class="form-text">Set automatically.</div>
-            </div>
+        <div class="mb-3">
+            <label class="form-label">Team</label>
+            <InputSelect class="form-select" @bind-Value=_pagEntity.Team @bind-Value:after="Edit">
+                <option value="A">Team A</option>
+                <option value="B">Team B</option>
+                <option value="">No Team</option>
+            </InputSelect>
+        </div>
 
-            <div class="mb-3">
-                <label class="form-label">Game</label>
-                <span class="form-control-plaintext"><EntityTitleLink RowKey="@_gameEntity.RowKey" EntityType="Enums.EntityType.GameEntity" Link="true" /></span>
-            </div>
+        <div class="mb-3">
+            <label class="form-label">Add Payment</label>
+            <br>
+            <button class="btn btn-outline-secondary" @onclick="AddTransactionForPlayer"><i class="fa-solid fa-plus"></i> @_player.DefaultRate</button>
+            <br>
+            <span>Balance: <CurrencyDisplay Amount="@_player.Balance" /></span>
+        </div>
 
-            <div class="mb-3">
-                <label class="form-label">Playing Forecast</label>
-                <InputSelect class="form-select" @bind-Value=_pagEntity.Forecast @bind-Value:after="Edit">
-                    @foreach (var playingStatus in Enum.GetValues<Enums.PlayingStatus>())
-                    {
-                        <option value="@playingStatus">@playingStatus</option>
-                    }
-                </InputSelect>
-            </div>
+        <div class="mb-3">
+            <label class="form-label">Player Name</label>
+            <span class="form-control bg-body-secondary"><PlayerLink PlayerName="@_player.Name" PlayerUrlSegment="@_player.UrlSegment" /></span>
+        </div>
 
-            <div class="mb-3">
-                <label class="form-label">Played</label>
-                <InputSelect class="form-select" @bind-Value=_pagEntity.Played @bind-Value:after="EditPlayed">
-                    <option value="true">Yes</option>
-                    <option value="false">No</option>
-                </InputSelect>
-            </div>
+        <div class="mb-3">
+            <label class="form-label">Game</label>
+            <span class="form-control bg-body-secondary"><GameLink GameLabel="@_game.Label" GameUrlSegment="@_game.UrlSegment" /></span>
+        </div>
 
-            <div class="mb-3">
-                <label class="form-label">Team</label>
-                <InputSelect class="form-select" @bind-Value=_pagEntity.Team @bind-Value:after="Edit">
-                    <option value="A">Team A</option>
-                    <option value="B">Team B</option>
-                    <option value="">No Team</option>
-                </InputSelect>
-            </div>
+        <div class="mb-3">
+            <label class="form-label">Url Segment</label>
+            <span class="form-control bg-body-secondary" disabled="true">@_pagEntity.UrlSegment</span>
+        </div>
 
-            <div class="mb-3">
-                <label class="form-label">Add Payment</label>
-                <br>
-                <button class="btn btn-outline-secondary" @onclick="AddTransactionForPlayer"><i class="fa-solid fa-plus"></i> @_player.DefaultRate</button>
-                <br>
-                <span>Balance: <CurrencyDisplay Amount="@_player.Balance" /></span>
-            </div>
+        <div class="mb-3">
+            <label class="form-label">Last Updated</label>
+            <span class="form-control bg-body-secondary">@_pagEntity.Timestamp</span>
+        </div>
 
         <div class="hstack gap-2">
             <a class="btn btn-secondary" href="/games/@GameUrlSegment"><i class="fa-solid fa-arrow-left"></i> Back to Game</a>
@@ -93,7 +92,7 @@
 
     private string _pageTitle = null!;
 
-    private GameEntity _gameEntity = null!;
+    private Game _game = null!;
 
     protected override void OnInitialized()
     {
@@ -105,9 +104,9 @@
         var newTransactionForPag = new Transaction()
             {
                 DateTime = DateTime.UtcNow,
-                Notes = GameEntityService.GetNotesForGame(_pagEntity.GameRowKey),
+                Notes = _game.Notes,
                 PlayerId = _player.Id,
-                GameId = _gameEntity.RowKey,
+                GameId = _game.Id,
                 Amount = _player.DefaultRate
             };
         if (TransactionService is not null)
@@ -139,10 +138,8 @@
     {
         _pagEntity = PlayerAtGameEntityService.GetPlayerAtGameEntityByUrlSegment(PagUrlSegment);
         _player = PlayerService.GetPlayer(_pagEntity.PlayerRowKey);
-        _gameEntity = GameEntityService.GetGameEntity(_pagEntity.GameRowKey);
-        var gameLabel = GameEntityService.GetGameLabel(_gameEntity.RowKey);
-        _pageTitle = $"{@_player.Name} at {gameLabel}";
+        _game = GameService.GetGame(_pagEntity.GameRowKey);
+        _pageTitle = $"{@_player.Name} at {_game.Label}";
         MainLayout.SetPageTitle(_pageTitle);
     }
-
 }

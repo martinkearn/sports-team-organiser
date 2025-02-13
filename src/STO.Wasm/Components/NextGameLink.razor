@@ -1,12 +1,12 @@
-@inject IGameEntityService GameEntityService
+@inject IGameService GameService
 
 @if (string.IsNullOrEmpty(IconCss))
 {
-    <a class="@Css" href="/games/@_nextGameEntity.UrlSegment">Next Game</a>
+    <a class="@Css" href="/games/@_nextGame.UrlSegment">Next Game</a>
 }
 else
 {
-    <a class="@Css" href="/games/@_nextGameEntity.UrlSegment"><i class="@IconCss"></i> Next Game</a>
+    <a class="@Css" href="/games/@_nextGame.UrlSegment"><i class="@IconCss"></i> Next Game</a>
 }
 
 @code {
@@ -14,11 +14,11 @@ else
 
     [Parameter] public string? IconCss { get; set; }
 
-    private GameEntity _nextGameEntity = default!;
+    private Game _nextGame = null!;
 
     protected override void OnInitialized()
     {
-        _nextGameEntity = GameEntityService.GetNextGameEntity();
+        _nextGame = GameService.GetNextGame();
     }
 
 }

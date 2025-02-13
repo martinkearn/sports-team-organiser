@@ -1,6 +1,6 @@
 @page "/playerstochase"
 @inject IPlayerService PlayerService
-@inject IGameEntityService GameEntityService
+@inject IGameService GameService
 @inject IPlayerAtGameEntityService PlayerAtGameEntityService
 
 <PageTitle>TNF - @_pageTitle</PageTitle>
@@ -16,21 +16,11 @@
             <option value="all">Select Game ...</option>
             @foreach (var game in _recentGames)
             {
-                <option value="@game.RowKey">
-                    <EntityTitleLink EntityType="Enums.EntityType.GameEntity" RowKey="@game.RowKey" Link="false" />
-                </option>
+                <option value="@game.Id"><GameLink GameLabel="@game.Label" GameUrlSegment="@game.UrlSegment" /></option>
             }
         </InputSelect>
 
         <br/>
-        @if (string.IsNullOrEmpty(_selectedGameLabel))
-        {
-            <p>All recent players:</p>
-        }
-        else
-        {
-            <p>Recent players not playing at @_selectedGameLabel:</p>
-        }
 
         @foreach (var rp in _recentPlayersNotAtSelectedGame)
         {
@@ -47,9 +37,8 @@
 @code {
     [CascadingParameter] public MainLayout MainLayout { get; set; } = null!;
     private string _pageTitle = null!;
-    private List<GameEntity> _recentGames = null!;
+    private List<Game> _recentGames = null!;
     private string _selectedGameRowKey = null!;
-    private string _selectedGameLabel = null!;
     private List<Player> _recentPlayers = null!;
     private List<Player> _recentPlayersNotAtSelectedGame = null!;
     private DateTime _startDate;
@@ -63,12 +52,10 @@
     {
         if (_selectedGameRowKey == "all")
         {
-            _selectedGameLabel = string.Empty;
             _recentPlayersNotAtSelectedGame = _recentPlayers;
         }
         else
         {
-            _selectedGameLabel = GameEntityService.GetGameLabel(_selectedGameRowKey); //TO DO: This should be built into the GameEntity object as a property which is set every time the date or Title properties change
             var pagsForSelectedGame = PlayerAtGameEntityService.GetPlayerAtGameEntitiesForGame(_selectedGameRowKey);
         
             // Look for recent players which are not Pags
@@ -86,20 +73,19 @@
     private void RefreshData()
     {
         // Set start date
-        _startDate = DateTime.UtcNow.Subtract(new TimeSpan(30, 0, 0, 0));
+        _startDate = DateTime.UtcNow.Subtract(new TimeSpan(60, 0, 0, 0));
         
         // Get recent players
         _recentPlayers = PlayerService.GetPlayers(_startDate, DateTime.UtcNow);
         
         // Get recent games
-        _recentGames = GameEntityService.GetGameEntities()
-            .Where(g => g.Date > _startDate)
-            .OrderByDescending(g => g.Date)
+        _recentGames = GameService.GetGames(null, null)
+            .Where(g => g.DateTime > _startDate)
             .ToList();
         
         // Set next game as default
-        var nextGameEntity = GameEntityService.GetNextGameEntity();
-        _selectedGameRowKey = nextGameEntity.RowKey;
+        var nextGameEntity = GameService.GetNextGame();
+        _selectedGameRowKey = nextGameEntity.Id;
         GameSelected();
         
         _pageTitle = "Players to chase";

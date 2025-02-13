@@ -1,25 +1,20 @@
 @page "/games/{GameUrlSegment}/edit"
-@inject IGameEntityService GameEntityService
+@inject IGameService GameService
 @inject NavigationManager Navigation
 
 <PageTitle>TNF - @_pageTitle</PageTitle>
 
-<h1><i class="fa-solid fa-people-group me-2"></i> Edit <EntityTitleLink RowKey="@_gameEntity.RowKey" EntityType="Enums.EntityType.GameEntity" Link="false" /></h1>
+<h1><i class="fa-solid fa-people-group me-2"></i> @_pageTitle</h1>
 
 <AuthorizeView Policy="IsAdminEmail">
     <Authorized>
         
-        <div class="mb-3">
+        <div class="mb-3 mt-3">
             <label class="form-label">Date</label>
-            <InputDate class="form-control" @bind-Value="_gameEntity.Date" />
+            <InputDate class="form-control" @bind-Value="_game.DateTime" @bind-Value:after="Edit" />
         </div>
 
-        <div class="mb-3">
-            <label class="form-label">Last Updated</label>
-            <span class="form-control-plaintext">@_gameEntity.Timestamp</span>
-        </div>
-
-        <div class="mb-3">
+        <div class="mb-3 mt-3">
             <label class="form-label">Time</label>
             <div class="row">
                 <div class="col-auto">
@@ -31,25 +26,29 @@
             </div>
         </div>
 
-        <div class="mb-3">
+        <div class="mb-3 mt-3">
             <label class="form-label">Title</label>
-            <InputText class="form-control" @bind-Value="_gameEntity.Title" @bind-Value:after="Edit" />
+            <InputText class="form-control" @bind-Value="_game.Title" @bind-Value:after="Edit" />
         </div>
-
-        <div class="mb-3">
-            <label class="form-label">Url Segment</label>
-            <InputText class="form-control" @bind-Value="_gameEntity.UrlSegment" disabled="true"  />
-            <div class="form-text">Set automatically.</div>
-        </div>
-
-        <div class="mb-3">
+        
+        <div class="mb-3 mt-3">
             <label class="form-label">Notes</label>
-            <InputText class="form-control" @bind-Value="_gameEntity.Notes" @bind-Value:after="Edit" />
+            <InputText class="form-control" @bind-Value="_game.Notes" @bind-Value:after="Edit" />
         </div>
-
+        
+        <div class="mb-3 mt-3">
+            <label class="form-label">Url Segment</label>
+            <InputText class="form-control" @bind-Value="_game.UrlSegment" disabled="true"  />
+        </div>
+        
+        <div class="mb-3">
+            <label class="form-label">Last Updated</label>
+            <span class="form-control bg-body-secondary">@_game.LastUpdated</span>
+        </div>
+        
         <div class="hstack gap-2">
-            <a class="btn btn-secondary" href="/games/@GameUrlSegment"><i class="fa-solid fa-arrow-left"></i>Back to Game</a>
-            <DeleteButtonWithCheck @rendermode="RenderMode.InteractiveAuto" DeleteWhatLabel="@_pageTitle" ButtonLabel="Delete" ParentPageCallback="DeleteGame" />
+            <a class="btn btn-secondary" href="/games/@_game.UrlSegment"><i class="fa-solid fa-arrow-left"></i>Back to Game</a>
+            <DeleteButtonWithCheck @rendermode="RenderMode.InteractiveAuto" DeleteWhatLabel="@_game.Label" ButtonLabel="Delete" ParentPageCallback="DeleteGame" />
         </div>
 
     </Authorized>
@@ -60,17 +59,17 @@
 </AuthorizeView>
 
     @code {
-    [CascadingParameter] public MainLayout MainLayout { get; set; } = default!;
+    [CascadingParameter] public MainLayout MainLayout { get; set; } = null!;
     
-    [Parameter] public string GameUrlSegment { get; set; } = default!;
+    [Parameter] public string GameUrlSegment { get; set; } = null!;
 
-    private GameEntity _gameEntity = default!;
+    private Game _game = null!;
 
     private int _hour;
 
     private int _minute;
 
-    private string _pageTitle = default!;
+    private string _pageTitle = null!;
 
     protected override void OnInitialized()
     {
@@ -79,25 +78,25 @@
 
     private async Task Edit()
     {
-        var dt = new DateTime(_gameEntity.Date.Year, _gameEntity.Date.Month, _gameEntity.Date.Day, _hour, _minute, 0, DateTimeKind.Utc);
-        _gameEntity.Date = dt;
-        await GameEntityService.UpsertGameEntityAsync(_gameEntity);
+        _game.DateTime = new DateTime(_game.DateTime.Year, _game.DateTime.Month, _game.DateTime.Day, _hour, _minute, 0);
+        await GameService.UpsertGameAsync(_game);
+        GameUrlSegment = _game.UrlSegment;
+        StateHasChanged();
+        RefreshData();
     }
 
     private async Task DeleteGame()
     {
-        await GameEntityService.DeleteGameEntityAsync(_gameEntity.RowKey);
+        await GameService.DeleteGameAsync(_game.Id);
         Navigation.NavigateTo("/games");
     }
 
     private void RefreshData()
     {
-        _gameEntity = GameEntityService.GetGameEntityByUrlSegment(GameUrlSegment);
-        _hour = _gameEntity.Date.Hour;
-        _minute = _gameEntity.Date.Minute;
-
-        var gameLabel = GameEntityService.GetGameLabel(_gameEntity.RowKey);
-        _pageTitle = $"Edit {gameLabel}";
+        _game = GameService.GetGameByUrlSegment(GameUrlSegment);
+        _hour = _game.DateTime.Hour;
+        _minute = _game.DateTime.Minute;
+        _pageTitle = $"Edit {_game.Label}";
         MainLayout.SetPageTitle(_pageTitle);
     }
 }

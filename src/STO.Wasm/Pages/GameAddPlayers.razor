@@ -1,6 +1,6 @@
 @page "/games/addplayerstogame"
 @inject IPlayerService PlayerService
-@inject IGameEntityService GameEntityService
+@inject IGameService GameService
 @inject IPlayerAtGameEntityService PlayerAtGameEntityService
 @inject NavigationManager Navigation
 
@@ -13,18 +13,18 @@
 
         <div class="mb-3">
             <label class="form-label">Game</label>
-            <InputSelect class="form-select" @bind-Value="_selectedGameRowKey" @bind-Value:after="RefreshGame">
+            <InputSelect class="form-select" @bind-Value="_selectedGameId" @bind-Value:after="RefreshGame">
                 <option value="">Select Game ...</option>
-                @foreach (var ge in _gameEntities)
+                @foreach (var g in _games)
                 {
-                    var gameRowKey = ge.RowKey;
-                    if (gameRowKey == _nextGameEntity?.RowKey)
+                    var gameId = g.Id;
+                    if (gameId == _nextGame?.Id)
                     {
-                        <option value="@gameRowKey" selected><EntityTitleLink RowKey="@ge.RowKey" EntityType="Enums.EntityType.GameEntity" Link="false" /></option>
+                        <option value="@gameId" selected><GameLink GameLabel="@g.Label" GameUrlSegment="@g.UrlSegment" /></option>
                     }
                     else
                     {
-                        <option value="@gameRowKey"><EntityTitleLink RowKey="@ge.RowKey" EntityType="Enums.EntityType.GameEntity" Link="false" /></option>
+                        <option value="@gameId"><GameLink GameLabel="@g.Label" GameUrlSegment="@g.UrlSegment" /></option>
                     }
                 }
             </InputSelect>
@@ -76,7 +76,8 @@
 
 @code {
     [CascadingParameter] public MainLayout MainLayout { get; set; } = null!;
-    private List<GameEntity> _gameEntities = [];
+    
+    private List<Game> _games = [];
 
     private List<Player> _players = [];
 
@@ -84,11 +85,11 @@
 
     private string _selectedProspectPagPlayerRowKey = null!;
 
-    private string _selectedGameRowKey = null!;
+    private string _selectedGameId = null!;
 
-    private GameEntity _selectedGame = null!;
+    private Game _selectedGame = null!;
 
-    private GameEntity _nextGameEntity = null!;
+    private Game _nextGame = null!;
 
     private Enums.PlayingStatus _selectedPlayingStatus = default!;
     
@@ -104,7 +105,7 @@
         var prospectPag = new PlayerAtGameEntity()
         {
             PlayerRowKey = _selectedProspectPagPlayerRowKey,
-            GameRowKey = _selectedGameRowKey,
+            GameRowKey = _selectedGameId,
             Played = false,
             Forecast = _selectedPlayingStatus,
             Team = string.Empty
@@ -125,18 +126,18 @@
 
     private void RefreshGame()
     {
-        if (string.IsNullOrEmpty(_selectedGameRowKey)) return;
-        _selectedGame = GameEntityService.GetGameEntity(_selectedGameRowKey);
+        if (string.IsNullOrEmpty(_selectedGameId)) return;
+        _selectedGame = _games.Single(g => g.Id == _selectedGameId);
         _prospectPags.Clear();
     }
 
     private void RefreshData()
     {
-        _gameEntities = GameEntityService.GetGameEntities();
+        _games = GameService.GetGames(null, null);
         _players = PlayerService.GetPlayers();
-        _nextGameEntity = GameEntityService.GetNextGameEntity();
-        _selectedGameRowKey = _nextGameEntity.RowKey;
-        _selectedGame = _nextGameEntity;
+        _nextGame = GameService.GetNextGame();
+        _selectedGameId = _nextGame.Id;
+        _selectedGame = _nextGame;
         _pageTitle = "Add Players to Game";
         MainLayout.SetPageTitle(_pageTitle);
     }

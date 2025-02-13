@@ -39,11 +39,6 @@
 		</div>
 
 		<div class="mb-3">
-			<label class="form-label">Average Rating</label>
-			<div class="form-control bg-body-secondary"><PlayerRating Rating="_player.Rating" Stars="true" /></div>
-		</div>
-
-		<div class="mb-3">
 			<label class="form-label">Default Rate</label>
 			<div class="input-group">
 				<span class="input-group-text">£</span>
@@ -52,18 +47,23 @@
 		</div>
 
 		<div class="mb-3">
+			<label class="form-label">Average Rating</label>
+			<div class="form-control bg-body-secondary"><PlayerRating Rating="_player.Rating" Stars="true" /></div>
+		</div>
+
+		<div class="mb-3">
 			<label class="form-label">Balance</label>
 			<span class="form-control bg-body-secondary"><CurrencyDisplay Amount="@_player.Balance" /></span>
 		</div>
 
 		<div class="mb-3">
-			<label class="form-label">Url Segment</label>
-			<InputText class="form-control bg-body-secondary" @bind-Value="_player.UrlSegment" disabled="true"  />
-		</div>
-
-		<div class="mb-3">
 			<label class="form-label">Games Played</label>
 			<div class="form-control bg-body-secondary">@_player.GamesCount</div>
+		</div>
+		
+		<div class="mb-3">
+			<label class="form-label">Url Segment</label>
+			<InputText class="form-control bg-body-secondary" @bind-Value="_player.UrlSegment" disabled="true"  />
 		</div>
 
 		<div class="mb-3">

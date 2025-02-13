@@ -24,8 +24,8 @@ public class MainFixture
                 AdminRating = 5
             }
         );
-        RatingEntities.Add(new RatingEntity { RowKey = "R1", PlayerRowKey = "1", Rating = 4 });
-        RatingEntities.Add(new RatingEntity { RowKey = "R2", PlayerRowKey = "1", Rating = 5 });
+        RatingEntities.Add(new RatingEntity { RowKey = "R1", PlayerRowKey = "1", Rating = 4, GameRowKey = "G1"});
+        RatingEntities.Add(new RatingEntity { RowKey = "R2", PlayerRowKey = "1", Rating = 5, GameRowKey = "G1" });
         RatingEntities.Add(new RatingEntity { RowKey = "R3", PlayerRowKey = "1", Rating = 3 });
         RatingEntities.Add(new RatingEntity { RowKey = "R4", PlayerRowKey = "1", Rating = 5 });// Average 4.25
         var dtOffset = new DateTimeOffset(2024, 01, 20, 18, 30, 0, TimeSpan.FromHours(0));
@@ -42,7 +42,6 @@ public class MainFixture
             Position = Enums.PlayerPosition.Defender,
             DefaultRate = 3,
             AdminRating = 2,
-            Label = "Wolly Watkins",
             Rating = 2,
             UrlSegment = "wolly-watkins",
             Balance = 3,

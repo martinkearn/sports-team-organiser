@@ -41,9 +41,7 @@
                     <td><CurrencyDisplay Amount="@t.Amount" /></td>
                     @if (!string.IsNullOrEmpty(t.GameId))
                     {
-                        <td class="d-none d-lg-table-cell">
-                            <EntityTitleLink EntityType="Enums.EntityType.GameEntity" RowKey="@t.GameId" Length="Enums.TitleLength.Short" Link="true"/>
-                        </td>
+                        <td class="d-none d-lg-table-cell"><GameLink GameLabel="@t.GameLabel" GameUrlSegment="@t.GameUrlSegment" /></td>
                     }
                     else
                     {

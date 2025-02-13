@@ -1,3 +1,5 @@
+using System.Globalization;
+
 namespace STO.Models;
 
 public class Player
@@ -14,11 +16,8 @@ public class Player
         {
             _name = value;
             UrlSegment = value.Replace(" ", "-").ToLowerInvariant();
-            Label = value;
         }
     }
-
-
     public string Tags { get; set; }
     public Enums.PlayerPosition Position { get; set; }
     public double DefaultRate { get; set; }
@@ -26,7 +25,7 @@ public class Player
     public DateTime LastUpdated { get; set; }
     
     // Calculated properties
-    public string Label { get; set; }
+    public string Label => new CultureInfo("en-GB", false).TextInfo.ToTitleCase(Name);
     public double Rating { get; set; }
     public string UrlSegment { get; set; }
     public double Balance { get; set; }

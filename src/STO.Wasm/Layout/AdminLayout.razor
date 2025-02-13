@@ -1,0 +1,158 @@
+﻿@using System.Globalization
+@inherits LayoutComponentBase
+@inject NavigationManager NavigationManager
+
+
+<CascadingValue Value="this">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark" aria-label="Eighth navbar example">
+        <div class="container">
+            <a class="navbar-brand" href="/admin">Tuesday.Football Admin</a>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsExample07" aria-controls="navbarsExample07" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <AuthorizeView Policy="IsAdminEmail">
+                <Authorized>
+                    <div class="collapse navbar-collapse" id="navbarsExample07">
+                        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                            <li class="nav-item dropdown">
+                                <NavLink class="nav-link dropdown-toggle" href="games" data-bs-toggle="dropdown" aria-expanded="false" Match="NavLinkMatch.Prefix">Games</NavLink>
+                                <ul class="dropdown-menu">
+                                    <li><NavLink class="dropdown-item" href="games" Match="NavLinkMatch.All">Games</NavLink></li>
+                                    <NextGameLink Css="dropdown-item" />
+                                    <li><NavLink class="dropdown-item" href="games/add" Match="NavLinkMatch.All">Add Game</NavLink></li>
+                                    <li><NavLink class="dropdown-item" href="games/addplayerstogame" Match="NavLinkMatch.All">Add Players to Game</NavLink></li>
+                                    <li><NavLink class="dropdown-item" href="games/addtransactionstogame" Match="NavLinkMatch.All">Add Transactions to Game</NavLink></li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <NavLink class="nav-link dropdown-toggle" href="players" data-bs-toggle="dropdown" aria-expanded="false" Match="NavLinkMatch.Prefix">Players</NavLink>
+                                <ul class="dropdown-menu">
+                                    <li><NavLink class="dropdown-item" href="players" Match="NavLinkMatch.All">Players</NavLink></li>
+                                    <li><NavLink class="dropdown-item" href="players/add" Match="NavLinkMatch.All">Add Player</NavLink></li>
+                                    <li><NavLink class="dropdown-item" href="playerstochase" Match="NavLinkMatch.All">Players to Chase</NavLink></li>
+                                    <li><NavLink class="dropdown-item" href="playerssetdefaultrate" Match="NavLinkMatch.All">Set Default Rate</NavLink></li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <NavLink class="nav-link dropdown-toggle" href="transactions" data-bs-toggle="dropdown" aria-expanded="false" Match="NavLinkMatch.Prefix">Transactions</NavLink>
+                                <ul class="dropdown-menu">
+                                    <li><NavLink class="dropdown-item" href="transactions" Match="NavLinkMatch.All">Transactions</NavLink></li>
+                                    <li><NavLink class="dropdown-item" href="transactions/add" Match="NavLinkMatch.All">Add Transaction</NavLink></li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <NavLink class="nav-link dropdown-toggle" href="ratings" data-bs-toggle="dropdown" aria-expanded="false" Match="NavLinkMatch.Prefix">Ratings</NavLink>
+                                <ul class="dropdown-menu">
+                                    <li><NavLink class="dropdown-item" href="ratings" Match="NavLinkMatch.All">Ratings</NavLink></li>
+                                    <li><NavLink class="dropdown-item" href="ratings/add" Match="NavLinkMatch.All">Add Rating</NavLink></li>
+                                    <li><NavLink class="dropdown-item" href="ratings/addmultiple" Match="NavLinkMatch.All">Add Multiple Ratings</NavLink></li>
+                                </ul>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" target="_blank" href="https://github.com/martinkearn/sports-team-organiser/issues">Issue</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" target="_blank" href="https://chat.whatsapp.com/HJD3Tz8v8Lv2skZj4DFEOf">WhatsApp</a>
+                            </li>
+                            <li class="nav-item">
+                                <LoginDisplay />
+                            </li>
+                        </ul>
+                    </div>
+                </Authorized>
+            </AuthorizeView>
+        </div>
+    </nav>
+    
+    <div class="container my-2">
+        <ol class="breadcrumb">
+            @if (_uri != _baseUri)
+            {
+                <li class="breadcrumb-item "><a href="/"><i class="fa-solid fa-home fa-xs"></i></a></li>
+            }
+            @foreach (var segment in _relativeUri.ToString().Split('/'))
+            {
+                if (string.IsNullOrEmpty(segment))
+                {
+                    continue;
+                }
+
+                if (segment.Contains("authentication"))
+                {
+                    continue;
+                }
+
+                var uriString = _uri.ToString();
+                var segmentIndex = uriString.IndexOf(segment, StringComparison.Ordinal);
+                if (segmentIndex <= 0)
+                {
+                    continue;
+                }
+
+                var segmentUri = uriString[..segmentIndex] + segment;
+                var segmentDisplay = _textInfo.ToTitleCase(segment).TrimEnd('/');
+                if (_uri.ToString().EndsWith($"/{segment}"))
+                {
+                    if (!string.IsNullOrEmpty(_pageTitle))
+                    {
+                        segmentDisplay = _pageTitle;
+                    }
+
+                    <li class="breadcrumb-item active">@segmentDisplay</li>
+                }
+                else
+                {
+                    <li class="breadcrumb-item"><a href="@segmentUri">@segmentDisplay</a></li>
+                }
+            }
+        </ol>
+    </div>
+
+    <div class="container my-2">
+        <AuthorizeView Policy="IsAdminEmail">
+            <Authorized>
+                @Body
+            </Authorized>
+            <NotAuthorized>
+                <h4>Access Denied!</h4>
+                <a class="btn btn-primary" href="authentication/login"><i class="fa-solid fa-key me-2"></i> Log in</a>
+            </NotAuthorized>
+        </AuthorizeView>
+    </div>
+</CascadingValue>
+
+@code{
+    private string _pageTitle = null!;
+    private bool _showBreadcrumb;
+    private Uri _uri = null!;
+    private Uri _baseUri = null!;
+    private Uri _relativeUri = null!;
+    private TextInfo _textInfo = null!;
+
+    protected override void OnParametersSet()
+    {
+        _showBreadcrumb = NavigationManager.Uri != NavigationManager.BaseUri;
+        _baseUri = new Uri(NavigationManager.BaseUri +"/admin");
+        _uri = new Uri(NavigationManager.Uri);
+        _relativeUri = _baseUri.MakeRelativeUri(_uri);
+        _textInfo = new CultureInfo("en-GB", false).TextInfo;
+        _pageTitle = string.Empty;
+    }
+
+    public void SetPageTitle(string pageTitle)
+    {
+        _pageTitle = pageTitle;
+        StateHasChanged();
+    }
+
+}
+
+
+
+
+
+
+
+

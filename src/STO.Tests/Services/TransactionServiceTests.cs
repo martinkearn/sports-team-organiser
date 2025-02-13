@@ -42,6 +42,8 @@ namespace STO.Tests.Services
             Assert.Equal("G1", result.GameId);
             Assert.Equal(3, result.Amount);
             Assert.Equal("ollie-watkins-20-01-2024-18-30-00", result.UrlSegment);
+            Assert.Equal("10-06-2024", result.GameUrlSegment);
+            Assert.Equal("10 Jun Foo", result.GameLabel);
         }
         
         [Fact]

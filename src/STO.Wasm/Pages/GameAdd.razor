@@ -1,5 +1,5 @@
 @page "/games/add"
-@inject IGameEntityService GameEntityService
+@inject IGameService GameService
 @inject NavigationManager Navigation
 
 <PageTitle>TNF - @_pageTitle</PageTitle>
@@ -9,12 +9,12 @@
 <AuthorizeView Policy="IsAdminEmail">
     <Authorized>
 
-        <EditForm Model="@_newGameEntity" OnSubmit="@Add" Context="editForm">
+        <EditForm Model="@_newGame" OnSubmit="@Add" Context="editForm">
             <DataAnnotationsValidator />
             <ValidationSummary />
             <div class="mb-3">
                 <label for="addDate" class="form-label">Date</label>
-                <InputDate class="form-control" id="addDate" @bind-Value="_newGameEntity.Date" />
+                <InputDate class="form-control" id="addDate" @bind-Value="_newGame.DateTime" />
             </div>
 
             <div class="mb-3">
@@ -31,12 +31,22 @@
 
             <div class="mb-3">
                 <label for="addTitle" class="form-label">Title</label>
-                <InputText class="form-control" id="addTitle" @bind-Value="_newGameEntity.Title" />
+                <InputText class="form-control" id="addTitle" @bind-Value="_newGame.Title" />
             </div>
 
             <div class="mb-3">
                 <label for="addNotes" class="form-label">Notes</label>
-                <InputText class="form-control" id="addNotes" @bind-Value="_newGameEntity.Notes" />
+                <InputText class="form-control" id="addNotes" @bind-Value="_newGame.Notes" />
+            </div>
+
+            <div class="mb-3 mt-3">
+                <label class="form-label">Label</label>
+                <input disabled="true" class="form-control valid" value="@_newGame.Label">
+            </div>
+
+            <div class="mb-3 mt-3">
+                <label class="form-label">Url Segment</label>
+                <InputText class="form-control" @bind-Value="_newGame.UrlSegment" disabled="true"  />
             </div>
 
             <div class="hstack gap-2">
@@ -52,14 +62,15 @@
 </AuthorizeView>
 
     @code {
-    [CascadingParameter] public MainLayout MainLayout { get; set; } = default!;
-    private GameEntity _newGameEntity = new();
+    [CascadingParameter] public MainLayout MainLayout { get; set; } = null!;
+    
+    private Game _newGame = new();
 
-    private int _hour = default!;
+    private int _hour = 0!;
 
-    private int _minute = default!;
+    private int _minute = 0!;
 
-    private string _pageTitle = default!;
+    private string _pageTitle = null!;
 
     protected override void OnInitialized()
     {
@@ -68,9 +79,9 @@
 
     private async Task Add()
     {
-        var dt = new DateTime(_newGameEntity.Date.Year, _newGameEntity.Date.Month, _newGameEntity.Date.Day, _hour, _minute, 0, DateTimeKind.Utc);
-        _newGameEntity.Date = dt;
-        await GameEntityService.UpsertGameEntityAsync(_newGameEntity);
+        var dt = new DateTime(_newGame.DateTime.Year, _newGame.DateTime.Month, _newGame.DateTime.Day, _hour, _minute, 0, DateTimeKind.Utc);
+        _newGame.DateTime = dt;
+        await GameService.UpsertGameAsync(_newGame);
         Navigation.NavigateTo("/games");
     }
 
@@ -78,9 +89,9 @@
     {
         _hour = 18;
         _minute = 30;
-        _newGameEntity = new GameEntity()
+        _newGame = new Game()
         {
-            Date = DateTimeOffset.UtcNow
+            DateTime = DateTime.UtcNow
         };
         _pageTitle = "Add a Game";
         MainLayout.SetPageTitle(_pageTitle);

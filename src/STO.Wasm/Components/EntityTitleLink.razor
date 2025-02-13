@@ -1,16 +1,13 @@
-@inject IGameEntityService GameEntityService
 @inject IPlayerAtGameEntityService PlayerAtGameEntityService
 @inject IRatingEntityService RatingEntityService
+@inject IGameService GameService
 
 @if (Link)
 {
     @switch (EntityType)
     {
-        case Enums.EntityType.GameEntity:
-            <a href="/games/@_gameEntity.UrlSegment">@Label</a>
-            break;
         case Enums.EntityType.PlayerAtGameEntity:
-            <a href="/games/@_gameEntity.UrlSegment/@_playerAtGameEntity.UrlSegment">@Label</a>
+            <a href="/games{@_playerAtGameEntity.UrlSegment}">@Label</a>
             break;
         case Enums.EntityType.RatingEntity:
             <a href="/ratings/@_ratingEntity.UrlSegment">@Label</a>
@@ -36,8 +33,6 @@ else
 
     [Parameter] public Enums.TitleLength Length { get; set; } = Enums.TitleLength.Short;
 
-    private GameEntity _gameEntity = null!;
-
     private PlayerAtGameEntity _playerAtGameEntity = null!;
 
     private RatingEntity _ratingEntity = null!;
@@ -59,17 +54,13 @@ else
 
         switch (EntityType)
         {
-            case Enums.EntityType.GameEntity:
-                _gameEntity = GameEntityService.GetGameEntity(RowKey);
-                if (string.IsNullOrEmpty(Label))
-                {
-                    Label = GameEntityService.GetGameLabel(RowKey, Length);
-                }
-
-                break;
             case Enums.EntityType.PlayerAtGameEntity:
                 _playerAtGameEntity = PlayerAtGameEntityService.GetPlayerAtGameEntity(RowKey);
-                _gameEntity = GameEntityService.GetGameEntity(_playerAtGameEntity.GameRowKey);
+                
+                //ToDo: This is a temporary hack until PlayerAtGame has expanded Game details and is seperated from PlayerAtGameEntity class.
+                var gameUrlSegment = GameService.GetGame(_playerAtGameEntity.GameRowKey);
+                _playerAtGameEntity.UrlSegment = $"/{@gameUrlSegment}/{@_playerAtGameEntity.UrlSegment}";
+                
                 if (string.IsNullOrEmpty(Label))
                 {
                     Label = PlayerAtGameEntityService.GetPlayerAtGameLabel(_playerAtGameEntity.RowKey, Length);

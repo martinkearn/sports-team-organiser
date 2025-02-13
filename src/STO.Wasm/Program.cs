@@ -45,7 +45,6 @@ builder.Services.AddOptions<ApiConfiguration>()
 // Add custom services
 builder.Services.AddSingleton<IApiService, ApiService>();
 builder.Services.AddSingleton<IDataService, DataService>();
-builder.Services.AddSingleton<IGameEntityService, GameEntityService>();
 builder.Services.AddSingleton<IGameService, GameService>();
 builder.Services.AddSingleton<IPlayerAtGameEntityService, PlayerAtGameEntityService>();
 builder.Services.AddSingleton<IRatingEntityService, RatingEntityService>();

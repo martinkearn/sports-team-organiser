@@ -62,7 +62,9 @@ public class TransactionService(IDataService dataService) : ITransactionService
         t.UrlSegment = urlSegment;
         if (ge != null)
         {
-            t.GameLabel = ge.Title;
+            //ToDo: The creation of game label here is a duplication of the logic from the Game model. Can the game model be used here?
+            t.GameLabel = string.IsNullOrEmpty(ge.Title) ? $"{ge.Date.Date:dd MMM}": $"{ge.Date.Date:dd MMM} {ge.Title}";
+            t.GameUrlSegment = ge.UrlSegment;
         }
         
         return t;

@@ -18,6 +18,7 @@ public class Transaction
     public string PlayerUrlSegment { get; set; } = null!;
     public string GameId { get; set; } = null!;
     public string GameLabel { get; set; } = null!;
+    public string GameUrlSegment { get; set; } = null!;
     public DateTime LastUpdated { get; set; }
 
 }

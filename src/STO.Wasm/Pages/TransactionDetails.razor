@@ -56,7 +56,7 @@
 			<div class="form-control bg-body-secondary">
 				@if (!string.IsNullOrEmpty(_transaction.GameId))
 				{
-					<span><EntityTitleLink EntityType="Enums.EntityType.GameEntity" RowKey="@_transaction.GameId" Length="Enums.TitleLength.Long" Link="true" /></span>
+					<span><GameLink GameLabel="@_transaction.GameLabel" GameUrlSegment="@_transaction.GameLabel" /></span>
 				}
 				else
 				{

@@ -2,37 +2,4 @@
 
 Used as a log during development to keep track of progress and status in between sessions.
 
-## Game Class
-- [x] Create initial Game class
-- [x] Tests
-
-## Game Service
-- [x] Create initial GameService by copying and consolidating methods from GameEntityService
-- [x] Tests
-- [x] Startup DI
-
-## Pages
-- [x] /games
-- [x] /games/{GameUrlSegment}
-- [x] /games/{GameUrlSegment}/edit
-- [x] /games/{GameUrlSegment}/{PagUrlSegment}
-- [x] /games/add
-- [x] /games/addplayerstogame
-- [x] /games/addtransactionstogame
-- [x] /playerstochase
-- [x] /ratings/add
-- [x] /ratings/{RatingUrlSegment}
-- [x] /transactions/add
-- [x] /admin
-
-## Components
-- [x] Add GameLink
-- [x] EntityTitleLink - remove game references
-- [x] NextGameLink
-
-## Services
-- [ ] Remove IGameEntityService
-- [ ] Remove GameEntityService
-- [ ] Program.cs
-
 ## Current focus

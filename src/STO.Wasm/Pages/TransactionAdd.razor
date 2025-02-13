@@ -1,7 +1,7 @@
 @page "/transactions/add"
 @inject ITransactionService TransactionService
 @inject IPlayerService PlayerService
-@inject IGameEntityService GameEntityService
+@inject IGameService GameService
 @inject NavigationManager Navigation
 
 <PageTitle>TNF - @_pageTitle</PageTitle>
@@ -28,9 +28,9 @@
 				<label class="form-label">Game</label>
 				<InputSelect class="form-select" @bind-Value="_newTransaction.GameId">
 					<option value="">Select Game ...</option>
-					@foreach (var ge in _gameEntities)
+					@foreach (var g in _games)
 					{
-						<option value="@ge.RowKey">@ge.UrlSegment</option>
+						<option value="@g.Id"><GameLink GameLabel="@g.Label" GameUrlSegment="@g.UrlSegment" /></option>
 					}
 				</InputSelect>
 			</div>
@@ -69,7 +69,7 @@
 @code {
 	[CascadingParameter] public MainLayout MainLayout { get; set; } = null!;
 	private List<Player> _players = [];
-	private List<GameEntity> _gameEntities = [];
+	private List<Game> _games = [];
 	private Transaction _newTransaction = new();
 	private string _pageTitle = null!;
 
@@ -92,7 +92,7 @@
 		};
 
 		_players = PlayerService.GetPlayers();
-		_gameEntities = GameEntityService.GetGameEntities();
+		_games = GameService.GetGames(null, null);
 		_pageTitle = "Add Transaction";
 		MainLayout.SetPageTitle(_pageTitle);
 	}

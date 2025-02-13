@@ -28,7 +28,7 @@ Used as a log during development to keep track of progress and status in between
 ## Components
 - [x] Add GameLink
 - [x] EntityTitleLink - remove game references
-- [ ] NextGameLink
+- [x] NextGameLink
 
 ## Services
 - [ ] Remove IGameEntityService

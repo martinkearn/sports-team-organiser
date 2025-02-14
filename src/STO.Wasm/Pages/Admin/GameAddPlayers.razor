@@ -76,7 +76,7 @@
 }
 
 @code {
-    [CascadingParameter] public MainLayout MainLayout { get; set; } = null!;
+    [CascadingParameter] public AdminLayout Layout { get; set; } = null!;
     
     private List<Game> _games = [];
 
@@ -121,7 +121,7 @@
             await PlayerAtGameEntityService.UpsertPlayerAtGameEntityAsync(prospectPag);
         }
 
-        var nav = $"/games/{_selectedGame.UrlSegment}";
+        var nav = $"/admin/games/{_selectedGame.UrlSegment}";
         Navigation.NavigateTo(nav);
     }
 
@@ -140,7 +140,7 @@
         _selectedGameId = _nextGame.Id;
         _selectedGame = _nextGame;
         _pageTitle = "Add Players to Game";
-        MainLayout.SetPageTitle(_pageTitle);
+        Layout.SetPageTitle(_pageTitle);
     }
 
 }

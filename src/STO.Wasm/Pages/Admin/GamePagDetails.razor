@@ -81,7 +81,7 @@
 </AuthorizeView>
 
 @code {
-    [CascadingParameter] public MainLayout MainLayout { get; set; } = null!;
+    [CascadingParameter] public AdminLayout Layout { get; set; } = null!;
     
     [Parameter] public string PagUrlSegment { get; set; } = null!;
     
@@ -132,7 +132,7 @@
     private async Task DeletePag()
     {
         await PlayerAtGameEntityService.DeletePlayerAtGameEntityAsync(_pagEntity.RowKey);
-        Navigation.NavigateTo($"/games/{GameUrlSegment}");
+        Navigation.NavigateTo($"/admin/games/{GameUrlSegment}");
     }
 
     private void RefreshData()
@@ -141,6 +141,6 @@
         _player = PlayerService.GetPlayer(_pagEntity.PlayerRowKey);
         _game = GameService.GetGame(_pagEntity.GameRowKey);
         _pageTitle = $"{@_player.Name} at {_game.Label}";
-        MainLayout.SetPageTitle(_pageTitle);
+        Layout.SetPageTitle(_pageTitle);
     }
 }

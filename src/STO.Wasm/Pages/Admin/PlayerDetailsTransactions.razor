@@ -77,7 +77,7 @@
 
 
 @code {
-    [CascadingParameter] public MainLayout MainLayout { get; set; } = null!;
+    [CascadingParameter] public AdminLayout Layout { get; set; } = null!;
     
     [Parameter] public string PlayerUrlSegment { get; set; } = null!;
 
@@ -104,10 +104,10 @@
             await TransactionService.DeleteTransactionAsync(t.Id);
         }
 
-        Navigation.NavigateTo("/players");
+        Navigation.NavigateTo("/admin/players");
     }
 
-    private void SwitchTabPlayer() => Navigation.NavigateTo($"/players/{@PlayerUrlSegment}");
+    private void SwitchTabPlayer() => Navigation.NavigateTo($"/admin/players/{@PlayerUrlSegment}");
 
     private void RefreshData()
     {
@@ -120,6 +120,6 @@
 
         _deleteAllLabel = $"All transactions for {player.Name}";
         _pageTitle = $"{player.Name}";
-        MainLayout.SetPageTitle(_pageTitle);
+        Layout.SetPageTitle(_pageTitle);
     }
 }

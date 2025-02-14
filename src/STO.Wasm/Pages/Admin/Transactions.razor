@@ -51,7 +51,7 @@
 </AuthorizeView>
 
 @code {
-	[CascadingParameter] public MainLayout MainLayout { get; set; } = null!;
+	[CascadingParameter] public AdminLayout Layout { get; set; } = null!;
 
 	private List<Transaction> _transactions = [];
 
@@ -73,6 +73,6 @@
 	{
 		_transactions = TransactionService.GetTransactions(0, ItemsPerPage);
 		_pageTitle = "Transactions";
-		MainLayout.SetPageTitle(_pageTitle);
+		Layout.SetPageTitle(_pageTitle);
 	}
 }

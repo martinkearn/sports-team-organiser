@@ -36,7 +36,7 @@
 <ShowMore ParentPageCallback="ShowMore" />
 
 @code {
-	[CascadingParameter] public MainLayout MainLayout { get; set; } = null!;
+	[CascadingParameter] public AdminLayout Layout { get; set; } = null!;
 	
 	private List<Game> _games = [];
 	
@@ -58,6 +58,6 @@
 	{
 		_games = GameService.GetGames(0, ItemsPerPage);
 		_pageTitle = "Games";
-		MainLayout.SetPageTitle(_pageTitle);
+		Layout.SetPageTitle(_pageTitle);
 	}
 }

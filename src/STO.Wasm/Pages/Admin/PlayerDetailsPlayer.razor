@@ -86,7 +86,7 @@
 </AuthorizeView>
 
 @code {
-	[CascadingParameter] public MainLayout MainLayout { get; set; } = default!;
+	[CascadingParameter] public AdminLayout Layout { get; set; } = default!;
 	
 	[Parameter] public string PlayerUrlSegment { get; set; } = default!;
 
@@ -107,15 +107,15 @@
 	private async Task DeletePlayer()
 	{
 		await PlayerService.DeletePlayerAsync(_player.Id);
-		Navigation.NavigateTo("/players");
+		Navigation.NavigateTo("/admin/players");
 	}
 
-	private void SwitchTabTransactions() => Navigation.NavigateTo($"/players/{@PlayerUrlSegment}/transactions");
+	private void SwitchTabTransactions() => Navigation.NavigateTo($"/admin/players/{@PlayerUrlSegment}/transactions");
 
 	private void RefreshData()
 	{
 		_player = PlayerService.GetPlayers().Single(p => p.UrlSegment == PlayerUrlSegment);
 		_pageTitle = $"{_player.Name}";
-		MainLayout.SetPageTitle(_pageTitle);
+		Layout.SetPageTitle(_pageTitle);
 	}
 }

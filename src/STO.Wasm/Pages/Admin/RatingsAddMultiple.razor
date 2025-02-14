@@ -49,7 +49,7 @@
 </div>
 
 @code {
-	[CascadingParameter] public MainLayout MainLayout { get; set; } = default!;
+	[CascadingParameter] public AdminLayout Layout { get; set; } = default!;
 
 	private readonly List<RatingEntity> _ratingEntityAllPlayers = [];
 
@@ -68,7 +68,7 @@
 			//TODO: Make this a list of tasks and use .WhenAll
 			await RatingEntityEntityService.UpsertRatingEntityAsync(reWithValue);
 		}
-		Navigation.NavigateTo("/ratings/addthanks");
+		Navigation.NavigateTo("/admin/ratings/addthanks");
 	}
 
 	private void RefreshData()
@@ -83,6 +83,6 @@
 			});
 		}
 		_pageTitle = "Add Ratings";
-		MainLayout.SetPageTitle(_pageTitle);
+		Layout.SetPageTitle(_pageTitle);
 	}
 }

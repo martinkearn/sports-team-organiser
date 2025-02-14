@@ -71,7 +71,7 @@
 </AuthorizeView>
 
 @code {
-    [CascadingParameter] public MainLayout MainLayout { get; set; } = null!;
+    [CascadingParameter] public AdminLayout Layout { get; set; } = null!;
     
     private List<Game> _games = [];
 
@@ -124,7 +124,7 @@
             await TransactionService.UpsertTransactionAsync(prospectTransaction);
         }
         
-        Navigation.NavigateTo($"/games/{_selectedGame.UrlSegment}");
+        Navigation.NavigateTo($"/admin/games/{_selectedGame.UrlSegment}");
     }
 
     private void RefreshGame()
@@ -142,7 +142,7 @@
         _selectedGameId = _nextGame.Id;
         _selectedGame = _nextGame;
         _pageTitle = "Add Transactions to Game";
-        MainLayout.SetPageTitle(_pageTitle);
+        Layout.SetPageTitle(_pageTitle);
         RefreshGame();
     }
 

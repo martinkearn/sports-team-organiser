@@ -70,7 +70,7 @@
 
 
 @code {
-	[CascadingParameter] public MainLayout MainLayout { get; set; } = null!;
+	[CascadingParameter] public AdminLayout Layout { get; set; } = null!;
 	
 	private List<Game> _games = [];
 
@@ -88,7 +88,7 @@
 	protected async Task Add()
 	{
 		await RatingEntityEntityService.UpsertRatingEntityAsync(_newRatingEntity);
-		Navigation.NavigateTo("/ratings/addthanks");
+		Navigation.NavigateTo("/admin/ratings/addthanks");
 	}
 
 	private void RefreshPlayers()
@@ -104,6 +104,6 @@
 	{
 		_games = GameService.GetGames(null, null);
 		_pageTitle = "Add Rating";
-		MainLayout.SetPageTitle(_pageTitle);
+		Layout.SetPageTitle(_pageTitle);
 	}
 }

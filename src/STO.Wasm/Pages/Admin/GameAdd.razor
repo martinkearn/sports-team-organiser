@@ -63,7 +63,7 @@
 </AuthorizeView>
 
     @code {
-    [CascadingParameter] public MainLayout MainLayout { get; set; } = null!;
+    [CascadingParameter] public AdminLayout Layout { get; set; } = null!;
     
     private Game _newGame = new();
 
@@ -83,7 +83,7 @@
         var dt = new DateTime(_newGame.DateTime.Year, _newGame.DateTime.Month, _newGame.DateTime.Day, _hour, _minute, 0, DateTimeKind.Utc);
         _newGame.DateTime = dt;
         await GameService.UpsertGameAsync(_newGame);
-        Navigation.NavigateTo("/games");
+        Navigation.NavigateTo("/admin/games");
     }
 
     private void RefreshData()
@@ -95,6 +95,6 @@
             DateTime = DateTime.UtcNow
         };
         _pageTitle = "Add a Game";
-        MainLayout.SetPageTitle(_pageTitle);
+        Layout.SetPageTitle(_pageTitle);
     }
 }

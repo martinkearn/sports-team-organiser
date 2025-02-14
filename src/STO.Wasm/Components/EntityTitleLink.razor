@@ -7,10 +7,10 @@
     @switch (EntityType)
     {
         case Enums.EntityType.PlayerAtGameEntity:
-            <a href="/games{@_playerAtGameEntity.UrlSegment}">@Label</a>
+            <a href="/admin/games{@_playerAtGameEntity.UrlSegment}">@Label</a>
             break;
         case Enums.EntityType.RatingEntity:
-            <a href="/ratings/@_ratingEntity.UrlSegment">@Label</a>
+            <a href="/admin/ratings/@_ratingEntity.UrlSegment">@Label</a>
             break;
         default:
             @Label
@@ -59,7 +59,7 @@ else
                 
                 //ToDo: This is a temporary hack until PlayerAtGame has expanded Game details and is seperated from PlayerAtGameEntity class.
                 var gameUrlSegment = GameService.GetGame(_playerAtGameEntity.GameRowKey);
-                _playerAtGameEntity.UrlSegment = $"/{@gameUrlSegment}/{@_playerAtGameEntity.UrlSegment}";
+                _playerAtGameEntity.UrlSegment = $"/admin/{@gameUrlSegment}/{@_playerAtGameEntity.UrlSegment}";
                 
                 if (string.IsNullOrEmpty(Label))
                 {

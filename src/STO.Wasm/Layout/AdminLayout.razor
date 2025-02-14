@@ -2,7 +2,6 @@
 @inherits LayoutComponentBase
 @inject NavigationManager NavigationManager
 
-
 <CascadingValue Value="this">
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark" aria-label="Eighth navbar example">
         <div class="container">
@@ -65,54 +64,51 @@
             </AuthorizeView>
         </div>
     </nav>
-    
-    <div class="container my-2">
-        <ol class="breadcrumb">
-            @if (_uri != _baseUri)
-            {
-                <li class="breadcrumb-item "><a href="/"><i class="fa-solid fa-home fa-xs"></i></a></li>
-            }
-            @foreach (var segment in _relativeUri.ToString().Split('/'))
-            {
-                if (string.IsNullOrEmpty(segment))
-                {
-                    continue;
-                }
-
-                if (segment.Contains("authentication"))
-                {
-                    continue;
-                }
-
-                var uriString = _uri.ToString();
-                var segmentIndex = uriString.IndexOf(segment, StringComparison.Ordinal);
-                if (segmentIndex <= 0)
-                {
-                    continue;
-                }
-
-                var segmentUri = uriString[..segmentIndex] + segment;
-                var segmentDisplay = _textInfo.ToTitleCase(segment).TrimEnd('/');
-                if (_uri.ToString().EndsWith($"/{segment}"))
-                {
-                    if (!string.IsNullOrEmpty(_pageTitle))
-                    {
-                        segmentDisplay = _pageTitle;
-                    }
-
-                    <li class="breadcrumb-item active">@segmentDisplay</li>
-                }
-                else
-                {
-                    <li class="breadcrumb-item"><a href="@segmentUri">@segmentDisplay</a></li>
-                }
-            }
-        </ol>
-    </div>
 
     <div class="container my-2">
         <AuthorizeView Policy="IsAdminEmail">
             <Authorized>
+                <ol class="breadcrumb">
+                        @if (_uri != _baseUri)
+                        {
+                            <li class="breadcrumb-item "><a href="/"><i class="fa-solid fa-home fa-xs"></i></a></li>
+                        }
+                        @foreach (var segment in _relativeUri.ToString().Split('/'))
+                        {
+                            if (string.IsNullOrEmpty(segment))
+                            {
+                                continue;
+                            }
+
+                            if (segment.Contains("authentication"))
+                            {
+                                continue;
+                            }
+
+                            var uriString = _uri.ToString();
+                            var segmentIndex = uriString.IndexOf(segment, StringComparison.Ordinal);
+                            if (segmentIndex <= 0)
+                            {
+                                continue;
+                            }
+
+                            var segmentUri = uriString[..segmentIndex] + segment;
+                            var segmentDisplay = _textInfo.ToTitleCase(segment).TrimEnd('/');
+                            if (_uri.ToString().EndsWith($"/{segment}"))
+                            {
+                                if (!string.IsNullOrEmpty(_pageTitle))
+                                {
+                                    segmentDisplay = _pageTitle;
+                                }
+
+                                <li class="breadcrumb-item active">@segmentDisplay</li>
+                            }
+                            else
+                            {
+                                <li class="breadcrumb-item"><a href="@segmentUri">@segmentDisplay</a></li>
+                            }
+                        }
+                    </ol>
                 @Body
             </Authorized>
             <NotAuthorized>

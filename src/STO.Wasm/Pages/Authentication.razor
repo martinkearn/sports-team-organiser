@@ -1,7 +1,13 @@
 ﻿@page "/authentication/{action}"
+@inject NavigationManager Navigation
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
-<RemoteAuthenticatorView Action="@Action" />
+<RemoteAuthenticatorView Action="@Action" OnLogInSucceeded="@HandleNavigation" />
 
 @code{
     [Parameter] public string? Action { get; set; }
+
+    private async Task HandleNavigation()
+    {
+        Navigation.NavigateTo("/admin");
+    }
 }

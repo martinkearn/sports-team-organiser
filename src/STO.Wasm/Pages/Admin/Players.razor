@@ -44,7 +44,7 @@
 </table>
 
 @code {
-	[CascadingParameter] public MainLayout MainLayout { get; set; } = default!;
+	[CascadingParameter] public AdminLayout Layout { get; set; } = default!;
 	private List<Player> _players = [];
 	private string _pageTitle = default!;
 
@@ -52,6 +52,6 @@
 	{
 		_players = PlayerService.GetPlayers();
 		_pageTitle = "Players";
-		MainLayout.SetPageTitle(_pageTitle);
+		Layout.SetPageTitle(_pageTitle);
 	}
 }

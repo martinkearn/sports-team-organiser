@@ -50,7 +50,7 @@
 </AuthorizeView>
 
 @code {
-	[CascadingParameter] public MainLayout MainLayout { get; set; } = null!;
+	[CascadingParameter] public AdminLayout Layout { get; set; } = null!;
 	
 	[Parameter]
 	public string RatingUrlSegment { get; set; } = null!;
@@ -80,6 +80,6 @@
 		_player = PlayerService.GetPlayer(_ratingEntity.PlayerRowKey);
 		_game = GameService.GetGame(_ratingEntity.GameRowKey);
 		_pageTitle = $"Rating for {_player.Name} {_game.Label}";
-		MainLayout.SetPageTitle(_pageTitle);
+		Layout.SetPageTitle(_pageTitle);
 	}
 }

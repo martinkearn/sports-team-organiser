@@ -13,7 +13,7 @@
 </div>
 
 @code{
-    [CascadingParameter] public MainLayout MainLayout { get; set; } = default!;
+    [CascadingParameter] public AdminLayout Layout { get; set; } = default!;
     
     private string _pageTitle = default!;
 
@@ -25,7 +25,7 @@
     private void RefreshData()
     {
         _pageTitle = "Thanks for the ratings";
-        MainLayout.SetPageTitle(_pageTitle);
+        Layout.SetPageTitle(_pageTitle);
     }
 
 }

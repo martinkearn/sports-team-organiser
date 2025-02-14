@@ -36,7 +36,7 @@
 </AuthorizeView>
 
 @code {
-    [CascadingParameter] public MainLayout MainLayout { get; set; } = null!;
+    [CascadingParameter] public AdminLayout Layout { get; set; } = null!;
     private string _pageTitle = null!;
     private List<Game> _recentGames = null!;
     private string _selectedGameRowKey = null!;
@@ -90,7 +90,7 @@
         GameSelected();
         
         _pageTitle = "Players to chase";
-        MainLayout.SetPageTitle(_pageTitle);
+        Layout.SetPageTitle(_pageTitle);
     }
 
 }

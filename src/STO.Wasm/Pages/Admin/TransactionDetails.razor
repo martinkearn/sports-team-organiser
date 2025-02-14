@@ -89,7 +89,7 @@
 </AuthorizeView>
 
 @code {
-	[CascadingParameter] public MainLayout MainLayout { get; set; } = null!;
+	[CascadingParameter] public AdminLayout Layout { get; set; } = null!;
 	
 	[Parameter]
 	public string TransactionUrlSegment { get; set; } = null!;
@@ -113,6 +113,6 @@
 	{
 		_transaction = TransactionService.GetTransactionByUrlSegment(TransactionUrlSegment);
 		_pageTitle = _transaction.Label;
-		MainLayout.SetPageTitle(_pageTitle);
+		Layout.SetPageTitle(_pageTitle);
 	}
 }

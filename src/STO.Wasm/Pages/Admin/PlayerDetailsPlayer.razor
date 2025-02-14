@@ -86,7 +86,7 @@
 </AuthorizeView>
 
 @code {
-	[CascadingParameter] public MainLayout MainLayout { get; set; } = default!;
+	[CascadingParameter] public AdminLayout Layout { get; set; } = default!;
 	
 	[Parameter] public string PlayerUrlSegment { get; set; } = default!;
 
@@ -116,6 +116,6 @@
 	{
 		_player = PlayerService.GetPlayers().Single(p => p.UrlSegment == PlayerUrlSegment);
 		_pageTitle = $"{_player.Name}";
-		MainLayout.SetPageTitle(_pageTitle);
+		Layout.SetPageTitle(_pageTitle);
 	}
 }

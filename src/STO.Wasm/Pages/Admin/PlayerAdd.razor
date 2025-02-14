@@ -55,7 +55,7 @@
 </AuthorizeView>
 
 @code {
-	[CascadingParameter] public MainLayout MainLayout { get; set; } = default!;
+	[CascadingParameter] public AdminLayout Layout { get; set; } = default!;
 	private Player _newPlayer = null!;
 	private string _pageTitle = default!;
 
@@ -77,6 +77,6 @@
 			DefaultRate = 3
 		};
 		_pageTitle = "Add Player";
-		MainLayout.SetPageTitle(_pageTitle);
+		Layout.SetPageTitle(_pageTitle);
 	}
 }

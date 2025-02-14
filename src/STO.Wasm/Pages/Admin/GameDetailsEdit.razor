@@ -1,4 +1,5 @@
-@page "/games/{GameUrlSegment}/edit"
+@page "/admin/games/{GameUrlSegment}/edit"
+@layout AdminLayout
 @inject IGameService GameService
 @inject NavigationManager Navigation
 
@@ -59,7 +60,7 @@
 </AuthorizeView>
 
     @code {
-    [CascadingParameter] public MainLayout MainLayout { get; set; } = null!;
+    [CascadingParameter] public AdminLayout Layout { get; set; } = null!;
     
     [Parameter] public string GameUrlSegment { get; set; } = null!;
 
@@ -88,7 +89,7 @@
     private async Task DeleteGame()
     {
         await GameService.DeleteGameAsync(_game.Id);
-        Navigation.NavigateTo("/games");
+        Navigation.NavigateTo("/admin/games");
     }
 
     private void RefreshData()
@@ -97,6 +98,6 @@
         _hour = _game.DateTime.Hour;
         _minute = _game.DateTime.Minute;
         _pageTitle = $"Edit {_game.Label}";
-        MainLayout.SetPageTitle(_pageTitle);
+        Layout.SetPageTitle(_pageTitle);
     }
 }

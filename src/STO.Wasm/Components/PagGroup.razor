@@ -18,7 +18,7 @@
         var player = Players.Single(p => p.Id == pag.PlayerRowKey);
         <tr>
             <td>
-                <a href="/games/@GameUrlSegment/@pag.UrlSegment">@player.Name</a>
+                <a href="/admin/games/@GameUrlSegment/@pag.UrlSegment">@player.Name</a>
                 <PlayingForecastIcon Forecast="@pag.Forecast"/>
                 <PositionIcon Position="player.Position"/>
                 <RagIcon Balance="player.Balance" Played="pag.Played" DefaultRate="player.DefaultRate" PlayerRowKey="@player.Id" />

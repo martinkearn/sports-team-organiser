@@ -71,7 +71,7 @@
 	private async Task DeleteRating()
 	{
 		await RatingEntityEntityService.DeleteRatingEntityAsync(_ratingEntity.RowKey);
-		Navigation.NavigateTo("/ratings");
+		Navigation.NavigateTo("/admin/ratings");
 	}
 
 	private void RefreshData()

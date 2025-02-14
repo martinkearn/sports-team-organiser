@@ -121,7 +121,7 @@
             await PlayerAtGameEntityService.UpsertPlayerAtGameEntityAsync(prospectPag);
         }
 
-        var nav = $"/games/{_selectedGame.UrlSegment}";
+        var nav = $"/admin/games/{_selectedGame.UrlSegment}";
         Navigation.NavigateTo(nav);
     }
 

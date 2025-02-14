@@ -107,10 +107,10 @@
 	private async Task DeletePlayer()
 	{
 		await PlayerService.DeletePlayerAsync(_player.Id);
-		Navigation.NavigateTo("/players");
+		Navigation.NavigateTo("/admin/players");
 	}
 
-	private void SwitchTabTransactions() => Navigation.NavigateTo($"/players/{@PlayerUrlSegment}/transactions");
+	private void SwitchTabTransactions() => Navigation.NavigateTo($"/admin/players/{@PlayerUrlSegment}/transactions");
 
 	private void RefreshData()
 	{

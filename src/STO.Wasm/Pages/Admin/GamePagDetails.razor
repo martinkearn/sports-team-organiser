@@ -132,7 +132,7 @@
     private async Task DeletePag()
     {
         await PlayerAtGameEntityService.DeletePlayerAtGameEntityAsync(_pagEntity.RowKey);
-        Navigation.NavigateTo($"/games/{GameUrlSegment}");
+        Navigation.NavigateTo($"/admin/games/{GameUrlSegment}");
     }
 
     private void RefreshData()

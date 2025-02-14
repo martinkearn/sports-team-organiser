@@ -124,7 +124,7 @@
             await TransactionService.UpsertTransactionAsync(prospectTransaction);
         }
         
-        Navigation.NavigateTo($"/games/{_selectedGame.UrlSegment}");
+        Navigation.NavigateTo($"/admin/games/{_selectedGame.UrlSegment}");
     }
 
     private void RefreshGame()

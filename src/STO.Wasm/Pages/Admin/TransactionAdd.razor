@@ -82,7 +82,7 @@
 	protected async Task Add()
 	{
 		await TransactionService.UpsertTransactionAsync(_newTransaction);
-		Navigation.NavigateTo("/transactions");
+		Navigation.NavigateTo("/admin/transactions");
 	}
 
 	private void RefreshData()

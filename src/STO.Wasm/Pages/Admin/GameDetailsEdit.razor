@@ -89,7 +89,7 @@
     private async Task DeleteGame()
     {
         await GameService.DeleteGameAsync(_game.Id);
-        Navigation.NavigateTo("/games");
+        Navigation.NavigateTo("/admin/games");
     }
 
     private void RefreshData()

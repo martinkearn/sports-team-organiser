@@ -104,10 +104,10 @@
             await TransactionService.DeleteTransactionAsync(t.Id);
         }
 
-        Navigation.NavigateTo("/players");
+        Navigation.NavigateTo("/admin/players");
     }
 
-    private void SwitchTabPlayer() => Navigation.NavigateTo($"/players/{@PlayerUrlSegment}");
+    private void SwitchTabPlayer() => Navigation.NavigateTo($"/admin/players/{@PlayerUrlSegment}");
 
     private void RefreshData()
     {

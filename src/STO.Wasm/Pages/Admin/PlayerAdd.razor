@@ -67,7 +67,7 @@
 	private async Task Add()
 	{
 		await PlayerService.UpsertPlayerAsync(_newPlayer);
-		Navigation.NavigateTo("/players");
+		Navigation.NavigateTo("/admin/players");
 	}
 
 	private void RefreshData()

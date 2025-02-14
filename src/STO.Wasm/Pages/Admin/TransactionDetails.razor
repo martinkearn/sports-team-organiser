@@ -106,7 +106,7 @@
 	private async Task DeleteTransaction()
 	{
 		await TransactionService.DeleteTransactionAsync(_transaction.Id);
-		Navigation.NavigateTo("/transactions");
+		Navigation.NavigateTo("/admin/transactions");
 	}
 
 	private void RefreshData()

@@ -88,7 +88,7 @@
 	protected async Task Add()
 	{
 		await RatingEntityEntityService.UpsertRatingEntityAsync(_newRatingEntity);
-		Navigation.NavigateTo("/ratings/addthanks");
+		Navigation.NavigateTo("/admin/ratings/addthanks");
 	}
 
 	private void RefreshPlayers()

@@ -1,15 +1,18 @@
-﻿@page "/authentication/{action}"
+﻿@page "/authentication/{Action}"
 @layout MainLayout
 @inject NavigationManager Navigation
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
-<RemoteAuthenticatorView Action="@Action" OnLogInSucceeded="@HandleNavigation" />
+
+<h1>Authentication @Action</h1>
+
+<p><RemoteAuthenticatorView Action="@Action" OnLoginSucceeded="@HandleLoginSucceeded" /></p>
 
 @code{
     [Parameter] public string? Action { get; set; }
 
-    private async Task HandleNavigation()
+    private void HandleLoginSucceeded()
     {
-        //ToDo: This is working bu getting overridden later by the returnurl inside RemoteAuthenticatorView. Need to work out where that is being set
-        Navigation.NavigateTo("/admin");
+        //ToDo: This redirect works for external sites, but not internal ones. For internal it goes to home page.
+        Navigation.NavigateTo("https://www.bing.com");
     }
 }

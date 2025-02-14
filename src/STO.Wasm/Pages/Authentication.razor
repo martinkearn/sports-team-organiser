@@ -1,4 +1,5 @@
 ﻿@page "/authentication/{action}"
+@layout MainLayout
 @inject NavigationManager Navigation
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 <RemoteAuthenticatorView Action="@Action" OnLogInSucceeded="@HandleNavigation" />

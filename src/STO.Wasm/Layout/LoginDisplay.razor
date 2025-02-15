@@ -15,7 +15,7 @@
     private async Task LoginWithReturnUrl()
     {
         var currentUrl = Navigation.Uri; // Capture the current URL
-        await LocalStorageService.SetItemAsStringAsync("ReturnUrl", currentUrl);
+        await LocalStorageService.SetItemAsStringAsync("returnurl", currentUrl);
         
         // Redirect to the login page using the Microsoft authentication service
         Navigation.NavigateTo("authentication/login");

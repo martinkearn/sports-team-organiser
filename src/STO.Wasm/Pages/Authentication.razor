@@ -1,4 +1,5 @@
 ﻿@page "/authentication/{Action}"
+@layout MainLayout
 @inject ILocalStorageService LocalStorageService
 @inject NavigationManager Navigation
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
@@ -7,20 +8,16 @@
 
 <p><RemoteAuthenticatorView Action="@Action" OnLogInSucceeded="@HandleLoginSucceeded" /></p>
 
-<a href="/">Home</a>
-<a href="/testpageone">One</a>
-<a href="/testpagetwo">Two</a>
-
 @code {
     [Parameter] public string? Action { get; set; }
     
     private async Task HandleLoginSucceeded()
     {
         await Task.Delay(100);  // Short delay to let RemoteAuthenticatorView finish
-        var returnUrl = await LocalStorageService.GetItemAsync<string>("ReturnUrl");
+        var returnUrl = await LocalStorageService.GetItemAsync<string>("returnurl");
         if (!string.IsNullOrEmpty(returnUrl) && returnUrl != Navigation.Uri)
         {
-            await LocalStorageService.RemoveItemAsync("returnUrl"); // Clean up storage
+            await LocalStorageService.RemoveItemAsync("returnurl"); // Clean up storage
             Navigation.NavigateTo(returnUrl, true); // Redirect to the original URL
         }
     }

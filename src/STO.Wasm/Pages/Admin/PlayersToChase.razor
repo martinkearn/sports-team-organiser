@@ -1,4 +1,5 @@
-@page "/playerstochase"
+@page "/admin/playerstochase"
+@layout AdminLayout
 @inject IPlayerService PlayerService
 @inject IGameService GameService
 @inject IPlayerAtGameEntityService PlayerAtGameEntityService
@@ -7,35 +8,25 @@
 
 <h1><i class="fa-solid fa-user me-2"></i> @_pageTitle</h1>
 
-<AuthorizeView Policy="IsAdminEmail">
-    <Authorized>
+<p>Search back to @_startDate.Date.ToShortDateString() for recent games and players.</p>
 
-        <p>Search back to @_startDate.Date.ToShortDateString() for recent games and players.</p>
+<InputSelect class="form-select" @bind-Value="_selectedGameRowKey" @bind-Value:after="GameSelected">
+    <option value="all">Select Game ...</option>
+    @foreach (var game in _recentGames)
+    {
+        <option value="@game.Id"><GameLink GameLabel="@game.Label" GameUrlSegment="@game.UrlSegment" /></option>
+    }
+</InputSelect>
 
-        <InputSelect class="form-select" @bind-Value="_selectedGameRowKey" @bind-Value:after="GameSelected">
-            <option value="all">Select Game ...</option>
-            @foreach (var game in _recentGames)
-            {
-                <option value="@game.Id"><GameLink GameLabel="@game.Label" GameUrlSegment="@game.UrlSegment" /></option>
-            }
-        </InputSelect>
+<br/>
 
-        <br/>
-
-        @foreach (var rp in _recentPlayersNotAtSelectedGame)
-        {
-            <p><PlayerLink PlayerName="@rp.Name" PlayerUrlSegment="@rp.UrlSegment" /> has played @rp.GamesCount times</p>
-        }
-
-    </Authorized>
-    <NotAuthorized>
-        <h4>Access Denied!</h4>
-        <a class="btn btn-secondary" href="authentication/login"><i class="fa-solid fa-key me-2"></i> Log in</a>
-    </NotAuthorized>
-</AuthorizeView>
+@foreach (var rp in _recentPlayersNotAtSelectedGame)
+{
+    <p><PlayerLink PlayerName="@rp.Name" PlayerUrlSegment="@rp.UrlSegment" /> has played @rp.GamesCount times</p>
+}
 
 @code {
-    [CascadingParameter] public MainLayout MainLayout { get; set; } = null!;
+    [CascadingParameter] public AdminLayout Layout { get; set; } = null!;
     private string _pageTitle = null!;
     private List<Game> _recentGames = null!;
     private string _selectedGameRowKey = null!;
@@ -89,7 +80,7 @@
         GameSelected();
         
         _pageTitle = "Players to chase";
-        MainLayout.SetPageTitle(_pageTitle);
+        Layout.SetPageTitle(_pageTitle);
     }
 
 }

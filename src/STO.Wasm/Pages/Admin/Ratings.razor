@@ -1,57 +1,50 @@
-@page "/ratings"
+@page "/admin/ratings"
+@layout AdminLayout
 @inject IRatingEntityService RatingEntityEntityService
 
 <PageTitle>TNF - @_pageTitle</PageTitle>
 
 <h1><i class="fa-regular fa-star me-2"></i> @_pageTitle</h1>
 
-<AuthorizeView Policy="IsAdminEmail">
-	<Authorized>
-		<table class="table table-striped">
-			<thead>
-				<tr>
-					<th scope="col">Timestamp</th>
-					<th scope="col"><button class="btn btn-link m-0 p-0" @onclick="() => Sort(Enums.SortRatingsBy.Player)">Player</button></th>
-					<th scope="col"><button class="btn btn-link m-0 p-0" @onclick="() => Sort(Enums.SortRatingsBy.Game)">Game</button></th>
-					<th scope="col"><button class="btn btn-link m-0 p-0" @onclick="() => Sort(Enums.SortRatingsBy.Rating)">Rating</button></th>
-					<th scope="col" class="d-none d-lg-table-cell">Notes</th>
-				</tr>
-			</thead>
-			<tbody>
-				@foreach (var re in _pageOfRatingEntities)
-				{
-					<tr>
-						<td><a href="/ratings/@re.UrlSegment">@re.Timestamp!.Value.ToString(Consts.DateTimeFormat)</a> TO DO: Use rating Label from Rating</td>
-						<td>@re.PlayerRowKey DO Player Name from Rating</td>
-						<td>@re.GameRowKey TO DO Game Title from Rating</td>
-						<td>@re.Rating</td>
-						<td class="d-none d-lg-table-cell">@re.Notes</td>
-					</tr>
-				}
-			</tbody>
-		</table>
+<table class="table table-striped">
+	<thead>
+		<tr>
+			<th scope="col">Timestamp</th>
+			<th scope="col"><button class="btn btn-link m-0 p-0" @onclick="() => Sort(Enums.SortRatingsBy.Player)">Player</button></th>
+			<th scope="col"><button class="btn btn-link m-0 p-0" @onclick="() => Sort(Enums.SortRatingsBy.Game)">Game</button></th>
+			<th scope="col"><button class="btn btn-link m-0 p-0" @onclick="() => Sort(Enums.SortRatingsBy.Rating)">Rating</button></th>
+			<th scope="col" class="d-none d-lg-table-cell">Notes</th>
+		</tr>
+	</thead>
+	<tbody>
+		@foreach (var re in _pageOfRatingEntities)
+		{
+			<tr>
+				<td><a href="/ratings/@re.UrlSegment">@re.Timestamp!.Value.ToString(Consts.DateTimeFormat)</a> TO DO: Use rating Label from Rating</td>
+				<td>@re.PlayerRowKey DO Player Name from Rating</td>
+				<td>@re.GameRowKey TO DO Game Title from Rating</td>
+				<td>@re.Rating</td>
+				<td class="d-none d-lg-table-cell">@re.Notes</td>
+			</tr>
+		}
+	</tbody>
+</table>
 
-		<nav aria-label="Page navigation">
-			<ul class="pagination">
-				@for (var p = 1; p <= _pages; p++)
-				{
-					var thisPage = p;
-					var css = (_currentPageNumber == p) ? "page-item active" : "page-item";
-					<li class="@css"><button class="btn btn-outline-secondary btn-sm me-2 mb-2" @onclick="@(e => ChangePage(thisPage))">@p</button></li>
-				}
-			</ul>
-		</nav>
+<nav aria-label="Page navigation">
+	<ul class="pagination">
+		@for (var p = 1; p <= _pages; p++)
+		{
+			var thisPage = p;
+			var css = (_currentPageNumber == p) ? "page-item active" : "page-item";
+			<li class="@css"><button class="btn btn-outline-secondary btn-sm me-2 mb-2" @onclick="@(e => ChangePage(thisPage))">@p</button></li>
+		}
+	</ul>
+</nav>
 
-		<p>@_ratingEntities.Count ratings. @_ratingsPerPage per page.</p>
-	</Authorized>
-	<NotAuthorized>
-		<h4>Access Denied!</h4>
-		<a class="btn btn-secondary" href="authentication/login"><i class="fa-solid fa-key me-2"></i> Log in</a>
-	</NotAuthorized>
-</AuthorizeView>
+<p>@_ratingEntities.Count ratings. @_ratingsPerPage per page.</p>
 
 @code {
-	[CascadingParameter] public MainLayout MainLayout { get; set; } = default!;
+	[CascadingParameter] public AdminLayout Layout { get; set; } = default!;
 	private List<RatingEntity> _ratingEntities = [];
 
 	private List<RatingEntity> _pageOfRatingEntities = [];
@@ -108,7 +101,7 @@
 	{
 		_ratingEntities = RatingEntityEntityService.GetRatingEntities();
 		_pageTitle = "Ratings";
-		MainLayout.SetPageTitle(_pageTitle);
+		Layout.SetPageTitle(_pageTitle);
 
 		// Setup paging
 		_pageOfRatingEntities = _ratingEntities.Take(_ratingsPerPage).ToList();

@@ -1,7 +1,29 @@
-﻿@page "/authentication/{action}"
+﻿@page "/authentication/{Action}"
+@layout MainLayout
+@inject ILocalStorageService LocalStorageService
+@inject NavigationManager Navigation
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
-<RemoteAuthenticatorView Action="@Action" />
 
-@code{
-    [Parameter] public string? Action { get; set; }
+<h1><RemoteAuthenticatorView Action="@Action" OnLogInSucceeded="@HandleLoginSucceeded" /></h1>
+
+@if (Action == "logged-out")
+{
+    <a class="btn btn-secondary" href="/" title="Home"><i class="fa-solid fa-home"></i> <span class="d-none d-md-inline">Home</span></a>
 }
+
+@code {
+    [Parameter] public string? Action { get; set; }
+    
+    private async Task HandleLoginSucceeded()
+    {
+        await Task.Delay(100);  // Short delay to let RemoteAuthenticatorView finish
+        var returnUrl = await LocalStorageService.GetItemAsync<string>("returnurl");
+        if (!string.IsNullOrEmpty(returnUrl) && returnUrl != Navigation.Uri)
+        {
+            await LocalStorageService.RemoveItemAsync("returnurl"); // Clean up storage
+            Navigation.NavigateTo(returnUrl, true); // Redirect to the original URL
+        }
+    }
+}
+
+

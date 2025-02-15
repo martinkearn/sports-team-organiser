@@ -2,11 +2,11 @@
 
 @if (string.IsNullOrEmpty(IconCss))
 {
-    <a class="@Css" href="/games/@_nextGame.UrlSegment">Next Game</a>
+    <a class="@Css" href="/admin/games/@_nextGame.UrlSegment">Next Game</a>
 }
 else
 {
-    <a class="@Css" href="/games/@_nextGame.UrlSegment"><i class="@IconCss"></i> Next Game</a>
+    <a class="@Css" href="/admin/games/@_nextGame.UrlSegment"><i class="@IconCss"></i> Next Game</a>
 }
 
 @code {

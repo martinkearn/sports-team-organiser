@@ -1,0 +1,77 @@
+@page "/admin/ratings/{RatingUrlSegment}"
+@layout AdminLayout
+@inject IRatingEntityService RatingEntityEntityService
+@inject IPlayerService PlayerService
+@inject IGameService GameService
+@inject NavigationManager Navigation
+
+<PageTitle>TNF - @_pageTitle</PageTitle>
+
+<h1><i class="fa-regular fa-star me-2"></i> @_pageTitle</h1>
+
+<p>Ratings cannot be edited, only deleted</p>
+
+<h5>Date & Time</h5>
+<p>@_ratingEntity.Timestamp!.Value.ToString(Consts.DateTimeFormat)</p>
+
+<h5>Url Segment</h5>
+<p>@_ratingEntity.UrlSegment</p>
+
+<h5>Player</h5>
+<p><PlayerLink PlayerName="@_player.Name" PlayerUrlSegment="@_player.UrlSegment" /></p>
+
+<h5>Game</h5>
+<p><GameLink GameLabel="@_game.Label" GameUrlSegment="@_game.UrlSegment" /></p>
+
+<h5>Rating</h5>
+<p>@_ratingEntity.Rating</p>
+
+<h5>Notes</h5>
+@if (_ratingEntity?.Notes is not null)
+{
+	<p>@_ratingEntity.Notes</p>
+}
+else
+{
+	<p>No Notes</p>
+}
+
+<div class="hstack gap-2">
+	<a class="btn btn-secondary" href="/ratings/"><i class="fa-solid fa-arrow-left"></i>All Ratings</a>
+	<DeleteButtonWithCheck DeleteWhatLabel="@_pageTitle" ButtonLabel="Delete" ParentPageCallback="DeleteRating" />
+</div>
+
+@code {
+	[CascadingParameter] public AdminLayout Layout { get; set; } = null!;
+	
+	[Parameter]
+	public string RatingUrlSegment { get; set; } = null!;
+
+	private RatingEntity _ratingEntity = null!;
+
+	private Player _player = null!;
+	
+	private Game _game = null!;
+
+	private string _pageTitle = null!;
+
+	protected override void OnInitialized()
+	{
+		RefreshData();
+	}
+
+	private async Task DeleteRating()
+	{
+		await RatingEntityEntityService.DeleteRatingEntityAsync(_ratingEntity.RowKey);
+		Navigation.NavigateTo("/admin/ratings");
+	}
+
+	private void RefreshData()
+	{
+		_ratingEntity = RatingEntityEntityService.GetRatingEntityByUrlSegment(RatingUrlSegment);
+		_player = PlayerService.GetPlayer(_ratingEntity.PlayerRowKey);
+		_game = GameService.GetGame(_ratingEntity.GameRowKey);
+		_pageTitle = $"Rating for {_player.Name} {_game.Label}";
+		Layout.SetPageTitle(_pageTitle);
+	}
+}

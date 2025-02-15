@@ -1,0 +1,68 @@
+@page "/admin/transactions"
+@layout AdminLayout
+@inject ITransactionService TransactionService
+
+<PageTitle>TNF - @_pageTitle</PageTitle>
+
+<h1><i class="fa-solid fa-coins me-2"></i> @_pageTitle</h1>
+
+<table class="table table-striped">
+	<thead>
+	<tr>
+		<th scope="col">Transaction</th>
+		<th scope="col">Amount</th>
+		<th scope="col" class="d-none d-lg-table-cell">Player</th>
+		<th scope="col" class="d-none d-lg-table-cell">Game</th>
+		<th scope="col" class="d-none d-lg-table-cell">Notes</th>
+	</tr>
+	</thead>
+	<tbody>
+	@foreach (var t in _transactions)
+	{
+		<tr>
+			<td><TransactionLink UrlSegment="@t.UrlSegment" Label="@t.Label" /></td>
+			<td><CurrencyDisplay Amount="@t.Amount" /></td>
+			<td class="d-none d-lg-table-cell"><PlayerLink PlayerName="@t.PlayerName" PlayerUrlSegment="@t.PlayerUrlSegment" /></td>
+			@if (!string.IsNullOrEmpty(t.GameId))
+			{
+				<td class="d-none d-lg-table-cell"><GameLink GameLabel="@t.GameLabel" GameUrlSegment="@t.GameUrlSegment" /></td>
+			}
+			else
+			{
+				<td class="d-none d-lg-table-cell">No Game</td>
+			}
+			<td class="d-none d-lg-table-cell">@t.Notes</td>
+		</tr>
+	}
+	</tbody>
+</table>
+
+<p>Showing @_transactions.Count transactions.</p>
+<ShowMore ParentPageCallback="ShowMore" />
+
+@code {
+	[CascadingParameter] public AdminLayout Layout { get; set; } = null!;
+
+	private List<Transaction> _transactions = [];
+
+	private const int ItemsPerPage = 30;
+
+	private string _pageTitle = null!;
+
+	protected override void OnInitialized()
+	{
+		RefreshData();
+	}
+
+	private void ShowMore()
+	{
+		_transactions.AddRange(TransactionService.GetTransactions(_transactions.Count, ItemsPerPage));
+	}
+
+	private void RefreshData()
+	{
+		_transactions = TransactionService.GetTransactions(0, ItemsPerPage);
+		_pageTitle = "Transactions";
+		Layout.SetPageTitle(_pageTitle);
+	}
+}

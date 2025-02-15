@@ -1,4 +1,5 @@
-@page "/games/addplayerstogame"
+@page "/admin/games/addplayerstogame"
+@layout AdminLayout
 @inject IPlayerService PlayerService
 @inject IGameService GameService
 @inject IPlayerAtGameEntityService PlayerAtGameEntityService
@@ -8,10 +9,7 @@
 
 <h1><i class="fa-solid fa-people-group me-2"></i> @_pageTitle</h1>
 
-<AuthorizeView Policy="IsAdminEmail">
-    <Authorized>
-
-        <div class="mb-3">
+<div class="mb-3">
             <label class="form-label">Game</label>
             <InputSelect class="form-select" @bind-Value="_selectedGameId" @bind-Value:after="RefreshGame">
                 <option value="">Select Game ...</option>
@@ -30,7 +28,7 @@
             </InputSelect>
         </div>
 
-        <div class="mb-3">
+<div class="mb-3">
             <label class="form-label">Playing status for prospective players</label>
             <InputSelect class="form-select" @bind-Value="_selectedPlayingStatus" >
                 @foreach (var playingStatus in Enum.GetValues<Enums.PlayingStatus>())
@@ -40,7 +38,7 @@
             </InputSelect>
         </div>
 
-        <div class="mb-3">
+<div class="mb-3">
             <label class="form-label">Add prospective players</label>
             <InputSelect class="form-select" @bind-Value="_selectedProspectPagPlayerRowKey" @bind-Value:after="AddProspectPag">
                 <option value="" selected>Choose Player ...</option>
@@ -51,14 +49,7 @@
             </InputSelect>
         </div>
 
-    </Authorized>
-    <NotAuthorized>
-        <h4>Access Denied!</h4>
-        <a class="btn btn-secondary" href="authentication/login"><i class="fa-solid fa-key me-2"></i> Log in</a>
-    </NotAuthorized>
-</AuthorizeView>
-
-    @if (_prospectPags.Count > 0)
+@if (_prospectPags.Count > 0)
 {
     <div class="mb-3">
         <label class="form-label">Prospective players</label>
@@ -75,7 +66,7 @@
 }
 
 @code {
-    [CascadingParameter] public MainLayout MainLayout { get; set; } = null!;
+    [CascadingParameter] public AdminLayout Layout { get; set; } = null!;
     
     private List<Game> _games = [];
 
@@ -120,7 +111,7 @@
             await PlayerAtGameEntityService.UpsertPlayerAtGameEntityAsync(prospectPag);
         }
 
-        var nav = $"/games/{_selectedGame.UrlSegment}";
+        var nav = $"/admin/games/{_selectedGame.UrlSegment}";
         Navigation.NavigateTo(nav);
     }
 
@@ -139,7 +130,7 @@
         _selectedGameId = _nextGame.Id;
         _selectedGame = _nextGame;
         _pageTitle = "Add Players to Game";
-        MainLayout.SetPageTitle(_pageTitle);
+        Layout.SetPageTitle(_pageTitle);
     }
 
 }

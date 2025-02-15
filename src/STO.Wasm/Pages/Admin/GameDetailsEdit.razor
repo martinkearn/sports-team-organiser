@@ -1,0 +1,94 @@
+@page "/admin/games/{GameUrlSegment}/edit"
+@layout AdminLayout
+@inject IGameService GameService
+@inject NavigationManager Navigation
+
+<PageTitle>TNF - @_pageTitle</PageTitle>
+
+<h1><i class="fa-solid fa-people-group me-2"></i> @_pageTitle</h1>
+
+<div class="mb-3 mt-3">
+    <label class="form-label">Date</label>
+    <InputDate class="form-control" @bind-Value="_game.DateTime" @bind-Value:after="Edit" />
+</div>
+
+<div class="mb-3 mt-3">
+    <label class="form-label">Time</label>
+    <div class="row">
+        <div class="col-auto">
+            <div class="input-group">
+                <InputNumber class="form-control" min="0" max="23" @bind-Value="_hour" @bind-Value:after="Edit" />
+                <InputNumber class="form-control" min="0" max="59" @bind-Value="_minute" @bind-Value:after="Edit" />
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="mb-3 mt-3">
+    <label class="form-label">Title</label>
+    <InputText class="form-control" @bind-Value="_game.Title" @bind-Value:after="Edit" />
+</div>
+
+<div class="mb-3 mt-3">
+    <label class="form-label">Notes</label>
+    <InputText class="form-control" @bind-Value="_game.Notes" @bind-Value:after="Edit" />
+</div>
+
+<div class="mb-3 mt-3">
+    <label class="form-label">Url Segment</label>
+    <InputText class="form-control" @bind-Value="_game.UrlSegment" disabled="true"  />
+</div>
+
+<div class="mb-3">
+    <label class="form-label">Last Updated</label>
+    <span class="form-control bg-body-secondary">@_game.LastUpdated</span>
+</div>
+
+<div class="hstack gap-2">
+    <a class="btn btn-secondary" href="/games/@_game.UrlSegment"><i class="fa-solid fa-arrow-left"></i>Back to Game</a>
+    <DeleteButtonWithCheck @rendermode="RenderMode.InteractiveAuto" DeleteWhatLabel="@_game.Label" ButtonLabel="Delete" ParentPageCallback="DeleteGame" />
+</div>
+
+
+@code {
+    [CascadingParameter] public AdminLayout Layout { get; set; } = null!;
+    
+    [Parameter] public string GameUrlSegment { get; set; } = null!;
+
+    private Game _game = null!;
+
+    private int _hour;
+
+    private int _minute;
+
+    private string _pageTitle = null!;
+
+    protected override void OnInitialized()
+    {
+        RefreshData();
+    }
+
+    private async Task Edit()
+    {
+        _game.DateTime = new DateTime(_game.DateTime.Year, _game.DateTime.Month, _game.DateTime.Day, _hour, _minute, 0);
+        await GameService.UpsertGameAsync(_game);
+        GameUrlSegment = _game.UrlSegment;
+        StateHasChanged();
+        RefreshData();
+    }
+
+    private async Task DeleteGame()
+    {
+        await GameService.DeleteGameAsync(_game.Id);
+        Navigation.NavigateTo("/admin/games");
+    }
+
+    private void RefreshData()
+    {
+        _game = GameService.GetGameByUrlSegment(GameUrlSegment);
+        _hour = _game.DateTime.Hour;
+        _minute = _game.DateTime.Minute;
+        _pageTitle = $"Edit {_game.Label}";
+        Layout.SetPageTitle(_pageTitle);
+    }
+}

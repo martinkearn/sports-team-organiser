@@ -1,0 +1,90 @@
+@page "/admin/games/add"
+@layout AdminLayout
+@inject IGameService GameService
+@inject NavigationManager Navigation
+
+<PageTitle>TNF - @_pageTitle</PageTitle>
+
+<h1><i class="fa-solid fa-people-group me-2"></i> @_pageTitle</h1>
+
+<EditForm Model="@_newGame" OnSubmit="@Add" Context="editForm">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+    <div class="mb-3">
+        <label for="addDate" class="form-label">Date</label>
+        <InputDate class="form-control" id="addDate" @bind-Value="_newGame.DateTime" />
+    </div>
+
+    <div class="mb-3">
+        <label for="addDate" class="form-label">Time</label>
+        <div class="row">
+            <div class="col-auto">
+                <div class="input-group">
+                    <InputNumber class="form-control" min="0" max="23" @bind-Value="_hour" />
+                    <InputNumber class="form-control" min="0" max="59" @bind-Value="_minute" />
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <label for="addTitle" class="form-label">Title</label>
+        <InputText class="form-control" id="addTitle" @bind-Value="_newGame.Title" />
+    </div>
+
+    <div class="mb-3">
+        <label for="addNotes" class="form-label">Notes</label>
+        <InputText class="form-control" id="addNotes" @bind-Value="_newGame.Notes" />
+    </div>
+
+    <div class="mb-3 mt-3">
+        <label class="form-label">Label</label>
+        <input disabled="true" class="form-control valid" value="@_newGame.Label">
+    </div>
+
+    <div class="mb-3 mt-3">
+        <label class="form-label">Url Segment</label>
+        <InputText class="form-control" @bind-Value="_newGame.UrlSegment" disabled="true"  />
+    </div>
+
+    <div class="hstack gap-2">
+        <button type="submit" class="btn btn-secondary"><i class="fa-solid fa-plus"></i> Add Game</button>
+    </div>
+</EditForm>
+
+@code {
+    [CascadingParameter] public AdminLayout Layout { get; set; } = null!;
+    
+    private Game _newGame = new();
+
+    private int _hour = 0!;
+
+    private int _minute = 0!;
+
+    private string _pageTitle = null!;
+
+    protected override void OnInitialized()
+    {
+        RefreshData();
+    }
+
+    private async Task Add()
+    {
+        var dt = new DateTime(_newGame.DateTime.Year, _newGame.DateTime.Month, _newGame.DateTime.Day, _hour, _minute, 0, DateTimeKind.Utc);
+        _newGame.DateTime = dt;
+        await GameService.UpsertGameAsync(_newGame);
+        Navigation.NavigateTo("/admin/games");
+    }
+
+    private void RefreshData()
+    {
+        _hour = 18;
+        _minute = 30;
+        _newGame = new Game()
+        {
+            DateTime = DateTime.UtcNow
+        };
+        _pageTitle = "Add a Game";
+        Layout.SetPageTitle(_pageTitle);
+    }
+}

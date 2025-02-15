@@ -4,9 +4,12 @@
 @inject NavigationManager Navigation
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 
-<h1>Authentication @Action</h1>
+<h1><RemoteAuthenticatorView Action="@Action" OnLogInSucceeded="@HandleLoginSucceeded" /></h1>
 
-<p><RemoteAuthenticatorView Action="@Action" OnLogInSucceeded="@HandleLoginSucceeded" /></p>
+@if (Action == "logged-out")
+{
+    <a class="btn btn-secondary" href="/" title="Home"><i class="fa-solid fa-home"></i> <span class="d-none d-md-inline">Home</span></a>
+}
 
 @code {
     [Parameter] public string? Action { get; set; }

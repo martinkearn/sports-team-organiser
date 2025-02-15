@@ -1,16 +1,26 @@
 ﻿@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 @inject NavigationManager Navigation
+@inject ILocalStorageService LocalStorageService
 
 <AuthorizeView>
     <Authorized>
         <a class="nav-link" @onclick="BeginLogOut" href="#">Logout</a>
     </Authorized>
     <NotAuthorized>
-        <a class="nav-link" href="authentication/login">Login</a>
+        <button @onclick="LoginWithReturnUrl">Login</button>
     </NotAuthorized>
 </AuthorizeView>
 
 @code{
+    private async Task LoginWithReturnUrl()
+    {
+        var currentUrl = Navigation.Uri; // Capture the current URL
+        await LocalStorageService.SetItemAsStringAsync("ReturnUrl", currentUrl);
+        
+        // Redirect to the login page using the Microsoft authentication service
+        Navigation.NavigateTo("authentication/login");
+    }
+    
     public void BeginLogOut()
     {
         Navigation.NavigateToLogout("authentication/logout");

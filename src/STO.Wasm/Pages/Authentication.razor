@@ -1,18 +1,29 @@
 ﻿@page "/authentication/{Action}"
-@layout MainLayout
+@inject ILocalStorageService LocalStorageService
 @inject NavigationManager Navigation
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 
 <h1>Authentication @Action</h1>
 
-<p><RemoteAuthenticatorView Action="@Action" OnLoginSucceeded="@HandleLoginSucceeded" /></p>
+<p><RemoteAuthenticatorView Action="@Action" OnLogInSucceeded="@HandleLoginSucceeded" /></p>
 
-@code{
+<a href="/">Home</a>
+<a href="/testpageone">One</a>
+<a href="/testpagetwo">Two</a>
+
+@code {
     [Parameter] public string? Action { get; set; }
-
-    private void HandleLoginSucceeded()
+    
+    private async Task HandleLoginSucceeded()
     {
-        //ToDo: This redirect works for external sites, but not internal ones. For internal it goes to home page.
-        Navigation.NavigateTo("https://www.bing.com");
+        await Task.Delay(100);  // Short delay to let RemoteAuthenticatorView finish
+        var returnUrl = await LocalStorageService.GetItemAsync<string>("ReturnUrl");
+        if (!string.IsNullOrEmpty(returnUrl) && returnUrl != Navigation.Uri)
+        {
+            await LocalStorageService.RemoveItemAsync("returnUrl"); // Clean up storage
+            Navigation.NavigateTo(returnUrl, true); // Redirect to the original URL
+        }
     }
 }
+
+

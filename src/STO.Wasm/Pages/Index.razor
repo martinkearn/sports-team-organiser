@@ -1,6 +1,18 @@
 ﻿@page "/"
-@layout MainLayout
 
 <PageTitle>Tuesday.Football</PageTitle>
 
 <h1>Welcome to Tuesday.Football</h1>
+
+<a href="/">Home</a>
+<a href="/testpageone">One</a>
+<a href="/testpagetwo">Two</a>
+
+<AuthorizeView Policy="IsAdminEmail">
+    <Authorized>
+        Authenticated
+    </Authorized>
+    <NotAuthorized>
+        Not Authenticated
+    </NotAuthorized>
+</AuthorizeView>

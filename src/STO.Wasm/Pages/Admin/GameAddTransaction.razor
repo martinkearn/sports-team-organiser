@@ -9,66 +9,56 @@
 <PageTitle>@_pageTitle</PageTitle>
 
 <h1><i class="fa-solid fa-people-group me-2"></i> @_pageTitle</h1>
-
-<AuthorizeView Policy="IsAdminEmail">
-    <Authorized>
         
-        <div class="mb-3">
-            <label class="form-label">Game</label>
-            <InputSelect class="form-select" @bind-Value="_selectedGameId" @bind-Value:after="RefreshGame">
-                <option value="">Select Game ...</option>
-                @foreach (var g in _games)
-                {
-                    var gameId = g.Id;
-                    if (gameId == _nextGame?.Id)
-                    {
-                        <option value="@gameId" selected><GameLink GameLabel="@g.Label" GameUrlSegment="@g.UrlSegment" /></option>
-                    }
-                    else
-                    {
-                        <option value="@gameId"><GameLink GameLabel="@g.Label" GameUrlSegment="@g.UrlSegment" /></option>
-                    }
-                }
-            </InputSelect>
-        </div>
-
-        <div class="mb-3">
-            <label class="form-label">Players to add payments for</label>
-            <InputSelect class="form-select" @bind-Value="_selectedProspectPagPlayerRowKey" @bind-Value:after="AddProspectTransaction">
-                <option value="" selected>Choose Player ...</option>
-                @foreach (var player in _pagPlayers)
-                {
-                    <option value="@player.Id">@player.Name</option>
-                }
-            </InputSelect>
-        </div>
-
-        <div class="mb-3">
-            <label class="form-label">Prospective Payments</label>
-            @foreach (var prospectTransaction in _prospectTransactions)
+<div class="mb-3">
+    <label class="form-label">Game</label>
+    <InputSelect class="form-select" @bind-Value="_selectedGameId" @bind-Value:after="RefreshGame">
+        <option value="">Select Game ...</option>
+        @foreach (var g in _games)
+        {
+            var gameId = g.Id;
+            if (gameId == _nextGame?.Id)
             {
-                var player = PlayerService.GetPlayer(prospectTransaction.PlayerId);
-                <p><CurrencyDisplay Amount="@prospectTransaction.Amount" BlackText="true" /> for <PlayerLink PlayerName="@player.Name" PlayerUrlSegment="@player.UrlSegment" /> </p>
+                <option value="@gameId" selected><GameLink GameLabel="@g.Label" GameUrlSegment="@g.UrlSegment" /></option>
             }
-        </div>
-
-        @if (_showLongRunning)
-        {
-            <LongRunning />
+            else
+            {
+                <option value="@gameId"><GameLink GameLabel="@g.Label" GameUrlSegment="@g.UrlSegment" /></option>
+            }
         }
-        else
-        {
-            <div class="hstack gap-2">
-                <button class="btn btn-secondary" @onclick="AddProspectTransactionsToGame"><i class="fa-solid fa-plus"></i> Add @_prospectTransactions.Count Payments to Game</button>
-            </div>
-        }
+    </InputSelect>
+</div>
 
-    </Authorized>
-    <NotAuthorized>
-        <h4>Access Denied!</h4>
-        <a class="btn btn-secondary" href="authentication/login"><i class="fa-solid fa-key me-2"></i> Log in</a>
-    </NotAuthorized>
-</AuthorizeView>
+<div class="mb-3">
+    <label class="form-label">Players to add payments for</label>
+    <InputSelect class="form-select" @bind-Value="_selectedProspectPagPlayerRowKey" @bind-Value:after="AddProspectTransaction">
+        <option value="" selected>Choose Player ...</option>
+        @foreach (var player in _pagPlayers)
+        {
+            <option value="@player.Id">@player.Name</option>
+        }
+    </InputSelect>
+</div>
+
+<div class="mb-3">
+    <label class="form-label">Prospective Payments</label>
+    @foreach (var prospectTransaction in _prospectTransactions)
+    {
+        var player = PlayerService.GetPlayer(prospectTransaction.PlayerId);
+        <p><CurrencyDisplay Amount="@prospectTransaction.Amount" BlackText="true" /> for <PlayerLink PlayerName="@player.Name" PlayerUrlSegment="@player.UrlSegment" /> </p>
+    }
+</div>
+
+@if (_showLongRunning)
+{
+    <LongRunning />
+}
+else
+{
+    <div class="hstack gap-2">
+        <button class="btn btn-secondary" @onclick="AddProspectTransactionsToGame"><i class="fa-solid fa-plus"></i> Add @_prospectTransactions.Count Payments to Game</button>
+    </div>
+}
 
 @code {
     [CascadingParameter] public AdminLayout Layout { get; set; } = null!;

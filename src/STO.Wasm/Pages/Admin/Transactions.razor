@@ -6,49 +6,39 @@
 
 <h1><i class="fa-solid fa-coins me-2"></i> @_pageTitle</h1>
 
-<AuthorizeView Policy="IsAdminEmail">
-	<Authorized>
-
-		<table class="table table-striped">
-			<thead>
-			<tr>
-				<th scope="col">Transaction</th>
-				<th scope="col">Amount</th>
-				<th scope="col" class="d-none d-lg-table-cell">Player</th>
-				<th scope="col" class="d-none d-lg-table-cell">Game</th>
-				<th scope="col" class="d-none d-lg-table-cell">Notes</th>
-			</tr>
-			</thead>
-			<tbody>
-			@foreach (var t in _transactions)
+<table class="table table-striped">
+	<thead>
+	<tr>
+		<th scope="col">Transaction</th>
+		<th scope="col">Amount</th>
+		<th scope="col" class="d-none d-lg-table-cell">Player</th>
+		<th scope="col" class="d-none d-lg-table-cell">Game</th>
+		<th scope="col" class="d-none d-lg-table-cell">Notes</th>
+	</tr>
+	</thead>
+	<tbody>
+	@foreach (var t in _transactions)
+	{
+		<tr>
+			<td><TransactionLink UrlSegment="@t.UrlSegment" Label="@t.Label" /></td>
+			<td><CurrencyDisplay Amount="@t.Amount" /></td>
+			<td class="d-none d-lg-table-cell"><PlayerLink PlayerName="@t.PlayerName" PlayerUrlSegment="@t.PlayerUrlSegment" /></td>
+			@if (!string.IsNullOrEmpty(t.GameId))
 			{
-				<tr>
-					<td><TransactionLink UrlSegment="@t.UrlSegment" Label="@t.Label" /></td>
-					<td><CurrencyDisplay Amount="@t.Amount" /></td>
-					<td class="d-none d-lg-table-cell"><PlayerLink PlayerName="@t.PlayerName" PlayerUrlSegment="@t.PlayerUrlSegment" /></td>
-					@if (!string.IsNullOrEmpty(t.GameId))
-					{
-						<td class="d-none d-lg-table-cell"><GameLink GameLabel="@t.GameLabel" GameUrlSegment="@t.GameUrlSegment" /></td>
-					}
-					else
-					{
-						<td class="d-none d-lg-table-cell">No Game</td>
-					}
-					<td class="d-none d-lg-table-cell">@t.Notes</td>
-				</tr>
+				<td class="d-none d-lg-table-cell"><GameLink GameLabel="@t.GameLabel" GameUrlSegment="@t.GameUrlSegment" /></td>
 			}
-			</tbody>
-		</table>
+			else
+			{
+				<td class="d-none d-lg-table-cell">No Game</td>
+			}
+			<td class="d-none d-lg-table-cell">@t.Notes</td>
+		</tr>
+	}
+	</tbody>
+</table>
 
-		<p>Showing @_transactions.Count transactions.</p>
-		<ShowMore ParentPageCallback="ShowMore" />
-
-	</Authorized>
-	<NotAuthorized>
-		<h4>Access Denied!</h4>
-		<a class="btn btn-secondary" href="authentication/login"><i class="fa-solid fa-key me-2"></i> Log in</a>
-	</NotAuthorized>
-</AuthorizeView>
+<p>Showing @_transactions.Count transactions.</p>
+<ShowMore ParentPageCallback="ShowMore" />
 
 @code {
 	[CascadingParameter] public AdminLayout Layout { get; set; } = null!;

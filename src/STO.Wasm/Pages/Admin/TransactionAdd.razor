@@ -9,63 +9,54 @@
 
 <h1><i class="fa-solid fa-coins me-2"></i> @_pageTitle</h1>
 
-<AuthorizeView Policy="IsAdminEmail">
-	<Authorized>
-		<EditForm Model="@_newTransaction" OnValidSubmit="Add" Context="newTransaction">
-			<DataAnnotationsValidator />
-			<ValidationSummary />
-			<div class="mb-3">
-				<label class="form-label">Player</label>
-				<InputSelect class="form-select" @bind-Value="_newTransaction.PlayerId">
-					<option value="">Select Player ...</option>
-					@foreach (var p in _players)
-					{
-						<option value="@p.Id">@p.Name</option>
-					}
-				</InputSelect>
-			</div>
-			
-			<div class="mb-3">
-				<label class="form-label">Game</label>
-				<InputSelect class="form-select" @bind-Value="_newTransaction.GameId">
-					<option value="">Select Game ...</option>
-					@foreach (var g in _games)
-					{
-						<option value="@g.Id"><GameLink GameLabel="@g.Label" GameUrlSegment="@g.UrlSegment" /></option>
-					}
-				</InputSelect>
-			</div>
+<EditForm Model="@_newTransaction" OnValidSubmit="Add" Context="newTransaction">
+	<DataAnnotationsValidator />
+	<ValidationSummary />
+	<div class="mb-3">
+		<label class="form-label">Player</label>
+		<InputSelect class="form-select" @bind-Value="_newTransaction.PlayerId">
+			<option value="">Select Player ...</option>
+			@foreach (var p in _players)
+			{
+				<option value="@p.Id">@p.Name</option>
+			}
+		</InputSelect>
+	</div>
+	
+	<div class="mb-3">
+		<label class="form-label">Game</label>
+		<InputSelect class="form-select" @bind-Value="_newTransaction.GameId">
+			<option value="">Select Game ...</option>
+			@foreach (var g in _games)
+			{
+				<option value="@g.Id"><GameLink GameLabel="@g.Label" GameUrlSegment="@g.UrlSegment" /></option>
+			}
+		</InputSelect>
+	</div>
 
-			<div class="mb-3">
-				<label for="addDate" class="form-label">Date</label>
-				<InputDate class="form-control" id="addDate" @bind-Value="_newTransaction.DateTime" />
-			</div>
+	<div class="mb-3">
+		<label for="addDate" class="form-label">Date</label>
+		<InputDate class="form-control" id="addDate" @bind-Value="_newTransaction.DateTime" />
+	</div>
 
-			<div class="mb-3">
-				<label for="addNotes" class="form-label">Notes</label>
-				<InputText class="form-control" id="addNotes" @bind-Value="_newTransaction.Notes" />
-			</div>
+	<div class="mb-3">
+		<label for="addNotes" class="form-label">Notes</label>
+		<InputText class="form-control" id="addNotes" @bind-Value="_newTransaction.Notes" />
+	</div>
 
-			<div class="mb-3">
-				<label for="addAmount" class="form-label">Amount</label>
-				<div class="input-group">
-					<span class="input-group-text">£</span>
-					<InputNumber type="number" class="form-control" id="addAmount" @bind-Value="_newTransaction.Amount" />
-				</div>
-				<div class="form-text">Positive for payments, negative to pay for a played game.</div>
-			</div>
+	<div class="mb-3">
+		<label for="addAmount" class="form-label">Amount</label>
+		<div class="input-group">
+			<span class="input-group-text">£</span>
+			<InputNumber type="number" class="form-control" id="addAmount" @bind-Value="_newTransaction.Amount" />
+		</div>
+		<div class="form-text">Positive for payments, negative to pay for a played game.</div>
+	</div>
 
-			<div class="hstack gap-2">
-				<button type="submit" class="btn btn-secondary"><i class="fa-solid fa-plus"></i> Add Transaction</button>
-			</div>
-		</EditForm>
-	</Authorized>
-	<NotAuthorized>
-		<h4>Access Denied!</h4>
-		<a class="btn btn-secondary" href="authentication/login"><i class="fa-solid fa-key me-2"></i> Log in</a>
-	</NotAuthorized>
-</AuthorizeView>
-
+	<div class="hstack gap-2">
+		<button type="submit" class="btn btn-secondary"><i class="fa-solid fa-plus"></i> Add Transaction</button>
+	</div>
+</EditForm>
 
 @code {
 	[CascadingParameter] public AdminLayout Layout { get; set; } = null!;

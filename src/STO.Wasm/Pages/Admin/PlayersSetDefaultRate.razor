@@ -6,38 +6,28 @@
 
 <h1><i class="fa-solid fa-user me-2"></i> @_pageTitle</h1>
 
-<AuthorizeView Policy="IsAdminEmail">
-    <Authorized>
-
-        @if (!_showLongRunning)
+@if (!_showLongRunning)
+{
+    <div class="mb-3">
+        <label class="form-label">Default Rate</label>
+        <div class="input-group">
+            <span class="input-group-text">£</span>
+            <InputNumber type="number" min="0" class="form-control" id="addDefaultRate" @bind-Value="_newDefaultRate"  />
+        </div>
+    </div>
+    
+    <div class="hstack gap-2">
+        <button class="btn btn-secondary" @onclick="SetDefaultRate" title="Set Default Rate"><i class="fa-solid fa-save"></i> <span class="d-none d-md-inline">Set Default Rate</span></button>
+        @if (_playerUpdateCount > 0)
         {
-            <div class="mb-3">
-                <label class="form-label">Default Rate</label>
-                <div class="input-group">
-                    <span class="input-group-text">£</span>
-                    <InputNumber type="number" min="0" class="form-control" id="addDefaultRate" @bind-Value="_newDefaultRate"  />
-                </div>
-            </div>
-            
-            <div class="hstack gap-2">
-                <button class="btn btn-secondary" @onclick="SetDefaultRate" title="Set Default Rate"><i class="fa-solid fa-save"></i> <span class="d-none d-md-inline">Set Default Rate</span></button>
-                @if (_playerUpdateCount > 0)
-                {
-                    <p>@_playerUpdateCount players updated with new default rate of <CurrencyDisplay Amount="@_newDefaultRate" BlackText="true" /></p>
-                }
-            </div>
+            <p>@_playerUpdateCount players updated with new default rate of <CurrencyDisplay Amount="@_newDefaultRate" BlackText="true" /></p>
         }
-        else
-        {
-            <LongRunning />
-        }
-
-    </Authorized>
-    <NotAuthorized>
-        <h4>Access Denied!</h4>
-        <a class="btn btn-secondary" href="authentication/login"><i class="fa-solid fa-key me-2"></i> Log in</a>
-    </NotAuthorized>
-</AuthorizeView>
+    </div>
+}
+else
+{
+    <LongRunning />
+}
 
 @code {
     [CascadingParameter] public AdminLayout Layout { get; set; } = default!;

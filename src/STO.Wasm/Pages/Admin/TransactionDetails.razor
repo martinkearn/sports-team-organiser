@@ -8,85 +8,75 @@
 
 <h1><i class="fa-solid fa-coins me-2"></i> @_pageTitle</h1>
 
-<AuthorizeView Policy="IsAdminEmail">
-	<Authorized>
+<p>Transactions cannot be edited, only deleted</p>
 
-		<p>Transactions cannot be edited, only deleted</p>
+<div class="mb-3 mt-3">
+	<label class="form-label">Id</label>
+	<div class="form-control bg-body-secondary">@_transaction.Id</div>
+</div>
 
-		<div class="mb-3 mt-3">
-			<label class="form-label">Id</label>
-			<div class="form-control bg-body-secondary">@_transaction.Id</div>
-		</div>
+<div class="mb-3 mt-3">
+	<label class="form-label">Label</label>
+	<div class="form-control bg-body-secondary">@_transaction.Label</div>
+</div>
 
-		<div class="mb-3 mt-3">
-			<label class="form-label">Label</label>
-			<div class="form-control bg-body-secondary">@_transaction.Label</div>
-		</div>
+<div class="mb-3 mt-3">
+	<label class="form-label">UrlSegment</label>
+	<div class="form-control bg-body-secondary">@_transaction.UrlSegment</div>
+</div>
 
-		<div class="mb-3 mt-3">
-			<label class="form-label">UrlSegment</label>
-			<div class="form-control bg-body-secondary">@_transaction.UrlSegment</div>
-		</div>
+<div class="mb-3 mt-3">
+	<label class="form-label">Date</label>
+	<div class="form-control bg-body-secondary">@_transaction.DateTime.ToString(CultureInfo.CurrentCulture)</div>
+</div>
 
-		<div class="mb-3 mt-3">
-			<label class="form-label">Date</label>
-			<div class="form-control bg-body-secondary">@_transaction.DateTime.ToString(CultureInfo.CurrentCulture)</div>
-		</div>
+<div class="mb-3 mt-3">
+	<label class="form-label">Amount</label>
+	<div class="form-control bg-body-secondary"><CurrencyDisplay Amount="@_transaction.Amount" /></div>
+</div>
 
-		<div class="mb-3 mt-3">
-			<label class="form-label">Amount</label>
-			<div class="form-control bg-body-secondary"><CurrencyDisplay Amount="@_transaction.Amount" /></div>
-		</div>
+<div class="mb-3 mt-3">
+	<label class="form-label">Notes</label>
+	<div class="form-control bg-body-secondary">
+		@if (!string.IsNullOrEmpty(_transaction.Notes))
+		{
+			@_transaction.Notes
+		}
+		else
+		{
+			<span>No Notes</span>
+		}
+	</div>
+</div>
 
-		<div class="mb-3 mt-3">
-			<label class="form-label">Notes</label>
-			<div class="form-control bg-body-secondary">
-				@if (!string.IsNullOrEmpty(_transaction.Notes))
-				{
-					@_transaction.Notes
-				}
-				else
-				{
-					<span>No Notes</span>
-				}
-			</div>
-		</div>
+<div class="mb-3 mt-3">
+	<label class="form-label">Game</label>
+	<div class="form-control bg-body-secondary">
+		@if (!string.IsNullOrEmpty(_transaction.GameId))
+		{
+			<span><GameLink GameLabel="@_transaction.GameLabel" GameUrlSegment="@_transaction.GameLabel" /></span>
+		}
+		else
+		{
+			<span>No Game</span>
+		}
+	</div>
+</div>
 
-		<div class="mb-3 mt-3">
-			<label class="form-label">Game</label>
-			<div class="form-control bg-body-secondary">
-				@if (!string.IsNullOrEmpty(_transaction.GameId))
-				{
-					<span><GameLink GameLabel="@_transaction.GameLabel" GameUrlSegment="@_transaction.GameLabel" /></span>
-				}
-				else
-				{
-					<span>No Game</span>
-				}
-			</div>
-		</div>
+<div class="mb-3 mt-3">
+	<label class="form-label">Player</label>
+	<div class="form-control bg-body-secondary"><PlayerLink PlayerName="@_transaction.PlayerName" PlayerUrlSegment="@_transaction.PlayerUrlSegment" /></div>
+</div>
 
-		<div class="mb-3 mt-3">
-			<label class="form-label">Player</label>
-			<div class="form-control bg-body-secondary"><PlayerLink PlayerName="@_transaction.PlayerName" PlayerUrlSegment="@_transaction.PlayerUrlSegment" /></div>
-		</div>
+<div class="mb-3">
+	<label class="form-label">Last Updated</label>
+	<div class="form-control bg-body-secondary">@_transaction.LastUpdated</div>
+</div>
 
-		<div class="mb-3">
-			<label class="form-label">Last Updated</label>
-			<div class="form-control bg-body-secondary">@_transaction.LastUpdated</div>
-		</div>
-
-		<div class="hstack gap-2">
-			<a class="btn btn-secondary" href="/transactions/"><i class="fa-solid fa-arrow-left"></i> All Transactions</a>
-			<DeleteButtonWithCheck DeleteWhatLabel="@_pageTitle" ButtonLabel="Delete" ParentPageCallback="DeleteTransaction" />
-		</div>
-
-	</Authorized>
-	<NotAuthorized>
-		<h4>Access Denied!</h4>
-		<a class="btn btn-secondary" href="authentication/login"><i class="fa-solid fa-key me-2"></i> Log in</a>
-	</NotAuthorized>
-</AuthorizeView>
+<div class="hstack gap-2">
+	<a class="btn btn-secondary" href="/transactions/"><i class="fa-solid fa-arrow-left"></i> All Transactions</a>
+	<DeleteButtonWithCheck DeleteWhatLabel="@_pageTitle" ButtonLabel="Delete" ParentPageCallback="DeleteTransaction" />
+</div>
 
 @code {
 	[CascadingParameter] public AdminLayout Layout { get; set; } = null!;

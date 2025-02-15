@@ -1,7 +1,4 @@
-﻿@inject ILocalStorageService LocalStorageService
-@inject NavigationManager Navigation
-
-@*<CascadingAuthenticationState>*@
+﻿<CascadingAuthenticationState>
     <Router AppAssembly="@typeof(App).Assembly">
         <Found Context="routeData">
             <AuthorizeRouteView RouteData="@routeData"/>
@@ -14,19 +11,5 @@
             </LayoutView>
         </NotFound>
     </Router>
-@*</CascadingAuthenticationState>*@
+</CascadingAuthenticationState>
 
-@*@code {
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            var returnUrl = await LocalStorageService.GetItemAsync<string>("ReturnUrl");
-            if (!string.IsNullOrEmpty(returnUrl) && returnUrl != Navigation.Uri)
-            {
-                await LocalStorageService.RemoveItemAsync("returnUrl"); // Clean up storage
-                Navigation.NavigateTo(returnUrl, true); // Redirect to the original URL
-            }
-        }
-    }
-}*@

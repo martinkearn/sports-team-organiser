@@ -5,7 +5,7 @@
 <CascadingValue Value="this">
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark" aria-label="Eighth navbar example">
         <div class="container">
-            <a class="navbar-brand" href="/admin">Tuesday.Football Admin</a>
+            <a class="navbar-brand" href="/">Tuesday.Football</a>
 
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsExample07" aria-controls="navbarsExample07" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -15,11 +15,14 @@
                 <Authorized>
                     <div class="collapse navbar-collapse" id="navbarsExample07">
                         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                            <li class="nav-item">
+                                <NavLink class="nav-link" href="admin" Match="NavLinkMatch.All">Admin</NavLink>
+                            </li>
                             <li class="nav-item dropdown">
                                 <NavLink class="nav-link dropdown-toggle" href="admin/games" data-bs-toggle="dropdown" aria-expanded="false" Match="NavLinkMatch.Prefix">Games</NavLink>
                                 <ul class="dropdown-menu">
                                     <li><NavLink class="dropdown-item" href="admin/games" Match="NavLinkMatch.All">Games</NavLink></li>
-                                    <NextGameLink Css="dropdown-item" />
+                                    <NextGameLink Css="dropdown-item"/>
                                     <li><NavLink class="dropdown-item" href="admin/games/add" Match="NavLinkMatch.All">Add Game</NavLink></li>
                                     <li><NavLink class="dropdown-item" href="admin/games/addplayerstogame" Match="NavLinkMatch.All">Add Players to Game</NavLink></li>
                                     <li><NavLink class="dropdown-item" href="admin/games/addtransactionstogame" Match="NavLinkMatch.All">Add Transactions to Game</NavLink></li>
@@ -56,7 +59,7 @@
                                 <a class="nav-link" target="_blank" href="https://chat.whatsapp.com/HJD3Tz8v8Lv2skZj4DFEOf">WhatsApp</a>
                             </li>
                             <li class="nav-item">
-                                <LoginDisplay DisplayAsButton="false" />
+                                <LoginDisplay DisplayAsButton="false"/>
                             </li>
                         </ul>
                     </div>

@@ -4,10 +4,10 @@
 
 <AuthorizeView>
     <Authorized>
-        <a class="nav-link" @onclick="BeginLogOut" href="#">Logout</a>
+        <a class="nav-link" @onclick="LogOut" href="authentication/logout">Logout</a>
     </Authorized>
     <NotAuthorized>
-        <button @onclick="LoginWithReturnUrl">Login</button>
+        <a class="nav-link" @onclick="LoginWithReturnUrl" href="authentication/login">Login</a>
     </NotAuthorized>
 </AuthorizeView>
 
@@ -21,7 +21,7 @@
         Navigation.NavigateTo("authentication/login");
     }
     
-    public void BeginLogOut()
+    public void LogOut()
     {
         Navigation.NavigateToLogout("authentication/logout");
     }

@@ -5,6 +5,17 @@ namespace STO.Services;
 
 public class PlayerAtGameService : IPlayerAtGameService
 {
+    private readonly IEnumerable<PlayerAtGameEntity> _pagEntities;
+    private readonly IEnumerable<GameEntity> _gameEntities;
+    private readonly IEnumerable<PlayerEntity> _playerEntities;
+
+    public PlayerAtGameService(IDataService dataService)
+    {
+        _pagEntities = dataService.PlayerAtGameEntities.OrderByDescending(o => o.UrlSegment);
+        _gameEntities = dataService.GameEntities.OrderByDescending(o => o.Date);
+        _playerEntities = dataService.PlayerEntities.OrderByDescending(o => o.Name);
+    }
+    
     public List<PlayerAtGame> GetPags(int? skip, int? take)
     {
         throw new NotImplementedException();

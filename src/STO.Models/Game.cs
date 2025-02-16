@@ -10,7 +10,7 @@ public class Game
     public string Id { get; set; } = null!;
     
     /// <summary>
-    /// The DateTimer for when teh game will start.
+    /// The DateTime for when the game will start.
     /// </summary>
     [Required]
     public DateTime DateTime

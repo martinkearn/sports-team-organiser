@@ -15,7 +15,30 @@ public class PlayerAtGameService : IPlayerAtGameService
         _gameEntities = dataService.GameEntities.OrderByDescending(o => o.Date);
         _playerEntities = dataService.PlayerEntities.OrderByDescending(o => o.Name);
     }
-    
+
+    private PlayerAtGame ConstructPag(string pagId)
+    {
+        var pag = new PlayerAtGame();
+        
+        return pag;
+    }
+
+    private PlayerAtGameEntity DeconstructPag(PlayerAtGame pag)
+    {
+        var pe = new PlayerAtGameEntity()
+        {
+            RowKey = pag.Id,
+            PlayerRowKey = pag.PlayerId,
+            GameRowKey = pag.GameId,
+            Forecast = pag.Forecast,
+            Played = pag.Played,
+            Team = pag.Team,
+            UrlSegment = pag.UrlSegment,
+        };
+
+        return pe;
+    }
+
     public List<PlayerAtGame> GetPags(int? skip, int? take)
     {
         throw new NotImplementedException();

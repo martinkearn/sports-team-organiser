@@ -6,8 +6,6 @@ namespace STO.Services;
 public class PlayerAtGameService : IPlayerAtGameService
 {
     private readonly IEnumerable<PlayerAtGameEntity> _pagEntities;
-    private readonly IEnumerable<GameEntity> _gameEntities;
-    private readonly IEnumerable<PlayerEntity> _playerEntities;
     private readonly IDataService _dataService;
     private readonly IPlayerService _playerService;
     private readonly IGameService _gameService;
@@ -15,8 +13,6 @@ public class PlayerAtGameService : IPlayerAtGameService
     public PlayerAtGameService(IDataService dataService, IGameService gameService, IPlayerService playerService)
     {
         _pagEntities = dataService.PlayerAtGameEntities.OrderByDescending(o => o.UrlSegment);
-        _gameEntities = dataService.GameEntities.OrderByDescending(o => o.Date);
-        _playerEntities = dataService.PlayerEntities.OrderByDescending(o => o.Name);
         _dataService = dataService;
         _playerService = playerService;
         _gameService = gameService;
@@ -113,7 +109,14 @@ public class PlayerAtGameService : IPlayerAtGameService
 
     public async Task ResetTeamsAsync(List<PlayerAtGame> pags)
     {
-        throw new NotImplementedException();
+        // Using a For loop because we are modifying the collection as we go
+        var index = 0;
+        for (; index < pags.Count; index++)
+        {
+            var pag = pags[index];
+            pag.Team = string.Empty;
+            await UpsertPagAsync(pag);
+        }
     }
 
     public async Task TogglePagPlayedAsync(string pagId, bool played)

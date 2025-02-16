@@ -44,14 +44,14 @@ public interface IPlayerAtGameService
     /// </summary>
     /// <param name="id">The Id for the PlayerAtGame to get.</param>
     /// <returns>PlayerAtGame.</returns>
-    public Game GetPag(string id);
+    public PlayerAtGame GetPag(string id);
     
     /// <summary>
     /// Gets a single PlayerAtGame by UrlSegment.
     /// </summary>
     /// <param name="urlSegment">The UrlSegment for the PlayerAtGame to get.</param>
-    /// <returns>Game.</returns>
-    public Game GetPagByUrlSegment(string urlSegment);
+    /// <returns>PlayerAtGame.</returns>
+    public PlayerAtGame GetPagByUrlSegment(string urlSegment);
     
     /// <summary>
     /// Deletes the PlayerAtGame.

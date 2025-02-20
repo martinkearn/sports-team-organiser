@@ -22,7 +22,7 @@ public interface IPlayerAtGameService
     /// </summary>
     /// <param name="pags">The list of PlayerAtGame to organise into teams.</param>
     /// <returns>List of PlayerAtGame.</returns>
-    public List<PlayerAtGame> OrganiseTeams(List<PlayerAtGame> pags);
+    public Task<List<PlayerAtGame>> OrganiseTeams(List<PlayerAtGame> pags);
     
     /// <summary>
     /// Removes team association for each PlayerAtGame in given list.
@@ -35,9 +35,8 @@ public interface IPlayerAtGameService
     /// Toggles the Played property of the specified PlayerAtGame. Adds or removes Transactions in accordance with new Played status
     /// </summary>
     /// <param name="pagId">The ID for the PlayerAtGame to toggle</param>
-    /// <param name="played">The new value for the Played property for the specified PlayerAtGame.</param>
     /// <returns>Nothing.</returns>
-    public Task TogglePagPlayedAsync(string pagId, bool played);
+    public Task TogglePagPlayedAsync(string pagId);
     
     /// <summary>
     /// Gets a single PlayerAtGame by Id.

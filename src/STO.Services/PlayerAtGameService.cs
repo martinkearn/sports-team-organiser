@@ -9,13 +9,15 @@ public class PlayerAtGameService : IPlayerAtGameService
     private readonly IDataService _dataService;
     private readonly IPlayerService _playerService;
     private readonly IGameService _gameService;
+    private readonly ITransactionService _transactionService;
 
-    public PlayerAtGameService(IDataService dataService, IGameService gameService, IPlayerService playerService)
+    public PlayerAtGameService(IDataService dataService, IGameService gameService, IPlayerService playerService, ITransactionService transactionService)
     {
         _pagEntities = dataService.PlayerAtGameEntities.OrderByDescending(o => o.UrlSegment);
         _dataService = dataService;
         _playerService = playerService;
         _gameService = gameService;
+        _transactionService = transactionService;
     }
 
     private PlayerAtGame ConstructPag(string pagId)
@@ -35,7 +37,7 @@ public class PlayerAtGameService : IPlayerAtGameService
             GameId = pagEntity.GameRowKey,
             Forecast = pagEntity.Forecast,
             Played = pagEntity.Played,
-            Team = pagEntity.Team,
+            Team = (Enums.Team)Enum.Parse(typeof(Enums.Team), pagEntity.Team),
             PlayerLabel = player.Label,
             PlayerBalance = player.Balance,
             PlayerName = player.Name,
@@ -74,7 +76,7 @@ public class PlayerAtGameService : IPlayerAtGameService
             GameRowKey = pag.GameId,
             Forecast = pag.Forecast,
             Played = pag.Played,
-            Team = pag.Team,
+            Team = pag.Team.ToString(),
             UrlSegment = pag.UrlSegment,
         };
 
@@ -102,9 +104,41 @@ public class PlayerAtGameService : IPlayerAtGameService
         return pags;
     }
 
-    public List<PlayerAtGame> OrganiseTeams(List<PlayerAtGame> pags)
+    public async Task<List<PlayerAtGame>> OrganiseTeams(List<PlayerAtGame> pags)
     {
-        throw new NotImplementedException();
+        // Establish return list
+        var newPags = new List<PlayerAtGame>();
+        
+        // Get Yes pags
+        var yesPags = pags
+            .Where(p => p.Forecast == Enums.PlayingStatus.Yes)
+            .OrderBy(p => p.PlayerAdminRating).ToList();
+        
+        var nextTeamToGetPag = Enums.Team.A;
+
+        foreach (var position in Enum.GetValues<Enums.PlayerPosition>())
+        {
+            // Get pags in this position
+            var pagsInPosition = yesPags.Where(o => o.PlayerPosition == position);
+
+            // Distribute pags in this position between teams
+            foreach (var pagInPosition in pagsInPosition)
+            {
+                // Set team for page
+                pagInPosition.Team = nextTeamToGetPag;
+                newPags.Add(pagInPosition);
+
+                // Update pag in storage
+                await UpsertPagAsync(pagInPosition);
+
+                // Set team for next pag
+                nextTeamToGetPag = (nextTeamToGetPag == Enums.Team.A) ? Enums.Team.B : Enums.Team.A;
+            }
+        }
+
+        newPags = newPags.OrderBy(p => p.PlayerName).ToList();
+
+        return newPags;
     }
 
     public async Task ResetTeamsAsync(List<PlayerAtGame> pags)
@@ -114,14 +148,65 @@ public class PlayerAtGameService : IPlayerAtGameService
         for (; index < pags.Count; index++)
         {
             var pag = pags[index];
-            pag.Team = string.Empty;
+            pag.Team = Enums.Team.None;
             await UpsertPagAsync(pag);
         }
     }
 
-    public async Task TogglePagPlayedAsync(string pagId, bool played)
+    public async Task TogglePagPlayedAsync(string pagId)
     {
-        throw new NotImplementedException();
+        // Get Pag
+        var pag = GetPag(pagId);
+        
+        // Just toggle the pag value
+        pag.Played = !pag.Played;
+        
+        // Add / remove transactions if played / not played
+        if (pag.Played)
+        {
+            var chargeTransaction = new Transaction()
+            {
+                PlayerId = pag.PlayerId,
+                Amount = -pag.PlayerDefaultRate,
+                DateTime = DateTime.UtcNow,
+                GameId = pag.GameId
+            };
+            
+            await _transactionService.UpsertTransactionAsync(chargeTransaction);
+        }
+        else
+        {
+            // Get debit transactions (less than £0) for player and game
+            var chargeTransactionsForPlayer = _transactionService.GetTransactions(null, null, pag.PlayerId)
+                .Where(t => t.Amount < 0)
+                .ToList();
+				
+            // Do we have any associated with this game? If so, use those
+            var chargeTransactionsForPag = chargeTransactionsForPlayer.Where(t => t.GameId == pag.GameId).ToList();
+            if (chargeTransactionsForPag.Count > 0)
+            {
+                foreach (var t in chargeTransactionsForPag)
+                {
+                    await _transactionService.DeleteTransactionAsync(t.Id);
+                }
+            }
+            else
+            {
+                // If not, these must be old transactions without the GameId. Add a credit to balance it out. Cannot delete any because we do not know which game they are assoicated with
+                var creditTransaction = new Transaction()
+                {
+                    PlayerId = pag.PlayerId,
+                    Amount = pag.PlayerDefaultRate,
+                    DateTime = DateTime.UtcNow,
+                    GameId = pag.GameId
+                };
+                
+                await _transactionService.UpsertTransactionAsync(creditTransaction);
+            }
+        }
+
+        // Upsert pag
+        await UpsertPagAsync(pag);
     }
 
     public PlayerAtGame GetPag(string id)
@@ -159,13 +244,13 @@ public class PlayerAtGameService : IPlayerAtGameService
         pagEntity.UrlSegment = $"{pag.PlayerUrlSegment}-{pag.GameUrlSegment}";
         
         //Check if Pag exists with same GameId and PlayerID.
-        //We could have Pags with different Id but same Player and Game if a Pag has been already added to Game
+        //We could have Pags with different ID but same Player and Game if a Pag has been already added to Game
         var matchingPagEntity = _pagEntities.FirstOrDefault(page => page.UrlSegment == pagEntity.UrlSegment);
         if (matchingPagEntity is not null)
         {
             //Overwrite the PagEntity we created with a new one based on existing PagEntity details with new properties from incoming Pag
             pagEntity = matchingPagEntity;
-            pagEntity.Team = pag.Team;
+            pagEntity.Team = pag.Team.ToString();
             pagEntity.Forecast = pag.Forecast;
             pagEntity.Played = pag.Played;
         }

@@ -20,7 +20,7 @@ public class PlayerAtGame
     /// <summary>
     /// Which Team the PlayerAtGame is on, A or B
     /// </summary>
-    public string Team { get; set; } = null!;
+    public Enums.Team Team { get; set; } = Enums.Team.None;
     
     /// <summary>
     /// Url for the PlayerAtGame

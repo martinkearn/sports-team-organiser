@@ -33,11 +33,11 @@ From Game
 - UrlSegment
 
 ## Tasks
-- Class
-- Service
-- Tests
-- Implement in pages
-- Implement in components
-- Remove old
+- [x] Class
+- [x] Service
+- [] Tests
+- [] Implement in pages
+- [] Implement in components
+- [] Remove old
 
 ## Current focus

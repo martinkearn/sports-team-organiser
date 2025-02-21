@@ -1,4 +1,5 @@
 using STO.Tests.Fixtures;
+using Moq;
 
 namespace STO.Tests.Services;
 
@@ -414,6 +415,41 @@ public class PlayerAtGameServiceTests : IClassFixture<MainFixture>
 
         // Assert
         Assert.Empty(result);
+    }
+    
+    #endregion
+    
+    #region ResetTeams
+    
+    [Fact]
+    public async Task ResetTeamsAsync_SetsAllPlayersToNone()
+    {
+        // Arrange
+        var pags = new List<PlayerAtGame>
+        {
+            new PlayerAtGame { Id = "1", Team = Enums.Team.A },
+            new PlayerAtGame { Id = "2", Team = Enums.Team.B },
+            new PlayerAtGame { Id = "3", Team = Enums.Team.A }
+        };
+
+        // Act
+        await _service.ResetTeamsAsync(pags);
+
+        // Assert
+        Assert.All(pags, pag => Assert.Equal(Enums.Team.None, pag.Team));
+    }
+
+    [Fact]
+    public async Task ResetTeamsAsync_DoesNotFailOnEmptyList()
+    {
+        // Arrange
+        var pags = new List<PlayerAtGame>();
+
+        // Act
+        await _service.ResetTeamsAsync(pags);
+
+        // Assert
+        Assert.Empty(pags);
     }
     
     #endregion

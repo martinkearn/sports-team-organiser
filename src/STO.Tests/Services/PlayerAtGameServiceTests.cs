@@ -30,6 +30,29 @@ public class PlayerAtGameServiceTests : IClassFixture<MainFixture>
         _transactionService = new TransactionService(_mockDataService.Object);
         _service = new PlayerAtGameService(_mockDataService.Object, _gameService, _playerService, _transactionService);
     }
+
+    private PlayerAtGameService CreateIsolatedService(List<PlayerAtGameEntity>? pags)
+    {
+        var isolatedFixture = new MainFixture();
+        var isolatedMockDataService = new Mock<IDataService>();
+        isolatedMockDataService.Setup(ds => ds.PlayerEntities).Returns(isolatedFixture.PlayerEntities);
+        isolatedMockDataService.Setup(ds => ds.RatingEntities).Returns(isolatedFixture.RatingEntities);
+        isolatedMockDataService.Setup(ds => ds.TransactionEntities).Returns(isolatedFixture.TransactionEntities);
+        isolatedMockDataService.Setup(ds => ds.GameEntities).Returns(isolatedFixture.GameEntities);
+        if (pags != null)
+        {
+            isolatedMockDataService.Setup(ds => ds.PlayerAtGameEntities).Returns(pags);
+        }
+        else
+        {
+            isolatedMockDataService.Setup(ds => ds.PlayerAtGameEntities).Returns(isolatedFixture.PlayerAtGameEntities);
+        }
+        var isolatedPlayerService = new PlayerService(isolatedMockDataService.Object);
+        var isolatedGameService = new GameService(isolatedMockDataService.Object);
+        var isolatedTransactionService = new TransactionService(isolatedMockDataService.Object);
+        var isolatedService = new PlayerAtGameService(isolatedMockDataService.Object, isolatedGameService, isolatedPlayerService, isolatedTransactionService);
+        return isolatedService;
+    }
     
     #region GetPag
     
@@ -113,16 +136,10 @@ public class PlayerAtGameServiceTests : IClassFixture<MainFixture>
         };
         var thisPlayerAtGameEntities = _fixture.PlayerAtGameEntities.ToList();
         thisPlayerAtGameEntities.Add(pag);
-        var thisMockDataService = new Mock<IDataService>();
-        thisMockDataService.Setup(ds => ds.PlayerEntities).Returns(_fixture.PlayerEntities);
-        thisMockDataService.Setup(ds => ds.RatingEntities).Returns(_fixture.RatingEntities);
-        thisMockDataService.Setup(ds => ds.TransactionEntities).Returns(_fixture.TransactionEntities);
-        thisMockDataService.Setup(ds => ds.GameEntities).Returns(_fixture.GameEntities);
-        thisMockDataService.Setup(ds => ds.PlayerAtGameEntities).Returns(thisPlayerAtGameEntities);
-        var thisService = new PlayerAtGameService(thisMockDataService.Object, _gameService, _playerService, _transactionService);
+        var isolatedService = CreateIsolatedService(thisPlayerAtGameEntities);
         
         // Act & Assert
-        var ex = Assert.Throws<KeyNotFoundException>(() => thisService.GetPag("PAG5"));
+        var ex = Assert.Throws<KeyNotFoundException>(() => isolatedService.GetPag("PAG5"));
         Assert.Contains("The Game with Id 999 was not found.", ex.Message);
     }
     
@@ -450,6 +467,25 @@ public class PlayerAtGameServiceTests : IClassFixture<MainFixture>
 
         // Assert
         Assert.Empty(pags);
+    }
+    
+    #endregion
+    
+    #region TogglepagPlayedAsync
+    
+    
+    [Fact]
+    public async Task TogglePagPlayedAsync_TogglesPlayedStatus()
+    {
+        // Arrange
+        var isolatedService = CreateIsolatedService(null);
+        
+        // Act
+        await isolatedService.TogglePagPlayedAsync("PAG1");
+        var updatedPag = isolatedService.GetPag("PAG1");
+
+        // Assert
+        Assert.False(updatedPag.Played); // Should now be false
     }
     
     #endregion

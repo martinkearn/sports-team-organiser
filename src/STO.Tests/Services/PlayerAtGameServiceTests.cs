@@ -311,4 +311,110 @@ public class PlayerAtGameServiceTests : IClassFixture<MainFixture>
     }
 
     #endregion
+    
+    #region OrganiseTeams
+    
+        [Fact]
+    public async Task OrganiseTeams_DistributesTeamsEvenlyBasedOnAdminRating()
+    {
+        // Arrange
+        var pags = new List<PlayerAtGame>
+        {
+            new PlayerAtGame { Id = "1", Forecast = Enums.PlayingStatus.Yes, PlayerAdminRating = 5, PlayerPosition = Enums.PlayerPosition.Forward },
+            new PlayerAtGame { Id = "2", Forecast = Enums.PlayingStatus.Yes, PlayerAdminRating = 5, PlayerPosition = Enums.PlayerPosition.Forward },
+            new PlayerAtGame { Id = "3", Forecast = Enums.PlayingStatus.Yes, PlayerAdminRating = 1, PlayerPosition = Enums.PlayerPosition.Forward },
+            new PlayerAtGame { Id = "4", Forecast = Enums.PlayingStatus.Yes, PlayerAdminRating = 1, PlayerPosition = Enums.PlayerPosition.Forward },
+            new PlayerAtGame { Id = "5", Forecast = Enums.PlayingStatus.Yes, PlayerAdminRating = 5, PlayerPosition = Enums.PlayerPosition.Defender },
+            new PlayerAtGame { Id = "6", Forecast = Enums.PlayingStatus.Yes, PlayerAdminRating = 5, PlayerPosition = Enums.PlayerPosition.Defender },
+            new PlayerAtGame { Id = "7", Forecast = Enums.PlayingStatus.Yes, PlayerAdminRating = 1, PlayerPosition = Enums.PlayerPosition.Defender },
+            new PlayerAtGame { Id = "8", Forecast = Enums.PlayingStatus.Yes, PlayerAdminRating = 1, PlayerPosition = Enums.PlayerPosition.Defender },
+        };
+
+        // Act
+        var result = await _service.OrganiseTeams(pags);
+
+        // Assert
+        var teamARating = result.Where(p => p.Team == Enums.Team.A).Sum(p => p.PlayerAdminRating);
+        var teamBRating = result.Where(p => p.Team == Enums.Team.B).Sum(p => p.PlayerAdminRating);
+        Assert.Equal(12, teamARating);
+        Assert.Equal(12, teamBRating);
+    }
+
+    [Fact]
+    public async Task OrganiseTeams_IgnoresPlayersNotMarkedAsYes()
+    {
+        // Arrange
+        var pags = new List<PlayerAtGame>
+        {
+            new PlayerAtGame { Id = "1", Forecast = Enums.PlayingStatus.Yes, PlayerAdminRating = 8, PlayerPosition = Enums.PlayerPosition.Forward },
+            new PlayerAtGame { Id = "2", Forecast = Enums.PlayingStatus.No, PlayerAdminRating = 5, PlayerPosition = Enums.PlayerPosition.Forward }, // Should be ignored
+            new PlayerAtGame { Id = "3", Forecast = Enums.PlayingStatus.Yes, PlayerAdminRating = 7, PlayerPosition = Enums.PlayerPosition.Defender },
+        };
+
+        // Act
+        var result = await _service.OrganiseTeams(pags);
+
+        // Assert
+        Assert.Equal(2, result.Count); // Only two players should be assigned
+        Assert.All(result, pag => Assert.Equal(Enums.PlayingStatus.Yes, pag.Forecast));
+    }
+
+    [Fact]
+    public async Task OrganiseTeams_EnsuresPositionBalance()
+    {
+        // Arrange
+        var pags = new List<PlayerAtGame>
+        {
+            new PlayerAtGame { Id = "1", Forecast = Enums.PlayingStatus.Yes, PlayerAdminRating = 9, PlayerPosition = Enums.PlayerPosition.Midfielder },
+            new PlayerAtGame { Id = "2", Forecast = Enums.PlayingStatus.Yes, PlayerAdminRating = 6, PlayerPosition = Enums.PlayerPosition.Midfielder },
+            new PlayerAtGame { Id = "3", Forecast = Enums.PlayingStatus.Yes, PlayerAdminRating = 7, PlayerPosition = Enums.PlayerPosition.Defender },
+            new PlayerAtGame { Id = "4", Forecast = Enums.PlayingStatus.Yes, PlayerAdminRating = 5, PlayerPosition = Enums.PlayerPosition.Defender },
+        };
+
+        // Act
+        var result = await _service.OrganiseTeams(pags);
+
+        // Assert
+        var teamA = result.Where(p => p.Team == Enums.Team.A).ToList();
+        var teamB = result.Where(p => p.Team == Enums.Team.B).ToList();
+
+        Assert.Equal(2, teamA.Count);
+        Assert.Equal(2, teamB.Count);
+
+        Assert.Equal(1, teamA.Count(p => p.PlayerPosition == Enums.PlayerPosition.Midfielder));
+        Assert.Equal(1, teamA.Count(p => p.PlayerPosition == Enums.PlayerPosition.Defender));
+        Assert.Equal(1, teamB.Count(p => p.PlayerPosition == Enums.PlayerPosition.Midfielder));
+        Assert.Equal(1, teamB.Count(p => p.PlayerPosition == Enums.PlayerPosition.Defender));
+    }
+
+    [Fact]
+    public async Task OrganiseTeams_UpsertsPagForEachPlayer()
+    {
+        // Arrange
+        var thisService = new PlayerAtGameService(_mockDataService.Object, _gameService, _playerService, _transactionService);
+        var playersAtGame = thisService.GetPags(null, null);
+        
+        // Act
+        var result = await thisService.OrganiseTeams(playersAtGame);
+        
+        // Assert
+        var teamNone = result.Where(p => p.Team == Enums.Team.None).ToList();
+        
+        Assert.Empty(teamNone); // Started with two Pags with Team set to None
+    }
+
+    [Fact]
+    public async Task OrganiseTeams_ReturnsEmptyList_WhenNoPlayersAreAvailable()
+    {
+        // Arrange
+        var pags = new List<PlayerAtGame>(); // No players
+
+        // Act
+        var result = await _service.OrganiseTeams(pags);
+
+        // Assert
+        Assert.Empty(result);
+    }
+    
+    #endregion
 }

@@ -50,14 +50,14 @@ namespace STO.Tests.Services
         public void GetTransaction_WithMissingGameEntity_ReturnsTransactionWithoutGameEntity()
         {
             // Arrange
-            const string transactionId = "T2";
+            const string transactionId = "T10";
 
             // Act
             var result = _transactionService.GetTransaction(transactionId);
             
             // Assert
             Assert.NotNull(result);
-            Assert.Null(result.GameId); // Transaction T2 does not have a Game
+            Assert.Null(result.GameId); // Transaction T10 does not have a Game
         }
         
         [Fact]

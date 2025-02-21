@@ -216,6 +216,11 @@ public class PlayerAtGameService : IPlayerAtGameService
 
     public PlayerAtGame GetPagByUrlSegment(string urlSegment)
     {
+        ArgumentNullException.ThrowIfNull(urlSegment);
+        
+        // Trim whitespace
+        urlSegment = urlSegment.Trim();
+
         // Get PlayerAtGameEntity for this UrlSegment
         var page = _pagEntities.FirstOrDefault(page => page.UrlSegment.ToLowerInvariant() == urlSegment.ToLowerInvariant());
 

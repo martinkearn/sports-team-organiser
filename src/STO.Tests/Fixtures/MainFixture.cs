@@ -197,5 +197,26 @@ public class MainFixture
             GameId = "G3",
             GameLabel = ""
         };
+        
+        // Deliberately invalid PlayerAtGame
+        PlayerAtGameEntities.Add(new PlayerAtGameEntity()
+        {
+            RowKey = "PAG5",
+            GameRowKey = "G1",
+            PlayerRowKey = "999",
+            Forecast = Enums.PlayingStatus.Yes,
+            Played = false,
+            UrlSegment = "jacob-ramsey-10-04-2024"
+        });
+        
+        PlayerAtGameEntities.Add(new PlayerAtGameEntity()
+        {
+            RowKey = "PAG6",
+            GameRowKey = "999",
+            PlayerRowKey = "4",
+            Forecast = Enums.PlayingStatus.Yes,
+            Played = false,
+            UrlSegment = "jacob-ramsey-10-04-2024"
+        });
     }
 }

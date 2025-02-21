@@ -29,6 +29,13 @@ public class PlayerAtGameService : IPlayerAtGameService
         var player = _playerService.GetPlayer(pagEntity.PlayerRowKey);
         var game = _gameService.GetGame(pagEntity.GameRowKey);
 
+        // Get Team
+        var team = Enums.Team.None;
+        if (!string.IsNullOrEmpty(pagEntity.Team))
+        {
+            team = (Enums.Team)Enum.Parse(typeof(Enums.Team), pagEntity.Team);
+        }
+
         // Construct
         var pag = new PlayerAtGame()
         {
@@ -37,7 +44,7 @@ public class PlayerAtGameService : IPlayerAtGameService
             GameId = pagEntity.GameRowKey,
             Forecast = pagEntity.Forecast,
             Played = pagEntity.Played,
-            Team = (Enums.Team)Enum.Parse(typeof(Enums.Team), pagEntity.Team),
+            Team = team,
             PlayerLabel = player.Label,
             PlayerBalance = player.Balance,
             PlayerName = player.Name,

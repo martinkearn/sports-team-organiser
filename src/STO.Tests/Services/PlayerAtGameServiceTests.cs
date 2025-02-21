@@ -488,5 +488,17 @@ public class PlayerAtGameServiceTests : IClassFixture<MainFixture>
         Assert.False(updatedPag.Played); // Should now be false
     }
     
+    //ToDo: Tests for transactions when Played is toggled. Need to look at whether CreateIsolatedService keeps returning the initial TransactionEntities list.
+    
+    [Fact]
+    public async Task TogglePagPlayedAsync_ThrowsKeyNotFoundException_WhenPagDoesNotExist()
+    {
+        // Arrange
+        var isolatedService = CreateIsolatedService(null);
+
+        // Act & Assert
+        await Assert.ThrowsAsync<KeyNotFoundException>(() => isolatedService.TogglePagPlayedAsync("InvalidId"));
+    }
+    
     #endregion
 }

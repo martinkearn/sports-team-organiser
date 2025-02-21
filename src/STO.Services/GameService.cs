@@ -83,7 +83,7 @@ public class GameService : IGameService
 
     public Game GetGameByUrlSegment(string urlSegment)
     {
-        // Get PlayerEntity for this UrlSegment
+        // Get GameEntity for this UrlSegment
         var ge = _dataService.GameEntities.FirstOrDefault(ge => ge.UrlSegment.ToLowerInvariant() == urlSegment.ToLowerInvariant());
 
         if (ge == null)

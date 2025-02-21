@@ -4,27 +4,23 @@ namespace STO.Tests.Services;
 
 public class PlayerAtGameServiceTests : IClassFixture<MainFixture>
 {
-    private readonly Mock<IDataService> _mockDataService;
-    private readonly PlayerService _playerService;
-    private readonly GameService _gameService;
-    private readonly TransactionService _transactionService;
     private readonly PlayerAtGameService _service;
     
     public PlayerAtGameServiceTests(MainFixture fixture)
     {
         // Mocking IDataService with data from Fixture
-        _mockDataService = new Mock<IDataService>();
-        _mockDataService.Setup(ds => ds.PlayerEntities).Returns(fixture.PlayerEntities);
-        _mockDataService.Setup(ds => ds.RatingEntities).Returns(fixture.RatingEntities);
-        _mockDataService.Setup(ds => ds.TransactionEntities).Returns(fixture.TransactionEntities);
-        _mockDataService.Setup(ds => ds.GameEntities).Returns(fixture.GameEntities);
-        _mockDataService.Setup(ds => ds.PlayerAtGameEntities).Returns(fixture.PlayerAtGameEntities);
+        var mockDataService = new Mock<IDataService>();
+        mockDataService.Setup(ds => ds.PlayerEntities).Returns(fixture.PlayerEntities);
+        mockDataService.Setup(ds => ds.RatingEntities).Returns(fixture.RatingEntities);
+        mockDataService.Setup(ds => ds.TransactionEntities).Returns(fixture.TransactionEntities);
+        mockDataService.Setup(ds => ds.GameEntities).Returns(fixture.GameEntities);
+        mockDataService.Setup(ds => ds.PlayerAtGameEntities).Returns(fixture.PlayerAtGameEntities);
 
-        // Create GameService with mocked IDataService
-        _playerService = new PlayerService(_mockDataService.Object);
-        _gameService = new GameService(_mockDataService.Object);
-        _transactionService = new TransactionService(_mockDataService.Object);
-        _service = new PlayerAtGameService(_mockDataService.Object, _gameService, _playerService, _transactionService);
+        // Create GameService with mocked IDataService and real other services
+        var playerService = new PlayerService(mockDataService.Object);
+        var gameService = new GameService(mockDataService.Object);
+        var transactionService = new TransactionService(mockDataService.Object);
+        _service = new PlayerAtGameService(mockDataService.Object, gameService, playerService, transactionService);
     }
     
     [Fact]

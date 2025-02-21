@@ -30,7 +30,7 @@ public class PlayerAtGame
     /// <summary>
     /// The label of the PLayerAtGame to use in titles and lists when PlayerName is not appropriate.
     /// </summary>
-    public string Label => $"{PlayerLabel}-at-{GameLabel}";
+    public string Label => $"{PlayerLabel} at {GameLabel}";
     
     /// <summary>
     /// Format dd-MM-yyyy

@@ -118,39 +118,52 @@ public class PlayerAtGameService : IPlayerAtGameService
 
     public async Task<List<PlayerAtGame>> OrganiseTeams(List<PlayerAtGame> pags)
     {
-        // Establish return list
-        var newPags = new List<PlayerAtGame>();
-        
-        // Get Yes pags
-        var yesPags = pags
-            .Where(p => p.Forecast == Enums.PlayingStatus.Yes)
-            .OrderBy(p => p.PlayerAdminRating).ToList();
-        
-        var nextTeamToGetPag = Enums.Team.A;
+        // Filter only players who are actually playing
+        var availablePlayers = pags.Where(p => p.Forecast == Enums.PlayingStatus.Yes).ToList();
 
-        foreach (var position in Enum.GetValues<Enums.PlayerPosition>())
+        // Dictionary to hold players sorted by position
+        var groupedByPosition = availablePlayers
+            .GroupBy(p => p.PlayerPosition)
+            .ToDictionary(g => g.Key, g => g.OrderByDescending(p => p.PlayerAdminRating).ToList());
+
+        var teamA = new List<PlayerAtGame>();
+        var teamB = new List<PlayerAtGame>();
+        var updateTasks = new List<Task>(); // List to batch async updates
+
+        // Assign players in alternating order by position
+        foreach (var positionGroup in groupedByPosition)
         {
-            // Get pags in this position
-            var pagsInPosition = yesPags.Where(o => o.PlayerPosition == position);
+            var assignToTeamA = true;
 
-            // Distribute pags in this position between teams
-            foreach (var pagInPosition in pagsInPosition)
+            foreach (var player in positionGroup.Value)
             {
-                // Set team for page
-                pagInPosition.Team = nextTeamToGetPag;
-                newPags.Add(pagInPosition);
+                if (assignToTeamA)
+                    teamA.Add(player);
+                else
+                    teamB.Add(player);
 
-                // Update pag in storage
-                await UpsertPagAsync(pagInPosition);
-
-                // Set team for next pag
-                nextTeamToGetPag = (nextTeamToGetPag == Enums.Team.A) ? Enums.Team.B : Enums.Team.A;
+                // Toggle team for next player
+                assignToTeamA = !assignToTeamA;
             }
         }
 
-        newPags = newPags.OrderBy(p => p.PlayerName).ToList();
+        // Assign team values
+        foreach (var pagA in teamA)
+        {
+            pagA.Team = Enums.Team.A;
+            updateTasks.Add(UpsertPagAsync(pagA));
+        }
 
-        return newPags;
+        foreach (var pagB in teamB)
+        {
+            pagB.Team = Enums.Team.B;
+            updateTasks.Add(UpsertPagAsync(pagB));
+        }
+        
+        // Wait for all async updates to complete
+        await Task.WhenAll(updateTasks);
+
+        return teamA.Concat(teamB).OrderBy(p => p.PlayerName).ToList(); // Return sorted for consistency
     }
 
     public async Task ResetTeamsAsync(List<PlayerAtGame> pags)

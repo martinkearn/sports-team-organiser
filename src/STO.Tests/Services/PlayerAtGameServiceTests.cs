@@ -256,4 +256,59 @@ public class PlayerAtGameServiceTests : IClassFixture<MainFixture>
     }
 
     #endregion
+    
+    #region GetPagsForGame
+
+    [Fact]
+    public void GetPagsForGame_WhenGameExists_ReturnsPags()
+    {
+        // Arrange
+        string gameId = "G1";
+
+        // Act
+        var result = _service.GetPagsForGame(gameId);
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.All(result, pag => Assert.Equal(gameId, pag.GameId));
+    }
+
+    [Fact]
+    public void GetPagsForGame_WhenGameHasNoPags_ReturnsEmptyList()
+    {
+        // Arrange
+        string gameId = "G999"; // Non-existent game
+
+        // Act
+        var result = _service.GetPagsForGame(gameId);
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Empty(result);
+    }
+
+    [Fact]
+    public void GetPagsForGame_WhenGameIdIsNullOrEmpty_ThrowsException()
+    {
+        // Act & Assert
+        Assert.Throws<ArgumentNullException>(() => _service.GetPagsForGame(null));
+        Assert.Throws<ArgumentNullException>(() => _service.GetPagsForGame(string.Empty));
+    }
+
+    [Fact]
+    public void GetPagsForGame_ReturnsCorrectNumberOfPags()
+    {
+        // Arrange
+        string gameId = "G1";
+        var expectedCount = _fixture.PlayerAtGameEntities.Count(p => p.GameRowKey == gameId);
+
+        // Act
+        var result = _service.GetPagsForGame(gameId);
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal(expectedCount, result.Count);
+    }
+
+    #endregion
 }

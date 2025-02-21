@@ -105,6 +105,11 @@ public class PlayerAtGameService : IPlayerAtGameService
 
     public List<PlayerAtGame> GetPagsForGame(string gameId)
     {
+        if (string.IsNullOrEmpty(gameId))
+        {
+            throw new ArgumentNullException(nameof(gameId));
+        }
+        
         var pags = _pagEntities
             .Where(page => page.GameRowKey == gameId)
             .Select(page => ConstructPag(page.RowKey)).ToList();
